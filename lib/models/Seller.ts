@@ -1,0 +1,53 @@
+import { Connection, Schema, Model } from "mongoose"
+
+const SellerSchema = new Schema(
+  {
+    businessName: { type: String, required: true },
+    ownerName: { type: String, required: true },
+    email: { type: String, required: true, unique: true, index: true },
+    phone: { type: String, required: true, unique: true, index: true },
+    address: { type: String },
+    country: { type: String },
+    state: { type: String },
+    district: { type: String },
+    city: { type: String },
+    pincode: { type: String },
+    gstNumber: { type: String },
+    panNumber: { type: String },
+    aadhaar: { type: String },
+    hasGST: { type: Boolean, default: true },
+    businessLogoUrl: { type: String },
+    documentUrls: { type: [String], default: [] },
+    status: { type: String, default: "pending" },
+    loginOtp: { type: String },
+    loginOtpExpires: { type: Date },
+  },
+  { timestamps: true }
+)
+
+export function getSellerModel(conn: Connection) {
+  const models = conn.models as Record<string, Model<unknown>>
+  const existing = models.Seller as Model<unknown> | undefined
+  return existing ?? conn.model("Seller", SellerSchema)
+}
+
+export async function findSellerAcrossDBs(identifier: { email?: string; phone?: string }) {
+  const { email, phone } = identifier
+  const { connectDB } = await import("@/lib/db/db")
+  const conns: Connection[] = []
+  try { conns.push(await connectDB("US")) } catch {}
+  try { conns.push(await connectDB("EU")) } catch {}
+  try { conns.push(await connectDB("IN")) } catch {}
+  for (const loc of ["WB", "MH", "TN", "DL", "RJ"]) {
+    try { conns.push(await connectDB("IN", loc)) } catch {}
+  }
+  for (const conn of conns) {
+    const Seller = getSellerModel(conn)
+    const query: Record<string, string> = {}
+    if (email) query.email = email
+    if (phone) query.phone = phone
+    const doc = await Seller.findOne(query)
+    if (doc) return { conn, Seller, seller: doc }
+  }
+  return null
+}
