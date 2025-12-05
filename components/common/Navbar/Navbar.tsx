@@ -96,6 +96,13 @@ const Navbar: React.FC = () => {
               <span className="font-medium">Sell on Firgomart</span>
             </Link>
 
+            <Link
+              href="/admin"
+              className="flex items-center space-x-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            >
+              <span className="font-medium">Admin Login</span>
+            </Link>
+
             {isAuthenticated ? (
               <div className="relative">
                 <button
@@ -196,6 +203,13 @@ const Navbar: React.FC = () => {
               >
                 <Store className="w-5 h-5" />
                 <span className="font-medium">Sell on Firgomart</span>
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center space-x-2 px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg"
+              >
+                <span className="font-medium">Admin Login</span>
               </Link>
               <button
                 onClick={() => {

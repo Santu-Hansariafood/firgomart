@@ -8,7 +8,7 @@ import React from 'react'
 import { useAuth } from '@/context/AuthContext'
 
 interface CartItem {
-  id: string | number
+  id: number
   name: string
   price: number
   originalPrice?: number
@@ -19,8 +19,8 @@ interface CartItem {
 interface CartProps {
   items: CartItem[]
   onClose: () => void
-  onUpdateQuantity: (id: string | number, newQuantity: number) => void
-  onRemoveItem: (id: string | number) => void
+  onUpdateQuantity: (id: number, newQuantity: number) => void
+  onRemoveItem: (id: number) => void
 }
 
 const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveItem }) => {

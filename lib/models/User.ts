@@ -1,34 +1,34 @@
-import { Connection, Schema, Model } from "mongoose"
+import { Connection, Schema } from "mongoose"
 import { connectDB } from "@/lib/db/db"
 
-const UserSchema = new Schema(
-  {
-    name: { type: String },
-    email: { type: String, required: true, unique: true, index: true },
-    passwordHash: { type: String, required: true },
-    mobile: { type: String },
-    address: { type: String },
-    city: { type: String },
-    state: { type: String },
-    pincode: { type: String },
-    dateOfBirth: { type: String },
-    gender: { type: String },
-    country: { type: String },
-    location: { type: String },
-    resetOtp: { type: String },
-    resetOtpExpires: { type: Date },
-  },
-  { timestamps: true }
-)
+  const UserSchema = new Schema(
+    {
+      name: { type: String },
+      email: { type: String, required: true, unique: true, index: true },
+      passwordHash: { type: String, required: true },
+      mobile: { type: String },
+      address: { type: String },
+      city: { type: String },
+      state: { type: String },
+      pincode: { type: String },
+      dateOfBirth: { type: String },
+      gender: { type: String },
+      country: { type: String },
+      location: { type: String },
+      resetOtp: { type: String },
+      resetOtpExpires: { type: Date },
+      adminLoginOtp: { type: String },
+      adminLoginOtpExpires: { type: Date },
+    },
+    { timestamps: true }
+  )
 
 export function getUserModel(conn: Connection) {
-  const models = conn.models as Record<string, Model<unknown>>
-  const existing = models.User as Model<unknown> | undefined
-  return existing ?? conn.model("User", UserSchema)
+  return (conn.models as any).User || conn.model("User", UserSchema)
 }
 
 export async function findUserAcrossDBs(email: string) {
-  const conns: Connection[] = []
+  const conns: Connection[] = [] as any
   try {
     conns.push(await connectDB("US"))
   } catch {}

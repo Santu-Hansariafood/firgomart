@@ -7,3 +7,4 @@ const SellerLoginPage = () => {
 }
 
 export default SellerLoginPage
+

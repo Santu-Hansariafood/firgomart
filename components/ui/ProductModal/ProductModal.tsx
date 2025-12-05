@@ -31,9 +31,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const [quantity, setQuantity] = useState(1)
   const router = useRouter()
 
-  const images: string[] = product.images && product.images.length > 0
+  const images: string[] = (product.images && product.images.length > 0)
     ? product.images
-    : [product.image, product.image, product.image, product.image]
+    : [product.image]
 
   const nextImage = () => setSelectedImage((prev) => (prev + 1) % images.length)
   const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)

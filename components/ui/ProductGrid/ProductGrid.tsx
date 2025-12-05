@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { ShoppingCart, Eye } from 'lucide-react'
 import Image from 'next/image'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
-// Fetched from backend
+// import { products } from '@/data/mockData'
 
 // ✅ Type definitions
 interface Product {
@@ -29,64 +29,57 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
-  const [total, setTotal] = useState<number>(0)
+  const [hasMore, setHasMore] = useState<boolean>(true)
   const observerTarget = useRef<HTMLDivElement | null>(null)
   const productsPerPage = 12
 
+  const fetchPage = async (pageNum: number) => {
+    try {
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}`)
+      if (!res.ok) return []
+      const data = await res.json()
+      const list = Array.isArray(data.products) ? data.products : []
+      // Map API product to grid product shape
+      return list.map((p: any) => ({
+        id: p._id || p.id,
+        name: p.name,
+        image: Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image,
+        images: Array.isArray(p.images) ? p.images : undefined,
+        category: p.category,
+        price: p.price,
+        originalPrice: p.originalPrice,
+        discount: p.discount,
+        rating: p.rating,
+      })) as Product[]
+    } catch {
+      return []
+    }
+  }
+
   useEffect(() => {
-    const fetchInitial = async () => {
+    const loadInitial = async () => {
       setLoading(true)
-      try {
-        const res = await fetch(`/api/products?limit=${productsPerPage}&page=1`)
-        const data = await res.json()
-        if (res.ok) {
-          const mapped: Product[] = (data.products || []).map((p: any) => ({
-            id: p._id || p.id,
-            name: p.name,
-            image: p.image,
-            images: p.images,
-            category: p.category,
-            price: p.price,
-            originalPrice: p.originalPrice,
-            discount: p.discount,
-            rating: p.rating,
-          }))
-          setDisplayedProducts(mapped)
-          setTotal(data.total || mapped.length)
-          setPage(1)
-        }
-      } catch {}
+      const first = await fetchPage(1)
+      setDisplayedProducts(first)
+      setHasMore(first.length === productsPerPage)
       setLoading(false)
     }
-    fetchInitial()
+    loadInitial()
   }, [])
 
-  const loadMore = useCallback(async () => {
-    if (loading || displayedProducts.length >= total) return
+  const loadMore = useCallback(() => {
+    if (loading || !hasMore) return
+
     setLoading(true)
-    const nextPage = page + 1
-    try {
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${nextPage}`)
-      const data = await res.json()
-      if (res.ok) {
-        const mapped: Product[] = (data.products || []).map((p: any) => ({
-          id: p._id || p.id,
-          name: p.name,
-          image: p.image,
-          images: p.images,
-          category: p.category,
-          price: p.price,
-          originalPrice: p.originalPrice,
-          discount: p.discount,
-          rating: p.rating,
-        }))
-        setDisplayedProducts(prev => [...prev, ...mapped])
-        setTotal(data.total ?? total)
-        setPage(nextPage)
-      }
-    } catch {}
-    setLoading(false)
-  }, [page, loading, displayedProducts.length, total])
+    ;(async () => {
+      const nextPage = page + 1
+      const next = await fetchPage(nextPage)
+      setDisplayedProducts(prev => [...prev, ...next])
+      setPage(nextPage)
+      setHasMore(next.length === productsPerPage)
+      setLoading(false)
+    })()
+  }, [page, loading, displayedProducts.length])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -113,7 +106,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-heading font-bold text-gray-900">Featured Products</h2>
           <p className="text-gray-600">
-            {displayedProducts.length} of {total} products
+            {displayedProducts.length} products
           </p>
         </div>
 
@@ -196,7 +189,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         </motion.div>
 
         {/* Infinite Scroll Loader */}
-        {displayedProducts.length < total && (
+        {hasMore && (
           <div ref={observerTarget} className="flex justify-center mt-8">
             {loading && (
               <div className="flex items-center space-x-2 text-gray-600">
