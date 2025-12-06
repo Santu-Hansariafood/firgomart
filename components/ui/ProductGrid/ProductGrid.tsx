@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ShoppingCart, Eye } from 'lucide-react'
 import Image from 'next/image'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
+import locationData from '@/data/country.json'
 // import { products } from '@/data/mockData'
 
 // ✅ Type definitions
@@ -30,12 +31,24 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(true)
+  const [deliverToState, setDeliverToState] = useState<string>("")
   const observerTarget = useRef<HTMLDivElement | null>(null)
   const productsPerPage = 12
 
+  const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
+  const isNextImageAllowed = (src: string) => {
+    try {
+      const u = new URL(src)
+      return u.hostname === 'res.cloudinary.com' || u.hostname === 'images.pexels.com'
+    } catch {
+      return false
+    }
+  }
+
   const fetchPage = async (pageNum: number) => {
     try {
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}`)
+      const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -43,7 +56,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       return list.map((p: any) => ({
         id: p._id || p.id,
         name: p.name,
-        image: Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image,
+        image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
         images: Array.isArray(p.images) ? p.images : undefined,
         category: p.category,
         price: p.price,
@@ -65,6 +78,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       setLoading(false)
     }
     loadInitial()
+  }, [deliverToState])
+
+  // Initialize deliverToState from localStorage (if present)
+  useEffect(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
+      if (saved) setDeliverToState(saved)
+    } catch {}
   }, [])
 
   const loadMore = useCallback(() => {
@@ -79,7 +100,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       setHasMore(next.length === productsPerPage)
       setLoading(false)
     })()
-  }, [page, loading, displayedProducts.length])
+  }, [page, loading, displayedProducts.length, deliverToState])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -105,9 +126,28 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-heading font-bold text-gray-900">Featured Products</h2>
-          <p className="text-gray-600">
-            {displayedProducts.length} products
-          </p>
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-gray-600">Deliver to</label>
+            <select
+              value={deliverToState}
+              onChange={(e) => {
+                const val = e.target.value
+                setDeliverToState(val)
+                try { localStorage.setItem('deliverToState', val) } catch {}
+                // Reset paging when state changes
+                setPage(1)
+              }}
+              className="px-3 py-2 border rounded-lg bg-white text-sm"
+            >
+              <option value="">Select State</option>
+              {locationData.countries.find(c => c.country === 'India')?.states.map(s => (
+                <option key={s.state} value={s.state}>{s.state}</option>
+              ))}
+            </select>
+            <p className="text-gray-600 hidden md:block">
+              {displayedProducts.length} products
+            </p>
+          </div>
         </div>
 
         {/* Product Grid */}
@@ -129,12 +169,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 className="relative aspect-square overflow-hidden cursor-pointer group"
                 onClick={() => onProductClick(product)}
               >
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
-                />
+                {isNextImageAllowed(product.image) ? (
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                ) : (
+                  <img
+                    src={product.image || '/logo/firgomart.png'}
+                    alt={product.name}
+                    className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                    referrerPolicy="no-referrer"
+                  />
+                )}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                   <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>

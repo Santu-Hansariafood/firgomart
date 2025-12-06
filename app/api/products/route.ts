@@ -10,11 +10,34 @@ export async function GET(request: Request) {
     const limit = Math.max(1, Math.min(100, Number(url.searchParams.get("limit") || 20)))
     const page = Math.max(1, Number(url.searchParams.get("page") || 1))
     const adminOnly = (url.searchParams.get("adminOnly") || "").toLowerCase() === "true"
+    const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
+    const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
+    const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const query = adminOnly ? { isAdminProduct: true } : {}
-    const products = await Product.find(query).sort("-createdAt").skip(skip).limit(limit).lean()
+    const query: Record<string, unknown> = {}
+    if (adminOnly) query.isAdminProduct = true
+    if (createdByEmail) query.createdByEmail = createdByEmail
+    // Visibility rules when browsing (not scoped to a specific seller)
+    let finalQuery: any = { ...query }
+    if (!createdByEmail) {
+      // Apply state-based visibility only for generic browsing
+      if (deliverToState) {
+        finalQuery.$or = [
+          { isAdminProduct: true },
+          { sellerHasGST: true },
+          { sellerHasGST: false, sellerState: deliverToState },
+        ]
+      } else {
+        // Without a destination state, show only GST-enabled and admin products
+        finalQuery.$or = [
+          { isAdminProduct: true },
+          { sellerHasGST: true },
+        ]
+      }
+    }
+    const products = await Product.find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()
     return NextResponse.json({ products })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
@@ -48,6 +71,15 @@ export async function POST(request: Request) {
           allowed = true
           adminEmail = email
         }
+      }
+    }
+
+    // Header-based fallback: allow when client sends x-admin-email that matches allowed list
+    if (!allowed) {
+      const hdrEmail = request.headers.get("x-admin-email")
+      if (hdrEmail && isAdminEmail(hdrEmail)) {
+        allowed = true
+        adminEmail = hdrEmail
       }
     }
 
@@ -88,6 +120,8 @@ export async function POST(request: Request) {
       description,
       isAdminProduct: true,
       createdByEmail: adminEmail || undefined,
+      // Admin-managed products are deliverable nationwide
+      sellerHasGST: true,
     })
 
     return NextResponse.json({ product: doc.toObject() }, { status: 201 })

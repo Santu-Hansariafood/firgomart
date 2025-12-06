@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import {
   CreditCard,
@@ -64,6 +64,45 @@ const Checkout: React.FC<CheckoutProps> = ({
     expiryDate: '',
     cvv: '',
   })
+  const [invalidItems, setInvalidItems] = useState<Array<{ id: string | number; name: string }>>([])
+  const [validating, setValidating] = useState<boolean>(false)
+
+  useEffect(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
+      if (saved) setFormData(prev => ({ ...prev, state: saved }))
+    } catch {}
+  }, [])
+
+  async function validateDelivery(stateVal: string) {
+    if (!stateVal) {
+      setInvalidItems([])
+      return true
+    }
+    setValidating(true)
+    try {
+      const res = await fetch('/api/cart/validate-delivery', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          deliverToState: stateVal,
+          items: cartItems.map(ci => ({ id: ci.id })),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Validation failed')
+      const results: Array<{ id: string; deliverable: boolean }> = Array.isArray(data?.results) ? data.results : []
+      const badIds = new Set(results.filter(r => !r.deliverable).map(r => String(r.id)))
+      const invalid = cartItems.filter(ci => badIds.has(String(ci.id))).map(ci => ({ id: ci.id, name: ci.name }))
+      setInvalidItems(invalid)
+      return invalid.length === 0
+    } catch {
+      setInvalidItems([])
+      return true
+    } finally {
+      setValidating(false)
+    }
+  }
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -165,9 +204,10 @@ const Checkout: React.FC<CheckoutProps> = ({
               {/* Step 1: Address */}
               {step === 1 && (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault()
-                    setStep(2)
+                    const ok = await validateDelivery(formData.state)
+                    if (ok) setStep(2)
                   }}
                   className="space-y-4"
                 >
@@ -236,6 +276,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       required
                       className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
+                  
                     <input
                       type="text"
                       name="pincode"
@@ -252,8 +293,33 @@ const Checkout: React.FC<CheckoutProps> = ({
                     type="submit"
                     className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                   >
-                    Continue to Payment
+                    {validating ? 'Checking delivery...' : 'Continue to Payment'}
                   </button>
+
+                  {invalidItems.length > 0 && (
+                    <div className="mt-4 p-4 rounded-lg border border-red-200 bg-red-50">
+                      <p className="text-sm text-red-700 mb-2">
+                        Some items cannot be delivered to <strong>{formData.state}</strong>.
+                        Remove them or change the delivery state.
+                      </p>
+                      <ul className="space-y-2">
+                        {invalidItems.map(item => (
+                          <li key={String(item.id)} className="flex items-center justify-between">
+                            <span className="text-sm text-red-800">{item.name}</span>
+                            {onRemoveItem && (
+                              <button
+                                type="button"
+                                onClick={() => onRemoveItem(item.id)}
+                                className="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </form>
               )}
 

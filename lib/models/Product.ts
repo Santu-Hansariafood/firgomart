@@ -12,8 +12,12 @@ const ProductSchema = new Schema(
     rating: { type: Number, default: 0 },
     reviews: { type: Number, default: 0 },
     description: { type: String },
+    details: { type: String },
     isAdminProduct: { type: Boolean, default: false, index: true },
     createdByEmail: { type: String, index: true },
+    // Delivery visibility control based on seller registration
+    sellerState: { type: String, index: true },
+    sellerHasGST: { type: Boolean, default: undefined, index: true },
   },
   { timestamps: true }
 )
