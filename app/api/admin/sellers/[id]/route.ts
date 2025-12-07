@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
@@ -19,14 +19,14 @@ async function requireAdmin() {
   return session
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     const ok = await requireAdmin()
     if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    const id = params.id
+    const { id } = await ctx.params
     const conn = await connectDB()
     const Seller = getSellerModel(conn)
-    const doc = await Seller.findById(id).lean()
+    const doc = await (Seller as any).findById(id).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
     return NextResponse.json({ seller: doc })
   } catch (err: any) {
@@ -34,11 +34,11 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
     const ok = await requireAdmin()
     if (!ok) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    const id = params.id
+    const { id } = await ctx.params
     const body = await request.json()
     const allowed: Record<string, unknown> = {}
     const fields = [
@@ -64,11 +64,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
     const conn = await connectDB()
     const Seller = getSellerModel(conn)
-    const doc = await Seller.findByIdAndUpdate(id, allowed, { new: true }).lean()
+    const doc = await (Seller as any).findByIdAndUpdate(id, allowed, { new: true }).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
     return NextResponse.json({ seller: doc })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

@@ -8,6 +8,13 @@ interface User {
   id?: string
   email: string
   name?: string
+  mobile?: string
+  dateOfBirth?: string
+  gender?: string
+  address?: string
+  city?: string
+  state?: string
+  pincode?: string
 }
 
 interface AuthContextType {

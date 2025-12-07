@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     const Seller = getSellerModel(conn)
     const query: Record<string, unknown> = {}
     if (status) query.status = status
-    const items = await Seller.find(query).sort("-createdAt").limit(100).lean()
+    const items = await (Seller as any).find(query).sort("-createdAt").limit(100).lean()
     return NextResponse.json({ sellers: items })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     if (!id || !status) return NextResponse.json({ error: "id and status required" }, { status: 400 })
     const conn = await connectDB()
     const Seller = getSellerModel(conn)
-    const doc = await Seller.findByIdAndUpdate(id, { status }, { new: true }).lean()
+    const doc = await (Seller as any).findByIdAndUpdate(id, { status }, { new: true }).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
     return NextResponse.json({ seller: doc })
   } catch (err: any) {

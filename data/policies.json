@@ -1,0 +1,115 @@
+{
+  "privacyPolicy": [
+    {
+      "title": "Privacy Policy – FirgoMart.com",
+      "effectiveDate": "01 January 2025"
+    },
+    {
+      "title": "1. Introduction",
+      "content": "This Privacy Policy explains how FirgoMart 24Logistics Private Limited (\"FirgoMart\") collects, uses, stores, protects, and shares your information when you use our website FirgoMart.com and mobile applications."
+    },
+    {
+      "title": "2. Information We Collect",
+      "content": "We may collect Personal Information (name, phone, email, addresses), Payment & Financial Information (transaction IDs, masked details handled by gateways), and Technical Information (IP, device, browser, cookies, location if permitted)."
+    },
+    {
+      "title": "3. How We Use Your Information",
+      "content": "Processing orders and deliveries; customer support; fraud detection; improving performance; sending offers and notifications (opt-out available); and legal compliance. We never sell your personal data."
+    },
+    {
+      "title": "4. Sharing of Information",
+      "content": "Shared only with verified delivery partners, payment gateways, IT service providers, or government authorities when legally required. No unauthorized third-party sharing."
+    },
+    {
+      "title": "5. Data Storage & Security",
+      "content": "We follow ISO/IEC 27001-aligned practices. Data is stored securely on servers located in India, compliant with applicable laws."
+    },
+    {
+      "title": "6. User Rights",
+      "content": "You may request access, correction, deletion of non-essential data, or unsubscribe from marketing communications by contacting support."
+    },
+    {
+      "title": "7. Contact",
+      "content": "Support: support@firgomart.com | Help: help@firgomart.com | Address: 48/2B, Radhanath Chowdhury Road, Kolkata – 700015, West Bengal, India."
+    }
+  ],
+  "termsOfService": [
+    {
+      "title": "Terms & Conditions – FirgoMart.com",
+      "effectiveDate": "01 January 2025"
+    },
+    {
+      "title": "1. Introduction",
+      "content": "These Terms govern your access to and use of FirgoMart.com, owned and operated by FirgoMart 24Logistics Private Limited. By using our website or mobile application, you agree to these Terms."
+    },
+    {
+      "title": "2. Eligibility",
+      "content": "You must be 18+ years old, have a valid mobile number and email, and use the platform only for lawful purchases."
+    },
+    {
+      "title": "3. Account Registration",
+      "content": "Provide accurate information, maintain confidentiality of login credentials, and take responsibility for all activities under your account."
+    },
+    {
+      "title": "4. Products & Services",
+      "content": "Products are subject to availability, are described as accurately as possible, and are provided by verified sellers or FirgoMart. Listings may be updated or discontinued at any time."
+    },
+    {
+      "title": "5. Pricing & Payment",
+      "content": "Prices may include or exclude applicable taxes. Accepted methods include UPI, Credit/Debit Cards, Net Banking, Wallets, and other approved gateways. FirgoMart may cancel suspicious transactions."
+    },
+    {
+      "title": "6. Shipping, Returns & Refunds",
+      "content": "Delivery timelines are estimates and may vary. Returns and refunds are governed by the Refund & Return Policy, which varies by category."
+    },
+    {
+      "title": "7. Governing Law",
+      "content": "These Terms are governed by Indian law. Disputes fall under the jurisdiction of courts in Kolkata, West Bengal."
+    }
+  ]
+  ,
+  "cookiesPolicy": [
+    { "title": "Cookie Policy", "effectiveDate": "01 January 2025" },
+    {
+      "title": "1. What Are Cookies?",
+      "content": "Cookies are small text files stored on your device to help websites function, improve user experience, and analyze usage."
+    },
+    {
+      "title": "2. Types We Use",
+      "content": "Essential cookies (required for the site), Performance cookies (analytics), Functional cookies (preferences), and Marketing cookies (offers and recommendations)."
+    },
+    {
+      "title": "3. Managing Cookies",
+      "content": "You can control cookies via your browser settings. Disabling certain cookies may affect site functionality."
+    }
+  ],
+  "disclaimer": [
+    { "title": "Disclaimer", "effectiveDate": "01 January 2025" },
+    {
+      "title": "1. General",
+      "content": "Information on FirgoMart is provided in good faith for general purposes. We make no warranties about completeness or accuracy; use at your own discretion."
+    },
+    {
+      "title": "2. External Links",
+      "content": "We may link to external websites. We are not responsible for their content or practices."
+    }
+  ],
+  "sitemap": [
+    { "title": "Sitemap", "effectiveDate": "01 January 2025" },
+    {
+      "title": "1. Overview",
+      "content": "This sitemap provides a structured overview of major sections including Home, Categories, Help Center, Policies, and Seller Resources."
+    }
+  ],
+  "affiliateProgram": [
+    { "title": "Affiliate Program", "effectiveDate": "01 January 2025" },
+    {
+      "title": "1. Participation",
+      "content": "Join FirgoMart’s Affiliate Program to earn commissions by referring customers. Participation is subject to approval and compliance with program guidelines."
+    },
+    {
+      "title": "2. Commission & Payouts",
+      "content": "Commissions are calculated on eligible purchases and paid out as per the schedule. Fraudulent or self-referrals are prohibited."
+    }
+  ]
+}

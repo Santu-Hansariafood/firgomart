@@ -46,7 +46,7 @@ export async function findSellerAcrossDBs(identifier: { email?: string; phone?: 
     const query: Record<string, string> = {}
     if (email) query.email = email
     if (phone) query.phone = phone
-    const doc = await Seller.findOne(query)
+    const doc = await (Seller as any).findOne(query)
     if (doc) return { conn, Seller, seller: doc }
   }
   return null

@@ -12,19 +12,20 @@ import {
 import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
 
-// Types for cart items
+// Types for cart items (aligned with CartContext)
 interface CartItem {
-  id: string | number
+  id: number
   name: string
-  image: string
   price: number
-  quantity: number
+  image: string
+  originalPrice?: number
+  quantity?: number
 }
 
 interface CheckoutProps {
   cartItems: CartItem[]
-  onUpdateQuantity?: (id: string | number, quantity: number) => void
-  onRemoveItem?: (id: string | number) => void
+  onUpdateQuantity?: (id: number, quantity: number) => void
+  onRemoveItem?: (id: number) => void
 }
 
 // Form data type
@@ -64,7 +65,7 @@ const Checkout: React.FC<CheckoutProps> = ({
     expiryDate: '',
     cvv: '',
   })
-  const [invalidItems, setInvalidItems] = useState<Array<{ id: string | number; name: string }>>([])
+  const [invalidItems, setInvalidItems] = useState<Array<{ id: number; name: string }>>([])
   const [validating, setValidating] = useState<boolean>(false)
 
   useEffect(() => {
@@ -93,7 +94,9 @@ const Checkout: React.FC<CheckoutProps> = ({
       if (!res.ok) throw new Error(data?.error || 'Validation failed')
       const results: Array<{ id: string; deliverable: boolean }> = Array.isArray(data?.results) ? data.results : []
       const badIds = new Set(results.filter(r => !r.deliverable).map(r => String(r.id)))
-      const invalid = cartItems.filter(ci => badIds.has(String(ci.id))).map(ci => ({ id: ci.id, name: ci.name }))
+      const invalid = cartItems
+        .filter(ci => badIds.has(String(ci.id)))
+        .map(ci => ({ id: ci.id as number, name: ci.name }))
       setInvalidItems(invalid)
       return invalid.length === 0
     } catch {
@@ -105,7 +108,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   }
 
   const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.price * (item.quantity ?? 1),
     0
   )
   const tax = subtotal * 0.18
@@ -516,10 +519,10 @@ const Checkout: React.FC<CheckoutProps> = ({
                         {item.name}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        Qty: {item.quantity}
+                        Qty: {item.quantity ?? 1}
                       </p>
                       <p className="text-sm font-bold text-gray-900">
-                        ₹{item.price * item.quantity}
+                        ₹{item.price * (item.quantity ?? 1)}
                       </p>
                     </div>
                   </div>

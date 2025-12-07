@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const doc = await Product.create({
+    const doc = await (Product as any).create({
       name,
       image,
       images: Array.isArray(images) ? images : [],

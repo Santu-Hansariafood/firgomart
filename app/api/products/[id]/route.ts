@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 import { getServerSession } from "next-auth"
@@ -11,7 +11,7 @@ function isAdminEmail(email?: string | null) {
   return !!(email && allow.includes(email.toLowerCase()))
 }
 
-async function getActor(request: Request) {
+async function getActor(request: NextRequest) {
   // Try NextAuth session first (admin user)
   const session = await getServerSession(authOptions)
   const sessEmail = session?.user?.email || null
@@ -62,9 +62,9 @@ async function getActor(request: Request) {
   return { role: "guest", email: null }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   try {
-    const id = params?.id
+    const { id } = await ctx.params
     if (!id) return NextResponse.json({ error: "Product id required" }, { status: 400 })
 
     const actor = await getActor(request)
@@ -94,7 +94,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const doc = await Product.findById(id)
+    const doc = await (Product as any).findById(id)
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
     // Authorization: admin can update any; seller can update only their own non-admin product
@@ -116,4 +116,3 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

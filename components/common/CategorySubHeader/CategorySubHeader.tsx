@@ -75,26 +75,32 @@ const CategorySubHeader: React.FC = () => {
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-center justify-center space-x-3 overflow-x-auto scrollbar-hide">
+        <div className="flex items-stretch space-x-4 overflow-x-auto scrollbar-hide">
           {categories.map((category, index) => (
-            <motion.button
+            <motion.div
               key={category.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-full font-medium text-xs whitespace-nowrap transition-all shadow-sm ${category.color}`}
+              className="shrink-0"
             >
-              <div className="relative w-6 h-6 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  sizes="24px"
-                  className="object-cover"
-                />
-              </div>
-              <span>{category.name}</span>
-            </motion.button>
+              <button
+                className="flex flex-col items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
+              >
+                <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                  />
+                </div>
+                <span className="text-sm font-medium text-gray-800 text-center w-28">
+                  {category.name}
+                </span>
+              </button>
+            </motion.div>
           ))}
         </div>
       </div>

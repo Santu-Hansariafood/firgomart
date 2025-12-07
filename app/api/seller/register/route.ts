@@ -55,16 +55,16 @@ export async function POST(request: Request) {
     }
 
     const Seller = getSellerModel(conn)
-    const existingByEmail = await Seller.findOne({ email }).lean()
+    const existingByEmail = await (Seller as any).findOne({ email }).lean()
     if (existingByEmail) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 })
     }
-    const existingByPhone = await Seller.findOne({ phone }).lean()
+    const existingByPhone = await (Seller as any).findOne({ phone }).lean()
     if (existingByPhone) {
       return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
     }
 
-    const doc = await Seller.create({
+    const doc = await (Seller as any).create({
       businessName,
       ownerName,
       email,

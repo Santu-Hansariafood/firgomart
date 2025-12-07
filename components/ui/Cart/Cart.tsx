@@ -12,7 +12,7 @@ interface CartItem {
   name: string
   price: number
   originalPrice?: number
-  quantity: number
+  quantity?: number
   image: string
 }
 
@@ -27,9 +27,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
   const router = useRouter()
   const { isAuthenticated } = useAuth()
 
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const total = items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0)
   const savings = items.reduce((sum, item) => {
-    const saved = item.originalPrice ? (item.originalPrice - item.price) * item.quantity : 0
+    const saved = item.originalPrice ? (item.originalPrice - item.price) * (item.quantity ?? 1) : 0
     return sum + saved
   }, 0)
 
@@ -121,17 +121,17 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() =>
-                              onUpdateQuantity(item.id, Math.max(1, item.quantity - 1))
+                              onUpdateQuantity(item.id, Math.max(1, (item.quantity ?? 1) - 1))
                             }
                             className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
                           <span className="text-sm font-medium w-6 text-center">
-                            {item.quantity}
+                            {item.quantity ?? 1}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                            onClick={() => onUpdateQuantity(item.id, (item.quantity ?? 1) + 1)}
                             className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors"
                           >
                             <Plus className="w-3 h-3" />

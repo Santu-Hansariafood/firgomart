@@ -14,10 +14,25 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useState } from "react";
+const PolicyModal = dynamic(() => import("@/components/common/PolicyModal/PolicyModal"), { ssr: false });
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const Footer: React.FC = () => {
+  const [policyOpen, setPolicyOpen] = useState(false);
+  const [policyType, setPolicyType] = useState<"privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate" | null>(null);
+
+  const openPolicy = (type: "privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate") => {
+    setPolicyType(type);
+    setPolicyOpen(true);
+  };
+
+  const closePolicy = () => {
+    setPolicyOpen(false);
+    setPolicyType(null);
+  };
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -164,23 +179,20 @@ const Footer: React.FC = () => {
             </Paragraph>
 
             <div className="flex flex-wrap justify-center gap-6 text-sm">
-              {[
-                ["Privacy Policy", "/privacy-policy"],
-                ["Terms of Service", "/terms"],
-                ["Cookie Policy", "/cookies"],
-                ["Sitemap", "/sitemap"],
-                ["Disclaimer", "/disclaimer"],
-                ["Affiliate Program", "/affiliate"],
-              ].map(([label, link]) => (
-                <Link key={label} href={link} className="hover:text-white transition-colors">
-                  {label}
-                </Link>
-              ))}
+              <button onClick={() => openPolicy("privacy")} className="hover:text-white transition-colors">Privacy Policy</button>
+              <button onClick={() => openPolicy("terms")} className="hover:text-white transition-colors">Terms of Service</button>
+              <button onClick={() => openPolicy("cookies")} className="hover:text-white transition-colors">Cookie Policy</button>
+              <button onClick={() => openPolicy("sitemap")} className="hover:text-white transition-colors">Sitemap</button>
+              <button onClick={() => openPolicy("disclaimer")} className="hover:text-white transition-colors">Disclaimer</button>
+              <button onClick={() => openPolicy("affiliate")} className="hover:text-white transition-colors">Affiliate Program</button>
             </div>
 
           </div>
         </div>
       </div>
+      {policyOpen && (
+        <PolicyModal open={policyOpen} onClose={closePolicy} policy={policyType} />
+      )}
     </footer>
   );
 };

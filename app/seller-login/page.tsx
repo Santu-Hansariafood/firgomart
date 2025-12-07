@@ -1,10 +1,10 @@
-"use client"
+import React, { Suspense } from "react"
+import SellerLoginPageClient from "./SellerLoginPageClient"
 
-import SellerLogin from "@/components/ui/SellerLogin/SellerLogin"
-
-const SellerLoginPage = () => {
-  return <SellerLogin />
+export default function SellerLoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <SellerLoginPageClient />
+    </Suspense>
+  )
 }
-
-export default SellerLoginPage
-

@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const products = await Product.find({ _id: { $in: ids } }).lean()
+    const products = await (Product as any).find({ _id: { $in: ids } }).lean()
 
     const resultMap: Record<string, boolean> = {}
     for (const p of products) {
@@ -41,10 +41,9 @@ export async function POST(request: Request) {
       resultMap[String((p as any)._id)] = deliverable
     }
 
-    const results = ids.map(id => ({ id, deliverable: resultMap[id] ?? false }))
+    const results = ids.map((id: string) => ({ id, deliverable: resultMap[id] ?? false }))
     return NextResponse.json({ results })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-
