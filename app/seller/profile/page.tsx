@@ -166,35 +166,31 @@ export default function SellerProfilePage() {
               setCreating(true)
               setError(null)
               setCreated(null)
-              const form = e.target as HTMLFormElement
-              const fd = new FormData(form)
-              const payload: any = {
-                name: String(fd.get("name") || ""),
-                image: String(fd.get("image") || ""),
-                category: selectedCategory ? String(selectedCategory.label) : "",
-                price: Number(fd.get("price") || 0),
-                sellerEmail: email || String(fd.get("sellerEmail") || ""),
+              const formEl = e.target as HTMLFormElement
+              const fd = new FormData(formEl)
+              const name = String(fd.get("name") || "")
+              const category = selectedCategory ? String(selectedCategory.label) : ""
+              const price = Number(fd.get("price") || 0)
+              const sellerEmail = email || String(fd.get("sellerEmail") || "")
+              const files = (fd.getAll("images") || []).filter(Boolean) as File[]
+              let base64: string[] = []
+              for (const file of files) {
+                const data = await new Promise<string>((resolve) => { const r = new FileReader(); r.onload = () => resolve(String(r.result)); r.readAsDataURL(file) })
+                base64.push(data)
               }
-              const imagesRaw = String(fd.get("images") || "")
-              const images = imagesRaw.split(",").map(s => s.trim()).filter(Boolean)
-              if (images.length > 0) payload.images = images
+              let uploaded: string[] = []
               try {
-                const res = await fetch("/api/seller/products", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(payload),
-                })
-                const data = await res.json()
-                if (!res.ok) {
-                  setError(data?.error || "Failed to create product")
-                } else {
-                  setCreated(data.product)
-                  form.reset()
-                  setSelectedCategory(null)
+                if (base64.length) {
+                  const up = await fetch("/api/upload/image", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ images: base64 }) })
+                  const upJson = await up.json()
+                  if (up.ok && Array.isArray(upJson.urls)) uploaded = upJson.urls
                 }
-              } catch (err) {
-                setError("Network error")
-              }
+                const payload: any = { name, category, price, sellerEmail, images: uploaded }
+                const res = await fetch("/api/seller/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+                const data = await res.json()
+                if (!res.ok) setError(data?.error || "Failed to create product")
+                else { setCreated(data.product); formEl.reset(); setSelectedCategory(null) }
+              } catch (err) { setError("Network error") }
               setCreating(false)
             }}
             className="space-y-3"
@@ -204,8 +200,6 @@ export default function SellerProfilePage() {
             )}
             <div className="grid md:grid-cols-2 gap-3">
               <input name="name" placeholder="Name" className="px-3 py-2 border rounded" required />
-              <input name="image" placeholder="Image URL" className="px-3 py-2 border rounded" required />
-              <input name="images" placeholder="Extra images (comma-separated URLs)" className="px-3 py-2 border rounded" />
               <CommonDropdown
                 label="Category"
                 placeholder="Select category"
@@ -215,6 +209,10 @@ export default function SellerProfilePage() {
                 className="w-full"
               />
               <input name="price" type="number" step="0.01" placeholder="Price" className="px-3 py-2 border rounded" required />
+              <div className="md:col-span-2">
+                <label className="text-sm mb-1 font-medium text-gray-600">Images</label>
+                <input name="images" type="file" multiple accept="image/*" className="px-3 py-2 border rounded" />
+              </div>
             </div>
             <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg" disabled={creating}>
               {creating ? "Creating..." : "Create"}

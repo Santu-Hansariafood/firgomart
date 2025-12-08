@@ -210,6 +210,9 @@ export default function Page() {
         ) : (
           <CommonTable<ProductItem>
             columns={[
+              { key: "image", label: "Image", render: (r) => (
+                <img src={(r as any).image} alt={r.name} className="w-12 h-12 object-cover rounded border" />
+              ) },
               { key: "name", label: "Name", sortable: true },
               { key: "category", label: "Category", sortable: true },
               { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },

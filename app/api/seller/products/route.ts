@@ -24,7 +24,9 @@ export async function POST(request: Request) {
       sellerEmail,
     } = body || {}
 
-    if (!name || !image || typeof price !== "number") {
+    const imgs: string[] = Array.isArray(images) ? images : []
+    const primaryImage = String(image || (imgs[0] || ""))
+    if (!name || typeof price !== "number") {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
@@ -50,8 +52,8 @@ export async function POST(request: Request) {
     const Product = getProductModel(conn)
     const doc = await (Product as any).create({
       name,
-      image,
-      images: Array.isArray(images) ? images : [],
+      image: primaryImage,
+      images: imgs,
       category,
       price,
       originalPrice,

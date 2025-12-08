@@ -109,6 +109,9 @@ export default function Page() {
         ) : (
           <CommonTable<ProductRow>
             columns={[
+              { key: "image", label: "Image", render: (r) => (
+                <img src={r.image} alt={r.name} className="w-12 h-12 object-cover rounded border" />
+              ) },
               { key: "name", label: "Name", sortable: true },
               { key: "category", label: "Category" },
               { key: "price", label: "Price", sortable: true, render: (r) => (
@@ -146,4 +149,3 @@ export default function Page() {
     </Suspense>
   )
 }
-
