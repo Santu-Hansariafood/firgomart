@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import AdminLogin from "@/components/ui/AdminLogin/AdminLogin"
 import Image from "next/image"
@@ -39,6 +40,7 @@ type Product = {
 export default function AdminPageClient() {
   const { data: session } = useSession()
   const { user: authUser } = useAuth()
+  const router = useRouter()
   const [sellers, setSellers] = useState<Seller[]>([])
   const [approvedSellers, setApprovedSellers] = useState<Seller[]>([])
   const [products, setProducts] = useState<Product[]>([])
@@ -242,6 +244,40 @@ export default function AdminPageClient() {
     } catch {}
   }
 
+  const modules = [
+    { title: 'Dashboard', items: ['Sales, orders, revenue', 'Live order status', 'Active buyers & sellers', 'Top products & categories'] },
+    { title: 'Buyer Management', items: ['Buyer list', 'Block/Unblock', 'Order history'] },
+    { title: 'Seller Management', items: ['Seller KYC verification', 'Approve/Reject seller', 'Commission setup', 'Seller payouts & performance'] },
+    { title: 'Product Management', items: ['Add/Edit/Delete products', 'Product approval', 'Category management', 'Price, stock, discount control'] },
+    { title: 'Inventory Management', items: ['Stock level', 'Low-stock alerts', 'Seller stock sync'] },
+    { title: 'Order Management', items: ['View all orders', 'Status update (Packed/Shipped/Delivered/Return)', 'Cancel/Refund/Replacement', 'Shipping label & invoice'] },
+    { title: 'Logistics Management', items: ['Courier integration', 'Assign courier', 'Shipment tracking', 'NDR/RTO handling'] },
+    { title: 'Payments & Finance', items: ['Buyer payment logs', 'Failed transactions', 'Seller settlement', 'Commission reports', 'GST/TCS reports'] },
+    { title: 'Marketing & Promotions', items: ['Coupons', 'Offers', 'Banners', 'Push notifications'] },
+    { title: 'Customer Support', items: ['Tickets', 'Disputes', 'Refund approvals', 'Communication logs'] },
+    { title: 'CMS (Content Management)', items: ['Homepage banners', 'Static pages (About, Terms, Privacy, Refund Policy)', 'Category display control'] },
+    { title: 'Security & Roles', items: ['Admin roles & permissions', 'Activity logs', 'Fraud detection'] },
+    { title: 'Reports & Analytics', items: ['Sales reports', 'Seller reports', 'Product performance', 'Region-wise analytics'] },
+    { title: 'Global Selling (Optional)', items: ['Country-wise pricing', 'International courier setup', 'Export rules', 'Currency conversion'] },
+  ]
+
+  const moduleRoutes: Record<string, string> = {
+    'Dashboard': '/admin',
+    'Buyer Management': '/admin/buyers',
+    'Seller Management': '/admin/sellers',
+    'Product Management': '/admin/products',
+    'Inventory Management': '/admin/inventory',
+    'Order Management': '/admin/orders',
+    'Logistics Management': '/admin/logistics',
+    'Payments & Finance': '/admin/finance',
+    'Marketing & Promotions': '/admin/marketing',
+    'Customer Support': '/admin/support',
+    'CMS (Content Management)': '/admin/cms',
+    'Security & Roles': '/admin/security',
+    'Reports & Analytics': '/admin/reports',
+    'Global Selling (Optional)': '/admin/global-selling',
+  }
+
   // Render
   if (!allowed) return <AdminLogin />
 
@@ -249,8 +285,26 @@ export default function AdminPageClient() {
     <div className="p-4 space-y-6">
       <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
 
+      <section id="admin-modules">
+        <h2 className="text-xl font-medium">Admin Modules Overview</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+          {modules.map((m, i) => (
+            <div
+              key={i}
+              className="border rounded p-4 bg-white cursor-pointer hover:shadow"
+              onClick={() => {
+                const route = moduleRoutes[m.title]
+                if (route) router.push(route)
+              }}
+            >
+              <div className="font-semibold mb-2">{m.title}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Sellers Section */}
-      <section>
+      <section id="seller-section">
         <h2 className="text-xl font-medium">Pending Sellers</h2>
         {loading ? (
           <p>Loading...</p>
@@ -290,7 +344,7 @@ export default function AdminPageClient() {
       </section>
 
       {/* Products */}
-      <section>
+      <section id="product-section">
         <h2 className="text-xl font-medium">Products</h2>
         <div className="flex items-center gap-3 mb-3">
           <CommonDropdown

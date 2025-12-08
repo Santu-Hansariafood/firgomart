@@ -1,7 +1,8 @@
-'use client'
+"use client"
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import {
   ShoppingBag,
   Users,
@@ -72,6 +73,8 @@ const categories: Category[] = [
 ]
 
 const CategorySubHeader: React.FC = () => {
+  const pathname = usePathname()
+  if (pathname.startsWith('/admin')) return null
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 py-4">
