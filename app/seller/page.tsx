@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext"
 import { useEffect, useMemo, useState, Suspense } from "react"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import BackButton from "@/components/common/BackButton/BackButton"
 import CommonTable from "@/components/common/Table/CommonTable"
 import CommonPagination from "@/components/common/Pagination/CommonPagination"
@@ -53,7 +54,7 @@ export default function Page() {
   useEffect(() => { load() }, [email, page])
 
   return (
-    <Suspense fallback={<div className="p-4">Loading…</div>}>
+    <Suspense fallback={<BeautifulLoader />}>
     {!allowed ? (
       <div className="p-6">Login as seller to view dashboard.</div>
     ) : (
@@ -91,4 +92,3 @@ export default function Page() {
     </Suspense>
   )
 }
-

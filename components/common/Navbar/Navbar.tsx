@@ -66,21 +66,21 @@ const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
 
           <Link href="/" className="flex items-center space-x-2">
-            <div className="relative w-12 h-12 md:w-14 md:h-14">
+            <div className="relative w-16 h-16 md:w-20 md:h-20">
               <Image
                 src="/logo/firgomart.png"
                 alt="Firgomart Logo"
                 fill
                 priority
-                sizes="56px"
+                sizes="80px"
                 className="object-contain rounded-lg"
               />
             </div>
           </Link>
-          <div className="hidden md:flex flex-1 max-w-2xl mx-8">
+          <div className="hidden md:flex flex-none max-w-md mx-6 w-full">
             <SearchBox
               value={searchQuery}
               onChange={setSearchQuery}
@@ -94,13 +94,6 @@ const Navbar: React.FC = () => {
             >
               <Store className="w-5 h-5" />
               <span className="font-medium">Sell on Firgomart</span>
-            </Link>
-
-            <Link
-              href="/admin"
-              className="flex items-center space-x-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              <span className="font-medium">Admin Login</span>
             </Link>
 
             {isAuthenticated ? (
@@ -203,13 +196,6 @@ const Navbar: React.FC = () => {
               >
                 <Store className="w-5 h-5" />
                 <span className="font-medium">Sell on Firgomart</span>
-              </Link>
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-2 px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg"
-              >
-                <span className="font-medium">Admin Login</span>
               </Link>
               <button
                 onClick={() => {

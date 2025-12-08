@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/context/AuthContext"
 import { useEffect, useState, Suspense } from "react"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import BackButton from "@/components/common/BackButton/BackButton"
 import CommonTable from "@/components/common/Table/CommonTable"
 import CommonPagination from "@/components/common/Pagination/CommonPagination"
@@ -59,7 +60,7 @@ export default function Page() {
   }
 
   return (
-    <Suspense fallback={<div className="p-4">Loading…</div>}>
+    <Suspense fallback={<BeautifulLoader />}>
     {!allowed ? (
       <div className="p-6">Login as seller to manage inventory.</div>
     ) : (
@@ -73,7 +74,7 @@ export default function Page() {
           <span className="text-sm text-gray-600">Total: {total}</span>
         </div>
         {loading ? (
-          <div className="px-4 py-6 text-gray-700">Loading…</div>
+          <BeautifulLoader />
         ) : (
           <CommonTable<Row>
             columns={[
@@ -105,4 +106,3 @@ export default function Page() {
     </Suspense>
   )
 }
-

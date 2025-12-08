@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, Suspense } from "react"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import AdminLogin from "@/components/ui/AdminLogin/AdminLogin"
@@ -118,7 +119,7 @@ export default function Page() {
   }
 
   return (
-    <Suspense fallback={<div className="p-4">Loading…</div>}>
+    <Suspense fallback={<BeautifulLoader />}>
     {!allowed ? (
       <AdminLogin />
     ) : (
@@ -142,7 +143,7 @@ export default function Page() {
 
       <div className="space-y-3">
         {loading ? (
-          <div className="px-4 py-6 text-gray-700">Loading…</div>
+          <BeautifulLoader />
         ) : (
           <CommonTable<TicketRow>
             columns={[
