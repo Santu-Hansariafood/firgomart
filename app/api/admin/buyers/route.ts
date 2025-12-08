@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
-import { getSellerModel } from "@/lib/models/Seller"
+import { getUserModel } from "@/lib/models/User"
 
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
@@ -41,11 +41,9 @@ export async function GET(request: Request) {
     }
 
     if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-
     const url = new URL(request.url)
     const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10))
     const limit = Math.max(1, parseInt(url.searchParams.get("limit") || "100", 10))
-    const status = (url.searchParams.get("status") || "").trim()
     const country = (url.searchParams.get("country") || "").trim().toUpperCase()
     const state = (url.searchParams.get("state") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
@@ -73,24 +71,22 @@ export async function GET(request: Request) {
     const items: any[] = []
     const counts: number[] = []
     for (const conn of conns) {
-      const Seller = getSellerModel(conn)
+      const User = getUserModel(conn)
       const q: any = {}
-      if (status) q.status = status
       if (state) q.state = { $regex: new RegExp(`^${state}$`, "i") }
       if (search) {
         const r = new RegExp(search, "i")
         q.$or = [
-          { businessName: r },
-          { ownerName: r },
+          { name: r },
           { email: r },
-          { phone: r },
+          { mobile: r },
           { city: r },
           { state: r },
           { country: r },
         ]
       }
-      const part = await (Seller as any).find(q).lean()
-      const cnt = await (Seller as any).countDocuments(q)
+      const part = await (User as any).find(q).lean()
+      const cnt = await (User as any).countDocuments(q)
       items.push(...part)
       counts.push(cnt)
     }
@@ -105,65 +101,21 @@ export async function GET(request: Request) {
     const total = counts.reduce((s, n) => s + n, 0)
     const start = (page - 1) * limit
     const pageItems = items.slice(start, start + limit)
-    const safe = pageItems.map((s: any) => ({
-      id: s._id?.toString?.() || String(s._id),
-      businessName: s.businessName,
-      ownerName: s.ownerName,
-      email: s.email,
-      phone: s.phone,
-      address: s.address,
-      city: s.city,
-      state: s.state,
-      country: s.country,
-      status: s.status,
-      hasGST: s.hasGST,
-      createdAt: s.createdAt,
+    const safe = pageItems.map((u: any) => ({
+      id: u._id?.toString?.() || String(u._id),
+      name: u.name,
+      email: u.email,
+      mobile: u.mobile,
+      address: u.address,
+      city: u.city,
+      state: u.state,
+      pincode: u.pincode,
+      dateOfBirth: u.dateOfBirth,
+      gender: u.gender,
+      country: u.country,
+      createdAt: u.createdAt,
     }))
-    return NextResponse.json({ sellers: safe, total })
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const session = await getServerSession(authOptions)
-    let adminEmail: string | null = session?.user?.email || null
-    let allowed = isAdminEmail(adminEmail)
-
-    if (!allowed) {
-      const cookieHeader = request.headers.get("cookie") || ""
-      const match = cookieHeader.split(/;\s*/).find(p => p.startsWith("admin_session="))
-      if (match) {
-        const val = match.split("=")[1] || ""
-        const [email, sig] = val.split(".")
-        const crypto = await import("crypto")
-        const secret = process.env.NEXTAUTH_SECRET || "dev-secret"
-        const expected = crypto.createHmac("sha256", secret).update(String(email)).digest("hex")
-        if (sig === expected && isAdminEmail(email)) {
-          allowed = true
-          adminEmail = email
-        }
-      }
-    }
-
-    if (!allowed) {
-      const hdrEmail = request.headers.get("x-admin-email")
-      if (hdrEmail && isAdminEmail(hdrEmail)) {
-        allowed = true
-        adminEmail = hdrEmail
-      }
-    }
-
-    if (!allowed) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
-    const body = await request.json()
-    const { id, status } = body || {}
-    if (!id || !status) return NextResponse.json({ error: "id and status required" }, { status: 400 })
-    const conn = await connectDB()
-    const Seller = getSellerModel(conn)
-    const doc = await (Seller as any).findByIdAndUpdate(id, { status }, { new: true }).lean()
-    if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
-    return NextResponse.json({ seller: doc })
+    return NextResponse.json({ buyers: safe, total })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }

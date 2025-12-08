@@ -1,13 +1,19 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 
 export default function AdminLogin() {
   const router = useRouter()
-  const search = useSearchParams()
-  const next = search.get("next") || "/admin"
+  const [next, setNext] = useState("/admin")
+  useEffect(() => {
+    try {
+      const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null
+      const n = params?.get("next") || "/admin"
+      setNext(n)
+    } catch {}
+  }, [])
   const { login } = useAuth()
 
   const [email, setEmail] = useState("")

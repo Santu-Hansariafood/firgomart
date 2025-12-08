@@ -1,6 +1,6 @@
 import { Connection, Schema, Model } from "mongoose"
 
-const ProductSchema = new Schema(
+  const ProductSchema = new Schema(
   {
     name: { type: String, required: true },
     image: { type: String, required: true },
@@ -13,6 +13,7 @@ const ProductSchema = new Schema(
     reviews: { type: Number, default: 0 },
     description: { type: String },
     details: { type: String },
+    stock: { type: Number, default: 0 },
     isAdminProduct: { type: Boolean, default: false, index: true },
     createdByEmail: { type: String, index: true },
     // Delivery visibility control based on seller registration

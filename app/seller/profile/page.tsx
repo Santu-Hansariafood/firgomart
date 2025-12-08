@@ -12,6 +12,7 @@ type Product = {
   image: string
   category?: string
   price: number
+  stock?: number
 }
 
 type SellerInfo = {
@@ -41,6 +42,7 @@ export default function SellerProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<{ id: number; label: string } | null>(null)
   const [myProducts, setMyProducts] = useState<Product[]>([])
+  const [myOrders, setMyOrders] = useState<any[]>([])
   const [sellerInfo, setSellerInfo] = useState<SellerInfo | null>(null)
   const [sellerInfoError, setSellerInfoError] = useState<string | null>(null)
 
@@ -58,6 +60,21 @@ export default function SellerProfilePage() {
     }
     load()
   }, [email, created])
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      if (!email) return
+      try {
+        const res = await fetch(`/api/seller/orders?sellerEmail=${encodeURIComponent(email)}&limit=50&page=1`)
+        const data = await res.json()
+        if (res.ok) setMyOrders(data.orders || [])
+        else setMyOrders([])
+      } catch {
+        setMyOrders([])
+      }
+    }
+    loadOrders()
+  }, [email])
 
   useEffect(() => {
     const loadSeller = async () => {
@@ -224,12 +241,74 @@ export default function SellerProfilePage() {
                   <div>
                     <p className="font-medium">{p.name}</p>
                     <p className="text-sm text-gray-600">{p.category} • ₹{p.price}</p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="text-xs text-gray-500">Stock:</span>
+                      <input
+                        type="number"
+                        defaultValue={p.stock ?? 0}
+                        className="w-20 px-2 py-1 border rounded text-sm"
+                        onBlur={async (e) => {
+                          const val = Number(e.currentTarget.value)
+                          if (!Number.isFinite(val) || val < 0) return
+                          try {
+                            await fetch(`/api/seller/products`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: p._id, stock: val, sellerEmail: email }),
+                            })
+                          } catch {}
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
                 <span className="text-xs text-gray-500">{p._id}</span>
               </div>
             ))}
             {myProducts.length === 0 && <p className="text-sm text-gray-500">No products yet</p>}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">Orders for My Products</h2>
+          <div className="space-y-3">
+            {myOrders.map(o => (
+              <div key={o.id} className="border rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <p className="font-medium">Order #{o.orderNumber}</p>
+                  <span className="text-sm text-gray-600">₹{o.amount} • {o.status}</span>
+                </div>
+                <div className="mt-2 text-sm text-gray-700">Items:</div>
+                <ul className="mt-1 text-sm text-gray-600 list-disc list-inside">
+                  {(o.items || []).map((it: any, idx: number) => (
+                    <li key={idx}>{it.name} × {it.quantity} (₹{it.price})</li>
+                  ))}
+                </ul>
+                <div className="mt-3">
+                  <select
+                    defaultValue={o.status}
+                    className="border rounded px-2 py-1 text-sm"
+                    onChange={async (e) => {
+                      const newStatus = e.currentTarget.value
+                      try {
+                        const res = await fetch(`/api/seller/orders`, {
+                          method: "PATCH",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ id: o.id, status: newStatus, sellerEmail: email }),
+                        })
+                        if (res.ok) {
+                          setMyOrders(prev => prev.map(oo => oo.id === o.id ? { ...oo, status: newStatus } : oo))
+                        }
+                      } catch {}
+                    }}
+                  >
+                    <option value="packed">Packed</option>
+                    <option value="shipped">Shipped</option>
+                  </select>
+                </div>
+              </div>
+            ))}
+            {myOrders.length === 0 && <p className="text-sm text-gray-500">No orders found</p>}
           </div>
         </div>
       </div>
