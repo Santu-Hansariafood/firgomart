@@ -13,6 +13,7 @@ import { Connection, Schema, Model } from "mongoose"
     reviews: { type: Number, default: 0 },
     description: { type: String },
     details: { type: String },
+    status: { type: String, default: "approved", index: true },
     stock: { type: Number, default: 0 },
     isAdminProduct: { type: Boolean, default: false, index: true },
     createdByEmail: { type: String, index: true },

@@ -40,3 +40,23 @@ export async function GET(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json()
+    const email = String(body?.email || "")
+    if (!email) return NextResponse.json({ error: "email required" }, { status: 400 })
+    const found = await findSellerAcrossDBs({ email })
+    if (!found) return NextResponse.json({ error: "Seller not found" }, { status: 404 })
+    const { Seller } = found
+    const update: any = {}
+    for (const key of ["businessName","ownerName","phone","address","country","state","district","city","pincode","gstNumber","panNumber","hasGST","businessLogoUrl"]) {
+      if (body[key] !== undefined) update[key] = body[key]
+    }
+    if (Array.isArray(body?.documentUrls)) update.documentUrls = body.documentUrls
+    const doc = await (Seller as any).findOneAndUpdate({ email }, update, { new: true }).lean()
+    return NextResponse.json({ seller: doc })
+  } catch (err: any) {
+    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  }
+}
+

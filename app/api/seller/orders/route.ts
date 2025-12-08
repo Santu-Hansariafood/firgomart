@@ -10,6 +10,8 @@ export async function GET(request: Request) {
     const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10))
     const limit = Math.max(1, parseInt(url.searchParams.get("limit") || "100", 10))
     const search = (url.searchParams.get("search") || "").trim()
+    const from = url.searchParams.get("from")
+    const to = url.searchParams.get("to")
     const sortBy = (url.searchParams.get("sortBy") || "createdAt").trim()
     const sortOrder = (url.searchParams.get("sortOrder") || "desc").trim().toLowerCase() === "asc" ? 1 : -1
 
@@ -26,6 +28,11 @@ export async function GET(request: Request) {
     if (search) {
       const r = new RegExp(search, "i")
       q.$or = [{ orderNumber: r }, { buyerEmail: r }, { buyerName: r }]
+    }
+    if (from || to) {
+      q.createdAt = {}
+      if (from) (q.createdAt as any).$gte = new Date(from)
+      if (to) (q.createdAt as any).$lte = new Date(to)
     }
     const items = await (Order as any).find(q).sort(sortOrder > 0 ? sortBy : `-${sortBy}`).lean()
     const total = await (Order as any).countDocuments(q)
@@ -75,4 +82,3 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-
