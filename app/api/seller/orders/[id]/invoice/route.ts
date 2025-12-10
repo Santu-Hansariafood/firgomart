@@ -9,10 +9,11 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     const Order = getOrderModel(conn)
     const doc = await (Order as any).findById(id).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    const completed = String(doc.status || "").toLowerCase() === "completed" || doc.completionVerified === true
+    if (!completed) return NextResponse.json({ error: "Invoice available after order completion" }, { status: 403 })
     const sum = (doc.items || []).reduce((s: number, it: any) => s + Number(it.price || 0) * Number(it.quantity || 1), 0)
     return NextResponse.json({ invoice: { orderNumber: doc.orderNumber, amount: sum, items: doc.items || [], buyer: { email: doc.buyerEmail, name: doc.buyerName } } })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
+import { getShipmentModel } from "@/lib/models/Shipment"
 
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
@@ -48,11 +49,18 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
     if (!status) return NextResponse.json({ error: "Missing status" }, { status: 400 })
     const conn = await connectDB()
     const Order = getOrderModel(conn)
-    const doc = await (Order as any).findByIdAndUpdate(id, { status }, { new: true }).lean()
+    const Shipment = getShipmentModel(conn)
+    const update: any = { status }
+    if (status.toLowerCase() === "delivered") {
+      update.deliveredAt = new Date()
+    }
+    const doc = await (Order as any).findByIdAndUpdate(id, update, { new: true }).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    if (status.toLowerCase() === "delivered") {
+      await (Shipment as any).findOneAndUpdate({ orderId: id }, { status: "delivered", lastUpdate: new Date() })
+    }
     return NextResponse.json({ order: doc })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-
