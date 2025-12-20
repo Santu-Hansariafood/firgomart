@@ -53,8 +53,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(session?.user as User)
       setIsAuthenticated(true)
     } else if (status === "unauthenticated") {
-      setUser(null)
-      setIsAuthenticated(false)
+      setUser(prev => {
+        const keep = (prev as any)?.role === "admin"
+        return keep ? prev : null
+      })
+      setIsAuthenticated(prev => {
+        const keep = !!(user && (user as any).role === "admin")
+        return keep ? true : false
+      })
     }
     setLoading(status === "loading")
   }, [status, session])

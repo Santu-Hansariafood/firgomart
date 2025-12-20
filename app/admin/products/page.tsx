@@ -62,6 +62,7 @@ export default function Page() {
   const loadProducts = async () => {
     setLoading(true)
     try {
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
       const params = new URLSearchParams()
       params.set("page", String(page))
       params.set("limit", String(pageSize))
@@ -71,7 +72,11 @@ export default function Page() {
       if (search) params.set("search", search)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/products?${params.toString()}`)
+      const res = await fetch(`/api/admin/products?${params.toString()}`, {
+        headers: {
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+      })
       const data = await res.json()
       if (res.ok) {
         setProducts(Array.isArray(data.products) ? data.products : [])
@@ -128,6 +133,7 @@ export default function Page() {
         if (up.ok && Array.isArray(upJson.urls)) uploaded = upJson.urls
       } catch {}
     }
+    const adminEmail = (session?.user?.email || authUser?.email || "").trim()
     const payload = {
       name: formName.trim(),
       category: formCategory.trim(),
@@ -136,11 +142,15 @@ export default function Page() {
       sellerState: formGST ? "" : formSellerState.trim(),
       sellerHasGST: formGST,
       images: uploaded,
+      image: uploaded[0] || "/file.svg",
     }
     try {
       const res = await fetch(`/api/admin/products`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
         body: JSON.stringify(payload),
       })
       if (res.ok) {

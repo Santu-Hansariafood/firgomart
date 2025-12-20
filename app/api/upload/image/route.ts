@@ -40,13 +40,16 @@ export async function POST(request: Request) {
       })
       const json = await res.json()
       if (!res.ok) {
-        return NextResponse.json({ error: "Cloudinary upload failed", reason: json?.error?.message || "unknown" }, { status: 500 })
+        const reason = json?.error?.message || "unknown"
+        continue
       }
       urls.push(String(json.secure_url || json.url))
+    }
+    if (!urls.length) {
+      return NextResponse.json({ error: "Upload failed", reason: "no image uploaded" }, { status: 500 })
     }
     return NextResponse.json({ urls })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

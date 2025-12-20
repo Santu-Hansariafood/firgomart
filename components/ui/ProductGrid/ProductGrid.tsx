@@ -33,7 +33,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [hasMore, setHasMore] = useState<boolean>(true)
   const [deliverToState, setDeliverToState] = useState<string>("")
   const observerTarget = useRef<HTMLDivElement | null>(null)
-  const productsPerPage = 12
+  const productsPerPage = 24
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
   const isNextImageAllowed = (src: string) => {
@@ -48,7 +48,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const fetchPage = async (pageNum: number) => {
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}`)
+      const adminParam = !deliverToState ? `&adminOnly=true` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -72,9 +73,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   useEffect(() => {
     const loadInitial = async () => {
       setLoading(true)
-      const first = await fetchPage(1)
-      setDisplayedProducts(first)
-      setHasMore(first.length === productsPerPage)
+      const [first, second] = await Promise.all([fetchPage(1), fetchPage(2)])
+      const initial = [...first, ...second]
+      setDisplayedProducts(initial)
+      setPage(2)
+      setHasMore(second.length === productsPerPage)
       setLoading(false)
     }
     loadInitial()
