@@ -188,7 +188,23 @@ const Navbar: React.FC = () => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden bg-white border-t border-gray-200"
           >
-            <div className="px-4 py-4 space-y-2">
+            <div className="px-4 py-4 space-y-3">
+              {!isAuthenticated && (
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false) }}
+                    className="px-4 py-3 text-blue-600 hover:bg-blue-50 rounded-lg font-medium transition-colors"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false) }}
+                    className="px-4 py-3 bg-linear-to-r from-blue-600 to-blue-400 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all"
+                  >
+                    Register
+                  </button>
+                </div>
+              )}
               <Link
                 href="/seller-registration"
                 onClick={() => setMobileMenuOpen(false)}
