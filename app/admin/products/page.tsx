@@ -10,6 +10,7 @@ import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
 import SearchBox from "@/components/common/SearchBox/SearchBox"
 import locationData from "@/data/country.json"
 import BackButton from "@/components/common/BackButton/BackButton"
+import { categories as categoryList } from "@/data/mockData"
 
 type ProductItem = {
   id: string
@@ -45,6 +46,7 @@ export default function Page() {
   const india = locationData.countries.find((c: any) => c.country === "India")
   const stateOptions: DropdownItem[] = (india?.states || []).map((s: any) => ({ id: s.state, label: s.state }))
   const [selectedState, setSelectedState] = useState<DropdownItem | null>(null)
+  const categoryOptions: DropdownItem[] = categoryList.map((c) => ({ id: c.name, label: c.name }))
 
   const gstOptions: DropdownItem[] = [
     { id: "", label: "GST: Any" },
@@ -257,7 +259,12 @@ export default function Page() {
             </div>
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Category</label>
-              <input value={formCategory} onChange={(e) => setFormCategory(e.target.value)} className="w-full px-3 py-2 border rounded" />
+              <CommonDropdown
+                options={categoryOptions}
+                selected={formCategory ? { id: formCategory, label: formCategory } : null}
+                onChange={(item) => setFormCategory((item as any)?.label || "")}
+                placeholder="Category"
+              />
             </div>
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Price</label>
@@ -270,7 +277,12 @@ export default function Page() {
           {!formGST && (
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Seller State</label>
-              <input value={formSellerState} onChange={(e) => setFormSellerState(e.target.value)} className="w-full px-3 py-2 border rounded" />
+              <CommonDropdown
+                options={stateOptions}
+                selected={formSellerState ? { id: formSellerState, label: formSellerState } : null}
+                onChange={(item) => setFormSellerState((item as any)?.label || "")}
+                placeholder="Seller state"
+              />
             </div>
           )}
             <div className="flex items-center gap-2">

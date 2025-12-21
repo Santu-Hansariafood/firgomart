@@ -7,6 +7,8 @@ import BackButton from "@/components/common/BackButton/BackButton"
 import CommonTable from "@/components/common/Table/CommonTable"
 import CommonPagination from "@/components/common/Pagination/CommonPagination"
 import SearchBox from "@/components/common/SearchBox/SearchBox"
+import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
+import { categories as categoryList } from "@/data/mockData"
 
 type ProductRow = { _id: string; name: string; category?: string; price: number; discount?: number; stock?: number; status?: string; image: string }
 
@@ -23,6 +25,7 @@ export default function Page() {
 
   const [form, setForm] = useState({ name: "", category: "", price: "", images: [] as string[] })
   const [uploading, setUploading] = useState(false)
+  const categoryOptions = categoryList.map((c) => ({ id: c.name, label: c.name }))
 
   const onFiles = async (files: FileList | null) => {
     if (!files) return
@@ -90,7 +93,12 @@ export default function Page() {
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="px-3 py-2 border rounded" />
-          <input placeholder="Category" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="px-3 py-2 border rounded" />
+          <CommonDropdown
+            options={categoryOptions}
+            selected={form.category ? { id: form.category, label: form.category } : null}
+            onChange={(item) => setForm({ ...form, category: (item as any)?.label || "" })}
+            placeholder="Category"
+          />
           <input type="number" placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="px-3 py-2 border rounded" />
           <div className="md:col-span-3">
             <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} />
