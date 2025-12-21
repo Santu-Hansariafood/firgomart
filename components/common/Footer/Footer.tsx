@@ -44,7 +44,7 @@ const Footer: React.FC = () => {
               home essentials — all at unbeatable prices. Shop smart, live
               better with Firgomart!
             </Paragraph>
-            <div className="flex space-x-3">
+            <div className="flex flex-wrap gap-3">
               <Link
                 href="https://facebook.com/firgomart"
                 aria-label="Facebook"

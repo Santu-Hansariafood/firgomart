@@ -83,8 +83,8 @@ const CategorySubHeader: React.FC = () => {
   if (hide) return null
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4">
-        <div className="flex items-stretch gap-3 md:gap-4 overflow-x-auto scrollbar-hide snap-x">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-3">
+        <div className="flex items-stretch gap-3 md:gap-4 lg:gap-6 overflow-x-auto md:overflow-x-visible md:flex-wrap md:justify-center scrollbar-hide snap-x snap-mandatory md:snap-none scroll-smooth -mx-2 px-2 py-1">
           {categories.map((category, index) => (
             <motion.div
               key={category.id}
@@ -94,9 +94,9 @@ const CategorySubHeader: React.FC = () => {
               className="shrink-0 snap-start"
             >
               <button
-                className="flex flex-col items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
+                className="flex flex-col items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all w-24 md:w-28 lg:w-32"
               >
-                <div className="relative rounded-full overflow-hidden bg-gray-100 ring-1 ring-gray-200 mx-auto w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                <div className="relative rounded-full overflow-hidden bg-gray-100 ring-1 ring-gray-200 mx-auto w-14 h-14 md:w-20 md:h-20 lg:w-24 lg:h-24">
                   <Image
                     src={category.image}
                     alt={category.name}
@@ -105,7 +105,7 @@ const CategorySubHeader: React.FC = () => {
                     className="object-cover"
                   />
                 </div>
-                <span className="text-sm font-medium text-gray-800 text-center w-28">
+                <span className="text-xs md:text-sm font-medium text-gray-800 text-center w-24 md:w-28 truncate">
                   {category.name}
                 </span>
               </button>

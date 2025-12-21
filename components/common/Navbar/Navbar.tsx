@@ -65,17 +65,17 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
 
           <Link href="/" className="flex items-center space-x-2">
-            <div className="relative w-16 h-16 md:w-20 md:h-20">
+            <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20">
               <Image
                 src="/logo/firgomart.png"
                 alt="Firgomart Logo"
                 fill
                 priority
-                sizes="80px"
+                sizes="(max-width: 640px) 48px, (max-width: 768px) 64px, (max-width: 1024px) 80px, 80px"
                 className="object-contain rounded-lg"
               />
             </div>
