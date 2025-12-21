@@ -11,10 +11,11 @@ import {
   Wallet,
   Landmark,
   Linkedin,
+  ArrowUp,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 const PolicyModal = dynamic(() => import("@/components/common/PolicyModal/PolicyModal"), { ssr: false });
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
@@ -22,6 +23,13 @@ const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"
 const Footer: React.FC = () => {
   const [policyOpen, setPolicyOpen] = useState(false);
   const [policyType, setPolicyType] = useState<"privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate" | null>(null);
+  const [showTop, setShowTop] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowTop(window.scrollY > 300);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const openPolicy = (type: "privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate") => {
     setPolicyType(type);
@@ -192,6 +200,15 @@ const Footer: React.FC = () => {
       </div>
       {policyOpen && (
         <PolicyModal open={policyOpen} onClose={closePolicy} policy={policyType} />
+      )}
+      {showTop && (
+        <button
+          aria-label="Scroll to top"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors p-3 sm:p-4"
+        >
+          <ArrowUp className="w-5 h-5 sm:w-6 sm:h-6" />
+        </button>
       )}
     </footer>
   );
