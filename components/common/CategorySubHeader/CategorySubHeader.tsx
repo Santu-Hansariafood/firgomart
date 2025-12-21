@@ -83,25 +83,25 @@ const CategorySubHeader: React.FC = () => {
   if (hide) return null
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="flex items-stretch space-x-4 overflow-x-auto scrollbar-hide">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4">
+        <div className="flex items-stretch gap-3 md:gap-4 overflow-x-auto scrollbar-hide snap-x">
           {categories.map((category, index) => (
             <motion.div
               key={category.id}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="shrink-0"
+              className="shrink-0 snap-start"
             >
               <button
-                className="flex flex-col items-center gap-2 px-4 py-3 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
+                className="flex flex-col items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all"
               >
-                <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
+                <div className="relative rounded-full overflow-hidden bg-gray-100 ring-1 ring-gray-200 mx-auto w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
                   <Image
                     src={category.image}
                     alt={category.name}
                     fill
-                    sizes="96px"
+                    sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, (max-width: 1024px) 96px, 96px"
                     className="object-cover"
                   />
                 </div>
