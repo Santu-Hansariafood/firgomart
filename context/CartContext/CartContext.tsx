@@ -25,26 +25,30 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const MAX_QTY = 3;
 
   const addToCart = (product: CartItem) => {
     setCartItems((prev) => {
       const exists = prev.find((item) => item.id === product.id);
       if (exists) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: (item.quantity || 1) + 1 }
-            : item
-        );
+        const inc = product.quantity && product.quantity > 0 ? product.quantity : 1
+        return prev.map((item) => {
+          if (item.id !== product.id) return item
+          const current = item.quantity || 1
+          const next = Math.min(MAX_QTY, current + inc)
+          return { ...item, quantity: next }
+        });
       }
-      return [...prev, { ...product, quantity: 1 }];
+      const startQty = product.quantity && product.quantity > 0 ? product.quantity : 1
+      return [...prev, { ...product, quantity: Math.min(MAX_QTY, startQty) }];
     });
   };
 
   const updateQuantity = (id: number, quantity: number) => {
     setCartItems((prev) =>
-      quantity === 0
+      quantity <= 0
         ? prev.filter((item) => item.id !== id)
-        : prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+        : prev.map((item) => (item.id === id ? { ...item, quantity: Math.min(MAX_QTY, Math.max(1, quantity)) } : item))
     );
   };
 

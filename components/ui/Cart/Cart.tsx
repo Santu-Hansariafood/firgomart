@@ -131,8 +131,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                             {item.quantity ?? 1}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item.id, (item.quantity ?? 1) + 1)}
-                            className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors"
+                            onClick={() => onUpdateQuantity(item.id, Math.min(3, (item.quantity ?? 1) + 1))}
+                            className={`w-6 h-6 border border-gray-300 rounded flex items-center justify-center transition-colors ${((item.quantity ?? 1) >= 3) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white'}`}
+                            disabled={(item.quantity ?? 1) >= 3}
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -144,6 +145,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
+                      <div className="mt-2 text-xs text-gray-500">Max 3 per product</div>
                     </div>
                   </motion.div>
                 ))}

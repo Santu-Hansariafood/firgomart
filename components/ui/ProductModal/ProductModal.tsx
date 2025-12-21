@@ -163,12 +163,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     </button>
                     <span className="text-xl font-medium w-12 text-center">{quantity}</span>
                     <button
-                      onClick={() => setQuantity(quantity + 1)}
+                      onClick={() => setQuantity(Math.min(3, quantity + 1))}
                       className="w-10 h-10 border border-gray-300 rounded-lg flex items-center justify-center hover:bg-gray-50 transition-colors"
                     >
                       +
                     </button>
                   </div>
+                  <p className="mt-2 text-xs text-gray-500">Max 3 per product</p>
                 </div>
                 <div className="flex space-x-4">
                   <button
