@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { findSellerAcrossDBs } from "@/lib/models/Seller"
 
 type SellerDoc = {
+  _id?: { toString(): string }
+  id?: string
   status?: string
   email?: string
   businessName?: string
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
     s.loginOtpExpires = undefined
     await s.save()
     const safe = {
-      id: s._id.toString(),
+      id: s._id ? s._id.toString() : String((s as { id?: unknown }).id || ""),
       email: s.email,
       name: s.businessName,
       phone: s.phone,

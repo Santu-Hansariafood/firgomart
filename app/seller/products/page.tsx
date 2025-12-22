@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@/context/AuthContext"
-import { useEffect, useMemo, useState, Suspense } from "react"
+import { useEffect, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import BackButton from "@/components/common/BackButton/BackButton"
 import CommonTable from "@/components/common/Table/CommonTable"
@@ -60,7 +60,28 @@ export default function Page() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [email, page, search])
+  useEffect(() => {
+    if (!email) return
+    let cancelled = false
+    ;(async () => {
+      await Promise.resolve()
+      if (cancelled) return
+      setLoading(true)
+      try {
+        const params = new URLSearchParams()
+        params.set("sellerEmail", email)
+        params.set("page", String(page))
+        params.set("limit", String(pageSize))
+        if (search) params.set("search", search)
+        const res = await fetch(`/api/seller/products?${params.toString()}`)
+        const data = await res.json()
+        if (cancelled) return
+        if (res.ok) { setRows(data.products || []); setTotal(Number(data.total || 0)) } else { setRows([]); setTotal(0) }
+      } catch { if (!cancelled) { setRows([]); setTotal(0) } }
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [email, page, search])
 
   const createProduct = async () => {
     setUploading(true)
@@ -78,8 +99,11 @@ export default function Page() {
     setUploading(false)
   }
 
-  const updateField = async (id: string, changes: any) => {
-    try { await fetch(`/api/seller/products`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, sellerEmail: email, ...changes }) }); load() } catch {}
+  const updateField = async (id: string, changes: Partial<{ price: number; discount: number; stock: number; status: string }>) => {
+    try {
+      await fetch(`/api/seller/products`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, sellerEmail: email, ...changes }) })
+      setRows(prev => prev.map(r => r._id === id ? { ...r, ...changes } : r))
+    } catch {}
   }
   const deleteProduct = async (id: string) => {
     try { await fetch(`/api/seller/products?id=${encodeURIComponent(id)}&sellerEmail=${encodeURIComponent(email)}`, { method: "DELETE" }); load() } catch {}
@@ -123,7 +147,7 @@ export default function Page() {
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<ProductRow>
+          <CommonTable
             columns={[ 
               { key: "image", label: "Image", render: (r) => (
                 <Image src={r.image} alt={r.name} width={48} height={48} className="object-cover rounded border" unoptimized />

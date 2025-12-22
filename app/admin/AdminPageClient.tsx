@@ -264,11 +264,8 @@ export default function AdminPageClient() {
     { title: 'Global Selling (Optional)', icon: Globe, route: '/admin/global-selling' },
   ]
 
-  type DropdownItem = { id: number; label: string }
-  const [selectedCategoryItem, setSelectedCategoryItem] = useState<DropdownItem | null>(null)
-  const onCategoryChange = (v: DropdownItem | DropdownItem[]) => {
-    if (!Array.isArray(v)) setSelectedCategoryItem(v)
-  }
+  type CategoryOption = { id: number; label: string }
+  const [selectedCategoryItem, setSelectedCategoryItem] = useState<CategoryOption | null>(null)
 
   // Render
   if (!allowed) return <AdminLogin />
@@ -367,7 +364,9 @@ export default function AdminPageClient() {
           <CommonDropdown
             options={categoryList.map((c, i) => ({ id: i, label: c.name }))}
             selected={selectedCategoryItem}
-            onChange={onCategoryChange}
+            onChange={(v) => {
+              if (!Array.isArray(v)) setSelectedCategoryItem(v as CategoryOption)
+            }}
             placeholder="Filter by category"
           />
           <button className="px-3 py-1 bg-gray-800 text-white rounded" onClick={() => setSelectedCategoryItem(null)}>Clear</button>

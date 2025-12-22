@@ -220,7 +220,7 @@ export default function Page() {
                 ))}
               </div>
             ) : (
-              <CommonTable<OrderRow>
+              <CommonTable
                 columns={[
                   { key: "orderNumber", label: "Order #", sortable: true },
                   { key: "buyerName", label: "Buyer" },

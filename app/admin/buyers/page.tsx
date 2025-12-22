@@ -161,7 +161,7 @@ export default function Page() {
           <div className="px-4 py-6 text-gray-700">Loading…</div>
         ) : (
           <div className="bg-white rounded-xl shadow-md p-4">
-            <CommonTable<Buyer>
+            <CommonTable
               columns={[
                 { key: "name", label: "Name", sortable: true },
                 { key: "email", label: "Email" },

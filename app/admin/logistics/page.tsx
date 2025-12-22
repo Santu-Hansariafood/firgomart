@@ -32,7 +32,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -63,36 +63,41 @@ export default function Page() {
   ]
   const [selectedCourier, setSelectedCourier] = useState<DropdownItem>(courierOptions[0])
 
-  const loadLogistics = async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      params.set("page", String(page))
-      params.set("limit", String(pageSize))
-      if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
-      if (selectedCourier?.id !== undefined) params.set("courier", String(selectedCourier.id))
-      if (search) params.set("search", search)
-      if (sortKey) params.set("sortBy", String(sortKey))
-      params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/logistics?${params.toString()}`)
-      const data = await res.json()
-      if (res.ok) {
-        setRows(Array.isArray(data.shipments) ? data.shipments : [])
-        setTotal(Number(data.total || 0))
-      } else {
-        setRows([])
-        setTotal(0)
-      }
-    } catch {
-      setRows([])
-      setTotal(0)
-    }
-    setLoading(false)
-  }
-
   useEffect(() => {
     if (!allowed) return
-    loadLogistics()
+    let cancelled = false
+    ;(async () => {
+      await Promise.resolve()
+      if (cancelled) return
+      setLoading(true)
+      try {
+        const params = new URLSearchParams()
+        params.set("page", String(page))
+        params.set("limit", String(pageSize))
+        if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
+        if (selectedCourier?.id !== undefined) params.set("courier", String(selectedCourier.id))
+        if (search) params.set("search", search)
+        if (sortKey) params.set("sortBy", String(sortKey))
+        params.set("sortOrder", sortOrder)
+        const res = await fetch(`/api/admin/logistics?${params.toString()}`)
+        const data = await res.json()
+        if (cancelled) return
+        if (res.ok) {
+          setRows(Array.isArray(data.shipments) ? data.shipments : [])
+          setTotal(Number(data.total || 0))
+        } else {
+          setRows([])
+          setTotal(0)
+        }
+      } catch {
+        if (!cancelled) {
+          setRows([])
+          setTotal(0)
+        }
+      }
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
   }, [allowed, page, selectedStatus, selectedCourier, search, sortKey, sortOrder])
 
   const updateStatus = async (id: string, status: string) => {
@@ -118,10 +123,22 @@ export default function Page() {
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
           <div>
-            <CommonDropdown label="Status" options={statusOptions} selected={selectedStatus as any} onChange={setSelectedStatus as any} placeholder="Status" />
+            <CommonDropdown
+              label="Status"
+              options={statusOptions}
+              selected={selectedStatus}
+              onChange={(v) => { if (!Array.isArray(v)) setSelectedStatus(v) }}
+              placeholder="Status"
+            />
           </div>
           <div>
-            <CommonDropdown label="Courier" options={courierOptions} selected={selectedCourier as any} onChange={setSelectedCourier as any} placeholder="Courier" />
+            <CommonDropdown
+              label="Courier"
+              options={courierOptions}
+              selected={selectedCourier}
+              onChange={(v) => { if (!Array.isArray(v)) setSelectedCourier(v) }}
+              placeholder="Courier"
+            />
           </div>
           <div className="md:col-span-3">
             <SearchBox value={search} onChange={setSearch} placeholder="Search by order/tracking" />
@@ -133,7 +150,7 @@ export default function Page() {
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<ShipmentRow>
+          <CommonTable
             columns={[
               { key: "orderNumber", label: "Order", sortable: true },
               { key: "trackingNumber", label: "Tracking" },

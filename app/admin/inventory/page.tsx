@@ -130,7 +130,7 @@ export default function Page() {
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<InventoryRow>
+          <CommonTable
             columns={[
               { key: "image", label: "Image", render: (r) => (
                 <div className="relative w-12 h-10">

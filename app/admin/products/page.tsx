@@ -239,7 +239,7 @@ export default function Page() {
           <div className="px-4 py-6 text-gray-700">Loading…</div>
         ) : (
           <div className="bg-white rounded-xl shadow-md p-4">
-            <CommonTable<ProductItem>
+            <CommonTable
               columns={[
                 { key: "image", label: "Image", render: (r) => (
                   <Image src={(r as { image?: string }).image || "/file.svg"} alt={r.name} width={48} height={48} className="object-cover rounded border" />

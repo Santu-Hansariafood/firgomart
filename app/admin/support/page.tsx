@@ -32,7 +32,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -63,36 +63,41 @@ export default function Page() {
   ]
   const [selectedPriority, setSelectedPriority] = useState<DropdownItem>(priorityOptions[0])
 
-  const loadTickets = async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams()
-      params.set("page", String(page))
-      params.set("limit", String(pageSize))
-      if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
-      if (selectedPriority?.id !== undefined) params.set("priority", String(selectedPriority.id))
-      if (search) params.set("search", search)
-      if (sortKey) params.set("sortBy", String(sortKey))
-      params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/support?${params.toString()}`)
-      const data = await res.json()
-      if (res.ok) {
-        setRows(Array.isArray(data.tickets) ? data.tickets : [])
-        setTotal(Number(data.total || 0))
-      } else {
-        setRows([])
-        setTotal(0)
-      }
-    } catch {
-      setRows([])
-      setTotal(0)
-    }
-    setLoading(false)
-  }
-
   useEffect(() => {
     if (!allowed) return
-    loadTickets()
+    let cancelled = false
+    ;(async () => {
+      await Promise.resolve()
+      if (cancelled) return
+      setLoading(true)
+      try {
+        const params = new URLSearchParams()
+        params.set("page", String(page))
+        params.set("limit", String(pageSize))
+        if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
+        if (selectedPriority?.id !== undefined) params.set("priority", String(selectedPriority.id))
+        if (search) params.set("search", search)
+        if (sortKey) params.set("sortBy", String(sortKey))
+        params.set("sortOrder", sortOrder)
+        const res = await fetch(`/api/admin/support?${params.toString()}`)
+        const data = await res.json()
+        if (cancelled) return
+        if (res.ok) {
+          setRows(Array.isArray(data.tickets) ? data.tickets : [])
+          setTotal(Number(data.total || 0))
+        } else {
+          setRows([])
+          setTotal(0)
+        }
+      } catch {
+        if (!cancelled) {
+          setRows([])
+          setTotal(0)
+        }
+      }
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
   }, [allowed, page, selectedStatus, selectedPriority, search, sortKey, sortOrder])
 
   const updateStatus = async (id: string, status: string) => {
@@ -131,10 +136,22 @@ export default function Page() {
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
           <div>
-            <CommonDropdown label="Status" options={statusOptions} selected={selectedStatus as any} onChange={setSelectedStatus as any} placeholder="Status" />
+            <CommonDropdown
+              label="Status"
+              options={statusOptions}
+              selected={selectedStatus}
+              onChange={(v) => { if (!Array.isArray(v)) setSelectedStatus(v) }}
+              placeholder="Status"
+            />
           </div>
           <div>
-            <CommonDropdown label="Priority" options={priorityOptions} selected={selectedPriority as any} onChange={setSelectedPriority as any} placeholder="Priority" />
+            <CommonDropdown
+              label="Priority"
+              options={priorityOptions}
+              selected={selectedPriority}
+              onChange={(v) => { if (!Array.isArray(v)) setSelectedPriority(v) }}
+              placeholder="Priority"
+            />
           </div>
           <div className="md:col-span-3">
             <SearchBox value={search} onChange={setSearch} placeholder="Search tickets" />
@@ -146,7 +163,7 @@ export default function Page() {
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<TicketRow>
+          <CommonTable
             columns={[
               { key: "orderNumber", label: "Order", sortable: true },
               { key: "buyerEmail", label: "Email" },
