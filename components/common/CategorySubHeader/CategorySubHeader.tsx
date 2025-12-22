@@ -74,7 +74,9 @@ const categories: Category[] = [
 
 const CategorySubHeader: React.FC = () => {
   const pathname = usePathname()
+  const isAdminHost = typeof window !== 'undefined' ? !!(window.location.hostname && window.location.hostname.toLowerCase().includes('admin')) : false
   const hide = (
+    isAdminHost ||
     pathname.startsWith('/admin') ||
     pathname === '/admin-login' ||
     pathname.startsWith('/seller') ||
