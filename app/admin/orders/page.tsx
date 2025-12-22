@@ -33,7 +33,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -46,6 +46,7 @@ export default function Page() {
   const [search, setSearch] = useState("")
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [groupByDay, setGroupByDay] = useState(false)
 
   const statusOptions: DropdownItem[] = [
     { id: "", label: "All Status" },
@@ -67,6 +68,16 @@ export default function Page() {
   ]
   const [selectedCountry, setSelectedCountry] = useState<DropdownItem>(countryOptions[0])
   const [selectedState, setSelectedState] = useState<DropdownItem | null>(null)
+
+  const onStatusChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedStatus(v)
+  }
+  const onCountryChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedCountry(v)
+  }
+  const onStateChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedState(v)
+  }
 
   const loadOrders = async () => {
     setLoading(true)
@@ -130,8 +141,8 @@ export default function Page() {
             <CommonDropdown
               label="Status"
               options={statusOptions}
-              selected={selectedStatus as any}
-              onChange={setSelectedStatus as any}
+              selected={selectedStatus}
+              onChange={onStatusChange}
               placeholder="Select status"
             />
           </div>
@@ -139,8 +150,8 @@ export default function Page() {
             <CommonDropdown
               label="Country"
               options={countryOptions}
-              selected={selectedCountry as any}
-              onChange={setSelectedCountry as any}
+              selected={selectedCountry}
+              onChange={onCountryChange}
               placeholder="Select country"
             />
           </div>
@@ -148,13 +159,19 @@ export default function Page() {
             <CommonDropdown
               label="State"
               options={[]}
-              selected={selectedState as any}
-              onChange={setSelectedState as any}
+              selected={selectedState}
+              onChange={onStateChange}
               placeholder="State (optional)"
             />
           </div>
           <div className="md:col-span-2">
             <SearchBox value={search} onChange={setSearch} placeholder="Search orders" />
+          </div>
+          <div className="col-span-1">
+            <label className="inline-flex items-center gap-2 text-sm font-medium text-gray-600">
+              <input type="checkbox" checked={groupByDay} onChange={(e) => setGroupByDay(e.currentTarget.checked)} />
+              Group by day
+            </label>
           </div>
         </div>
       </div>
@@ -163,30 +180,72 @@ export default function Page() {
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<OrderRow>
-            columns={[
-              { key: "orderNumber", label: "Order #", sortable: true },
-              { key: "buyerName", label: "Buyer" },
-              { key: "buyerEmail", label: "Email" },
-              { key: "amount", label: "Amount", sortable: true, render: (r) => `₹${r.amount}` },
-              { key: "status", label: "Status", sortable: true, render: (r) => (
-                <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
-                  {statusOptions.filter(s => s.id !== "").map(s => (
-                    <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
-                  ))}
-                </select>
-              ) },
-              { key: "city", label: "City" },
-              { key: "state", label: "State" },
-              { key: "country", label: "Country" },
-              { key: "createdAt", label: "Placed", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
-            ]}
-            data={orders}
-            sortKey={sortKey || undefined}
-            sortOrder={sortOrder}
-            onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-            rowKey={(r) => r.id}
-          />
+          <>
+            {groupByDay ? (
+              <div className="space-y-6">
+                {Object.entries(
+                  orders.reduce<Record<string, OrderRow[]>>((acc, o) => {
+                    const key = o.createdAt ? new Date(o.createdAt).toISOString().slice(0, 10) : "Unknown"
+                    if (!acc[key]) acc[key] = []
+                    acc[key].push(o)
+                    return acc
+                  }, {})
+                ).sort((a, b) => b[0].localeCompare(a[0])).map(([day, list]) => (
+                  <div key={day} className="border rounded-xl bg-white">
+                    <div className="px-4 py-2 border-b font-semibold">{day}</div>
+                    <div className="divide-y">
+                      {list.map((r) => (
+                        <div key={r.id} className="px-4 py-3 flex flex-wrap items-center gap-x-6 gap-y-2">
+                          <div className="min-w-[180px]">
+                            <div className="font-medium">{r.orderNumber}</div>
+                            <div className="text-xs text-gray-500">{r.createdAt ? new Date(r.createdAt).toLocaleString() : ""}</div>
+                          </div>
+                          <div className="min-w-[200px]">
+                            <div>{r.buyerName}</div>
+                            <div className="text-xs text-gray-500">{r.buyerEmail}</div>
+                          </div>
+                          <div className="min-w-[120px] font-medium">₹{r.amount}</div>
+                          <div className="min-w-[160px]">
+                            <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
+                              {statusOptions.filter(s => s.id !== "").map(s => (
+                                <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                          <div className="text-sm text-gray-600">{[r.city, r.state, r.country].filter(Boolean).join(", ")}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <CommonTable<OrderRow>
+                columns={[
+                  { key: "orderNumber", label: "Order #", sortable: true },
+                  { key: "buyerName", label: "Buyer" },
+                  { key: "buyerEmail", label: "Email" },
+                  { key: "amount", label: "Amount", sortable: true, render: (r) => `₹${r.amount}` },
+                  { key: "status", label: "Status", sortable: true, render: (r) => (
+                    <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
+                      {statusOptions.filter(s => s.id !== "").map(s => (
+                        <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
+                      ))}
+                    </select>
+                  ) },
+                  { key: "city", label: "City" },
+                  { key: "state", label: "State" },
+                  { key: "country", label: "Country" },
+                  { key: "createdAt", label: "Placed", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+                ]}
+                data={orders}
+                sortKey={sortKey || undefined}
+                sortOrder={sortOrder}
+                onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
+                rowKey={(r) => r.id}
+              />
+            )}
+          </>
         )}
 
         <div className="flex items-center justify-between">

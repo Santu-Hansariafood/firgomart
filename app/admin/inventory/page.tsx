@@ -5,6 +5,7 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -16,6 +17,8 @@ type InventoryRow = {
   name: string
   category?: string
   stock: number
+  price?: number
+  image?: string
   sellerState?: string
   sellerHasGST?: boolean
   createdAt?: string
@@ -27,7 +30,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -42,6 +45,7 @@ export default function Page() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [minStock, setMinStock] = useState<string>("")
   const [maxStock, setMaxStock] = useState<string>("")
+  const [onlyMine, setOnlyMine] = useState(false)
 
   const loadInventory = async () => {
     setLoading(true)
@@ -54,6 +58,8 @@ export default function Page() {
       if (search) params.set("search", search)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
+      const email = (session?.user?.email || authUser?.email || "").trim()
+      if (onlyMine && email) params.set("createdByEmail", email)
       const res = await fetch(`/api/admin/inventory?${params.toString()}`)
       const data = await res.json()
       if (res.ok) {
@@ -87,7 +93,7 @@ export default function Page() {
     if (!allowed) return
     loadInventory()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowed, page, minStock, maxStock, search, sortKey, sortOrder])
+  }, [allowed, page, minStock, maxStock, search, sortKey, sortOrder, onlyMine])
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
@@ -111,6 +117,12 @@ export default function Page() {
           <div className="md:col-span-2">
             <SearchBox value={search} onChange={setSearch} placeholder="Search inventory" />
           </div>
+          <div className="col-span-1">
+            <label className="inline-flex items-center gap-2 text-sm font-medium text-gray-600">
+              <input type="checkbox" checked={onlyMine} onChange={(e) => setOnlyMine(e.currentTarget.checked)} />
+              Only my products
+            </label>
+          </div>
         </div>
       </div>
 
@@ -120,8 +132,21 @@ export default function Page() {
         ) : (
           <CommonTable<InventoryRow>
             columns={[
+              { key: "image", label: "Image", render: (r) => (
+                <div className="relative w-12 h-10">
+                  <Image
+                    src={typeof r.image === "string" ? r.image : ""}
+                    alt={r.name}
+                    width={48}
+                    height={40}
+                    className="object-cover rounded border"
+                    unoptimized
+                  />
+                </div>
+              ) },
               { key: "name", label: "Product", sortable: true },
               { key: "category", label: "Category" },
+              { key: "price", label: "Price", sortable: true, render: (r) => `₹${Number(r.price || 0).toFixed(2)}` },
               { key: "stock", label: "Stock", sortable: true, render: (r) => (
                 <div className="flex items-center gap-2">
                   <input

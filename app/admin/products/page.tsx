@@ -5,7 +5,9 @@ import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import { categories as categoryList } from "@/data/mockData"
 import locationData  from "@/data/country.json"
+import { Package } from "lucide-react"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -33,7 +35,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -44,8 +46,10 @@ export default function Page() {
   const [page, setPage] = useState(1)
   const pageSize = 100
 
-  const india = locationData.countries.find((c: any) => c.country === "India")
-  const stateOptions: DropdownItem[] = (india?.states || []).map((s: any) => ({ id: s.state, label: s.state }))
+  type IndiaState = { state: string }
+  type Country = { country: string; states?: IndiaState[] }
+  const india = (locationData.countries as Country[]).find((c) => c.country === "India")
+  const stateOptions: DropdownItem[] = (india?.states || []).map((s) => ({ id: s.state, label: s.state }))
   const [selectedState, setSelectedState] = useState<DropdownItem | null>(null)
   const categoryOptions: DropdownItem[] = categoryList.map((c) => ({ id: c.name, label: c.name }))
 
@@ -55,12 +59,16 @@ export default function Page() {
     { id: "false", label: "GST: No" },
   ]
   const [selectedGST, setSelectedGST] = useState<DropdownItem>(gstOptions[0])
+  const onStateChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setSelectedState(v) }
+  const onGSTChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setSelectedGST(v) }
 
   const [search, setSearch] = useState("")
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
   const [category, setCategory] = useState<string>("")
+  const onFormCategoryChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setFormCategory(v.label) }
+  const onFormSellerStateChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setFormSellerState(v.label) }
 
   const loadProducts = async () => {
     setLoading(true)
@@ -175,11 +183,20 @@ export default function Page() {
     {!allowed ? (
       <AdminLogin />
     ) : (
-    <div className="p-4 space-y-6">
+    <div className="p-6 space-y-8">
       <BackButton className="mb-2" />
-      <h1 className="text-2xl font-semibold">Product Management</h1>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Package className="w-8 h-8 text-white" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">Product Management</h1>
+            <p className="text-indigo-100 text-sm">Create, filter and manage catalog</p>
+          </div>
+        </div>
+        <span className="text-2xl font-semibold text-white">{total}</span>
+      </div>
 
-      <div className="bg-white border rounded-xl p-4 space-y-3">
+      <div className="bg-white rounded-xl shadow-md p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
           <div>
             <label className="text-sm mb-1 font-medium text-gray-600">Category</label>
@@ -188,7 +205,7 @@ export default function Page() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder="Category"
-              className="w-full px-3 py-2 border rounded"
+              className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
           {String(selectedGST.id) !== "true" && (
@@ -196,8 +213,8 @@ export default function Page() {
               <CommonDropdown
                 label="State"
                 options={stateOptions}
-                selected={selectedState as any}
-                onChange={setSelectedState as any}
+                selected={selectedState}
+                onChange={onStateChange}
                 placeholder="Seller state"
               />
             </div>
@@ -206,8 +223,8 @@ export default function Page() {
             <CommonDropdown
               label="GST"
               options={gstOptions}
-              selected={selectedGST as any}
-              onChange={setSelectedGST as any}
+              selected={selectedGST}
+              onChange={onGSTChange}
               placeholder="GST"
             />
           </div>
@@ -221,25 +238,27 @@ export default function Page() {
         {loading ? (
           <div className="px-4 py-6 text-gray-700">Loading…</div>
         ) : (
-          <CommonTable<ProductItem>
-            columns={[
-              { key: "image", label: "Image", render: (r) => (
-                <img src={(r as any).image} alt={r.name} className="w-12 h-12 object-cover rounded border" />
-              ) },
-              { key: "name", label: "Name", sortable: true },
-              { key: "category", label: "Category", sortable: true },
-              { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },
-              { key: "stock", label: "Stock", sortable: true },
-              { key: "sellerState", label: "State", sortable: true },
-              { key: "sellerHasGST", label: "GST", render: (r) => r.sellerHasGST ? "Yes" : "No" },
-              { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
-            ]}
-            data={products}
-            sortKey={sortKey || undefined}
-            sortOrder={sortOrder}
-            onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-            rowKey={(r) => r.id}
-          />
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <CommonTable<ProductItem>
+              columns={[
+                { key: "image", label: "Image", render: (r) => (
+                  <Image src={(r as { image?: string }).image || "/file.svg"} alt={r.name} width={48} height={48} className="object-cover rounded border" />
+                ) },
+                { key: "name", label: "Name", sortable: true },
+                { key: "category", label: "Category", sortable: true },
+                { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },
+                { key: "stock", label: "Stock", sortable: true },
+                { key: "sellerState", label: "State", sortable: true },
+                { key: "sellerHasGST", label: "GST", render: (r) => r.sellerHasGST ? "Yes" : "No" },
+                { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+              ]}
+              data={products}
+              sortKey={sortKey || undefined}
+              sortOrder={sortOrder}
+              onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
+              rowKey={(r) => r.id}
+            />
+          </div>
         )}
 
         <div className="flex items-center justify-between">
@@ -251,29 +270,29 @@ export default function Page() {
             onPageChange={(p) => setPage(p)}
           />
         </div>
-        <div className="bg-white border rounded-xl p-4 space-y-3">
-          <h2 className="text-lg font-medium">Add Product</h2>
+        <div className="bg-white rounded-xl shadow-md p-4 space-y-3">
+          <h2 className="text-lg font-semibold">Add Product</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Name</label>
-              <input value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full px-3 py-2 border rounded" />
+              <input value={formName} onChange={(e) => setFormName(e.target.value)} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Category</label>
               <CommonDropdown
                 options={categoryOptions}
                 selected={formCategory ? { id: formCategory, label: formCategory } : null}
-                onChange={(item) => setFormCategory((item as DropdownItem).label)}
+                onChange={onFormCategoryChange}
                 placeholder="Category"
               />
             </div>
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Price</label>
-              <input type="number" value={formPrice} onChange={(e) => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded" />
+              <input type="number" value={formPrice} onChange={(e) => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
             <div>
               <label className="text-sm mb-1 font-medium text-gray-600">Stock</label>
-              <input type="number" value={formStock} onChange={(e) => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded" />
+              <input type="number" value={formStock} onChange={(e) => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
             </div>
           {!formGST && (
             <div>
@@ -281,7 +300,7 @@ export default function Page() {
               <CommonDropdown
                 options={stateOptions}
                 selected={formSellerState ? { id: formSellerState, label: formSellerState } : null}
-                onChange={(item) => setFormSellerState((item as DropdownItem).label)}
+                onChange={onFormSellerStateChange}
                 placeholder="Seller state"
               />
             </div>
@@ -295,13 +314,13 @@ export default function Page() {
               <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} />
               <div className="mt-2 flex flex-wrap gap-2">
                 {images.map((src, i) => (
-                  <img key={i} src={src} alt="preview" className="w-16 h-16 object-cover rounded border" />
+                  <Image key={i} src={src} alt="preview" width={64} height={64} className="object-cover rounded border" />
                 ))}
               </div>
             </div>
           </div>
           <div>
-            <button onClick={submitNewProduct} className="px-4 py-2 rounded bg-blue-600 text-white">Create Product</button>
+            <button onClick={submitNewProduct} className="px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-700 text-white hover:opacity-90">Create Product</button>
           </div>
         </div>
       </div>

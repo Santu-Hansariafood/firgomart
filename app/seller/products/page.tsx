@@ -9,6 +9,7 @@ import CommonPagination from "@/components/common/Pagination/CommonPagination"
 import SearchBox from "@/components/common/SearchBox/SearchBox"
 import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
 import { categories as categoryList } from "@/data/mockData"
+import Image from "next/image"
 
 type DropdownItem = { id: string | number; label: string }
 
@@ -104,7 +105,11 @@ export default function Page() {
           <input type="number" placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="px-3 py-2 border rounded" />
           <div className="md:col-span-3">
             <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} />
-            <div className="mt-2 flex flex-wrap gap-2">{form.images.map((src, i) => (<img key={i} src={src} className="w-16 h-16 object-cover rounded border" />))}</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {form.images.map((src, i) => (
+                <Image key={i} src={src} alt="preview" width={64} height={64} className="object-cover rounded border" unoptimized />
+              ))}
+            </div>
           </div>
         </div>
         <button onClick={createProduct} className="px-4 py-2 rounded bg-blue-600 text-white" disabled={uploading}>{uploading ? "Uploading…" : "Add Product"}</button>
@@ -119,9 +124,9 @@ export default function Page() {
           <BeautifulLoader />
         ) : (
           <CommonTable<ProductRow>
-            columns={[
+            columns={[ 
               { key: "image", label: "Image", render: (r) => (
-                <img src={r.image} alt={r.name} className="w-12 h-12 object-cover rounded border" />
+                <Image src={r.image} alt={r.name} width={48} height={48} className="object-cover rounded border" unoptimized />
               ) },
               { key: "name", label: "Name", sortable: true },
               { key: "category", label: "Category" },

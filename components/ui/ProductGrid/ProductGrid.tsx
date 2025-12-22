@@ -31,7 +31,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(true)
-  const [deliverToState, setDeliverToState] = useState<string>("")
+  const [deliverToState, setDeliverToState] = useState<string>(() => {
+    try {
+      return typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
+    } catch {
+      return ''
+    }
+  })
   const observerTarget = useRef<HTMLDivElement | null>(null)
   const productsPerPage = 24
   const [geoAsked, setGeoAsked] = useState<boolean>(false)
@@ -47,7 +53,20 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   }
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
 
-  const fetchPage = async (pageNum: number) => {
+  type ApiProduct = {
+    _id?: string | number
+    id?: string | number
+    name: string
+    image?: string
+    images?: string[]
+    category: string
+    price: number
+    originalPrice?: number
+    discount?: number
+    rating?: number
+  }
+
+  const fetchPage = useCallback(async (pageNum: number) => {
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
       const adminParam = !deliverToState ? `&adminOnly=true` : ''
@@ -56,7 +75,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
       // Map API product to grid product shape
-      return list.map((p: any) => ({
+      return list.map((p: ApiProduct) => ({
         id: p._id || p.id,
         name: p.name,
         image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
@@ -70,7 +89,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     } catch {
       return []
     }
-  }
+  }, [deliverToState])
 
   useEffect(() => {
     const loadInitial = async () => {
@@ -83,15 +102,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       setLoading(false)
     }
     loadInitial()
-  }, [deliverToState])
+  }, [fetchPage])
 
-  // Initialize deliverToState from localStorage (if present)
-  useEffect(() => {
-    try {
-      const saved = typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
-      if (saved) setDeliverToState(saved)
-    } catch {}
-  }, [])
+  // Initial deliverToState is loaded lazily from localStorage via useState initializer
 
   useEffect(() => {
     const save = (s: string | undefined, country?: string | undefined) => {
@@ -151,7 +164,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       setHasMore(next.length === productsPerPage)
       setLoading(false)
     })()
-  }, [page, loading, hasMore, deliverToState])
+  }, [page, loading, hasMore, fetchPage])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -243,12 +256,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                       className="object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
-                    <img
+                    <Image
                       src={product.image || '/logo/firgomart.png'}
                       alt={product.name}
-                      className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
+                      fill
+                      sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      unoptimized
                     />
                   )}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">

@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server"
 import { findSellerAcrossDBs } from "@/lib/models/Seller"
 
+type SellerDoc = {
+  status?: string
+  loginOtp?: string
+  loginOtpExpires?: Date
+  save: () => Promise<unknown>
+}
+
 export async function POST(request: Request) {
   try {
     const { phone } = await request.json()
@@ -11,9 +18,13 @@ export async function POST(request: Request) {
     if (!result) {
       return NextResponse.json({ error: "Seller not found" }, { status: 404 })
     }
+    const s = result.seller as SellerDoc
+    const approved = String(s.status || "").toLowerCase() === "approved"
+    if (!approved) {
+      return NextResponse.json({ error: "Seller not approved" }, { status: 403 })
+    }
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
     const expires = new Date(Date.now() + 10 * 60 * 1000)
-    const s = result.seller as any
     s.loginOtp = otp
     s.loginOtpExpires = expires
     await s.save()

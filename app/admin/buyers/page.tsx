@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 import locationData from "@/data/country.json"
 import dynamic from "next/dynamic"
 import Loading from "@/app/loading"
+import { Users } from "lucide-react"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"));
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"));
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"));
@@ -36,7 +37,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -58,10 +59,15 @@ export default function Page() {
   const [stateOptions, setStateOptions] = useState<DropdownItem[]>([])
   const [selectedState, setSelectedState] = useState<DropdownItem | null>(null)
 
+  const onCountryChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setSelectedCountry(v) }
+  const onStateChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setSelectedState(v) }
+
   useEffect(() => {
     if (selectedCountry?.id === "IN") {
-      const india = locationData.countries.find((c: any) => c.country === "India")
-      const states = (india?.states || []).map((s: any) => ({ id: s.state, label: s.state }))
+      type IndiaState = { state: string }
+      type Country = { country: string; states?: IndiaState[] }
+      const india = (locationData.countries as Country[]).find((c) => c.country === "India")
+      const states = (india?.states || []).map((s) => ({ id: s.state, label: s.state }))
       setStateOptions(states)
     } else {
       setStateOptions([])
@@ -113,16 +119,25 @@ export default function Page() {
     ) : (
     <div className="p-4 space-y-6">
       <BackButton className="mb-2" />
-      <h1 className="text-2xl font-semibold">Buyer Management</h1>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Users className="w-8 h-8 text-white" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">Buyer Management</h1>
+            <p className="text-indigo-100 text-sm">Filter and manage buyers</p>
+          </div>
+        </div>
+        <span className="text-2xl font-semibold text-white">{total}</span>
+      </div>
 
-      <div className="bg-white border rounded-xl p-4 space-y-3">
+      <div className="bg-white rounded-xl shadow-md p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
           <div>
             <CommonDropdown
               label="Country"
               options={countryOptions}
-              selected={selectedCountry as any}
-              onChange={setSelectedCountry as any}
+              selected={selectedCountry}
+              onChange={onCountryChange}
               placeholder="Select country"
             />
           </div>
@@ -130,8 +145,8 @@ export default function Page() {
             <CommonDropdown
               label="State"
               options={stateOptions}
-              selected={selectedState as any}
-              onChange={setSelectedState as any}
+              selected={selectedState}
+              onChange={onStateChange}
               placeholder={selectedCountry?.id === "IN" ? "Select state" : "Not applicable"}
             />
           </div>
@@ -145,22 +160,24 @@ export default function Page() {
         {loading ? (
           <div className="px-4 py-6 text-gray-700">Loading…</div>
         ) : (
-          <CommonTable<Buyer>
-            columns={[
-              { key: "name", label: "Name", sortable: true },
-              { key: "email", label: "Email" },
-              { key: "mobile", label: "Mobile" },
-              { key: "city", label: "City" },
-              { key: "state", label: "State", sortable: true },
-              { key: "country", label: "Country", sortable: true },
-              { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
-            ]}
-            data={buyers}
-            sortKey={sortKey || undefined}
-            sortOrder={sortOrder}
-            onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-            rowKey={(r) => r.id}
-          />
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <CommonTable<Buyer>
+              columns={[
+                { key: "name", label: "Name", sortable: true },
+                { key: "email", label: "Email" },
+                { key: "mobile", label: "Mobile" },
+                { key: "city", label: "City" },
+                { key: "state", label: "State", sortable: true },
+                { key: "country", label: "Country", sortable: true },
+                { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+              ]}
+              data={buyers}
+              sortKey={sortKey || undefined}
+              sortOrder={sortOrder}
+              onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
+              rowKey={(r) => r.id}
+            />
+          </div>
         )}
 
         <div className="flex items-center justify-between">

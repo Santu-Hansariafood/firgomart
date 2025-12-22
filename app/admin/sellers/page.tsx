@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import locationData from "@/data/country.json"
 import dynamic from "next/dynamic"
+import { Store } from "lucide-react"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -35,7 +36,7 @@ export default function Page() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -57,6 +58,13 @@ export default function Page() {
   const [stateOptions, setStateOptions] = useState<DropdownItem[]>([])
   const [selectedState, setSelectedState] = useState<DropdownItem | null>(null)
 
+  const onCountryChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedCountry(v)
+  }
+  const onStateChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedState(v)
+  }
+
   const statusOptions: DropdownItem[] = [
     { id: "", label: "All Status" },
     { id: "pending", label: "Pending" },
@@ -64,11 +72,16 @@ export default function Page() {
     { id: "rejected", label: "Rejected" },
   ]
   const [selectedStatus, setSelectedStatus] = useState<DropdownItem>(statusOptions[0])
+  const onStatusFilterChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedStatus(v)
+  }
 
   useEffect(() => {
     if (selectedCountry?.id === "IN") {
-      const india = locationData.countries.find((c: any) => c.country === "India")
-      const states = (india?.states || []).map((s: any) => ({ id: s.state, label: s.state }))
+      type IndiaState = { state: string }
+      type Country = { country: string; states?: IndiaState[] }
+      const india = (locationData.countries as Country[]).find((c) => c.country === "India")
+      const states = (india?.states || []).map((s) => ({ id: s.state, label: s.state }))
       setStateOptions(states)
     } else {
       setStateOptions([])
@@ -79,6 +92,19 @@ export default function Page() {
   const [search, setSearch] = useState("")
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+
+  const updateStatus = async (id: string, status: string) => {
+    try {
+      const res = await fetch("/api/admin/sellers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status }),
+      })
+      if (res.ok) {
+        setSellers(prev => prev.map(s => s.id === id ? { ...s, status } as Seller : s))
+      }
+    } catch {}
+  }
 
   const loadSellers = async () => {
     setLoading(true)
@@ -121,16 +147,25 @@ export default function Page() {
     ) : (
     <div className="p-4 space-y-6">
       <BackButton className="mb-2" />
-      <h1 className="text-2xl font-semibold">Seller Management</h1>
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Store className="w-8 h-8 text-white" />
+          <div>
+            <h1 className="text-2xl font-bold text-white">Seller Management</h1>
+            <p className="text-indigo-100 text-sm">Approve and manage sellers</p>
+          </div>
+        </div>
+        <span className="text-2xl font-semibold text-white">{total}</span>
+      </div>
 
-      <div className="bg-white border rounded-xl p-4 space-y-3">
+      <div className="bg-white rounded-xl shadow-md p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
           <div>
             <CommonDropdown
               label="Country"
               options={countryOptions}
-              selected={selectedCountry as any}
-              onChange={setSelectedCountry as any}
+              selected={selectedCountry}
+              onChange={onCountryChange}
               placeholder="Select country"
             />
           </div>
@@ -138,8 +173,8 @@ export default function Page() {
             <CommonDropdown
               label="State"
               options={stateOptions}
-              selected={selectedState as any}
-              onChange={setSelectedState as any}
+              selected={selectedState}
+              onChange={onStateChange}
               placeholder={selectedCountry?.id === "IN" ? "Select state" : "Not applicable"}
             />
           </div>
@@ -147,8 +182,8 @@ export default function Page() {
             <CommonDropdown
               label="Status"
               options={statusOptions}
-              selected={selectedStatus as any}
-              onChange={setSelectedStatus as any}
+              selected={selectedStatus}
+              onChange={onStatusFilterChange}
               placeholder="Select status"
             />
           </div>
@@ -162,24 +197,36 @@ export default function Page() {
         {loading ? (
           <div className="px-4 py-6 text-gray-700">Loading…</div>
         ) : (
-          <CommonTable<Seller>
-            columns={[
-              { key: "businessName", label: "Business", sortable: true },
-              { key: "ownerName", label: "Owner" },
-              { key: "email", label: "Email" },
-              { key: "phone", label: "Phone" },
-              { key: "city", label: "City" },
-              { key: "state", label: "State", sortable: true },
-              { key: "country", label: "Country", sortable: true },
-              { key: "status", label: "Status", sortable: true },
-              { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
-            ]}
-            data={sellers}
-            sortKey={sortKey || undefined}
-            sortOrder={sortOrder}
-            onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-            rowKey={(r) => r.id}
-          />
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <CommonTable<Seller>
+              columns={[
+                { key: "businessName", label: "Business", sortable: true },
+                { key: "ownerName", label: "Owner" },
+                { key: "email", label: "Email" },
+                { key: "phone", label: "Phone" },
+                { key: "city", label: "City" },
+                { key: "state", label: "State", sortable: true },
+                { key: "country", label: "Country", sortable: true },
+                { key: "status", label: "Status", sortable: true, render: (r) => (
+                  <select
+                    defaultValue={r.status}
+                    className="border rounded-lg px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    onChange={(e) => updateStatus(r.id, e.currentTarget.value)}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                ) },
+                { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+              ]}
+              data={sellers}
+              sortKey={sortKey || undefined}
+              sortOrder={sortOrder}
+              onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
+              rowKey={(r) => r.id}
+            />
+          </div>
         )}
 
         <div className="flex items-center justify-between">

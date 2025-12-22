@@ -10,6 +10,19 @@ function isAdminEmail(email?: string | null) {
   return !!(email && allow.includes(email.toLowerCase()))
 }
 
+type ProductLean = {
+  _id?: unknown
+  name?: string
+  category?: string
+  stock?: number
+  price?: number
+  image?: string
+  sellerState?: string
+  sellerHasGST?: boolean
+  createdAt?: string
+  createdByEmail?: string
+}
+
 export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions)
@@ -50,10 +63,12 @@ export async function GET(request: Request) {
     const search = (url.searchParams.get("search") || "").trim()
     const sortBy = (url.searchParams.get("sortBy") || "createdAt").trim()
     const sortOrder = (url.searchParams.get("sortOrder") || "desc").trim().toLowerCase() === "asc" ? 1 : -1
+    const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const q: any = {}
+    const q: Record<string, unknown> = {}
+    if (createdByEmail) q.createdByEmail = createdByEmail
     if (minStock !== null && minStock !== undefined) q.stock = { ...(q.stock || {}), $gte: Number(minStock) }
     if (maxStock !== null && maxStock !== undefined) q.stock = { ...(q.stock || {}), $lte: Number(maxStock) }
     if (search) {
@@ -65,22 +80,26 @@ export async function GET(request: Request) {
       ]
     }
 
-    const items = await (Product as any).find(q).sort(sortOrder > 0 ? sortBy : `-${sortBy}`).lean()
-    const total = await (Product as any).countDocuments(q)
+    const items = await (Product as unknown as {
+      find: (q: unknown) => { sort: (arg: string) => { lean: () => Promise<ProductLean[]> } }
+    }).find(q).sort(sortOrder > 0 ? sortBy : `-${sortBy}`).lean()
+    const total = await (Product as unknown as { countDocuments: (q: unknown) => Promise<number> }).countDocuments(q)
     const start = (page - 1) * limit
     const pageItems = items.slice(start, start + limit)
-    const safe = pageItems.map((p: any) => ({
-      id: p._id?.toString?.() || String(p._id),
-      name: p.name,
+    const safe = pageItems.map((p: ProductLean) => ({
+      id: (p._id as { toString?: () => string } | undefined)?.toString?.() || String(p._id),
+      name: p.name || "",
       category: p.category,
       stock: p.stock ?? 0,
+      price: p.price ?? 0,
+      image: p.image,
       sellerState: p.sellerState,
       sellerHasGST: p.sellerHasGST,
       createdAt: p.createdAt,
     }))
     return NextResponse.json({ inventory: safe, total })
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  } catch (err: unknown) {
+    const reason = (err as { message?: string })?.message || "unknown"
+    return NextResponse.json({ error: "Server error", reason }, { status: 500 })
   }
 }
-

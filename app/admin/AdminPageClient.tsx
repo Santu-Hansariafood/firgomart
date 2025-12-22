@@ -9,6 +9,7 @@ import Image from "next/image"
 import dynamic from "next/dynamic"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
+import { BarChart3, Users, Store, Boxes, Receipt, Package, Truck, CreditCard, Megaphone, LifeBuoy, FileText, Shield, PieChart, Globe } from "lucide-react"
 
 type Seller = {
   _id: string
@@ -38,13 +39,14 @@ type Product = {
   price: number
 }
 
+type EditableProduct = Product & { description?: string; details?: string }
 export default function AdminPageClient() {
   const { data: session } = useSession()
   const { user: authUser } = useAuth()
   const router = useRouter()
   const [sellers, setSellers] = useState<Seller[]>([])
   const [approvedSellers, setApprovedSellers] = useState<Seller[]>([])
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<EditableProduct[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<{ id: number; label: string } | null>(null)
   const [selectedSeller, setSelectedSeller] = useState<Seller | null>(null)
@@ -92,7 +94,7 @@ export default function AdminPageClient() {
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || (authUser as any)?.role === "admin"
+    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
@@ -213,10 +215,10 @@ export default function AdminPageClient() {
     } catch {}
   }
 
-  const startEditProduct = (p: any) => {
+  const startEditProduct = (p: EditableProduct) => {
     setEditingProductId(p._id)
     setEditDescription(typeof p.description === 'string' ? p.description : '')
-    setEditDetails(typeof (p as any).details === 'string' ? (p as any).details : '')
+    setEditDetails(typeof p.details === 'string' ? p.details : '')
   }
 
   const cancelEditProduct = () => {
@@ -239,68 +241,82 @@ export default function AdminPageClient() {
       })
       const data = await res.json()
       if (res.ok) {
-        setProducts(prev => prev.map(p => p._id === editingProductId ? { ...p, description: editDescription, details: editDetails } as any : p))
+        setProducts(prev => prev.map(p => p._id === editingProductId ? { ...p, description: editDescription, details: editDetails } : p))
         cancelEditProduct()
       }
     } catch {}
   }
 
   const modules = [
-    { title: 'Dashboard', items: ['Sales, orders, revenue', 'Live order status', 'Active buyers & sellers', 'Top products & categories'] },
-    { title: 'Buyer Management', items: ['Buyer list', 'Block/Unblock', 'Order history'] },
-    { title: 'Seller Management', items: ['Seller KYC verification', 'Approve/Reject seller', 'Commission setup', 'Seller payouts & performance'] },
-    { title: 'Product Management', items: ['Add/Edit/Delete products', 'Product approval', 'Category management', 'Price, stock, discount control'] },
-    { title: 'Inventory Management', items: ['Stock level', 'Low-stock alerts', 'Seller stock sync'] },
-    { title: 'Order Management', items: ['View all orders', 'Status update (Packed/Shipped/Delivered/Return)', 'Cancel/Refund/Replacement', 'Shipping label & invoice'] },
-    { title: 'Logistics Management', items: ['Courier integration', 'Assign courier', 'Shipment tracking', 'NDR/RTO handling'] },
-    { title: 'Payments & Finance', items: ['Buyer payment logs', 'Failed transactions', 'Seller settlement', 'Commission reports', 'GST/TCS reports'] },
-    { title: 'Marketing & Promotions', items: ['Coupons', 'Offers', 'Banners', 'Push notifications'] },
-    { title: 'Customer Support', items: ['Tickets', 'Disputes', 'Refund approvals', 'Communication logs'] },
-    { title: 'CMS (Content Management)', items: ['Homepage banners', 'Static pages (About, Terms, Privacy, Refund Policy)', 'Category display control'] },
-    { title: 'Security & Roles', items: ['Admin roles & permissions', 'Activity logs', 'Fraud detection'] },
-    { title: 'Reports & Analytics', items: ['Sales reports', 'Seller reports', 'Product performance', 'Region-wise analytics'] },
-    { title: 'Global Selling (Optional)', items: ['Country-wise pricing', 'International courier setup', 'Export rules', 'Currency conversion'] },
+    { title: 'Dashboard', icon: BarChart3, route: '/admin' },
+    { title: 'Buyer Management', icon: Users, route: '/admin/buyers' },
+    { title: 'Seller Management', icon: Store, route: '/admin/sellers' },
+    { title: 'Product Management', icon: Boxes, route: '/admin/products' },
+    { title: 'Inventory Management', icon: Package, route: '/admin/inventory' },
+    { title: 'Order Management', icon: Receipt, route: '/admin/orders' },
+    { title: 'Logistics Management', icon: Truck, route: '/admin/logistics' },
+    { title: 'Payments & Finance', icon: CreditCard, route: '/admin/finance' },
+    { title: 'Marketing & Promotions', icon: Megaphone, route: '/admin/marketing' },
+    { title: 'Customer Support', icon: LifeBuoy, route: '/admin/support' },
+    { title: 'CMS (Content Management)', icon: FileText, route: '/admin/cms' },
+    { title: 'Security & Roles', icon: Shield, route: '/admin/security' },
+    { title: 'Reports & Analytics', icon: PieChart, route: '/admin/reports' },
+    { title: 'Global Selling (Optional)', icon: Globe, route: '/admin/global-selling' },
   ]
 
-  const moduleRoutes: Record<string, string> = {
-    'Dashboard': '/admin',
-    'Buyer Management': '/admin/buyers',
-    'Seller Management': '/admin/sellers',
-    'Product Management': '/admin/products',
-    'Inventory Management': '/admin/inventory',
-    'Order Management': '/admin/orders',
-    'Logistics Management': '/admin/logistics',
-    'Payments & Finance': '/admin/finance',
-    'Marketing & Promotions': '/admin/marketing',
-    'Customer Support': '/admin/support',
-    'CMS (Content Management)': '/admin/cms',
-    'Security & Roles': '/admin/security',
-    'Reports & Analytics': '/admin/reports',
-    'Global Selling (Optional)': '/admin/global-selling',
+  type DropdownItem = { id: number; label: string }
+  const [selectedCategoryItem, setSelectedCategoryItem] = useState<DropdownItem | null>(null)
+  const onCategoryChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedCategoryItem(v)
   }
 
   // Render
   if (!allowed) return <AdminLogin />
 
   return (
-    <div className="p-4 space-y-6">
-      <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+    <div className="p-6 space-y-8">
+      <div className="rounded-2xl bg-linear-to-r from-blue-700 to-blue-500 text-white p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
+            <p className="text-blue-100 mt-1">Control center for operations and analytics</p>
+          </div>
+          <BarChart3 className="w-8 h-8 opacity-80" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-blue-100">Pending sellers</p>
+            <p className="text-2xl font-semibold">{sellers.length}</p>
+          </div>
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-blue-100">Approved sellers</p>
+            <p className="text-2xl font-semibold">{approvedSellers.length}</p>
+          </div>
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-blue-100">Admin products</p>
+            <p className="text-2xl font-semibold">{products.length}</p>
+          </div>
+        </div>
+      </div>
 
       <section id="admin-modules">
-        <h2 className="text-xl font-medium">Admin Modules Overview</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
-          {modules.map((m, i) => (
-            <div
-              key={i}
-              className="border rounded p-4 bg-white cursor-pointer hover:shadow"
-              onClick={() => {
-                const route = moduleRoutes[m.title]
-                if (route) router.push(route)
-              }}
-            >
-              <div className="font-semibold mb-2">{m.title}</div>
-            </div>
-          ))}
+        <h2 className="text-xl font-medium">Modules</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-3">
+          {modules.map((m, i) => {
+            const Icon = m.icon
+            return (
+              <div
+                key={i}
+                className="border rounded-2xl p-4 bg-white cursor-pointer hover:shadow transition hover:-translate-y-0.5"
+                onClick={() => router.push(m.route)}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-5 h-5 text-blue-600" />
+                  <div className="font-semibold">{m.title}</div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
 
@@ -350,22 +366,22 @@ export default function AdminPageClient() {
         <div className="flex items-center gap-3 mb-3">
           <CommonDropdown
             options={categoryList.map((c, i) => ({ id: i, label: c.name }))}
-            selected={selectedCategory as any}
-            onChange={setSelectedCategory as any}
+            selected={selectedCategoryItem}
+            onChange={onCategoryChange}
             placeholder="Filter by category"
           />
-          <button className="px-3 py-1 bg-gray-800 text-white rounded" onClick={() => setSelectedCategory(null)}>Clear</button>
+          <button className="px-3 py-1 bg-gray-800 text-white rounded" onClick={() => setSelectedCategoryItem(null)}>Clear</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {products
-            .filter(p => !selectedCategory || p.category === selectedCategory.label)
-            .map(p => (
-              <div key={p._id} className="border rounded p-3 space-y-2">
+            .filter(p => !selectedCategoryItem || p.category === selectedCategoryItem.label)
+            .map((p: EditableProduct) => (
+              <div key={p._id} className="border rounded-2xl p-3 space-y-2 bg-white hover:shadow transition">
                 <Image src={isCloudinaryUrl(p.image) ? sanitizeImageUrl(p.image) : "/file.svg"} alt={p.name} width={160} height={120} className="rounded" />
                 <div className="font-medium">{p.name}</div>
                 <div className="text-sm">₹{p.price}</div>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => startEditProduct(p as any)}>Edit</button>
+                  <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => startEditProduct(p)}>Edit</button>
                 </div>
               </div>
             ))}
