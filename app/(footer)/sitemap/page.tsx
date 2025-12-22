@@ -1,9 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React from "react";
+import React, { Suspense } from "react";
 import policies from "@/data/policies.json";
-
+import Loading from "@/app/loading";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
@@ -12,6 +12,7 @@ const SitemapPage = () => {
   const header = sections.find((s: any) => s.effectiveDate) || null;
 
   return (
+    <Suspense fallback={<Loading />}>
     <div className="min-h-screen bg-gray-900 px-4 sm:px-8 py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         <Title level={1} className="text-center mb-6">
@@ -32,6 +33,7 @@ const SitemapPage = () => {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

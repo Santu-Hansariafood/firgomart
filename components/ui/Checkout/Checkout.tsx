@@ -52,6 +52,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const router = useRouter()
   const [step, setStep] = useState<number>(1)
   const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
+  const [lastOrder, setLastOrder] = useState<{ id?: string; orderNumber?: string } | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'qr'>('card')
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
@@ -147,6 +148,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         return
       }
       setOrderPlaced(true)
+      setLastOrder({ id: String(data?.order?.id || ""), orderNumber: String(data?.order?.orderNumber || "") })
       if (onRemoveItem) {
         cartItems.forEach(ci => onRemoveItem(ci.id))
       }
@@ -167,11 +169,19 @@ const Checkout: React.FC<CheckoutProps> = ({
             Order Placed Successfully!
           </h2>
           <p className="text-gray-600 mb-2">
-            Order ID: #ORD{Math.floor(Math.random() * 1000000)}
+            Order ID: {lastOrder?.orderNumber || lastOrder?.id || ""}
           </p>
           <p className="text-gray-600 mb-6">
             Your order will be delivered within 3-5 business days.
           </p>
+          {lastOrder?.id && (
+            <a
+              href={`/api/orders/${encodeURIComponent(lastOrder.id)}/receipt?download=true`}
+              className="inline-block mb-4 px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+            >
+              Download Receipt
+            </a>
+          )}
           <button
             onClick={() => router.push('/')}
             className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"

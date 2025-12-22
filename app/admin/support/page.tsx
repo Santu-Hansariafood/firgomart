@@ -4,12 +4,13 @@ import { useEffect, useMemo, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
-import AdminLogin from "@/components/ui/AdminLogin/AdminLogin"
-import CommonTable from "@/components/common/Table/CommonTable"
-import CommonPagination from "@/components/common/Pagination/CommonPagination"
-import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
-import SearchBox from "@/components/common/SearchBox/SearchBox"
-import BackButton from "@/components/common/BackButton/BackButton"
+import dynamic from "next/dynamic"
+const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
+const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
+const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
+const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
+const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
+const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
 
 type TicketRow = {
   id: string

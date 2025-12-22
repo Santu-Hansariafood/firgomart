@@ -1,12 +1,14 @@
 "use client";
 
+import Loading from "@/app/loading";
 import dynamic from "next/dynamic";
-import React from "react";
+import { Suspense } from "react";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const PrivacyPolicyPage = () => {
   return (
+    <Suspense fallback={<Loading />}>
     <div className="min-h-screen bg-gray-900 px-4 sm:px-8 py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         <Title level={1} className="text-center mb-6">
@@ -132,6 +134,7 @@ const PrivacyPolicyPage = () => {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

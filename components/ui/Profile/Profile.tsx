@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 interface UserData {
   name?: string;
@@ -41,6 +42,8 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<UserData>(user || {});
   const [errors, setErrors] = useState<FormErrors>({});
+  const [orders, setOrders] = useState<Array<{ id: string; orderNumber?: string; amount?: number; status?: string; createdAt?: string }>>([])
+  const [loadingOrders, setLoadingOrders] = useState(false)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -81,6 +84,21 @@ const Profile = () => {
     logout();
     router.push("/");
   };
+
+  const loadOrders = async () => {
+    const email = user?.email || ""
+    if (!email) { setOrders([]); return }
+    setLoadingOrders(true)
+    try {
+      const res = await fetch(`/api/buyer/orders?email=${encodeURIComponent(email)}&limit=50`)
+      const data = await res.json()
+      if (res.ok) setOrders(Array.isArray(data.orders) ? data.orders : [])
+      else setOrders([])
+    } catch { setOrders([]) }
+    setLoadingOrders(false)
+  }
+
+  useEffect(() => { loadOrders() }, [user?.email])
 
   if (!user) return null;
 
@@ -268,6 +286,36 @@ const Profile = () => {
                 Logout
               </button>
             </div>
+          </div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl shadow-lg overflow-hidden mt-6"
+        >
+          <div className="p-8">
+            <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">Previous Orders</h2>
+            {loadingOrders ? (
+              <div className="text-gray-600">Loading...</div>
+            ) : orders.length === 0 ? (
+              <div className="text-gray-600">No orders yet</div>
+            ) : (
+              <div className="space-y-3">
+                {orders.map(o => (
+                  <div key={o.id} className="flex items-center justify-between border rounded-lg p-4">
+                    <div>
+                      <div className="font-medium">Order {o.orderNumber || o.id}</div>
+                      <div className="text-sm text-gray-600">₹{Number(o.amount || 0).toFixed(2)} • {o.status}</div>
+                      <div className="text-xs text-gray-500">{o.createdAt ? new Date(o.createdAt).toLocaleString() : ""}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} className="px-3 py-1 border rounded">View</Link>
+                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt?download=true`} className="px-3 py-1 border rounded">Download</Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

@@ -14,7 +14,7 @@ export default function NotFound() {
         <div className="mt-6 flex items-center justify-center gap-3">
           <Link href="/" className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2">
             <HomeIcon className="w-5 h-5" />
-            <span>Go to Home</span>
+            <span>Back to Home</span>
           </Link>
         </div>
         <div className="mt-8 flex items-center justify-center gap-3 text-sm text-gray-500">

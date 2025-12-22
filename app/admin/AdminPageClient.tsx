@@ -4,10 +4,11 @@ import { useSession } from "next-auth/react"
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
-import AdminLogin from "@/components/ui/AdminLogin/AdminLogin"
-import Image from "next/image"
-import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
 import { categories as categoryList } from "@/data/mockData"
+import Image from "next/image"
+import dynamic from "next/dynamic"
+const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
+const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
 
 type Seller = {
   _id: string

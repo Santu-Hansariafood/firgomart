@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
+
 import Navbar from "@/components/common/Navbar/Navbar";
 import Footer from "@/components/common/Footer/Footer";
 import CategorySubHeader from "@/components/common/CategorySubHeader/CategorySubHeader";
@@ -8,96 +9,126 @@ import Providers from "@/app/providers";
 import Script from "next/script";
 
 const inter = Inter({
-  variable: "--font-inter",
   subsets: ["latin"],
+  variable: "--font-inter",
   display: "swap",
 });
 
 const poppins = Poppins({
-  variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title:
-    "FirgoMart – Shop Fashion, Beauty & Essentials Globally",
+  metadataBase: new URL("https://firgomart.com"),
+
+  title: {
+    default: "FirgoMart – Global Online Shopping from India",
+    template: "%s | FirgoMart",
+  },
+
   description:
-    "Shop women’s & men’s fashion, footwear, jewellery, beauty products, home essentials, and daily-use items on FirgoMart. Fast and reliable delivery from India to Saudi Arabia, Dubai, Qatar, USA & worldwide. Trusted global e-commerce platform powered by FirgoMart 24Logistics Pvt. Ltd.",
+    "FirgoMart is a global e-commerce platform offering fashion, beauty, footwear, jewellery, home essentials and daily-use products. Fast international delivery from India to Saudi Arabia, Dubai, Qatar, USA & more.",
+
   keywords: [
-    "FirgoMart online shopping",
-    "global fashion store",
-    "women’s wear",
-    "men’s wear",
-    "footwear",
-    "jewellery", 
+    "FirgoMart",
+    "online shopping India",
+    "global e commerce",
+    "women fashion",
+    "men fashion",
     "beauty products",
+    "jewellery online",
     "home essentials",
     "India to Saudi delivery",
     "India to Dubai shopping",
     "India to Qatar",
     "India to USA",
-    "international e-commerce"
   ],
-  authors: [{ name: "Developed by Santu De", url: "https://www.linkedin.com/in/santu-de-812571158/" }],
+
+  authors: [
+    {
+      name: "Santu De",
+      url: "https://www.linkedin.com/in/santu-de-812571158/",
+    },
+  ],
+
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  alternates: {
+    canonical: "https://firgomart.com",
+  },
+
   openGraph: {
-    title: "Firgomart - Shop Smarter, Live Better",
+    title: "FirgoMart – Shop Smarter, Live Better",
     description:
-      "Discover exclusive deals and quality products at Firgomart – your trusted online shopping destination for everything from groceries to gadgets.",
+      "Discover fashion, beauty, electronics & essentials with global delivery from India. FirgoMart – your trusted international shopping platform.",
     url: "https://firgomart.com",
-    siteName: "Firgomart",
+    siteName: "FirgoMart",
     images: [
       {
         url: "https://firgomart.com/assets/seo/firgomart-og-image.png",
         width: 1200,
         height: 630,
-        alt: "Firgomart - Online Shopping Platform",
+        alt: "FirgoMart Online Shopping",
       },
     ],
     locale: "en_IN",
     type: "website",
   },
+
   twitter: {
     card: "summary_large_image",
-    title: "Firgomart - Shop Smarter, Live Better",
+    title: "FirgoMart – Global Online Shopping",
     description:
-      "Shop online for the latest products at unbeatable prices. Firgomart brings you everything from groceries to gadgets.",
+      "Shop fashion, beauty & essentials with international delivery. FirgoMart brings India to the world.",
     images: ["https://firgomart.com/assets/seo/firgomart-og-image.png"],
     creator: "@firgomart",
   },
-  metadataBase: new URL("https://firgomart.com"),
+
   verification: {
     google: "YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE",
   },
+
   category: "shopping",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
-        <meta
-          name="google-site-verification"
-          content="YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE"
-        />
         <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://firgomart.com" />
+        <meta name="theme-color" content="#ffffff" />
         <Script
-          id="structured-data"
+          id="firgomart-schema"
           type="application/ld+json"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Store",
-              name: "Firgomart",
+              name: "FirgoMart",
               url: "https://firgomart.com",
               logo: "https://firgomart.com/assets/seo/firgomart-logo.png",
-              image: "https://firgomart.com/assets/seo/firgomart-og-image.png",
+              image:
+                "https://firgomart.com/assets/seo/firgomart-og-image.png",
               description:
-                "Firgomart is India's leading online shopping destination offering groceries, electronics, fashion, and more at unbeatable prices.",
+                "FirgoMart is a global online shopping platform delivering fashion, beauty, and essentials worldwide from India.",
               address: {
                 "@type": "PostalAddress",
                 addressLocality: "Kolkata",
@@ -116,12 +147,12 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${inter.variable} ${poppins.variable} bg-white text-gray-900 antialiased`}
+        className={`${inter.variable} ${poppins.variable} antialiased`}
       >
         <Providers>
           <Navbar />
           <CategorySubHeader />
-          <main>{children}</main>
+          <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>
       </body>

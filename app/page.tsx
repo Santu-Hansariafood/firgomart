@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import AdCarousel from "@/components/common/AdCarousel/AdCarousel";
-import ProductGrid from "@/components/ui/ProductGrid/ProductGrid";
-import ProductModal from "@/components/ui/ProductModal/ProductModal";
-import Cart from "@/components/ui/Cart/Cart";
+import { useState, Suspense } from "react";
 import { useCart } from "@/context/CartContext/CartContext";
+import dynamic from "next/dynamic";
+import Loading from "./loading";
+const AdCarousel = dynamic(() => import("@/components/common/AdCarousel/AdCarousel"));
+const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
+const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
+const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 
 export default function Page() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
@@ -18,7 +20,7 @@ export default function Page() {
   };
 
   return (
-    <>
+    <Suspense fallback={<Loading/>}>
       <AdCarousel />
       <ProductGrid
         onProductClick={setSelectedProduct}
@@ -41,6 +43,6 @@ export default function Page() {
           onRemoveItem={removeFromCart}
         />
       )}
-    </>
+    </Suspense>
   );
 }
