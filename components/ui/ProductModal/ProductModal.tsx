@@ -30,6 +30,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const router = useRouter()
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   const images: string[] = (product.images && product.images.length > 0)
     ? product.images
@@ -70,7 +71,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           <div className="p-6">
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-100 mb-4">
+                <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-100 mb-4" onClick={() => setLightboxOpen(true)}>
                   <FallbackImage
                     src={images[selectedImage]}
                     alt={product.name}
@@ -201,6 +202,37 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
               </div>
             </div>
           </div>
+          {lightboxOpen && (
+            <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxOpen(false)}>
+              <div className="relative w-full h-full md:w-[90vw] md:h-[90vh]">
+                <FallbackImage
+                  src={images[selectedImage]}
+                  alt={product.name}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                />
+                <button
+                  onClick={() => setLightboxOpen(false)}
+                  className="absolute top-4 right-4 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={prevImage}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={nextImage}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>
