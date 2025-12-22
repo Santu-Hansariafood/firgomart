@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
-import Image from 'next/image'
+import FallbackImage from '@/components/common/Image/FallbackImage'
 
 // Types for cart items (aligned with CartContext)
 interface CartItem {
@@ -547,7 +547,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex space-x-3">
-                    <Image
+                    <FallbackImage
                       src={item.image}
                       alt={item.name}
                       width={64}

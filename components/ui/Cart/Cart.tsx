@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Plus, Minus, ShoppingBag, Trash2 } from 'lucide-react'
-import Image from 'next/image'
+import FallbackImage from '@/components/common/Image/FallbackImage'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useAuth } from '@/context/AuthContext'
@@ -95,7 +95,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                     className="flex space-x-3 bg-gray-50 rounded-lg p-3"
                   >
                     <div className="relative w-20 h-20 shrink-0">
-                      <Image
+                      <FallbackImage
                         src={item.image}
                         alt={item.name}
                         fill

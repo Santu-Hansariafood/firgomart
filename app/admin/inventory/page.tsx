@@ -5,7 +5,7 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
-import Image from "next/image"
+import FallbackImage from "@/components/common/Image/FallbackImage"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -134,13 +134,12 @@ export default function Page() {
             columns={[
               { key: "image", label: "Image", render: (r) => (
                 <div className="relative w-12 h-10">
-                  <Image
+                  <FallbackImage
                     src={typeof r.image === "string" ? r.image : ""}
                     alt={r.name}
                     width={48}
                     height={40}
                     className="object-cover rounded border"
-                    unoptimized
                   />
                 </div>
               ) },

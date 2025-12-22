@@ -9,7 +9,7 @@ import CommonPagination from "@/components/common/Pagination/CommonPagination"
 import SearchBox from "@/components/common/SearchBox/SearchBox"
 import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
 import { categories as categoryList } from "@/data/mockData"
-import Image from "next/image"
+import FallbackImage from "@/components/common/Image/FallbackImage"
 
 type DropdownItem = { id: string | number; label: string }
 
@@ -131,7 +131,7 @@ export default function Page() {
             <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} />
             <div className="mt-2 flex flex-wrap gap-2">
               {form.images.map((src, i) => (
-                <Image key={i} src={src} alt="preview" width={64} height={64} className="object-cover rounded border" unoptimized />
+                <FallbackImage key={i} src={src} alt="preview" width={64} height={64} className="object-cover rounded border" unoptimized />
               ))}
             </div>
           </div>
@@ -150,7 +150,7 @@ export default function Page() {
           <CommonTable
             columns={[ 
               { key: "image", label: "Image", render: (r) => (
-                <Image src={r.image} alt={r.name} width={48} height={48} className="object-cover rounded border" unoptimized />
+                <FallbackImage src={r.image} alt={r.name} width={48} height={48} className="object-cover rounded border" />
               ) },
               { key: "name", label: "Name", sortable: true },
               { key: "category", label: "Category" },

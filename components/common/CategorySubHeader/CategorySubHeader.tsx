@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
+import FallbackImage from '@/components/common/Image/FallbackImage'
 import { usePathname } from 'next/navigation'
 import {
   ShoppingBag,
@@ -97,7 +97,7 @@ const CategorySubHeader: React.FC = () => {
                 className="flex flex-col items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-all w-24 md:w-28 lg:w-32"
               >
                 <div className="relative rounded-full overflow-hidden bg-gray-100 ring-1 ring-gray-200 mx-auto w-14 h-14 md:w-20 md:h-20 lg:w-24 lg:h-24">
-                  <Image
+                  <FallbackImage
                     src={category.image}
                     alt={category.name}
                     fill

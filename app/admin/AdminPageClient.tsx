@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { categories as categoryList } from "@/data/mockData"
-import Image from "next/image"
+import FallbackImage from "@/components/common/Image/FallbackImage"
 import dynamic from "next/dynamic"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
@@ -48,30 +48,19 @@ export default function AdminPageClient() {
   const [approvedSellers, setApprovedSellers] = useState<Seller[]>([])
   const [products, setProducts] = useState<EditableProduct[]>([])
   const [loading, setLoading] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<{ id: number; label: string } | null>(null)
-  const [selectedSeller, setSelectedSeller] = useState<Seller | null>(null)
-  const [sellerProducts, setSellerProducts] = useState<Product[]>([])
+  const [, setSelectedSeller] = useState<Seller | null>(null)
+  const [, setSellerProducts] = useState<Product[]>([])
   const [selectedSellerDetails, setSelectedSellerDetails] = useState<Seller | null>(null)
-  const [savingSeller, setSavingSeller] = useState(false)
-  const [mainImageFile, setMainImageFile] = useState<File | null>(null)
-  const [extraImageFiles, setExtraImageFiles] = useState<File[]>([])
-  const [uploadingImages, setUploadingImages] = useState(false)
+ 
   const [editingProductId, setEditingProductId] = useState<string | null>(null)
   const [editDescription, setEditDescription] = useState<string>("")
   const [editDetails, setEditDetails] = useState<string>("")
 
-  const sanitizeImageUrl = (src: string) => {
+  const sanitizeImageUrl = (src?: string) => {
     return (src || "").trim().replace(/[)]+$/g, "")
   }
 
-  const isCloudinaryUrl = (src: string) => {
-    try {
-      const u = new URL(sanitizeImageUrl(src))
-      return u.hostname === "res.cloudinary.com"
-    } catch {
-      return false
-    }
-  }
+ 
 
   const uploadToCloudinary = async (file: File): Promise<string> => {
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""
@@ -162,7 +151,6 @@ export default function AdminPageClient() {
   const saveSellerDetails = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!selectedSellerDetails) return
-    setSavingSeller(true)
     const fd = new FormData(e.target as HTMLFormElement)
     const payload: Partial<Seller> = {
       businessName: String(fd.get("businessName") || ""),
@@ -194,7 +182,6 @@ export default function AdminPageClient() {
         } catch {}
       }
     } catch {}
-    setSavingSeller(false)
   }
 
   const createProduct = async (p: Partial<Product>) => {
@@ -326,11 +313,7 @@ export default function AdminPageClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sellers.map(s => (
               <div key={s._id} className="border rounded p-3 flex items-center gap-3">
-                {s.businessLogoUrl ? (
-                  <Image src={sanitizeImageUrl(s.businessLogoUrl)} alt={s.businessName} width={48} height={48} className="rounded" />
-                ) : (
-                  <div className="w-12 h-12 bg-gray-200 rounded" />
-                )}
+                <FallbackImage src={sanitizeImageUrl(s.businessLogoUrl)} alt={s.businessName} width={48} height={48} className="rounded" />
                 <div className="flex-1">
                   <div className="font-medium">{s.businessName}</div>
                   <div className="text-sm text-gray-600">{s.email} • {s.phone}</div>
@@ -376,7 +359,7 @@ export default function AdminPageClient() {
             .filter(p => !selectedCategoryItem || p.category === selectedCategoryItem.label)
             .map((p: EditableProduct) => (
               <div key={p._id} className="border rounded-2xl p-3 space-y-2 bg-white hover:shadow transition">
-                <Image src={isCloudinaryUrl(p.image) ? sanitizeImageUrl(p.image) : "/file.svg"} alt={p.name} width={160} height={120} className="rounded" />
+                <FallbackImage src={sanitizeImageUrl(p.image)} alt={p.name} width={160} height={120} className="rounded" />
                 <div className="font-medium">{p.name}</div>
                 <div className="text-sm">₹{p.price}</div>
                 <div className="flex gap-2">

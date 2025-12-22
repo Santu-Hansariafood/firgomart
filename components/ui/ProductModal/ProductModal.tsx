@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
+import FallbackImage from '@/components/common/Image/FallbackImage'
 
 interface Product {
   id: string | number
@@ -71,7 +71,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-100 mb-4">
-                  <Image
+                  <FallbackImage
                     src={images[selectedImage]}
                     alt={product.name}
                     fill
@@ -103,7 +103,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <Image
+                      <FallbackImage
                         src={img}
                         alt={`Thumbnail ${idx + 1}`}
                         width={100}

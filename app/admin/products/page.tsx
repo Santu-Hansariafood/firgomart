@@ -7,7 +7,7 @@ import { categories as categoryList } from "@/data/mockData"
 import locationData  from "@/data/country.json"
 import { Package } from "lucide-react"
 import dynamic from "next/dynamic"
-import Image from "next/image"
+import FallbackImage from "@/components/common/Image/FallbackImage"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -242,7 +242,7 @@ export default function Page() {
             <CommonTable
               columns={[
                 { key: "image", label: "Image", render: (r) => (
-                  <Image src={(r as { image?: string }).image || "/file.svg"} alt={r.name} width={48} height={48} className="object-cover rounded border" />
+                  <FallbackImage src={(r as { image?: string }).image} alt={r.name} width={48} height={48} className="object-cover rounded border" />
                 ) },
                 { key: "name", label: "Name", sortable: true },
                 { key: "category", label: "Category", sortable: true },
@@ -314,7 +314,7 @@ export default function Page() {
               <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} />
               <div className="mt-2 flex flex-wrap gap-2">
                 {images.map((src, i) => (
-                  <Image key={i} src={src} alt="preview" width={64} height={64} className="object-cover rounded border" />
+                  <FallbackImage key={i} src={src} alt="preview" width={64} height={64} className="object-cover rounded border" />
                 ))}
               </div>
             </div>
