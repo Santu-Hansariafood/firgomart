@@ -13,6 +13,7 @@ export async function GET(request: Request) {
     const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
     const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
     const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
+    const search = (url.searchParams.get("search") || "").trim()
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
@@ -35,6 +36,16 @@ export async function GET(request: Request) {
           { isAdminProduct: true },
           { sellerHasGST: true },
         ]
+      }
+    }
+    if (search) {
+      const r = new RegExp(search, "i")
+      const searchOr = [{ name: r }, { category: r }]
+      if (finalQuery.$or) {
+        finalQuery.$and = [{ $or: finalQuery.$or }, { $or: searchOr }]
+        delete finalQuery.$or
+      } else {
+        finalQuery.$or = searchOr
       }
     }
     const products = await (Product as any).find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()

@@ -84,6 +84,7 @@ const Navbar: React.FC = () => {
             <SearchBox
               value={searchQuery}
               onChange={setSearchQuery}
+              onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
               placeholder="Search for products, brands and more..."
             />
           </div>
@@ -176,6 +177,7 @@ const Navbar: React.FC = () => {
           <SearchBox
             value={searchQuery}
             onChange={setSearchQuery}
+            onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
             placeholder="Search products..."
           />
         </div>

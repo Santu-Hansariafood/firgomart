@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Eye } from 'lucide-react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
@@ -31,6 +32,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(true)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const search = (searchParams.get('search') || '').trim()
   const [deliverToState, setDeliverToState] = useState<string>(() => {
     try {
       return typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
@@ -70,7 +74,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
       const adminParam = !deliverToState ? `&adminOnly=true` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}`)
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -89,7 +94,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     } catch {
       return []
     }
-  }, [deliverToState])
+  }, [deliverToState, search])
 
   useEffect(() => {
     const loadInitial = async () => {
