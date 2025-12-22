@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
+import Image from 'next/image'
 
 // Types for cart items (aligned with CartContext)
 interface CartItem {
@@ -120,9 +121,36 @@ const Checkout: React.FC<CheckoutProps> = ({
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handlePlaceOrder = (e: FormEvent<HTMLFormElement>) => {
+  const handlePlaceOrder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setOrderPlaced(true)
+    try {
+      const payload = {
+        buyerEmail: formData.email,
+        buyerName: formData.fullName,
+        address: formData.address,
+        city: formData.city,
+        state: formData.state,
+        country: "IN",
+        items: cartItems.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+      }
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        if (data?.productId) {
+          const pid = Number(data.productId)
+          if (onRemoveItem) onRemoveItem(pid)
+        }
+        return
+      }
+      setOrderPlaced(true)
+      if (onRemoveItem) {
+        cartItems.forEach(ci => onRemoveItem(ci.id))
+      }
+    } catch {}
   }
 
   // ORDER SUCCESS PAGE
@@ -468,7 +496,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <p className="text-sm text-blue-800 text-center">
                           <strong>Note:</strong> After successful payment, click
-                          "Place Order" to confirm your purchase.
+                          &quot;Place Order&quot; to confirm your purchase.
                         </p>
                       </div>
                     </div>
@@ -509,10 +537,12 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex space-x-3">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.name}
-                      className="w-16 h-16 object-cover rounded-lg"
+                      width={64}
+                      height={64}
+                      className="object-cover rounded-lg w-16 h-16"
                     />
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-2">

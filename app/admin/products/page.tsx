@@ -262,7 +262,7 @@ export default function Page() {
               <CommonDropdown
                 options={categoryOptions}
                 selected={formCategory ? { id: formCategory, label: formCategory } : null}
-                onChange={(item) => setFormCategory((item as any)?.label || "")}
+                onChange={(item) => setFormCategory((item as DropdownItem).label)}
                 placeholder="Category"
               />
             </div>
@@ -280,7 +280,7 @@ export default function Page() {
               <CommonDropdown
                 options={stateOptions}
                 selected={formSellerState ? { id: formSellerState, label: formSellerState } : null}
-                onChange={(item) => setFormSellerState((item as any)?.label || "")}
+                onChange={(item) => setFormSellerState((item as DropdownItem).label)}
                 placeholder="Seller state"
               />
             </div>

@@ -10,6 +10,8 @@ import SearchBox from "@/components/common/SearchBox/SearchBox"
 import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
 import { categories as categoryList } from "@/data/mockData"
 
+type DropdownItem = { id: string | number; label: string }
+
 type ProductRow = { _id: string; name: string; category?: string; price: number; discount?: number; stock?: number; status?: string; image: string }
 
 export default function Page() {
@@ -96,7 +98,7 @@ export default function Page() {
           <CommonDropdown
             options={categoryOptions}
             selected={form.category ? { id: form.category, label: form.category } : null}
-            onChange={(item) => setForm({ ...form, category: (item as any)?.label || "" })}
+            onChange={(item) => setForm({ ...form, category: (item as DropdownItem).label })}
             placeholder="Category"
           />
           <input type="number" placeholder="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="px-3 py-2 border rounded" />
