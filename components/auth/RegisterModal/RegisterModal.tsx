@@ -125,6 +125,21 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       body: JSON.stringify(payload),
     })
     if (res.ok) {
+      try {
+        const addr = {
+          fullName: formData.name,
+          email: formData.email,
+          phone: formData.mobile,
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        }
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('deliveryAddress', JSON.stringify(addr))
+          if (addr.state) localStorage.setItem('deliverToState', addr.state)
+        }
+      } catch {}
       const loginRes = await signIn('credentials', {
         redirect: false,
         email: formData.email,

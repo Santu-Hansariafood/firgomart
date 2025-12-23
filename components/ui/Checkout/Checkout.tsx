@@ -79,6 +79,23 @@ const Checkout: React.FC<CheckoutProps> = ({
     } catch {}
   }, [])
   useEffect(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('deliveryAddress') || '' : ''
+      if (!raw) return
+      const obj = JSON.parse(raw || '{}') as Partial<FormData>
+      setFormData(prev => ({
+        ...prev,
+        fullName: obj.fullName || prev.fullName,
+        email: obj.email || prev.email,
+        phone: obj.phone || prev.phone,
+        address: obj.address || prev.address,
+        city: obj.city || prev.city,
+        state: obj.state || prev.state,
+        pincode: obj.pincode || prev.pincode,
+      }))
+    } catch {}
+  }, [])
+  useEffect(() => {
     if (!user) return
     setFormData(prev => ({
       ...prev,
