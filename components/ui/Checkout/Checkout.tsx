@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
 import FallbackImage from '@/components/common/Image/FallbackImage'
+import { useAuth } from '@/context/AuthContext'
 
 // Types for cart items (aligned with CartContext)
 interface CartItem {
@@ -50,6 +51,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   onRemoveItem,
 }) => {
   const router = useRouter()
+  const { user } = useAuth()
   const [step, setStep] = useState<number>(1)
   const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
   const [lastOrder, setLastOrder] = useState<{ id?: string; orderNumber?: string } | null>(null)
@@ -76,6 +78,22 @@ const Checkout: React.FC<CheckoutProps> = ({
       if (saved) setFormData(prev => ({ ...prev, state: saved }))
     } catch {}
   }, [])
+  useEffect(() => {
+    if (!user) return
+    setFormData(prev => ({
+      ...prev,
+      fullName: user.name || prev.fullName,
+      email: user.email || prev.email,
+      phone: user.mobile || prev.phone,
+      address: user.address || prev.address,
+      city: user.city || prev.city,
+      state: user.state || prev.state,
+      pincode: user.pincode || prev.pincode,
+    }))
+    try {
+      if (user.state) localStorage.setItem('deliverToState', user.state)
+    } catch {}
+  }, [user])
 
   async function validateDelivery(stateVal: string) {
     if (!stateVal) {

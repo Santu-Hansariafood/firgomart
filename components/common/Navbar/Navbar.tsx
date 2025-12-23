@@ -207,6 +207,35 @@ const Navbar: React.FC = () => {
                   </button>
                 </div>
               )}
+              {isAuthenticated && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <User className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <span className="font-medium truncate max-w-[10rem]">
+                        {user?.name?.split(" ")[0] || user?.email}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
+                      className="flex items-center space-x-2 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                  <Link
+                    href="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                  >
+                    <User className="w-5 h-5" />
+                    <span className="font-medium">My Profile</span>
+                  </Link>
+                </div>
+              )}
               <Link
                 href="/seller-registration"
                 onClick={() => setMobileMenuOpen(false)}

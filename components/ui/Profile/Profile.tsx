@@ -127,7 +127,7 @@ const Profile = () => {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span>Edit Profile</span>
@@ -138,6 +138,29 @@ const Profile = () => {
 
           {/* Details Section */}
           <div className="p-8">
+            <div className="mb-6 p-4 border rounded-lg bg-green-50 border-green-200">
+              <div className="flex items-center gap-2 text-green-800 mb-2">
+                <MapPin className="w-5 h-5" />
+                <span className="font-medium">Delivery Address</span>
+              </div>
+              <p className="text-sm text-green-900">
+                {(formData.address || "").trim()
+                  ? `${formData.address}`
+                  : "No address on file"}
+              </p>
+              <p className="text-sm text-green-900">
+                {[
+                  (formData.city || "").trim(),
+                  (formData.state || "").trim(),
+                  (formData.pincode || "").trim(),
+                ]
+                  .filter(Boolean)
+                  .join(", ") || ""}
+              </p>
+              <p className="text-xs text-green-700 mt-2">
+                Using your registered address as delivery address for now.
+              </p>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Name */}
               <InputField
