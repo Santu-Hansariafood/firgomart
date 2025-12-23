@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
-import { getUserModel } from "@/lib/models/User"
+import { getUserModel, findUserAcrossDBs } from "@/lib/models/User"
 import { hash } from "bcryptjs"
 
 const stateToLocationMap: Record<string, string> = {
@@ -33,6 +33,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    const cross = await findUserAcrossDBs(email)
+    if (cross) {
+      return NextResponse.json(
+        { error: "Email already registered", redirectTo: "/login" },
+        { status: 409 }
+      )
+    }
+
     let targetCountry = country || "IN"
     let targetLocation = location as string | undefined
 
@@ -59,7 +67,10 @@ export async function POST(request: Request) {
     const User = getUserModel(conn)
     const existing = await User.findOne({ email }).lean()
     if (existing) {
-      return NextResponse.json({ error: "Email already registered" }, { status: 409 })
+      return NextResponse.json(
+        { error: "Email already registered", redirectTo: "/login" },
+        { status: 409 }
+      )
     }
 
     const passwordHash = await hash(password, 10)

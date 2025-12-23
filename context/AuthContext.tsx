@@ -88,6 +88,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
       })
+      if (res.status === 409) {
+        try {
+          const data = await res.json()
+          const target = (data as any)?.redirectTo || "/login"
+          router.push(target)
+        } catch {
+          router.push("/login")
+        }
+        return false
+      }
       if (!res.ok) return false
       await signIn("credentials", {
         redirect: false,

@@ -90,7 +90,12 @@ export default function Page() {
       if (search) params.set("search", search)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/buyers?${params.toString()}`)
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch(`/api/admin/buyers?${params.toString()}`, {
+        headers: {
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+      })
       const data = await res.json()
       if (res.ok) {
         setBuyers(Array.isArray(data.buyers) ? data.buyers : [])
@@ -166,6 +171,7 @@ export default function Page() {
                 { key: "name", label: "Name", sortable: true },
                 { key: "email", label: "Email" },
                 { key: "mobile", label: "Mobile" },
+                { key: "address", label: "Address", render: (r) => [r.address, r.city, r.state, r.pincode].filter(Boolean).join(", ") },
                 { key: "city", label: "City" },
                 { key: "state", label: "State", sortable: true },
                 { key: "country", label: "Country", sortable: true },
@@ -175,7 +181,7 @@ export default function Page() {
               sortKey={sortKey || undefined}
               sortOrder={sortOrder}
               onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-              rowKey={(r) => r.id}
+              rowKey={(r, idx) => `${r.id}-${idx}`}
             />
           </div>
         )}
