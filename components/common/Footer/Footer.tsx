@@ -24,6 +24,10 @@ const Footer: React.FC = () => {
   const [policyOpen, setPolicyOpen] = useState(false);
   const [policyType, setPolicyType] = useState<"privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate" | null>(null);
   const [showTop, setShowTop] = useState(false);
+  const addressText =
+    "Plot No. 678, Majherpara PO, Hatiara PS, Newtown, Chota Masjid, North 24 Parganas, Kolkata, West Bengal – 700157";
+  const addressHref =
+    "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(addressText + ", RF Manzil");
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 300);
     onScroll();
@@ -120,34 +124,51 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           <div>
-            <Title level={4} className="mb-4">Contact Us</Title>
+            <Title level={4} className="mb-4">Company & Contact</Title>
             <ul className="space-y-3 text-sm">
+              <li className="flex items-start space-x-2">
+                <Landmark className="w-4 h-4 mt-1 shrink-0" />
+                <div>
+                  <div className="font-medium text-white">FirgoMart 24Logistics Private Limited</div>
+                </div>
+              </li>
+              <li className="flex items-start space-x-2">
+                <Landmark className="w-4 h-4 mt-1 shrink-0" />
+                <div>
+                  <span className="text-gray-400">CIN:</span> U47912WB2025PTC281316
+                </div>
+              </li>
+              <li className="flex items-start space-x-2">
+                <Landmark className="w-4 h-4 mt-1 shrink-0" />
+                <div>
+                  <span className="text-gray-400">GSTIN:</span> 19AAGCF5282L1Z3
+                </div>
+              </li>
 
               <li className="flex items-start space-x-2">
                 <MapPin className="w-4 h-4 mt-1 shrink-0" />
                 <Link
-                  href="https://www.google.com/maps/dir/?api=1&destination=48/2B+Radhanath+Chowdhury+Road+Tangra+Kolkata+West+Bengal+700015"
+                  href={addressHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors"
                 >
-                  48/2B Radhanath Chowdhury Road, Tangra, Kolkata, West Bengal – 700015
+                  <span className="block font-medium text-white">Communication Address</span>
+                  <span className="block">{addressText}</span>
                 </Link>
+              </li>
+              <li className="flex items-start space-x-2">
+                <Landmark className="w-4 h-4 mt-1 shrink-0" />
+                <div>Landmark: RF Manzil</div>
               </li>
 
               <li className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 shrink-0" />
                 <a href="tel:+918100660080" className="hover:text-white transition-colors">
-                  +91 81006 60080
+                  +91 8100660080
                 </a>
               </li>
 
-              <li className="flex items-center space-x-2">
-                <Mail className="w-4 h-4 shrink-0" />
-                <a href="mailto:support@firgomart.com" className="hover:text-white transition-colors">
-                  support@firgomart.com
-                </a>
-              </li>
               <li className="flex items-center space-x-2">
                 <Mail className="w-4 h-4 shrink-0" />
                 <a href="mailto:info@firgomart.com" className="hover:text-white transition-colors">
