@@ -44,6 +44,25 @@ export default function Page() {
   const [page, setPage] = useState(1)
   const pageSize = 100
   const [search, setSearch] = useState("")
+  const [buyerEmail, setBuyerEmail] = useState("")
+  const [orderIdQuery, setOrderIdQuery] = useState("")
+  const [selectedOrder, setSelectedOrder] = useState<{
+    id: string
+    orderNumber: string
+    buyerEmail?: string
+    buyerName?: string
+    amount: number
+    status: string
+    address?: string
+    city?: string
+    state?: string
+    country?: string
+    createdAt?: string
+    deliveredAt?: string
+    completedAt?: string
+    completionVerified?: boolean
+    items?: Array<{ name?: string; quantity: number; price: number }>
+  } | null>(null)
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [groupByDay, setGroupByDay] = useState(false)
@@ -82,6 +101,7 @@ export default function Page() {
   const loadOrders = async () => {
     setLoading(true)
     try {
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
       const params = new URLSearchParams()
       params.set("page", String(page))
       params.set("limit", String(pageSize))
@@ -89,9 +109,14 @@ export default function Page() {
       if (selectedCountry?.id && String(selectedCountry.id) !== "ALL") params.set("country", String(selectedCountry.id))
       if (selectedState?.id) params.set("state", String(selectedState.id))
       if (search) params.set("search", search)
+      if (buyerEmail) params.set("buyerEmail", buyerEmail)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/orders?${params.toString()}`)
+      const res = await fetch(`/api/admin/orders?${params.toString()}`, {
+        headers: {
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+      })
       const data = await res.json()
       if (res.ok) {
         setOrders(Array.isArray(data.orders) ? data.orders : [])
@@ -167,6 +192,46 @@ export default function Page() {
           <div className="md:col-span-2">
             <SearchBox value={search} onChange={setSearch} placeholder="Search orders" />
           </div>
+          <div className="md:col-span-2">
+            <label className="text-sm font-medium text-gray-700">Buyer Email</label>
+            <input
+              type="email"
+              value={buyerEmail}
+              onChange={(e) => setBuyerEmail(e.target.value)}
+              placeholder="user@example.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="text-sm font-medium text-gray-700">Order ID or Number</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={orderIdQuery}
+                onChange={(e) => setOrderIdQuery(e.target.value)}
+                placeholder="ObjectId or ORD-YYYYMMDD-XXXXXX"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                onClick={async () => {
+                  const id = orderIdQuery.trim()
+                  if (!id) { setSelectedOrder(null); return }
+                  try {
+                    const res = await fetch(`/api/admin/orders/${encodeURIComponent(id)}`)
+                    const data = await res.json()
+                    if (res.ok) setSelectedOrder(data.order || null)
+                    else setSelectedOrder(null)
+                  } catch {
+                    setSelectedOrder(null)
+                  }
+                }}
+              >
+                Find
+              </button>
+            </div>
+          </div>
           <div className="col-span-1">
             <label className="inline-flex items-center gap-2 text-sm font-medium text-gray-600">
               <input type="checkbox" checked={groupByDay} onChange={(e) => setGroupByDay(e.currentTarget.checked)} />
@@ -237,6 +302,20 @@ export default function Page() {
                   { key: "state", label: "State" },
                   { key: "country", label: "Country" },
                   { key: "createdAt", label: "Placed", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+                  { key: "actions", label: "Actions", render: (r) => (
+                    <button
+                      className="px-3 py-1 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`/api/admin/orders/${encodeURIComponent(r.id)}`)
+                          const data = await res.json()
+                          if (res.ok) setSelectedOrder(data.order || null)
+                        } catch {}
+                      }}
+                    >
+                      View
+                    </button>
+                  ) },
                 ]}
                 data={orders}
                 sortKey={sortKey || undefined}
@@ -257,6 +336,48 @@ export default function Page() {
             onPageChange={(p) => setPage(p)}
           />
         </div>
+
+        {selectedOrder && (
+          <div className="border rounded-xl bg-white p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-lg font-semibold">{selectedOrder.orderNumber}</div>
+                <div className="text-sm text-gray-600">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : ""}</div>
+              </div>
+              <button
+                type="button"
+                className="px-3 py-2 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+                onClick={() => setSelectedOrder(null)}
+              >
+                Close
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <div className="font-medium">{selectedOrder.buyerName}</div>
+                <div className="text-sm text-gray-600">{selectedOrder.buyerEmail}</div>
+              </div>
+              <div className="font-medium">₹{selectedOrder.amount}</div>
+              <div>
+                <span className="text-sm text-gray-600">Status</span>
+                <div className="font-medium">{selectedOrder.status}</div>
+              </div>
+            </div>
+            <div className="text-sm text-gray-700">{[selectedOrder.address, selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}</div>
+            <div className="border-t pt-3">
+              <div className="font-semibold mb-2">Items</div>
+              <div className="divide-y">
+                {(selectedOrder.items || []).map((it, idx) => (
+                  <div key={idx} className="py-2 flex items-center justify-between">
+                    <div className="text-gray-900">{it.name}</div>
+                    <div className="text-gray-600">Qty: {it.quantity}</div>
+                    <div className="font-medium">₹{it.price}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     )}

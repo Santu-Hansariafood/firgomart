@@ -60,7 +60,11 @@ export default function Page() {
       params.set("sortOrder", sortOrder)
       const email = (session?.user?.email || authUser?.email || "").trim()
       if (onlyMine && email) params.set("createdByEmail", email)
-      const res = await fetch(`/api/admin/inventory?${params.toString()}`)
+      const res = await fetch(`/api/admin/inventory?${params.toString()}`, {
+        headers: {
+          ...(email ? { "x-admin-email": email } : {}),
+        },
+      })
       const data = await res.json()
       if (res.ok) {
         setItems(Array.isArray(data.inventory) ? data.inventory : [])
@@ -78,9 +82,13 @@ export default function Page() {
 
   const updateStock = async (id: string, stock: number) => {
     try {
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
       const res = await fetch(`/api/admin/inventory/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
         body: JSON.stringify({ stock }),
       })
       if (res.ok) {
@@ -122,6 +130,15 @@ export default function Page() {
               <input type="checkbox" checked={onlyMine} onChange={(e) => setOnlyMine(e.currentTarget.checked)} />
               Only my products
             </label>
+          </div>
+          <div className="col-span-1 md:col-span-1">
+            <button
+              type="button"
+              onClick={loadInventory}
+              className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+            >
+              Refresh
+            </button>
           </div>
         </div>
       </div>

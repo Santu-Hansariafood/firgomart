@@ -7,6 +7,7 @@ import { getOrderModel } from "@/lib/models/Order"
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
   const allow = raw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
+  if (!allow.length && process.env.NODE_ENV !== "production") return !!email
   return !!(email && allow.includes(email.toLowerCase()))
 }
 
@@ -48,6 +49,7 @@ export async function GET(request: Request) {
     const status = (url.searchParams.get("status") || "").trim()
     const country = (url.searchParams.get("country") || "").trim().toUpperCase()
     const state = (url.searchParams.get("state") || "").trim()
+    const buyerEmail = (url.searchParams.get("buyerEmail") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
     const sortBy = (url.searchParams.get("sortBy") || "createdAt").trim()
     const sortOrder = (url.searchParams.get("sortOrder") || "desc").trim().toLowerCase() === "asc" ? 1 : -1
@@ -58,6 +60,7 @@ export async function GET(request: Request) {
     if (status) q.status = status
     if (country) q.country = { $regex: new RegExp(`^${country}$`, "i") }
     if (state) q.state = { $regex: new RegExp(`^${state}$`, "i") }
+    if (buyerEmail) q.buyerEmail = { $regex: new RegExp(`^${buyerEmail}$`, "i") }
     if (search) {
       const r = new RegExp(search, "i")
       q.$or = [
@@ -90,4 +93,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

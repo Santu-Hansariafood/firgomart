@@ -39,15 +39,33 @@ export default function Page() {
   const [rows, setRows] = useState<ShipmentRow[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [page, setPage] = useState(1)
   const pageSize = 100
   const [search, setSearch] = useState("")
   const [sortKey, setSortKey] = useState<string | null>("lastUpdate")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [hideDelivered, setHideDelivered] = useState(true)
+  const [selectedOrder, setSelectedOrder] = useState<{
+    orderNumber: string
+    buyerEmail?: string
+    buyerName?: string
+    amount?: number
+    status?: string
+    address?: string
+    city?: string
+    state?: string
+    country?: string
+    createdAt?: string
+    items?: Array<{ name?: string; quantity: number; price: number }>
+  } | null>(null)
 
   const statusOptions: DropdownItem[] = [
     { id: "", label: "All Status" },
+    { id: "pending", label: "Pending" },
+    { id: "picked", label: "Picked" },
+    { id: "shipped", label: "Shipped" },
     { id: "created", label: "Created" },
     { id: "in_transit", label: "In Transit" },
     { id: "delivered", label: "Delivered" },
@@ -79,18 +97,28 @@ export default function Page() {
         if (search) params.set("search", search)
         if (sortKey) params.set("sortBy", String(sortKey))
         params.set("sortOrder", sortOrder)
-        const res = await fetch(`/api/admin/logistics?${params.toString()}`)
+        const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+        const res = await fetch(`/api/admin/logistics?${params.toString()}`, {
+          headers: {
+            ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+          },
+        })
         const data = await res.json()
         if (cancelled) return
         if (res.ok) {
-          setRows(Array.isArray(data.shipments) ? data.shipments : [])
+          setError(null)
+          const list = Array.isArray(data.shipments) ? data.shipments : []
+          const filtered = hideDelivered ? list.filter((s) => String(s.status).toLowerCase() !== "delivered") : list
+          setRows(filtered)
           setTotal(Number(data.total || 0))
         } else {
+          setError(typeof data?.error === "string" ? data.error : "Failed to load logistics")
           setRows([])
           setTotal(0)
         }
       } catch {
         if (!cancelled) {
+          setError("Network error")
           setRows([])
           setTotal(0)
         }
@@ -98,16 +126,27 @@ export default function Page() {
       if (!cancelled) setLoading(false)
     })()
     return () => { cancelled = true }
-  }, [allowed, page, selectedStatus, selectedCourier, search, sortKey, sortOrder])
+  }, [allowed, page, selectedStatus, selectedCourier, search, sortKey, sortOrder, hideDelivered])
 
   const updateStatus = async (id: string, status: string) => {
     try {
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
       const res = await fetch(`/api/admin/logistics/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
         body: JSON.stringify({ status }),
       })
-      if (res.ok) setRows(prev => prev.map(r => r.id === id ? { ...r, status } : r))
+      if (res.ok) {
+        setRows(prev => {
+          const next = prev.map(r => r.id === id ? { ...r, status } : r)
+          return hideDelivered && String(status).toLowerCase() === "delivered"
+            ? next.filter(r => r.id !== id)
+            : next
+        })
+      }
     } catch {}
   }
 
@@ -143,10 +182,17 @@ export default function Page() {
           <div className="md:col-span-3">
             <SearchBox value={search} onChange={setSearch} placeholder="Search by order/tracking" />
           </div>
+          <div className="col-span-1">
+            <label className="inline-flex items-center gap-2 text-sm font-medium text-gray-600">
+              <input type="checkbox" checked={hideDelivered} onChange={(e) => setHideDelivered(e.currentTarget.checked)} />
+              Hide delivered
+            </label>
+          </div>
         </div>
       </div>
 
       <div className="space-y-3">
+        {error && <div className="p-3 rounded-lg bg-red-50 text-red-700 text-sm">{error}</div>}
         {loading ? (
           <BeautifulLoader />
         ) : (
@@ -166,6 +212,39 @@ export default function Page() {
               { key: "destination", label: "Destination" },
               { key: "eventsCount", label: "Transit", render: (r) => String(r.eventsCount || 0) },
               { key: "lastUpdate", label: "Updated", sortable: true, render: (r) => r.lastUpdate ? new Date(r.lastUpdate).toLocaleString() : "" },
+              { key: "actions", label: "Actions", render: (r) => (
+                <button
+                  className="px-3 py-1 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+                  onClick={async () => {
+                    try {
+                      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+                      const res = await fetch(`/api/admin/orders/${encodeURIComponent(r.orderNumber)}`, {
+                        headers: {
+                          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+                        },
+                      })
+                      const data = await res.json()
+                      if (res.ok && data.order) {
+                        setSelectedOrder({
+                          orderNumber: data.order.orderNumber,
+                          buyerEmail: data.order.buyerEmail,
+                          buyerName: data.order.buyerName,
+                          amount: data.order.amount,
+                          status: data.order.status,
+                          address: data.order.address,
+                          city: data.order.city,
+                          state: data.order.state,
+                          country: data.order.country,
+                          createdAt: data.order.createdAt,
+                          items: data.order.items || [],
+                        })
+                      }
+                    } catch {}
+                  }}
+                >
+                  Details
+                </button>
+              ) },
             ]}
             data={rows}
             sortKey={sortKey || undefined}
@@ -179,6 +258,48 @@ export default function Page() {
           <div className="text-sm text-gray-600">Total: {total}</div>
           <CommonPagination currentPage={page} pageSize={pageSize} totalItems={total} onPageChange={(p) => setPage(p)} />
         </div>
+
+        {selectedOrder && (
+          <div className="border rounded-xl bg-white p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-lg font-semibold">{selectedOrder.orderNumber}</div>
+                <div className="text-sm text-gray-600">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : ""}</div>
+              </div>
+              <button
+                type="button"
+                className="px-3 py-2 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+                onClick={() => setSelectedOrder(null)}
+              >
+                Close
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <div className="font-medium">{selectedOrder.buyerName}</div>
+                <div className="text-sm text-gray-600">{selectedOrder.buyerEmail}</div>
+              </div>
+              <div className="font-medium">₹{Number(selectedOrder.amount || 0).toFixed(2)}</div>
+              <div>
+                <span className="text-sm text-gray-600">Status</span>
+                <div className="font-medium">{selectedOrder.status}</div>
+              </div>
+            </div>
+            <div className="text-sm text-gray-700">{[selectedOrder.address, selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}</div>
+            <div className="border-t pt-3">
+              <div className="font-semibold mb-2">Items</div>
+              <div className="divide-y">
+                {(selectedOrder.items || []).map((it, idx) => (
+                  <div key={idx} className="py-2 flex items-center justify-between">
+                    <div className="text-gray-900">{it.name}</div>
+                    <div className="text-gray-600">Qty: {it.quantity}</div>
+                    <div className="font-medium">₹{Number(it.price || 0).toFixed(2)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     )}
