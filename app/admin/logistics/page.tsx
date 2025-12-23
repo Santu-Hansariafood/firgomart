@@ -107,8 +107,8 @@ export default function Page() {
         if (cancelled) return
         if (res.ok) {
           setError(null)
-          const list = Array.isArray(data.shipments) ? data.shipments : []
-          const filtered = hideDelivered ? list.filter((s) => String(s.status).toLowerCase() !== "delivered") : list
+          const list: ShipmentRow[] = Array.isArray(data.shipments) ? (data.shipments as ShipmentRow[]) : []
+          const filtered = hideDelivered ? list.filter((s: ShipmentRow) => String(s.status).toLowerCase() !== "delivered") : list
           setRows(filtered)
           setTotal(Number(data.total || 0))
         } else {
