@@ -142,8 +142,8 @@ const Profile = () => {
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-8 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-2 border-red-600">
-                  <span className="text-5xl font-black text-red-700 tracking-wider leading-none">{initials}</span>
+                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-2 border-blue-600">
+                  <span className="text-5xl font-black text-blue-700 tracking-wider leading-none">{initials}</span>
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold">{user.name}</h1>
