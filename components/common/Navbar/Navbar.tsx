@@ -16,10 +16,11 @@ import {
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/context/AuthContext"
 import { useCart } from "@/context/CartContext/CartContext"
-import SearchBox from "@/components/common/SearchBox/SearchBox"
-import LoginModal from "@/components/auth/LoginModal/LoginModal"
-import RegisterModal from "@/components/auth/RegisterModal/RegisterModal"
-import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal/ForgotPasswordModal"
+import dynamic from "next/dynamic"
+const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
+const LoginModal = dynamic(() => import("@/components/auth/LoginModal/LoginModal"))
+const RegisterModal = dynamic(() => import("@/components/auth/RegisterModal/RegisterModal"))
+const ForgotPasswordModal = dynamic(() => import("@/components/auth/ForgotPasswordModal/ForgotPasswordModal"))
 
 const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("")
@@ -33,6 +34,23 @@ const Navbar: React.FC = () => {
   const router = useRouter()
   const { cartItems, setShowCart } = useCart()
   const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
+
+  const getInitials = (n?: string | null, e?: string | null) => {
+    const name = String(n || "").trim()
+    if (name) {
+      const parts = name.split(/\s+/).filter(Boolean)
+      return parts.slice(0, 2).map(p => (p[0] || "").toUpperCase()).join("")
+    }
+    const email = String(e || "").trim()
+    if (email) {
+      const local = email.split("@")[0] || ""
+      const parts = local.split(/[.\-_]+/).filter(Boolean)
+      const out = parts.slice(0, 2).map(p => (p[0] || "").toUpperCase()).join("")
+      return out || (local[0] || "").toUpperCase()
+    }
+    return ""
+  }
+  const initials = getInitials(user?.name, user?.email)
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -103,8 +121,8 @@ const Navbar: React.FC = () => {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-blue-600" />
+                  <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-red-600">
+                    <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                   </div>
                   <span className="font-medium">{user?.name?.split(" ")[0] || user?.email}</span>
                   <ChevronDown className="w-4 h-4" />
@@ -210,9 +228,9 @@ const Navbar: React.FC = () => {
               {isAuthenticated && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <User className="w-5 h-5 text-blue-600" />
+                  <div className="flex items-center space-x-2">
+                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-red-600">
+                        <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                       </div>
                       <span className="font-medium truncate max-w-[10rem]">
                         {user?.name?.split(" ")[0] || user?.email}

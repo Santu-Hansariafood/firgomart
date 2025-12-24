@@ -36,6 +36,22 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
 
     setLoading(true);
     try {
+      const chk = await fetch("/api/auth/exists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const existsData = await chk.json().catch(() => ({}));
+      if (!chk.ok) {
+        setError(typeof existsData?.error === "string" ? existsData.error : "Unable to verify email");
+        setLoading(false);
+        return;
+      }
+      if (!existsData?.exists) {
+        setError("Email not registered");
+        setLoading(false);
+        return;
+      }
       const res = await fetch("/api/auth/forgot", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

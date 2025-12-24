@@ -66,6 +66,30 @@ const LoginModal: React.FC<LoginModalProps> = ({
     if (!validateForm()) return
 
     setLoading(true)
+    try {
+      const chk = await fetch('/api/auth/exists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: formData.email }),
+      })
+      const data = await chk.json().catch(() => ({}))
+      if (!chk.ok) {
+        const msg = typeof data?.error === 'string' && data.error.length > 0 ? data.error : 'Unable to verify email'
+        setErrors({ submit: msg })
+        setLoading(false)
+        return
+      }
+      if (!data?.exists) {
+        setErrors({ submit: 'Email not registered' })
+        setLoading(false)
+        return
+      }
+    } catch {
+      setErrors({ submit: 'Network error while verifying email' })
+      setLoading(false)
+      return
+    }
+
     const res = await signIn('credentials', {
       redirect: false,
       email: formData.email,

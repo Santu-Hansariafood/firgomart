@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
+import PDFDocument from "pdfkit"
 
 type OrderItem = { name?: string; quantity?: number; price?: number }
 type OrderLean = {
@@ -20,6 +21,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     const { id } = await ctx.params
     const url = new URL(request.url)
     const download = (url.searchParams.get("download") || "").toLowerCase() === "true"
+    const format = (url.searchParams.get("format") || "html").toLowerCase()
     const conn = await connectDB()
     const Order = getOrderModel(conn)
     const doc = await (Order as unknown as {
@@ -27,6 +29,54 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     }).findById(id).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
     const sum = (doc.items || []).reduce((s: number, it: OrderItem) => s + Number(it.price || 0) * Number(it.quantity || 1), 0)
+    if (format === "pdf") {
+      const pdf = new PDFDocument({ size: "A4", margin: 50 })
+      const chunks: Buffer[] = []
+      pdf.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)))
+      const done = new Promise<void>((resolve) => pdf.on("end", () => resolve()))
+      pdf.fontSize(20).text("Receipt", { align: "left" })
+      pdf.moveDown(0.5)
+      pdf.fontSize(12).fillColor("#666666").text(`Order Number: ${doc.orderNumber || ""}`)
+      pdf.fillColor("#666666").text(`Status: ${doc.status || ""}`)
+      pdf.moveDown(0.5)
+      pdf.fillColor("#000000")
+      pdf.roundedRect(pdf.x, pdf.y, pdf.page.width - 100, 80, 8).stroke("#e5e7eb")
+      pdf.moveDown(0.2)
+      pdf.text(`Buyer: ${doc.buyerName || ""}${doc.buyerEmail ? ` (${doc.buyerEmail})` : ""}`, { width: pdf.page.width - 100, continued: false })
+      pdf.text(`Ship To: ${(doc.address || "")}${doc.city ? `, ${doc.city}` : ""}${doc.state ? `, ${doc.state}` : ""}${doc.country ? `, ${doc.country}` : ""}`, { width: pdf.page.width - 100 })
+      pdf.moveDown(0.8)
+      const startX = 50
+      const colItem = startX
+      const colQty = startX + 280
+      const colPrice = startX + 340
+      const colAmt = startX + 420
+      pdf.fontSize(12).fillColor("#000000").text("Item", colItem, pdf.y)
+      pdf.text("Qty", colQty, pdf.y)
+      pdf.text("Price", colPrice, pdf.y)
+      pdf.text("Amount", colAmt, pdf.y)
+      pdf.moveTo(startX, pdf.y + 2).lineTo(pdf.page.width - 50, pdf.y + 2).stroke("#e5e7eb")
+      let y = pdf.y + 8
+      for (const it of (doc.items || [])) {
+        const qty = Number(it.quantity || 1)
+        const price = Number(it.price || 0)
+        const amt = qty * price
+        pdf.text(String(it.name || ""), colItem, y, { width: 260 })
+        pdf.text(String(qty), colQty, y)
+        pdf.text(`₹${price.toFixed(2)}`, colPrice, y)
+        pdf.text(`₹${amt.toFixed(2)}`, colAmt, y)
+        y += 18
+      }
+      pdf.moveTo(startX, y + 2).lineTo(pdf.page.width - 50, y + 2).stroke("#e5e7eb")
+      pdf.font("Helvetica-Bold").text("Total", colPrice, y + 10)
+      pdf.text(`₹${sum.toFixed(2)}`, colAmt, y + 10)
+      pdf.end()
+      await done
+      const buf = Buffer.concat(chunks)
+      const headers: Record<string, string> = { "Content-Type": "application/pdf" }
+      const fname = `receipt-${String(doc.orderNumber || id)}.pdf`
+      headers["Content-Disposition"] = download ? `attachment; filename="${fname}"` : `inline; filename="${fname}"`
+      return new NextResponse(buf, { status: 200, headers })
+    }
     const html = `
 <!DOCTYPE html>
 <html lang="en">

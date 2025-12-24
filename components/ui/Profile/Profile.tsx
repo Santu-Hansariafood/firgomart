@@ -45,6 +45,26 @@ const Profile = () => {
   const [orders, setOrders] = useState<Array<{ id: string; orderNumber?: string; amount?: number; status?: string; createdAt?: string }>>([])
   const [loadingOrders, setLoadingOrders] = useState(false)
 
+  const getInitials = (n?: string | null, e?: string | null) => {
+    const name = String(n || "").trim()
+    if (name) {
+      const parts = name.split(/\s+/).filter(Boolean)
+      const first = (parts[0] || "").charAt(0).toUpperCase()
+      const last = (parts[parts.length - 1] || "").charAt(0).toUpperCase()
+      return parts.length >= 2 ? `${first}${last}` : first
+    }
+    const email = String(e || "").trim()
+    if (email) {
+      const local = email.split("@")[0] || ""
+      const segs = local.split(/[.\-_]+/).filter(Boolean)
+      const f = (segs[0] || local).charAt(0).toUpperCase()
+      const l = (segs[segs.length - 1] || "").charAt(0).toUpperCase()
+      return segs.length >= 2 ? `${f}${l}` : f
+    }
+    return ""
+  }
+  const initials = getInitials(user?.name, user?.email)
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     if (errors[e.target.name as keyof FormErrors]) {
@@ -85,6 +105,15 @@ const Profile = () => {
     router.push("/");
   };
 
+  const statusBadgeClass = (s?: string) => {
+    const t = String(s || "").toLowerCase();
+    if (t === "pending") return "bg-yellow-100 text-yellow-800";
+    if (["paid", "processing", "shipped"].includes(t)) return "bg-blue-100 text-blue-800";
+    if (["delivered", "completed"].includes(t)) return "bg-green-100 text-green-800";
+    if (["cancelled", "refunded", "returned"].includes(t)) return "bg-red-100 text-red-800";
+    return "bg-gray-100 text-gray-800";
+  };
+
   const loadOrders = async () => {
     const email = user?.email || ""
     if (!email) { setOrders([]); return }
@@ -110,12 +139,11 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-lg overflow-hidden"
         >
-          {/* Header Section */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-8 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                  <User className="w-10 h-10" />
+                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-2 border-red-600">
+                  <span className="text-5xl font-black text-red-700 tracking-wider leading-none">{initials}</span>
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold">{user.name}</h1>
@@ -136,8 +164,23 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Details Section */}
           <div className="p-8">
+            <div className="mb-6 p-4 border rounded-lg bg-white border-gray-200">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div>
+                  <div className="text-xs text-gray-500">Name</div>
+                  <div className="text-lg font-medium text-gray-900">{(formData.name || "").trim() || "—"}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Email</div>
+                  <div className="text-lg font-medium text-gray-900">{(formData.email || "").trim() || "—"}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Mobile</div>
+                  <div className="text-lg font-medium text-gray-900">{(formData.mobile || "").trim() || "—"}</div>
+                </div>
+              </div>
+            </div>
             <div className="mb-6 p-4 border rounded-lg bg-green-50 border-green-200">
               <div className="flex items-center gap-2 text-green-800 mb-2">
                 <MapPin className="w-5 h-5" />
@@ -162,7 +205,6 @@ const Profile = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Name */}
               <InputField
                 label="Full Name"
                 name="name"
@@ -172,115 +214,91 @@ const Profile = () => {
                 disabled={!isEditing}
                 error={errors.name}
               />
+              <InputField
+                label="Email Address"
+                name="email"
+                type="email"
+                icon={<Mail className="w-5 h-5 text-gray-400" />}
+                value={formData.email || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+                error={errors.email}
+              />
 
-              {/* Email */}
-              {formData.email && (
-                <InputField
-                  label="Email Address"
-                  name="email"
-                  type="email"
-                  icon={<Mail className="w-5 h-5 text-gray-400" />}
-                  value={formData.email || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  error={errors.email}
-                />
-              )}
+              <InputField
+                label="Mobile Number"
+                name="mobile"
+                type="tel"
+                icon={<Phone className="w-5 h-5 text-gray-400" />}
+                value={formData.mobile || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+                error={errors.mobile}
+              />
 
-              {/* Mobile */}
-              {formData.mobile && (
-                <InputField
-                  label="Mobile Number"
-                  name="mobile"
-                  type="tel"
-                  icon={<Phone className="w-5 h-5 text-gray-400" />}
-                  value={formData.mobile || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  error={errors.mobile}
-                />
-              )}
+              <InputField
+                label="Date of Birth"
+                name="dateOfBirth"
+                type="date"
+                icon={<Calendar className="w-5 h-5 text-gray-400" />}
+                value={formData.dateOfBirth || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
 
-              {/* Date of Birth */}
-              {formData.dateOfBirth && (
-                <InputField
-                  label="Date of Birth"
-                  name="dateOfBirth"
-                  type="date"
-                  icon={<Calendar className="w-5 h-5 text-gray-400" />}
-                  value={formData.dateOfBirth || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                />
-              )}
-
-              {/* Gender */}
-              {formData.gender && (
-                <SelectField
-                  label="Gender"
-                  name="gender"
-                  value={formData.gender || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                />
-              )}
+              <SelectField
+                label="Gender"
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
             </div>
 
-            {/* Address */}
-            {formData.address && (
-              <div className="mt-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address
-                </label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                  <textarea
-                    name="address"
-                    value={formData.address || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    rows={3}
-                    className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      !isEditing ? "bg-gray-50" : ""
-                    } border-gray-300`}
-                  />
-                </div>
+            <div className="mt-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Address
+              </label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <textarea
+                  name="address"
+                  value={formData.address || ""}
+                  onChange={handleChange}
+                  disabled={!isEditing}
+                  rows={3}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    !isEditing ? "bg-gray-50" : ""
+                  } border-gray-300`}
+                />
               </div>
-            )}
-
-            {/* City / State / Pincode */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-              {formData.city && (
-                <SimpleInput
-                  label="City"
-                  name="city"
-                  value={formData.city || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                />
-              )}
-              {formData.state && (
-                <SimpleInput
-                  label="State"
-                  name="state"
-                  value={formData.state || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                />
-              )}
-              {formData.pincode && (
-                <SimpleInput
-                  label="Pincode"
-                  name="pincode"
-                  value={formData.pincode || ""}
-                  onChange={handleChange}
-                  disabled={!isEditing}
-                  error={errors.pincode}
-                />
-              )}
             </div>
 
-            {/* Save / Cancel */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+              <SimpleInput
+                label="City"
+                name="city"
+                value={formData.city || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+              <SimpleInput
+                label="State"
+                name="state"
+                value={formData.state || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+              />
+              <SimpleInput
+                label="Pincode"
+                name="pincode"
+                value={formData.pincode || ""}
+                onChange={handleChange}
+                disabled={!isEditing}
+                error={errors.pincode}
+              />
+            </div>
+
             {isEditing && (
               <div className="flex space-x-4 mt-8">
                 <button
@@ -300,7 +318,6 @@ const Profile = () => {
               </div>
             )}
 
-            {/* Logout */}
             <div className="mt-8 pt-8 border-t border-gray-200">
               <button
                 onClick={handleLogout}
@@ -326,14 +343,17 @@ const Profile = () => {
               <div className="space-y-3">
                 {orders.map(o => (
                   <div key={o.id} className="flex items-center justify-between border rounded-lg p-4">
-                    <div>
-                      <div className="font-medium">Order {o.orderNumber || o.id}</div>
-                      <div className="text-sm text-gray-600">₹{Number(o.amount || 0).toFixed(2)} • {o.status}</div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium">Order {o.orderNumber || o.id}</div>
+                        <span className={`text-xs px-2 py-1 rounded ${statusBadgeClass(o.status)}`}>{String(o.status || "").toUpperCase()}</span>
+                      </div>
+                      <div className="text-sm text-gray-900 font-semibold">₹{Number(o.amount || 0).toFixed(2)}</div>
                       <div className="text-xs text-gray-500">{o.createdAt ? new Date(o.createdAt).toLocaleString() : ""}</div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} className="px-3 py-1 border rounded">View</Link>
-                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt?download=true`} className="px-3 py-1 border rounded">Download</Link>
+                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} className="px-3 py-1 border rounded">View Receipt</Link>
+                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt?format=pdf&download=true`} className="px-3 py-1 border rounded">Download PDF</Link>
                     </div>
                   </div>
                 ))}
@@ -347,8 +367,6 @@ const Profile = () => {
 };
 
 export default Profile;
-
-/* ---------- Helper Subcomponents ---------- */
 
 interface InputProps {
   label: string;
@@ -438,6 +456,7 @@ const SelectField = ({
         disabled ? "bg-gray-50" : ""
       } border-gray-300`}
     >
+      <option value="">Select Gender</option>
       <option value="male">Male</option>
       <option value="female">Female</option>
       <option value="other">Other</option>

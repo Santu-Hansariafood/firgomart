@@ -59,11 +59,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
   const validateStep1 = () => {
     const newErrors: FormErrors = {}
-    if (!formData.name.trim()) newErrors.name = 'Full name is required'
+    if (!formData.name.trim()) newErrors.name = 'First name is required'
+    else if (!/^[A-Za-z\s]+$/.test(formData.name.trim()))
+      newErrors.name = 'Only letters and spaces are allowed'
 
     if (formData.registrationType === 'email') {
       if (!formData.email) newErrors.email = 'Email is required'
-      else if (!/\S+@\S+\.\S+/.test(formData.email))
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.email))
         newErrors.email = 'Invalid email format'
     } else {
       if (!formData.mobile) newErrors.mobile = 'Mobile number is required'
@@ -161,7 +163,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-white/60 backdrop-blur-sm overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -216,7 +218,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name *
+                    First Name *
                   </label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -224,8 +226,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                       type="text"
                       name="name"
                       value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Enter your full name"
+                      onChange={e => {
+                        const v = e.target.value.replace(/[^A-Za-z\s]/g, '')
+                        setFormData(prev => ({ ...prev, name: v }))
+                        if (errors.name) setErrors(prev => ({ ...prev, name: '' }))
+                      }}
+                      placeholder="Enter your first name"
                       className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
                         errors.name ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -245,7 +251,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         type="email"
                         name="email"
                         value={formData.email}
-                        onChange={handleChange}
+                        onChange={e => {
+                          const val = e.target.value
+                          setFormData(prev => ({ ...prev, email: val }))
+                          if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
+                        }}
                         placeholder="your@email.com"
                         className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
                           errors.email ? 'border-red-500' : 'border-gray-300'
