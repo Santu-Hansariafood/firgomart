@@ -114,9 +114,15 @@ export async function GET(request: Request) {
       address: s.address,
       city: s.city,
       state: s.state,
+      district: s.district,
+      pincode: s.pincode,
       country: s.country,
       status: s.status,
       hasGST: s.hasGST,
+      gstNumber: s.gstNumber,
+      panNumber: s.panNumber,
+      aadhaar: s.aadhaar,
+      businessLogoUrl: s.businessLogoUrl,
       createdAt: s.createdAt,
     }))
     return NextResponse.json({ sellers: safe, total })

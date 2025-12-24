@@ -6,6 +6,7 @@ import { useAuth } from "@/context/AuthContext"
 import locationData from "@/data/country.json"
 import dynamic from "next/dynamic"
 import { Store } from "lucide-react"
+import Image from "next/image"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -22,9 +23,15 @@ type Seller = {
   address?: string
   city?: string
   state?: string
+  district?: string
+  pincode?: string
   country?: string
   status?: string
   hasGST?: boolean
+  gstNumber?: string
+  panNumber?: string
+  aadhaar?: string
+  businessLogoUrl?: string
   createdAt?: string
 }
 
@@ -118,7 +125,12 @@ export default function Page() {
       if (search) params.set("search", search)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/sellers?${params.toString()}`)
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch(`/api/admin/sellers?${params.toString()}`, {
+        headers: {
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+      })
       const data = await res.json()
       if (res.ok) {
         setSellers(Array.isArray(data.sellers) ? data.sellers : [])
@@ -200,13 +212,32 @@ export default function Page() {
           <div className="bg-white rounded-xl shadow-md p-4">
             <CommonTable
               columns={[
+                { key: "logo", label: "Logo", render: (r) => {
+                  const src = (r as Seller).businessLogoUrl
+                  return src ? (
+                    <div className="relative w-10 h-10">
+                      <Image src={src} alt={(r as Seller).businessName} fill sizes="40px" className="rounded border object-cover" unoptimized />
+                    </div>
+                  ) : (
+                    <div className="w-10 h-10 rounded border bg-gray-100 flex items-center justify-center">
+                      <Store className="w-5 h-5 text-gray-400" />
+                    </div>
+                  )
+                } },
                 { key: "businessName", label: "Business", sortable: true },
                 { key: "ownerName", label: "Owner" },
                 { key: "email", label: "Email" },
                 { key: "phone", label: "Phone" },
+                { key: "address", label: "Address" },
                 { key: "city", label: "City" },
                 { key: "state", label: "State", sortable: true },
+                { key: "district", label: "District" },
+                { key: "pincode", label: "Pincode" },
                 { key: "country", label: "Country", sortable: true },
+                { key: "hasGST", label: "Has GST", render: (r) => ((r as Seller).hasGST ? "Yes" : "No") },
+                { key: "gstNumber", label: "GST Number" },
+                { key: "panNumber", label: "PAN Number" },
+                { key: "aadhaar", label: "Aadhaar" },
                 { key: "status", label: "Status", sortable: true, render: (r) => (
                   <select
                     defaultValue={r.status}

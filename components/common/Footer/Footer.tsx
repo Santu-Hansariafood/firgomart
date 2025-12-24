@@ -47,8 +47,8 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="bg-gray-900 text-gray-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-10">
+      <div className="max-w-screen-xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10 mb-8 sm:mb-10">
           <div>
             <Title level={3} className="mb-4">Firgomart</Title>
             <Paragraph className="mb-4">
@@ -178,7 +178,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-8 mb-6">
+        <div className="border-t border-gray-800 pt-6 sm:pt-8 mb-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <Title level={5}>We Accept Payments</Title>
 
@@ -200,14 +200,14 @@ const Footer: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="border-t border-gray-800 pt-8">
+        <div className="border-t border-gray-800 pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
             <Paragraph className="text-center md:text-left">
               © {new Date().getFullYear() } Firgomart. All Rights Reserved.
             </Paragraph>
 
-            <div className="flex flex-wrap justify-center gap-6 text-sm">
+            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
               <button onClick={() => openPolicy("privacy")} className="hover:text-white transition-colors">Privacy Policy</button>
               <button onClick={() => openPolicy("terms")} className="hover:text-white transition-colors">Terms of Service</button>
               <button onClick={() => openPolicy("cookies")} className="hover:text-white transition-colors">Cookie Policy</button>

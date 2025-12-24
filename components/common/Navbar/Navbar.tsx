@@ -83,7 +83,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+      <div className="max-w-screen-xl mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
 
           <Link href="/" className="flex items-center space-x-2">
@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
               />
             </div>
           </Link>
-          <div className="hidden md:flex flex-none max-w-md mx-6 w-full">
+          <div className="hidden md:flex flex-1 min-w-0 mx-4">
             <SearchBox
               value={searchQuery}
               onChange={setSearchQuery}
@@ -106,7 +106,7 @@ const Navbar: React.FC = () => {
               placeholder="Search for products, brands and more..."
             />
           </div>
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 flex-none">
             <Link
               href="/seller-registration"
               className="flex items-center space-x-2 px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
