@@ -89,6 +89,12 @@ export async function GET(request: Request) {
       sellerHasGST: p.sellerHasGST,
       stock: p.stock ?? 0,
       createdAt: p.createdAt,
+      brand: p.brand,
+      colors: p.colors,
+      sizes: p.sizes,
+      about: p.about,
+      additionalInfo: p.additionalInfo,
+      description: p.description,
     }))
     return NextResponse.json({ products: safe, total })
   } catch (err: any) {
@@ -137,6 +143,13 @@ export async function POST(request: Request) {
     const sellerHasGST = typeof body?.sellerHasGST === "boolean" ? body.sellerHasGST : undefined
     const images = Array.isArray(body?.images) ? body.images : []
     const image = String(body?.image || images[0] || "")
+    const brand = String(body?.brand || "").trim()
+    const colors = Array.isArray(body?.colors) ? body.colors : []
+    const sizes = Array.isArray(body?.sizes) ? body.sizes : []
+    const about = String(body?.about || "").trim()
+    const additionalInfo = String(body?.additionalInfo || "").trim()
+    const description = String(body?.description || "").trim()
+
     if (!name || !price || !image) return NextResponse.json({ error: "name, price, image required" }, { status: 400 })
 
     const conn = await connectDB()
@@ -152,6 +165,12 @@ export async function POST(request: Request) {
       sellerHasGST,
       isAdminProduct: true,
       createdByEmail: adminEmail || undefined,
+      brand,
+      colors,
+      sizes,
+      about,
+      additionalInfo,
+      description,
     })
     return NextResponse.json({ product: { id: doc._id?.toString?.() || String(doc._id) } }, { status: 201 })
   } catch (err: any) {

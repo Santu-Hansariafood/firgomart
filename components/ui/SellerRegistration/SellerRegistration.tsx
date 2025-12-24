@@ -48,15 +48,62 @@ const SellerRegistration: React.FC = () => {
   const [districts, setDistricts] = useState<string[]>([])
   const [submitted, setSubmitted] = useState<boolean>(false)
   const [uploadingLogo, setUploadingLogo] = useState<boolean>(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [checking, setChecking] = useState<string | null>(null)
+
   const sortedCountries = [...locationData.countries]
     .map(c => c.country)
     .sort()
+
+  const checkExists = async (field: string, value: string) => {
+    if (!value) return
+    setChecking(field)
+    try {
+      const res = await fetch('/api/seller/check-exists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field, value }),
+      })
+      const data = await res.json()
+      if (data.exists) {
+        let msg = ''
+        switch (field) {
+          case 'email': msg = 'Email already registered'; break;
+          case 'phone': msg = 'Phone number already registered'; break;
+          case 'gstNumber': msg = 'GST Number already registered'; break;
+          case 'panNumber': msg = 'PAN Number already registered'; break;
+          default: msg = 'Already registered';
+        }
+        setErrors(prev => ({ ...prev, [field]: msg }))
+      } else {
+        setErrors(prev => {
+          const newErrors = { ...prev }
+          delete newErrors[field]
+          return newErrors
+        })
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setChecking(null)
+    }
+  }
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target as HTMLInputElement
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined
+
+    setErrors(prev => {
+      const newErrors = { ...prev }
+      delete newErrors[name]
+      if (name === 'hasGST') {
+        delete newErrors.gstNumber
+        delete newErrors.panNumber
+      }
+      return newErrors
+    })
 
     setFormData(prev => ({
       ...prev,
@@ -126,6 +173,11 @@ const SellerRegistration: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    if (Object.keys(errors).length > 0) {
+      return
+    }
+
     const payload = {
       ...formData,
       businessLogoUrl: formData.businessLogoUrl,
@@ -133,6 +185,14 @@ const SellerRegistration: React.FC = () => {
       country: formData.country,
       state: formData.state,
     }
+
+    if (payload.hasGST) {
+      payload.panNumber = ''
+      payload.aadhaar = ''
+    } else {
+      payload.gstNumber = ''
+    }
+
     const res = await fetch('/api/seller/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -221,9 +281,12 @@ const SellerRegistration: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
+                    onBlur={() => checkExists('email', formData.email)}
                     required
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className={`w-full px-4 py-2 border rounded-lg ${errors.email ? 'border-red-500' : ''}`}
                   />
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                  {checking === 'email' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
                 </div>
 
                 <div>
@@ -233,10 +296,13 @@ const SellerRegistration: React.FC = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
+                    onBlur={() => checkExists('phone', formData.phone)}
                     required
                     pattern="[0-9]{10}"
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className={`w-full px-4 py-2 border rounded-lg ${errors.phone ? 'border-red-500' : ''}`}
                   />
+                  {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                  {checking === 'phone' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
                 </div>
               </div>
               <div>
@@ -354,10 +420,13 @@ const SellerRegistration: React.FC = () => {
                     name="gstNumber"
                     value={formData.gstNumber}
                     onChange={handleChange}
+                    onBlur={() => checkExists('gstNumber', formData.gstNumber)}
                     pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
                     required
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className={`w-full px-4 py-2 border rounded-lg ${errors.gstNumber ? 'border-red-500' : ''}`}
                   />
+                  {errors.gstNumber && <p className="text-red-500 text-xs mt-1">{errors.gstNumber}</p>}
+                  {checking === 'gstNumber' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
                 </>
               ) : (
                 <div className="space-y-4">
@@ -368,10 +437,13 @@ const SellerRegistration: React.FC = () => {
                       name="panNumber"
                       value={formData.panNumber}
                       onChange={handleChange}
+                      onBlur={() => checkExists('panNumber', formData.panNumber)}
                       pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
                       required
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className={`w-full px-4 py-2 border rounded-lg ${errors.panNumber ? 'border-red-500' : ''}`}
                     />
+                    {errors.panNumber && <p className="text-red-500 text-xs mt-1">{errors.panNumber}</p>}
+                    {checking === 'panNumber' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
                   </div>
 
                   <div>

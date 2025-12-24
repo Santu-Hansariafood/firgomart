@@ -110,6 +110,11 @@ export async function POST(request: Request) {
       rating,
       reviews,
       description,
+      brand,
+      colors,
+      sizes,
+      about,
+      additionalInfo,
     } = body || {}
 
     if (!name || !image || typeof price !== "number") {
@@ -129,6 +134,11 @@ export async function POST(request: Request) {
       rating,
       reviews,
       description,
+      brand,
+      colors,
+      sizes,
+      about,
+      additionalInfo,
       isAdminProduct: true,
       createdByEmail: adminEmail || undefined,
       // Admin-managed products are deliverable nationwide

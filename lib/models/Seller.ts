@@ -34,8 +34,8 @@ export function getSellerModel(conn: Connection) {
   return existing ?? conn.model("Seller", SellerSchema)
 }
 
-export async function findSellerAcrossDBs(identifier: { email?: string; phone?: string }) {
-  const { email, phone } = identifier
+export async function findSellerAcrossDBs(identifier: { email?: string; phone?: string; gstNumber?: string; panNumber?: string }) {
+  const { email, phone, gstNumber, panNumber } = identifier
   const { connectDB } = await import("@/lib/db/db")
   const conns: Connection[] = []
   try { conns.push(await connectDB("US")) } catch {}
@@ -49,6 +49,11 @@ export async function findSellerAcrossDBs(identifier: { email?: string; phone?: 
     const query: Record<string, string> = {}
     if (email) query.email = email
     if (phone) query.phone = phone
+    if (gstNumber) query.gstNumber = gstNumber
+    if (panNumber) query.panNumber = panNumber
+    
+    if (Object.keys(query).length === 0) continue
+
     const doc = await (Seller as any).findOne(query)
     if (doc) return { conn, Seller, seller: doc }
   }

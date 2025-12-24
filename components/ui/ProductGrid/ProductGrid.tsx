@@ -20,6 +20,13 @@ interface Product {
   originalPrice?: number
   discount?: number
   rating?: number
+  brand?: string
+  colors?: string[]
+  sizes?: string[]
+  about?: string
+  additionalInfo?: string
+  description?: string
+  reviews?: number
 }
 
 interface ProductGridProps {
@@ -68,6 +75,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     originalPrice?: number
     discount?: number
     rating?: number
+    brand?: string
+    colors?: string[]
+    sizes?: string[]
+    about?: string
+    additionalInfo?: string
+    description?: string
+    reviews?: number
   }
 
   const fetchPage = useCallback(async (pageNum: number) => {
@@ -90,6 +104,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         originalPrice: p.originalPrice,
         discount: p.discount,
         rating: p.rating,
+        brand: p.brand,
+        colors: p.colors,
+        sizes: p.sizes,
+        about: p.about,
+        additionalInfo: p.additionalInfo,
+        description: p.description,
+        reviews: p.reviews,
       })) as Product[]
     } catch {
       return []
