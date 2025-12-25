@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { categories as categoryList } from "@/data/mockData"
@@ -10,6 +10,7 @@ import dynamic from "next/dynamic"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
 import { BarChart3, Users, Store, Boxes, Receipt, Package, Truck, CreditCard, Megaphone, LifeBuoy, FileText, Shield, PieChart, Globe } from "lucide-react"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 
 type Seller = {
   _id: string
@@ -254,10 +255,10 @@ export default function AdminPageClient() {
   type CategoryOption = { id: number; label: string }
   const [selectedCategoryItem, setSelectedCategoryItem] = useState<CategoryOption | null>(null)
 
-  // Render
   if (!allowed) return <AdminLogin />
 
   return (
+    <Suspense fallback={<BeautifulLoader/>}>
     <div className="p-6 space-y-8">
       <div className="rounded-2xl bg-linear-to-r from-blue-700 to-blue-500 text-white p-6">
         <div className="flex items-center justify-between">
@@ -304,11 +305,10 @@ export default function AdminPageClient() {
         </div>
       </section>
 
-      {/* Sellers Section */}
       <section id="seller-section">
         <h2 className="text-xl font-medium">Pending Sellers</h2>
         {loading ? (
-          <p>Loading...</p>
+          <BeautifulLoader />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sellers.map(s => (
@@ -327,7 +327,6 @@ export default function AdminPageClient() {
         )}
       </section>
 
-      {/* Approved Sellers */}
       <section>
         <h2 className="text-xl font-medium">Approved Sellers</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -340,7 +339,6 @@ export default function AdminPageClient() {
         </div>
       </section>
 
-      {/* Products */}
       <section id="product-section">
         <h2 className="text-xl font-medium">Products</h2>
         <div className="flex items-center gap-3 mb-3">
@@ -370,7 +368,6 @@ export default function AdminPageClient() {
         </div>
       </section>
 
-      {/* Edit Product Modal (simple inline form) */}
       {editingProductId && (
         <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
           <div className="bg-white rounded p-4 w-full max-w-lg space-y-3">
@@ -391,6 +388,7 @@ export default function AdminPageClient() {
         </div>
       )}
     </div>
+    </Suspense>
   )
 }
 

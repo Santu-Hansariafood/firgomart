@@ -27,6 +27,7 @@ interface Product {
   additionalInfo?: string
   description?: string
   reviews?: number
+  stock?: number
 }
 
 interface ProductGridProps {
@@ -82,6 +83,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     additionalInfo?: string
     description?: string
     reviews?: number
+    stock?: number
   }
 
   const fetchPage = useCallback(async (pageNum: number) => {
@@ -314,12 +316,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        onAddToCart(product)
+                        if ((product.stock ?? 0) > 0) {
+                          onAddToCart(product)
+                        }
                       }}
-                      className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center justify-center space-x-1"
+                      disabled={(product.stock ?? 0) <= 0}
+                      className={`flex-1 px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center space-x-1 ${
+                        (product.stock ?? 0) > 0
+                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
                     >
                       <ShoppingCart className="w-4 h-4" />
-                      <span>Add</span>
+                      <span>{(product.stock ?? 0) > 0 ? 'Add' : 'Sold'}</span>
                     </button>
                   </div>
                 </div>

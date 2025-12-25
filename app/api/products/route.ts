@@ -20,10 +20,8 @@ export async function GET(request: Request) {
     const query: Record<string, unknown> = {}
     if (adminOnly) query.isAdminProduct = true
     if (createdByEmail) query.createdByEmail = createdByEmail
-    // Visibility rules when browsing (not scoped to a specific seller)
     let finalQuery: any = { ...query }
     if (!createdByEmail) {
-      // Apply state-based visibility only for generic browsing
       if (deliverToState) {
         finalQuery.$or = [
           { isAdminProduct: true },
@@ -31,7 +29,6 @@ export async function GET(request: Request) {
           { sellerHasGST: false, sellerState: deliverToState },
         ]
       } else {
-        // Without a destination state, show only GST-enabled and admin products
         finalQuery.$or = [
           { isAdminProduct: true },
           { sellerHasGST: true },
@@ -57,7 +54,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    // Authorization: allow if NextAuth session email is admin OR admin_session cookie is valid
     function isAdminEmail(email?: string | null) {
       const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
       const allow = raw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
@@ -74,7 +70,6 @@ export async function POST(request: Request) {
       if (match) {
         const val = match.split("=")[1] || ""
         const [email, sig] = val.split(".")
-        // Recompute signature
         const crypto = await import("crypto")
         const secret = process.env.NEXTAUTH_SECRET || "dev-secret"
         const expected = crypto.createHmac("sha256", secret).update(String(email)).digest("hex")
@@ -85,7 +80,6 @@ export async function POST(request: Request) {
       }
     }
 
-    // Header-based fallback: allow when client sends x-admin-email that matches allowed list
     if (!allowed) {
       const hdrEmail = request.headers.get("x-admin-email")
       if (hdrEmail && isAdminEmail(hdrEmail)) {
@@ -141,7 +135,6 @@ export async function POST(request: Request) {
       additionalInfo,
       isAdminProduct: true,
       createdByEmail: adminEmail || undefined,
-      // Admin-managed products are deliverable nationwide
       sellerHasGST: true,
     })
 

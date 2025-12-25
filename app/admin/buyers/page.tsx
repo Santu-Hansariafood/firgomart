@@ -163,7 +163,7 @@ export default function Page() {
 
       <div className="space-y-3">
         {loading ? (
-          <div className="px-4 py-6 text-gray-700">Loading…</div>
+          <Loading />
         ) : (
           <div className="bg-white rounded-xl shadow-md p-4">
             <CommonTable

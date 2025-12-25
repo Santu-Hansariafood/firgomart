@@ -7,7 +7,7 @@ const ReviewSchema = new Schema(
     userName: { type: String, required: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, required: true },
-    status: { type: String, default: "approved" }, // approved, pending, rejected
+    status: { type: String, default: "approved" },
   },
   { timestamps: true }
 )

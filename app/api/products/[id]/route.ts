@@ -12,14 +12,12 @@ function isAdminEmail(email?: string | null) {
 }
 
 async function getActor(request: NextRequest) {
-  // Try NextAuth session first (admin user)
   const session = await getServerSession(authOptions)
   const sessEmail = session?.user?.email || null
   if (isAdminEmail(sessEmail)) {
     return { role: "admin", email: sessEmail }
   }
 
-  // Cookie-based admin session
   const cookieHeader = request.headers.get("cookie") || ""
   const match = cookieHeader.split(/;\s*/).find(p => p.startsWith("admin_session="))
   if (match) {
@@ -33,20 +31,17 @@ async function getActor(request: NextRequest) {
     }
   }
 
-  // Header-based admin fallback
   const hdrAdmin = request.headers.get("x-admin-email")
   if (hdrAdmin && isAdminEmail(hdrAdmin)) {
     return { role: "admin", email: hdrAdmin }
   }
 
-  // Seller by header or body
   let sellerEmail = (request.headers.get("x-seller-email") || "").trim()
   try {
     const bodyText = await request.text()
     if (!sellerEmail && bodyText) {
       const body = JSON.parse(bodyText)
       if (typeof body?.sellerEmail === "string") sellerEmail = body.sellerEmail.trim()
-      // Reconstruct request for downstream JSON parsing if needed
       ;(request as any)._jsonBody = body
     }
   } catch {}
@@ -72,7 +67,6 @@ export async function PATCH(request: NextRequest, ctx: { params: Promise<{ id: s
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
-    // Obtain body (may have been parsed in getActor)
     let body: any
     try {
       body = (request as any)._jsonBody ?? await request.json()
@@ -97,7 +91,6 @@ export async function PATCH(request: NextRequest, ctx: { params: Promise<{ id: s
     const doc = await (Product as any).findById(id)
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
-    // Authorization: admin can update any; seller can update only their own non-admin product
     if (actor.role === "seller") {
       const createdByEmail = (doc as any).createdByEmail
       const isAdminProduct = !!(doc as any).isAdminProduct
@@ -106,7 +99,6 @@ export async function PATCH(request: NextRequest, ctx: { params: Promise<{ id: s
       }
     }
 
-    // Apply updates
     for (const [k, v] of Object.entries(updates)) {
       (doc as any)[k] = v
     }

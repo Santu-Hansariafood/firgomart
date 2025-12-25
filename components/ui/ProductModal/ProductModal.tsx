@@ -24,6 +24,7 @@ interface Product {
   sizes?: string[]
   about?: string
   additionalInfo?: string
+  stock?: number
 }
 
 interface Review {
@@ -284,19 +285,31 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                 <div className="flex space-x-4">
                   <button
                     onClick={() => {
-                      onAddToCart({ ...product, quantity })
-                      onClose()
+                      if ((product.stock ?? 0) > 0) {
+                        onAddToCart({ ...product, quantity })
+                        onClose()
+                      }
                     }}
-                    className="flex-1 px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium flex items-center justify-center space-x-2"
+                    disabled={(product.stock ?? 0) <= 0}
+                    className={`flex-1 px-6 py-3 border-2 rounded-lg transition-colors font-medium flex items-center justify-center space-x-2 ${
+                      (product.stock ?? 0) > 0
+                        ? 'border-blue-600 text-blue-600 hover:bg-blue-50'
+                        : 'border-gray-300 text-gray-400 cursor-not-allowed'
+                    }`}
                   >
                     <ShoppingCart className="w-5 h-5" />
                     <span>Add to Cart</span>
                   </button>
                   <button
                     onClick={handleBuyNow}
-                    className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    disabled={(product.stock ?? 0) <= 0}
+                    className={`flex-1 px-6 py-3 rounded-lg transition-colors font-medium ${
+                      (product.stock ?? 0) > 0
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
                   >
-                    Buy Now
+                    {(product.stock ?? 0) > 0 ? 'Buy Now' : 'Out of Stock'}
                   </button>
                 </div>
               </div>

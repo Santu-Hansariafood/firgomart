@@ -8,6 +8,7 @@ import locationData  from "@/data/country.json"
 import { Package, Edit, Trash, X, Plus } from "lucide-react"
 import dynamic from "next/dynamic"
 import FallbackImage from "@/components/common/Image/FallbackImage"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
@@ -73,8 +74,6 @@ export default function Page() {
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [category, setCategory] = useState<string>("")
-
-  // Form State
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [formName, setFormName] = useState("")
@@ -84,8 +83,8 @@ export default function Page() {
   const [formSellerState, setFormSellerState] = useState("")
   const [formGST, setFormGST] = useState(false)
   const [formBrand, setFormBrand] = useState("")
-  const [formColors, setFormColors] = useState("") // Comma separated
-  const [formSizes, setFormSizes] = useState("") // Comma separated
+  const [formColors, setFormColors] = useState("")
+  const [formSizes, setFormSizes] = useState("")
   const [formAbout, setFormAbout] = useState("")
   const [formDesc, setFormDesc] = useState("")
   const [formAddInfo, setFormAddInfo] = useState("")
@@ -191,7 +190,6 @@ export default function Page() {
   const handleSave = async () => {
     let uploaded: string[] = []
     
-    // Upload new base64 images, keep existing urls
     const newImages = images.filter(img => img.startsWith("data:"))
     const existingImages = images.filter(img => !img.startsWith("data:"))
     
@@ -247,7 +245,7 @@ export default function Page() {
   }
 
   return (
-    <Suspense fallback={<div className="p-4">Loading…</div>}>
+    <Suspense fallback={<BeautifulLoader/>}>
       {!allowed ? (
         <AdminLogin />
       ) : (
@@ -352,7 +350,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* Edit/Add Modal */}
           {isModalOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
               <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -363,7 +360,6 @@ export default function Page() {
                   </button>
                 </div>
                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Basic Info */}
                     <div className="space-y-4">
                         <h3 className="font-semibold text-gray-700">Basic Information</h3>
                         <div>
@@ -395,7 +391,6 @@ export default function Page() {
                         </div>
                     </div>
 
-                    {/* Details */}
                     <div className="space-y-4">
                         <h3 className="font-semibold text-gray-700">Product Details</h3>
                          <div>
@@ -412,7 +407,6 @@ export default function Page() {
                         </div>
                     </div>
                     
-                    {/* Full Width Sections */}
                     <div className="md:col-span-2 space-y-4">
                         <div>
                              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -424,7 +418,6 @@ export default function Page() {
                         </div>
                     </div>
 
-                    {/* Seller Info */}
                     <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <h3 className="font-semibold text-gray-700">Seller & Tax</h3>

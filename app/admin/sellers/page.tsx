@@ -7,6 +7,7 @@ import locationData from "@/data/country.json"
 import dynamic from "next/dynamic"
 import { Store } from "lucide-react"
 import Image from "next/image"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -207,7 +208,7 @@ export default function Page() {
 
       <div className="space-y-3">
         {loading ? (
-          <div className="px-4 py-6 text-gray-700">Loading…</div>
+          <BeautifulLoader/>
         ) : (
           <div className="bg-white rounded-xl shadow-md p-4">
             <CommonTable

@@ -69,6 +69,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   })
   const [invalidItems, setInvalidItems] = useState<Array<{ id: number; name: string }>>([])
   const [validating, setValidating] = useState<boolean>(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   useEffect(() => {
     try {
@@ -157,6 +158,7 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   const handlePlaceOrder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setCheckoutError(null)
     try {
       const payload = {
         buyerEmail: formData.email,
@@ -176,7 +178,11 @@ const Checkout: React.FC<CheckoutProps> = ({
       if (!res.ok) {
         if (data?.productId) {
           const pid = Number(data.productId)
+          const item = cartItems.find(ci => ci.id === pid)
+          setCheckoutError(`Sorry, "${item?.name || 'Product'}" is out of stock and has been removed from your cart.`)
           if (onRemoveItem) onRemoveItem(pid)
+        } else {
+          setCheckoutError(data?.error || "Failed to place order")
         }
         return
       }
@@ -554,6 +560,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                       Place Order
                     </button>
                   </div>
+                  {checkoutError && (
+                    <div className="mt-4 p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 text-center">
+                      {checkoutError}
+                    </div>
+                  )}
                 </form>
               )}
             </motion.div>

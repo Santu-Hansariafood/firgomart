@@ -17,15 +17,13 @@ import { Connection, Schema, Model } from "mongoose"
     stock: { type: Number, default: 0 },
     isAdminProduct: { type: Boolean, default: false, index: true },
     createdByEmail: { type: String, index: true },
-    // Delivery visibility control based on seller registration
     sellerState: { type: String, index: true },
     sellerHasGST: { type: Boolean, default: undefined, index: true },
-    // New fields
     brand: { type: String },
-    colors: { type: [String], default: [] }, // e.g., ["Red", "Blue"] or Hex codes
-    sizes: { type: [String], default: [] },  // e.g., ["S", "M", "L", "XL"]
-    about: { type: String }, // Short bullet points or summary
-    additionalInfo: { type: String }, // Technical specs, etc.
+    colors: { type: [String], default: [] },
+    sizes: { type: [String], default: [] },
+    about: { type: String },
+    additionalInfo: { type: String },
   },
   { timestamps: true }
 )

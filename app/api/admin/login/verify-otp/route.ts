@@ -39,7 +39,6 @@ export async function POST(request: Request) {
       name: u.name,
       role: "admin",
     }
-    // Set a signed httpOnly admin session cookie for server-side API authorization
     const secret = process.env.NEXTAUTH_SECRET || "dev-secret"
     const sig = createHmac("sha256", secret).update(String(u.email)).digest("hex")
     const token = `${u.email}.${sig}`

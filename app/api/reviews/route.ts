@@ -38,19 +38,15 @@ export async function POST(request: Request) {
     const Review = getReviewModel(conn)
     const Product = getProductModel(conn)
 
-    // Optional: Check if user already reviewed?
-    // For now, allow multiple reviews or handle as needed.
-
     const newReview = await (Review as any).create({
       productId,
-      userId: session.user.email, // Using email as ID for simplicity, or fetch user ID
+      userId: session.user.email,
       userName: session.user.name || "Customer",
       rating,
       comment,
-      status: "approved" // Auto-approve for demo
+      status: "approved"
     })
 
-    // Update product rating stats
     const allReviews = await (Review as any).find({ productId, status: "approved" }).lean()
     const count = allReviews.length
     const sum = allReviews.reduce((acc: number, r: any) => acc + r.rating, 0)

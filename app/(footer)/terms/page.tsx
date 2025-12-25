@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Title from "@/components/common/Title/Title";
 import Paragraph from "@/components/common/Paragraph/Paragraph";
 
