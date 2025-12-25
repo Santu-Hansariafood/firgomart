@@ -14,6 +14,7 @@ interface CartItem {
   originalPrice?: number
   quantity?: number
   image: string
+  stock?: number
 }
 
 interface CartProps {
@@ -27,13 +28,20 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
   const router = useRouter()
   const { isAuthenticated } = useAuth()
 
-  const total = items.reduce((sum, item) => sum + item.price * (item.quantity ?? 1), 0)
+  const total = items.reduce((sum, item) => {
+    if ((item.stock ?? 0) <= 0) return sum
+    return sum + item.price * (item.quantity ?? 1)
+  }, 0)
   const savings = items.reduce((sum, item) => {
+    if ((item.stock ?? 0) <= 0) return sum
     const saved = item.originalPrice ? (item.originalPrice - item.price) * (item.quantity ?? 1) : 0
     return sum + saved
   }, 0)
 
   const handleCheckout = () => {
+    const validCount = items.filter(item => (item.stock ?? 0) > 0).length
+    if (validCount === 0) return 
+
     onClose()
     if (!isAuthenticated) {
       router.push('/login?next=/checkout')
@@ -117,13 +125,22 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                         )}
                       </div>
 
+                      {(item.stock ?? 0) <= 0 && (
+                        <div className="mb-2">
+                          <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium">
+                            Out of Stock
+                          </span>
+                        </div>
+                      )}
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() =>
                               onUpdateQuantity(item.id, Math.max(1, (item.quantity ?? 1) - 1))
                             }
-                            className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors"
+                            disabled={(item.stock ?? 0) <= 0}
+                            className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
@@ -131,9 +148,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                             {item.quantity ?? 1}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item.id, Math.min(3, (item.quantity ?? 1) + 1))}
-                            className={`w-6 h-6 border border-gray-300 rounded flex items-center justify-center transition-colors ${((item.quantity ?? 1) >= 3) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white'}`}
-                            disabled={(item.quantity ?? 1) >= 3}
+                            onClick={() => onUpdateQuantity(item.id, Math.min((item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
+                            className={`w-6 h-6 border border-gray-300 rounded flex items-center justify-center transition-colors ${((item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white'}`}
+                            disabled={(item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0}
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -176,9 +193,14 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
                 <button
                   onClick={handleCheckout}
-                  className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                  disabled={hasOutOfStockItems}
+                  className={`w-full py-3 rounded-lg transition-colors font-medium ${
+                    hasOutOfStockItems
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
                 >
-                  Proceed to Checkout
+                  {hasOutOfStockItems ? 'Remove Out of Stock Items' : 'Proceed to Checkout'}
                 </button>
               </div>
             </>

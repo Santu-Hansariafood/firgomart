@@ -113,6 +113,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         additionalInfo: p.additionalInfo,
         description: p.description,
         reviews: p.reviews,
+        stock: p.stock,
       })) as Product[]
     } catch {
       return []

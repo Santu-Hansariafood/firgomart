@@ -21,6 +21,7 @@ interface CartItem {
   image: string
   originalPrice?: number
   quantity?: number
+  stock?: number
 }
 
 interface CheckoutProps {
@@ -143,7 +144,8 @@ const Checkout: React.FC<CheckoutProps> = ({
     }
   }
 
-  const subtotal = cartItems.reduce(
+  const validItems = cartItems.filter(item => (item.stock ?? 0) > 0)
+  const subtotal = validItems.reduce(
     (sum, item) => sum + item.price * (item.quantity ?? 1),
     0
   )
@@ -555,7 +557,12 @@ const Checkout: React.FC<CheckoutProps> = ({
                     </button>
                     <button
                       type="submit"
-                      className="flex-1 py-3 bg-linear-to-r from-blue-600 to-blue-400 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all"
+                      disabled={validItems.length === 0}
+                      className={`flex-1 py-3 rounded-lg font-medium transition-all ${
+                        validItems.length === 0
+                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-linear-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500'
+                      }`}
                     >
                       Place Order
                     </button>
@@ -602,6 +609,9 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <p className="text-sm font-bold text-gray-900">
                         ₹{item.price * (item.quantity ?? 1)}
                       </p>
+                      {(item.stock ?? 0) <= 0 && (
+                        <span className="text-xs text-red-600 font-medium">Out of Stock</span>
+                      )}
                     </div>
                   </div>
                 ))}

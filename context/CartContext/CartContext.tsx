@@ -9,6 +9,7 @@ interface CartItem {
   image: string;
   originalPrice?: number;
   quantity?: number;
+  stock?: number;
 }
 
 interface CartContextType {
@@ -35,21 +36,26 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         return prev.map((item) => {
           if (item.id !== product.id) return item
           const current = item.quantity || 1
-          const next = Math.min(MAX_QTY, current + inc)
+          const stock = item.stock ?? MAX_QTY
+          const next = Math.min(stock, Math.min(MAX_QTY, current + inc))
           return { ...item, quantity: next }
         });
       }
       const startQty = product.quantity && product.quantity > 0 ? product.quantity : 1
-      return [...prev, { ...product, quantity: Math.min(MAX_QTY, startQty) }];
+      const stock = product.stock ?? MAX_QTY
+      if (stock <= 0) return prev
+      return [...prev, { ...product, quantity: Math.min(stock, Math.min(MAX_QTY, startQty)) }];
     });
   };
 
   const updateQuantity = (id: number, quantity: number) => {
-    setCartItems((prev) =>
-      quantity <= 0
-        ? prev.filter((item) => item.id !== id)
-        : prev.map((item) => (item.id === id ? { ...item, quantity: Math.min(MAX_QTY, Math.max(1, quantity)) } : item))
-    );
+    setCartItems((prev) => {
+       const item = prev.find(i => i.id === id)
+       if (!item) return prev
+       const stock = item.stock ?? MAX_QTY
+       if (quantity <= 0) return prev.filter((item) => item.id !== id)
+       return prev.map((item) => (item.id === id ? { ...item, quantity: Math.min(stock, Math.min(MAX_QTY, Math.max(1, quantity))) } : item))
+    });
   };
 
   const removeFromCart = (id: number) => {
