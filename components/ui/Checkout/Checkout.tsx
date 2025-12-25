@@ -606,11 +606,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <p className="text-sm text-gray-500">
                         Qty: {item.quantity ?? 1}
                       </p>
-                      <p className="text-sm font-bold text-gray-900">
+                      <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-gray-900' }`}>
                         ₹{item.price * (item.quantity ?? 1)}
                       </p>
                       {(item.stock ?? 0) <= 0 && (
-                        <span className="text-xs text-red-600 font-medium">Out of Stock</span>
+                        <span className="text-xs text-red-600 font-medium">Out of Stock (Excluded)</span>
                       )}
                     </div>
                   </div>

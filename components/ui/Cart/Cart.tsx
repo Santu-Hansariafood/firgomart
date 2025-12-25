@@ -193,14 +193,14 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
                 <button
                   onClick={handleCheckout}
-                  disabled={hasOutOfStockItems}
+                  disabled={items.every(item => (item.stock ?? 0) <= 0)}
                   className={`w-full py-3 rounded-lg transition-colors font-medium ${
-                    hasOutOfStockItems
+                    items.every(item => (item.stock ?? 0) <= 0)
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   }`}
                 >
-                  {hasOutOfStockItems ? 'Remove Out of Stock Items' : 'Proceed to Checkout'}
+                  Proceed to Checkout
                 </button>
               </div>
             </>
