@@ -14,6 +14,7 @@ import {
   ArrowUp,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import Image from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 const PolicyModal = dynamic(() => import("@/components/common/PolicyModal/PolicyModal"), { ssr: false });
@@ -50,11 +51,9 @@ const Footer: React.FC = () => {
       <div className="max-w-screen-xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10 mb-8 sm:mb-10">
           <div>
-            <Title level={3} className="mb-4">Firgomart</Title>
+            <Image src="/logo/firgomart.png" alt="FirgoMart Logo" width={100} height={20} className="mb-4" />
             <Paragraph className="mb-4">
-              Your one-stop destination for groceries, fashion, electronics, and
-              home essentials — all at unbeatable prices. Shop smart, live
-              better with Firgomart!
+              FirgoMart is a multi-category brand offering quality fashion footwear accessories and daily lifestyle products We focus on reliable quality fast delivery and a smooth shopping experience for every customer
             </Paragraph>
             <div className="flex flex-wrap gap-3">
               <Link

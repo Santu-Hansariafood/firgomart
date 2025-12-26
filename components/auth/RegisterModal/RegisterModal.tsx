@@ -6,7 +6,9 @@ import {
   X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff 
 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
-
+import dynamic from 'next/dynamic'
+const Title = dynamic(() => import('@/components/common/Title/Title'))
+const Paragraph = dynamic(() => import('@/components/common/Paragraph/Paragraph'))
 interface RegisterModalProps {
   isOpen: boolean
   onClose: () => void
@@ -170,7 +172,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           exit={{ opacity: 0, scale: 0.95 }}
           className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 overflow-hidden"
         >
-          {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-6 relative">
             <button
               onClick={onClose}
@@ -178,12 +179,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-2xl font-heading font-bold text-white">
-              Create Account
-            </h2>
-            <p className="text-blue-100 mt-1">
-              Step {step} of 2 — {step === 1 ? 'Account Details' : 'Personal Information'}
-            </p>
+            <Title level={2} className="text-white">
+  Create Account
+</Title>
+
+<Paragraph className="text-blue-100 mt-1">
+  Step {step} of 2 — {step === 1 ? 'Account Details' : 'Personal Information'}
+</Paragraph>
+
             <div className="flex mt-4 space-x-2">
               <div className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-white' : 'bg-blue-300'}`} />
               <div className={`h-1 flex-1 rounded-full ${step >= 2 ? 'bg-white' : 'bg-blue-300'}`} />
@@ -441,16 +444,17 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               </div>
             )}
             <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <button
-                  type="button"
-                  onClick={onSwitchToLogin}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  Sign in
-                </button>
-              </p>
+              <Paragraph className="text-gray-600">
+  Already have an account?{' '}
+  <button
+    type="button"
+    onClick={onSwitchToLogin}
+    className="text-blue-600 hover:text-blue-700 font-medium"
+  >
+    Sign in
+  </button>
+</Paragraph>
+
             </div>
           </form>
         </motion.div>

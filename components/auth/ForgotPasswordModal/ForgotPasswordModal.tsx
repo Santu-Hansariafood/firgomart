@@ -3,7 +3,9 @@
 import { useState, FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Mail, CheckCircle } from "lucide-react";
-
+import dynamic from "next/dynamic";
+const Title = dynamic(() => import('@/components/common/Title/Title'));
+const Paragraph = dynamic(() => import('@/components/common/Paragraph/Paragraph'));
 interface ForgotPasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -84,7 +86,6 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           exit={{ opacity: 0, scale: 0.95 }}
           className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
         >
-          {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-6 relative">
             <button
               onClick={onClose}
@@ -92,13 +93,15 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-2xl font-bold text-white">Forgot Password</h2>
-            <p className="text-blue-100 mt-1">
+            <Title level={2} className="text-white">
+              Forgot Password
+            </Title>
+
+            <Paragraph className="text-blue-100 mt-1">
               We&apos;ll send you reset instructions
-            </p>
+            </Paragraph>
           </div>
 
-          {/* Content */}
           <div className="p-6">
             {success ? (
               <motion.div
@@ -109,21 +112,25 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <Title level={4} className="text-gray-900 mb-2">
                   Check Your Email
-                </h3>
-                <p className="text-gray-600 mb-6">
+                </Title>
+
+                <Paragraph className="text-gray-600 mb-6">
                   We&apos;ve sent password reset instructions to{" "}
                   <strong>{email}</strong>
-                </p>
-                <p className="text-sm text-gray-500">Redirecting to login...</p>
+                </Paragraph>
+
+                <Paragraph className="text-gray-500 text-sm">
+                  Redirecting to login...
+                </Paragraph>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <p className="text-gray-600 text-sm">
+                <Paragraph className="text-gray-600 text-sm">
                   Enter your email address and we&apos;ll send you instructions to
                   reset your password.
-                </p>
+                </Paragraph>
 
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
@@ -156,13 +163,15 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 </button>
 
                 <div className="text-center pt-4 border-t border-gray-200">
+                  <Paragraph className="text-sm">
                   <button
                     type="button"
                     onClick={onSwitchToLogin}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    className="text-blue-600 hover:text-blue-700 font-medium"
                   >
                     Back to Login
                   </button>
+                  </Paragraph>
                 </div>
               </form>
             )}

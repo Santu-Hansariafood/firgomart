@@ -7,9 +7,7 @@ import { ShoppingCart, Eye } from 'lucide-react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import locationData from '@/data/country.json'
-// import { products } from '@/data/mockData'
 
-// ✅ Type definitions
 interface Product {
   id: string | number
   name: string
@@ -95,7 +93,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
-      // Map API product to grid product shape
       return list.map((p: ApiProduct) => ({
         id: p._id || p.id,
         name: p.name,
@@ -132,8 +129,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     }
     loadInitial()
   }, [fetchPage])
-
-  // Initial deliverToState is loaded lazily from localStorage via useState initializer
 
   useEffect(() => {
     const save = (s: string | undefined, country?: string | undefined) => {
@@ -227,7 +222,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 const val = e.target.value
                 setDeliverToState(val)
                 try { localStorage.setItem('deliverToState', val) } catch {}
-                // Reset paging when state changes
                 setPage(1)
               }}
               className="px-3 py-2 border rounded-lg bg-white text-sm w-40 sm:w-48"
@@ -337,8 +331,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
             ))}
           </motion.div>
         )}
-
-        {/* Infinite Scroll Loader */}
         {hasMore && (
           <div ref={observerTarget} className="flex justify-center mt-8">
             {loading && (

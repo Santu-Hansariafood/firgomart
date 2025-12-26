@@ -4,6 +4,9 @@ import React, { useState, ChangeEvent, FormEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import { signIn } from 'next-auth/react'
+import dynamic from "next/dynamic";
+const Title = dynamic(() => import('@/components/common/Title/Title'))
+const Paragraph = dynamic(() => import('@/components/common/Paragraph/Paragraph'))
 
 interface LoginModalProps {
   isOpen: boolean
@@ -124,10 +127,13 @@ const LoginModal: React.FC<LoginModalProps> = ({
             >
               <X className="w-5 h-5" />
             </button>
-            <h2 className="text-2xl font-bold text-white font-heading">Welcome Back</h2>
-            <p className="text-blue-100 mt-1 text-sm sm:text-base">
+            <Title level={2} className="text-white">
+              Welcome Back
+            </Title>
+
+            <Paragraph className="text-blue-100 mt-1 text-sm sm:text-base">
               Sign in to continue shopping
-            </p>
+            </Paragraph>
           </div>
           <form onSubmit={handleSubmit} className="p-6 space-y-4 sm:space-y-5">
             {errors.submit && (
@@ -210,7 +216,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             </button>
 
             <div className="text-center pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-600">
+              <Paragraph className="text-sm text-gray-600">
                 Don’t have an account?{' '}
                 <button
                   type="button"
@@ -219,7 +225,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 >
                   Sign up
                 </button>
-              </p>
+              </Paragraph>
             </div>
           </form>
         </motion.div>
