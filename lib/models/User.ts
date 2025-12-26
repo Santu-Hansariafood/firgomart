@@ -19,6 +19,16 @@ import { connectDB } from "@/lib/db/db"
       resetOtpExpires: { type: Date },
       adminLoginOtp: { type: String },
       adminLoginOtpExpires: { type: Date },
+      addresses: [{
+        name: String,
+        mobile: String,
+        address: String,
+        city: String,
+        state: String,
+        pincode: String,
+        country: String,
+        isDefault: Boolean
+      }],
     },
     { timestamps: true }
   )

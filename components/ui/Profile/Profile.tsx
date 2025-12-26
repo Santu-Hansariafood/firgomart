@@ -26,6 +26,15 @@ interface UserData {
   city?: string;
   state?: string;
   pincode?: string;
+  addresses?: Array<{
+    name?: string;
+    mobile?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+    isDefault?: boolean;
+  }>;
 }
 
 interface FormErrors {
@@ -44,6 +53,22 @@ const Profile = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [orders, setOrders] = useState<Array<{ id: string; orderNumber?: string; amount?: number; status?: string; createdAt?: string }>>([])
   const [loadingOrders, setLoadingOrders] = useState(false)
+  const [showAddAddress, setShowAddAddress] = useState(false)
+  const [newAddress, setNewAddress] = useState({
+    name: "",
+    mobile: "",
+    address: "",
+    city: "",
+    state: "",
+    pincode: "",
+    isDefault: false
+  })
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({ ...prev, ...user }))
+    }
+  }, [user])
 
   const getInitials = (n?: string | null, e?: string | null) => {
     const name = String(n || "").trim()
@@ -99,6 +124,46 @@ const Profile = () => {
     setErrors({});
     setIsEditing(false);
   };
+
+  const handleAddAddress = () => {
+    if (!newAddress.address || !newAddress.city || !newAddress.pincode) return
+    const updatedAddresses = [...(formData.addresses || [])]
+    if (newAddress.isDefault) {
+      updatedAddresses.forEach(a => a.isDefault = false)
+    }
+    updatedAddresses.push({ ...newAddress })
+    const updatedData = { ...formData, addresses: updatedAddresses }
+    setFormData(updatedData)
+    updateUser({ addresses: updatedAddresses } as any)
+    setNewAddress({
+      name: "",
+      mobile: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      isDefault: false
+    })
+    setShowAddAddress(false)
+  }
+
+  const handleDeleteAddress = (index: number) => {
+    const updatedAddresses = [...(formData.addresses || [])]
+    updatedAddresses.splice(index, 1)
+    const updatedData = { ...formData, addresses: updatedAddresses }
+    setFormData(updatedData)
+    updateUser({ addresses: updatedAddresses } as any)
+  }
+
+  const handleSetDefault = (index: number) => {
+    const updatedAddresses = (formData.addresses || []).map((addr, i) => ({
+      ...addr,
+      isDefault: i === index
+    }))
+    const updatedData = { ...formData, addresses: updatedAddresses }
+    setFormData(updatedData)
+    updateUser({ addresses: updatedAddresses } as any)
+  }
 
   const handleLogout = () => {
     logout();
@@ -317,6 +382,121 @@ const Profile = () => {
                 </button>
               </div>
             )}
+
+            <div className="mt-8 pt-8 border-t border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-heading font-bold text-gray-900">Saved Addresses</h2>
+                <button
+                  onClick={() => setShowAddAddress(!showAddAddress)}
+                  className="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                >
+                  {showAddAddress ? "Cancel" : "Add New Address"}
+                </button>
+              </div>
+
+              {showAddAddress && (
+                <div className="mb-6 p-6 bg-gray-50 rounded-xl border border-gray-200 animate-in fade-in slide-in-from-top-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <SimpleInput
+                      label="Name"
+                      name="newName"
+                      value={newAddress.name}
+                      onChange={(e) => setNewAddress({ ...newAddress, name: e.target.value })}
+                    />
+                    <SimpleInput
+                      label="Mobile"
+                      name="newMobile"
+                      value={newAddress.mobile}
+                      onChange={(e) => setNewAddress({ ...newAddress, mobile: e.target.value })}
+                    />
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                      <textarea
+                        value={newAddress.address}
+                        onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows={2}
+                      />
+                    </div>
+                    <SimpleInput
+                      label="City"
+                      name="newCity"
+                      value={newAddress.city}
+                      onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
+                    />
+                    <SimpleInput
+                      label="State"
+                      name="newState"
+                      value={newAddress.state}
+                      onChange={(e) => setNewAddress({ ...newAddress, state: e.target.value })}
+                    />
+                    <SimpleInput
+                      label="Pincode"
+                      name="newPincode"
+                      value={newAddress.pincode}
+                      onChange={(e) => setNewAddress({ ...newAddress, pincode: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <input
+                      type="checkbox"
+                      id="isDefault"
+                      checked={newAddress.isDefault}
+                      onChange={(e) => setNewAddress({ ...newAddress, isDefault: e.target.checked })}
+                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    />
+                    <label htmlFor="isDefault" className="text-sm text-gray-700">Set as default address</label>
+                  </div>
+                  <button
+                    onClick={handleAddAddress}
+                    disabled={!newAddress.address || !newAddress.city || !newAddress.pincode}
+                    className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Save Address
+                  </button>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(formData.addresses || []).map((addr, idx) => (
+                  <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white"} relative group`}>
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <div className="font-medium text-gray-900">{addr.name || formData.name}</div>
+                        <div className="text-sm text-gray-500">{addr.mobile || formData.mobile}</div>
+                      </div>
+                      {addr.isDefault && (
+                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">Default</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-700 mb-3">
+                      {addr.address}, {addr.city}, {addr.state} - {addr.pincode}
+                    </p>
+                    <div className="flex items-center gap-3 text-sm">
+                      {!addr.isDefault && (
+                        <button
+                          onClick={() => handleSetDefault(idx)}
+                          className="text-blue-600 hover:text-blue-800 font-medium"
+                        >
+                          Set Default
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDeleteAddress(idx)}
+                        className="text-red-600 hover:text-red-800 font-medium"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {(!formData.addresses || formData.addresses.length === 0) && (
+                  <div className="col-span-full text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-xl">
+                    No additional addresses saved.
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="mt-8 pt-8 border-t border-gray-200">
               <button

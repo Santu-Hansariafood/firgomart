@@ -50,8 +50,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      setUser(session?.user as User)
+      setUser(prev => ({ ...prev, ...(session?.user as User) }))
       setIsAuthenticated(true)
+      fetch("/api/auth/profile")
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) setUser(data.user)
+        })
+        .catch(console.error)
     } else if (status === "unauthenticated") {
       setUser(prev => {
         const keep = (prev as any)?.role === "admin"
@@ -115,10 +121,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     router.push("/login")
   }
 
-  const updateUser = (updatedData: Partial<User>) => {
+  const updateUser = async (updatedData: Partial<User>) => {
     if (!user) return
     const updatedUser = { ...user, ...updatedData }
     setUser(updatedUser)
+    try {
+      await fetch("/api/auth/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      })
+    } catch (err) {
+      console.error("Failed to update profile", err)
+    }
   }
 
   const value: AuthContextType = {
