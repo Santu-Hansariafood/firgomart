@@ -188,6 +188,30 @@ const Checkout: React.FC<CheckoutProps> = ({
         }
         return
       }
+
+      if (paymentMethod === 'card' || paymentMethod === 'qr') {
+        try {
+          const orderId = data.order._id || data.order.id
+          const initRes = await fetch('/api/payment/phonepe/initiate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId }),
+          })
+          const initData = await initRes.json()
+          
+          if (initRes.ok && initData.url) {
+            window.location.href = initData.url
+            return 
+          } else {
+             setCheckoutError(initData.error || "Failed to initiate PhonePe payment")
+             return
+          }
+        } catch (err) {
+           setCheckoutError("Failed to connect to payment gateway")
+           return
+        }
+      }
+
       setOrderPlaced(true)
       setLastOrder({ id: String(data?.order?.id || ""), orderNumber: String(data?.order?.orderNumber || "") })
       if (onRemoveItem) {
@@ -435,7 +459,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                               : 'text-gray-600'
                           }`}
                         >
-                          Card Payment
+                          Card (via PhonePe)
                         </p>
                       </button>
                       <button
@@ -461,7 +485,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                               : 'text-gray-600'
                           }`}
                         >
-                          QR Code
+                          UPI/QR (via PhonePe)
                         </p>
                       </button>
                     </div>
@@ -470,78 +494,29 @@ const Checkout: React.FC<CheckoutProps> = ({
                   {/* Conditional Payment UI */}
                   {paymentMethod === 'card' ? (
                     <div className="space-y-4">
-                      <input
-                        type="text"
-                        name="cardNumber"
-                        placeholder="Card Number *"
-                        value={formData.cardNumber}
-                        onChange={handleChange}
-                        required
-                        pattern="[0-9]{16}"
-                        maxLength={16}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-
-                      <input
-                        type="text"
-                        name="cardName"
-                        placeholder="Cardholder Name *"
-                        value={formData.cardName}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <input
-                          type="text"
-                          name="expiryDate"
-                          placeholder="MM/YY *"
-                          value={formData.expiryDate}
-                          onChange={handleChange}
-                          required
-                          pattern="(0[1-9]|1[0-2])/[0-9]{2}"
-                          maxLength={5}
-                          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <input
-                          type="text"
-                          name="cvv"
-                          placeholder="CVV *"
-                          value={formData.cvv}
-                          onChange={handleChange}
-                          required
-                          pattern="[0-9]{3}"
-                          maxLength={3}
-                          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                      <div className="bg-gray-50 rounded-xl p-6 text-center">
+                        <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
+                          Pay by Card via PhonePe
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-4">
+                          You will be redirected to PhonePe secure payment page to complete your card payment.
+                        </p>
+                        <p className="text-xl font-bold text-blue-600">
+                          ₹{total.toFixed(2)}
+                        </p>
                       </div>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <div className="bg-white inline-block p-4 rounded-lg shadow-md mb-4">
-                          <div className="w-48 h-48 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                            <QrCode className="w-32 h-32 text-white" />
-                          </div>
-                        </div>
                         <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
-                          Scan QR Code to Pay
+                          Pay via UPI/QR on PhonePe
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">
-                          Use any UPI app to scan and complete payment
+                          You will be redirected to PhonePe where you can pay using UPI/QR.
                         </p>
                         <p className="text-xl font-bold text-blue-600">
                           ₹{total.toFixed(2)}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-4">
-                          Order ID: #ORD{Math.floor(Math.random() * 1000000)}
-                        </p>
-                      </div>
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <p className="text-sm text-blue-800 text-center">
-                          <strong>Note:</strong> After successful payment, click
-                          &quot;Place Order&quot; to confirm your purchase.
                         </p>
                       </div>
                     </div>
