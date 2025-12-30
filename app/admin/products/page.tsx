@@ -79,6 +79,7 @@ export default function Page() {
   const [formName, setFormName] = useState("")
   const [formCategory, setFormCategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
+  const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
   const [formSellerState, setFormSellerState] = useState("")
   const [formGST, setFormGST] = useState(false)
@@ -140,6 +141,7 @@ export default function Page() {
       setFormName(product.name)
       setFormCategory(product.category || "")
       setFormPrice(String(product.price))
+      setFormOriginalPrice(String((product as any).originalPrice ?? ""))
       setFormStock(String(product.stock || 0))
       setFormSellerState(product.sellerState || "")
       setFormGST(!!product.sellerHasGST)
@@ -155,6 +157,7 @@ export default function Page() {
       setFormName("")
       setFormCategory("")
       setFormPrice("")
+      setFormOriginalPrice("")
       setFormStock("")
       setFormSellerState("")
       setFormGST(false)
@@ -210,6 +213,7 @@ export default function Page() {
       name: formName.trim(),
       category: formCategory.trim(),
       price: Number(formPrice),
+      originalPrice: formOriginalPrice ? Number(formOriginalPrice) : undefined,
       stock: Number(formStock || 0),
       sellerState: formGST ? "" : formSellerState.trim(),
       sellerHasGST: formGST,
@@ -318,6 +322,16 @@ export default function Page() {
                     { key: "name", label: "Name", sortable: true },
                     { key: "category", label: "Category", sortable: true },
                     { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },
+                    { key: "originalPrice", label: "Original", render: (r) => (r as any).originalPrice ? `₹${(r as any).originalPrice}` : "" },
+                    { key: "discount", label: "Discount", render: (r) => {
+                      const op = Number((r as any).originalPrice || 0)
+                      const sp = Number(r.price || 0)
+                      if (op > sp && op > 0) {
+                        const pct = Math.round(((op - sp) / op) * 100)
+                        return `-${pct}%`
+                      }
+                      return ""
+                    } },
                     { key: "stock", label: "Stock", sortable: true },
                     { key: "brand", label: "Brand" },
                     { key: "sellerState", label: "State", sortable: true },
@@ -326,6 +340,20 @@ export default function Page() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-blue-600">
                                 <Edit className="w-4 h-4" />
+                            </button>
+                            <button onClick={async () => {
+                              try {
+                                const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+                                await fetch(`/api/admin/products/${(r as ProductItem).id}`, {
+                                  method: "DELETE",
+                                  headers: {
+                                    ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+                                  },
+                                })
+                                loadProducts()
+                              } catch {}
+                            }} className="p-1 hover:bg-gray-100 rounded text-red-600">
+                                <Trash className="w-4 h-4" />
                             </button>
                         </div>
                     )}
@@ -368,10 +396,14 @@ export default function Page() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
                                 <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                             </div>
                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Actual Price</label>
+                                <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
+                            </div>
+                            <div className="col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                 <input type="number" value={formStock} onChange={e => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                             </div>

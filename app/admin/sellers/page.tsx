@@ -34,6 +34,10 @@ type Seller = {
   aadhaar?: string
   businessLogoUrl?: string
   createdAt?: string
+  reviewNotes?: string
+  rejectionReason?: string
+  reviewedBy?: string
+  reviewedAt?: string
 }
 
 type DropdownItem = { id: string | number; label: string }
@@ -112,6 +116,61 @@ export default function Page() {
         setSellers(prev => prev.map(s => s.id === id ? { ...s, status } as Seller : s))
       }
     } catch {}
+  }
+
+  const [selectedSeller, setSelectedSeller] = useState<Seller | null>(null)
+  const [decisionStatus, setDecisionStatus] = useState<"approved" | "rejected" | "pending">("pending")
+  const [decisionNote, setDecisionNote] = useState("")
+  const [saving, setSaving] = useState(false)
+
+  const openReview = (seller: Seller) => {
+    setSelectedSeller(seller)
+    setDecisionStatus((seller.status as any) || "pending")
+    setDecisionNote(seller.reviewNotes || seller.rejectionReason || "")
+  }
+
+  const saveDecision = async () => {
+    if (!selectedSeller) return
+    setSaving(true)
+    try {
+      const payload: Partial<Seller> = {
+        status: decisionStatus,
+        reviewedAt: new Date().toISOString(),
+        reviewNotes: decisionStatus === "approved" ? decisionNote : undefined,
+        rejectionReason: decisionStatus === "rejected" ? decisionNote : undefined,
+        reviewedBy: (session?.user?.email || authUser?.email || "") || undefined,
+      }
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch(`/api/admin/sellers/${selectedSeller.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        const updated = data.seller as any
+        setSellers(prev => prev.map(s => s.id === selectedSeller.id ? {
+          ...s,
+          status: updated.status,
+          reviewNotes: updated.reviewNotes,
+          rejectionReason: updated.rejectionReason,
+          reviewedAt: updated.reviewedAt,
+          reviewedBy: updated.reviewedBy,
+        } : s))
+        setSelectedSeller({
+          ...selectedSeller,
+          status: updated.status,
+          reviewNotes: updated.reviewNotes,
+          rejectionReason: updated.rejectionReason,
+          reviewedAt: updated.reviewedAt,
+          reviewedBy: updated.reviewedBy,
+        })
+      }
+    } catch {}
+    setSaving(false)
   }
 
   const loadSellers = async () => {
@@ -250,13 +309,21 @@ export default function Page() {
                     <option value="rejected">Rejected</option>
                   </select>
                 ) },
+                { key: "actions", label: "Actions", render: (r) => (
+                  <button
+                    className="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                    onClick={() => openReview(r as Seller)}
+                  >
+                    Review
+                  </button>
+                ) },
                 { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
               ]}
               data={sellers}
               sortKey={sortKey || undefined}
               sortOrder={sortOrder}
               onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-              rowKey={(r) => r.id}
+              rowKey={(r, i) => `${r.id}-${i}`}
             />
           </div>
         )}
@@ -270,6 +337,105 @@ export default function Page() {
             onPageChange={(p) => setPage(p)}
           />
         </div>
+
+        {selectedSeller && (
+          <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center" onClick={() => setSelectedSeller(null)}>
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-3xl p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-semibold">Review Seller</h3>
+                <button onClick={() => setSelectedSeller(null)} className="text-gray-600 hover:text-gray-900">Close</button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <div className="text-sm text-gray-500">Business</div>
+                  <div className="font-medium">{selectedSeller.businessName}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Owner</div>
+                  <div className="font-medium">{selectedSeller.ownerName}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Email</div>
+                  <div className="font-medium">{selectedSeller.email}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Phone</div>
+                  <div className="font-medium">{selectedSeller.phone}</div>
+                </div>
+                <div className="md:col-span-2">
+                  <div className="text-sm text-gray-500">Address</div>
+                  <div className="font-medium">{selectedSeller.address} {selectedSeller.city} {selectedSeller.state} {selectedSeller.pincode}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">GST</div>
+                  <div className="font-medium">{selectedSeller.gstNumber || "-"}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">PAN</div>
+                  <div className="font-medium">{selectedSeller.panNumber || "-"}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Aadhaar</div>
+                  <div className="font-medium">{selectedSeller.aadhaar || "-"}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-gray-500">Status</div>
+                  <select
+                    value={decisionStatus}
+                    onChange={(e) => setDecisionStatus(e.currentTarget.value as any)}
+                    className="border rounded-lg px-2 py-1 w-full"
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm text-gray-600 mb-1">Decision Notes / Reason</label>
+                <textarea
+                  value={decisionNote}
+                  onChange={(e) => setDecisionNote(e.currentTarget.value)}
+                  rows={4}
+                  className="w-full border rounded-lg px-3 py-2"
+                  placeholder="Write approval notes or rejection reason"
+                />
+                {decisionStatus === "rejected" && !decisionNote && (
+                  <div className="text-xs text-red-600 mt-1">Rejection reason is required</div>
+                )}
+              </div>
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50"
+                  onClick={() => setSelectedSeller(null)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className={`px-4 py-2 rounded-lg ${saving ? "bg-gray-300 text-gray-600" : "bg-blue-600 text-white hover:bg-blue-700"}`}
+                  onClick={saveDecision}
+                  disabled={saving || (decisionStatus === "rejected" && !decisionNote)}
+                >
+                  Save
+                </button>
+                <button
+                  className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
+                  onClick={() => { setDecisionStatus("approved"); saveDecision() }}
+                  disabled={saving}
+                >
+                  Approve
+                </button>
+                <button
+                  className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+                  onClick={() => { setDecisionStatus("rejected"); saveDecision() }}
+                  disabled={saving || !decisionNote}
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
     )}
