@@ -355,6 +355,7 @@ export default function Page() {
                             }} className="p-1 hover:bg-gray-100 rounded text-brand-red">
                                 <Trash className="w-4 h-4" />
                             </button>
+                        </div>
                   )}
                 ]}
                   data={products}
