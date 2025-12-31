@@ -93,12 +93,12 @@ const SellerLogin: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-xl overflow-hidden"
         >
-          <div className="bg-linear-to-r from-blue-600 to-blue-400 p-6 text-white">
+          <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 text-white">
             <div className="flex items-center space-x-3">
               <ShieldCheck className="w-6 h-6" />
               <h1 className="text-2xl font-heading font-bold">Seller Login (OTP)</h1>
             </div>
-            <p className="text-blue-100 mt-1">Secure login using your mobile number</p>
+            <p className="text-white/80 mt-1">Secure login using your mobile number</p>
           </div>
 
           <div className="p-6 space-y-5">
@@ -112,14 +112,14 @@ const SellerLogin: React.FC = () => {
                     value={mobile}
                     onChange={e => setMobile(e.target.value)}
                     placeholder="Enter 10-digit mobile number"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
                   />
                 </div>
                 {error && <p className="text-red-600 text-sm">{error}</p>}
                 <button
                   onClick={requestOtp}
                   disabled={loading}
-                  className="w-full bg-linear-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition disabled:opacity-50"
+                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-purple/90 hover:to-brand-red/90 transition disabled:opacity-50"
                 >
                   {loading ? 'Sending OTP...' : 'Request OTP'}
                 </button>
@@ -130,7 +130,7 @@ const SellerLogin: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {generatedOtp && (
-                  <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
+                  <div className="bg-brand-purple/10 border border-brand-purple/30 text-brand-purple px-4 py-3 rounded-lg text-sm">
                     Your OTP: <span className="font-semibold">{generatedOtp}</span>
                   </div>
                 )}
@@ -140,14 +140,14 @@ const SellerLogin: React.FC = () => {
                   value={enteredOtp}
                   onChange={e => setEnteredOtp(e.target.value)}
                   placeholder="6-digit code"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
                 />
                 {error && <p className="text-red-600 text-sm">{error}</p>}
                 <div className="flex gap-3">
                   <button
                     onClick={verifyOtp}
                     disabled={loading}
-                    className="flex-1 bg-linear-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition disabled:opacity-50"
+                    className="flex-1 bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-purple/90 hover:to-brand-red/90 transition disabled:opacity-50"
                   >
                     {loading ? 'Verifying...' : 'Verify & Login'}
                   </button>

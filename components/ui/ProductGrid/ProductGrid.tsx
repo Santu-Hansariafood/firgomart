@@ -238,7 +238,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         </div>
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
                 <div className="aspect-square bg-gray-200 animate-pulse" />
@@ -258,7 +258,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6"
           >
             {displayedProducts.map((product) => (
               <motion.div
@@ -274,7 +274,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     src={product.image}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 640px) 22vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
+                    sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">

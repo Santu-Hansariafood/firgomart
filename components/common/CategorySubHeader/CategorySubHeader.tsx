@@ -28,7 +28,7 @@ const categories: Category[] = [
     icon: ShoppingBag,
     color: 'bg-pink-100 hover:bg-pink-200 text-pink-700',
     image:
-      '/image/my.jpeg',
+      '/image/women.webp',
   },
   {
     id: 2,
@@ -36,7 +36,7 @@ const categories: Category[] = [
     icon: Users,
     color: 'bg-blue-100 hover:bg-blue-200 text-blue-700',
     image:
-      '/image/my.jpeg',
+      '/image/man.webp',
   },
   {
     id: 3,
@@ -44,7 +44,7 @@ const categories: Category[] = [
     icon: Footprints,
     color: 'bg-purple-100 hover:bg-purple-200 text-purple-700',
     image:
-      '/image/my.jpeg',
+      '/image/foot.webp',
   },
   {
     id: 4,
@@ -52,7 +52,7 @@ const categories: Category[] = [
     icon: Sparkles,
     color: 'bg-amber-100 hover:bg-amber-200 text-amber-700',
     image:
-      '/image/my.jpeg',
+      '/image/juallery.webp',
   },
   {
     id: 5,
@@ -60,7 +60,7 @@ const categories: Category[] = [
     icon: Heart,
     color: 'bg-rose-100 hover:bg-rose-200 text-rose-700',
     image:
-      '/image/my.jpeg',
+      '/image/beauti.webp',
   },
   {
     id: 6,
@@ -68,7 +68,7 @@ const categories: Category[] = [
     icon: Home,
     color: 'bg-green-100 hover:bg-green-200 text-green-700',
     image:
-      '/image/my.jpeg',
+      '/image/home.webp',
   },
 ]
 

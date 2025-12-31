@@ -218,7 +218,7 @@ const SellerRegistration: React.FC = () => {
           </p>
           <button
             onClick={() => (window.location.href = '/')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="px-6 py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors font-medium"
           >
             Back to Home
           </button>
@@ -236,12 +236,12 @@ const SellerRegistration: React.FC = () => {
           animate="show"
           className="bg-white rounded-2xl shadow-xl overflow-hidden"
         >
-          <div className="bg-linear-to-r from-blue-600 to-blue-400 p-8 text-white">
+          <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
             <div className="flex items-center space-x-3 mb-2">
               <Store className="w-8 h-8" />
               <h1 className="text-3xl font-heading font-bold">Become a Seller</h1>
             </div>
-            <p className="text-blue-100">Grow your business with us</p>
+            <p className="text-white/80">Grow your business with us</p>
           </div>
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">
@@ -286,7 +286,7 @@ const SellerRegistration: React.FC = () => {
                     className={`w-full px-4 py-2 border rounded-lg ${errors.email ? 'border-red-500' : ''}`}
                   />
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                  {checking === 'email' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
+                  {checking === 'email' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </div>
 
                 <div>
@@ -302,7 +302,7 @@ const SellerRegistration: React.FC = () => {
                     className={`w-full px-4 py-2 border rounded-lg ${errors.phone ? 'border-red-500' : ''}`}
                   />
                   {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-                  {checking === 'phone' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
+                  {checking === 'phone' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </div>
               </div>
               <div>
@@ -426,7 +426,7 @@ const SellerRegistration: React.FC = () => {
                     className={`w-full px-4 py-2 border rounded-lg ${errors.gstNumber ? 'border-red-500' : ''}`}
                   />
                   {errors.gstNumber && <p className="text-red-500 text-xs mt-1">{errors.gstNumber}</p>}
-                  {checking === 'gstNumber' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
+                  {checking === 'gstNumber' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </>
               ) : (
                 <div className="space-y-4">
@@ -443,7 +443,7 @@ const SellerRegistration: React.FC = () => {
                       className={`w-full px-4 py-2 border rounded-lg ${errors.panNumber ? 'border-red-500' : ''}`}
                     />
                     {errors.panNumber && <p className="text-red-500 text-xs mt-1">{errors.panNumber}</p>}
-                    {checking === 'panNumber' && <p className="text-blue-500 text-xs mt-1">Checking...</p>}
+                    {checking === 'panNumber' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                   </div>
 
                   <div>
@@ -467,7 +467,7 @@ const SellerRegistration: React.FC = () => {
               <div className="border-2 border-dashed p-6 text-center rounded-lg">
                 <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
 
-                <label className="cursor-pointer text-blue-600 font-medium">
+                <label className="cursor-pointer text-brand-purple font-medium">
                   Upload Logo
                   <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </label>
@@ -476,7 +476,7 @@ const SellerRegistration: React.FC = () => {
                   <p className="text-sm text-green-600 mt-2">✓ {formData.businessLogo.name}</p>
                 )}
                 {uploadingLogo && (
-                  <p className="text-sm text-blue-600 mt-2">Uploading logo...</p>
+                  <p className="text-sm text-brand-purple mt-2">Uploading logo...</p>
                 )}
                 {formData.businessLogoUrl && (
                   <p className="text-sm text-green-700 mt-2">Uploaded</p>
@@ -485,14 +485,14 @@ const SellerRegistration: React.FC = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="w-full py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90"
             >
               Submit Registration
             </button>
             <div className="pt-4 text-center border-t">
               <p className="text-sm">
                 Already have an account?{' '}
-                <Link href="/seller-login" className="text-blue-600">
+                <Link href="/seller-login" className="text-brand-purple">
                   Log in
                 </Link>
               </p>
