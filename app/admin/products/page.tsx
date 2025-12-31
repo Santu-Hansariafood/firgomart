@@ -255,17 +255,17 @@ export default function Page() {
       ) : (
         <div className="p-6 space-y-8">
           <BackButton className="mb-2" />
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl flex items-center justify-between">
+          <div className="bg-gradient-to-r from-brand-purple to-brand-red p-4 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Package className="w-8 h-8 text-white" />
               <div>
                 <h1 className="text-2xl font-bold text-white">Product Management</h1>
-                <p className="text-indigo-100 text-sm">Create, filter and manage catalog</p>
+                <p className="text-white/80 text-sm">Create, filter and manage catalog</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
                <span className="text-2xl font-semibold text-white">{total} Items</span>
-               <button onClick={() => openModal()} className="bg-white text-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 font-medium hover:bg-blue-50">
+               <button onClick={() => openModal()} className="bg-white text-brand-purple px-4 py-2 rounded-lg flex items-center gap-2 font-medium hover:bg-brand-purple/10">
                  <Plus className="w-4 h-4" /> Add Product
                </button>
             </div>
@@ -280,7 +280,7 @@ export default function Page() {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   placeholder="Category"
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-purple focus:outline-none"
                 />
               </div>
               {String(selectedGST.id) !== "true" && (
@@ -338,7 +338,7 @@ export default function Page() {
                     { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "" },
                     { key: "actions", label: "Actions", render: (r) => (
                         <div className="flex items-center gap-2">
-                            <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-blue-600">
+                            <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-brand-purple">
                                 <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={async () => {
@@ -352,12 +352,11 @@ export default function Page() {
                                 })
                                 loadProducts()
                               } catch {}
-                            }} className="p-1 hover:bg-gray-100 rounded text-red-600">
+                            }} className="p-1 hover:bg-gray-100 rounded text-brand-red">
                                 <Trash className="w-4 h-4" />
                             </button>
-                        </div>
-                    )}
-                  ]}
+                  )}
+                ]}
                   data={products}
                   sortKey={sortKey || undefined}
                   sortOrder={sortOrder}

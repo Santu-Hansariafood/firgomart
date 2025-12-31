@@ -67,7 +67,7 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
       <div
         className={clsx(
           "rounded-xl border flex flex-wrap gap-2 items-center justify-between px-4 py-3 cursor-pointer bg-white",
-          open && "ring-2 ring-blue-500"
+          open && "ring-2 ring-brand-purple"
         )}
         onClick={() => setOpen(!open)}
       >
@@ -78,7 +78,7 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
               (selected as DropdownItem[]).map((item) => (
                 <span
                   key={item.id}
-                  className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg flex items-center gap-1"
+                  className="bg-brand-purple text-white px-2 py-1 rounded-lg flex items-center gap-1"
                 >
                   {item.label}
                   <X
@@ -127,8 +127,8 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
               key={item.id}
               onClick={() => handleSelect(item)}
               className={clsx(
-                "px-3 py-2 rounded-lg cursor-pointer hover:bg-blue-100",
-                isSelected(item.id) && "bg-blue-200"
+                "px-3 py-2 rounded-lg cursor-pointer hover:bg-brand-purple/10",
+                isSelected(item.id) && "bg-brand-purple/20"
               )}
             >
               {item.label}

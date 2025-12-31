@@ -260,25 +260,25 @@ export default function AdminPageClient() {
   return (
     <Suspense fallback={<BeautifulLoader/>}>
     <div className="p-6 space-y-8">
-      <div className="rounded-2xl bg-linear-to-r from-blue-700 to-blue-500 text-white p-6">
+      <div className="rounded-2xl bg-linear-to-r from-brand-purple to-brand-red text-white p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-            <p className="text-blue-100 mt-1">Control center for operations and analytics</p>
+            <p className="text-white/80 mt-1">Control center for operations and analytics</p>
           </div>
           <BarChart3 className="w-8 h-8 opacity-80" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div className="rounded-xl bg-white/10 px-4 py-3">
-            <p className="text-sm text-blue-100">Pending sellers</p>
+            <p className="text-sm text-white/80">Pending sellers</p>
             <p className="text-2xl font-semibold">{sellers.length}</p>
           </div>
           <div className="rounded-xl bg-white/10 px-4 py-3">
-            <p className="text-sm text-blue-100">Approved sellers</p>
+            <p className="text-sm text-white/80">Approved sellers</p>
             <p className="text-2xl font-semibold">{approvedSellers.length}</p>
           </div>
           <div className="rounded-xl bg-white/10 px-4 py-3">
-            <p className="text-sm text-blue-100">Admin products</p>
+            <p className="text-sm text-white/80">Admin products</p>
             <p className="text-2xl font-semibold">{products.length}</p>
           </div>
         </div>
@@ -296,7 +296,7 @@ export default function AdminPageClient() {
                 onClick={() => router.push(m.route)}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5 text-blue-600" />
+                  <Icon className="w-5 h-5 text-brand-purple" />
                   <div className="font-semibold">{m.title}</div>
                 </div>
               </div>

@@ -72,7 +72,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
           onClick={toggleListen}
           className={clsx(
             "absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md",
-            isListening ? "text-red-600" : "text-gray-500 hover:text-gray-700"
+            isListening ? "text-brand-red" : "text-gray-500 hover:text-gray-700"
           )}
         >
           {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -83,7 +83,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent"
       />
     </div>
   );

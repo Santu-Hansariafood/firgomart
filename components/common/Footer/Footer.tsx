@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <footer className="bg-brand-black text-gray-300">
       <div className="max-w-screen-xl mx-auto px-3 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10 mb-8 sm:mb-10">
           <div>
@@ -59,28 +59,28 @@ const Footer: React.FC = () => {
               <Link
                 href="https://facebook.com/firgomart"
                 aria-label="Facebook"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors"
               >
                 <Facebook className="w-4 h-4" />
               </Link>
               <Link
                 href="https://twitter.com/firgomart"
                 aria-label="Twitter"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-400 transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors"
               >
                 <Twitter className="w-4 h-4" />
               </Link>
               <Link
                 href="https://instagram.com/firgomart"
                 aria-label="Instagram"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-pink-600 transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-red transition-colors"
               >
                 <Instagram className="w-4 h-4" />
               </Link>
               <Link
                 href="https://linkedin.com/company/firgomart-24logistics-private-limited/"
                 aria-label="LinkedIn"
-                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors"
+                className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors"
               >
                 <Linkedin className="w-4 h-4" />
               </Link>
@@ -225,7 +225,7 @@ const Footer: React.FC = () => {
         <button
           aria-label="Scroll to top"
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors p-3 sm:p-4"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-brand-purple text-white rounded-full shadow-lg hover:bg-brand-red transition-colors p-3 sm:p-4"
         >
           <ArrowUp className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>

@@ -172,7 +172,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           exit={{ opacity: 0, scale: 0.95 }}
           className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 overflow-hidden"
         >
-          <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-6 relative">
+          <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 relative">
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
@@ -183,13 +183,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   Create Account
 </Title>
 
-<Paragraph className="text-blue-100 mt-1">
+<Paragraph className="text-white/80 mt-1">
   Step {step} of 2 — {step === 1 ? 'Account Details' : 'Personal Information'}
 </Paragraph>
 
             <div className="flex mt-4 space-x-2">
-              <div className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-white' : 'bg-blue-300'}`} />
-              <div className={`h-1 flex-1 rounded-full ${step >= 2 ? 'bg-white' : 'bg-blue-300'}`} />
+              <div className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-white' : 'bg-brand-gray'}`} />
+              <div className={`h-1 flex-1 rounded-full ${step >= 2 ? 'bg-white' : 'bg-brand-gray'}`} />
             </div>
           </div>
 
@@ -209,7 +209,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           value={type}
                           checked={formData.registrationType === type}
                           onChange={handleChange}
-                          className="w-4 h-4 text-blue-600"
+                          className="w-4 h-4 text-brand-purple"
                         />
                         <span className="ml-2 text-sm text-gray-700 capitalize">
                           {type}
@@ -235,7 +235,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         if (errors.name) setErrors(prev => ({ ...prev, name: '' }))
                       }}
                       placeholder="Enter your first name"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple ${
                         errors.name ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -260,7 +260,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
                         }}
                         placeholder="your@email.com"
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple ${
                           errors.email ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -280,7 +280,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         value={formData.mobile}
                         onChange={handleChange}
                         placeholder="10-digit mobile number"
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple ${
                           errors.mobile ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -315,7 +315,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           value={formData[name as 'password' | 'confirmPassword']}
                           onChange={handleChange}
                           placeholder={placeholder}
-                          className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                          className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple ${
                             errors[name] ? 'border-red-500' : 'border-gray-300'
                           }`}
                         />
@@ -336,7 +336,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="w-full bg-linear-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all"
+                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all"
                 >
                   Next Step
                 </button>
@@ -355,10 +355,10 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                       onChange={handleChange}
                       rows={3}
                       placeholder="Street address, apartment, suite, etc."
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
-                        errors.address ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    />
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple ${
+                          errors.address ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
                   </div>
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                 </div>
@@ -374,7 +374,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         value={formData[field]}
                         onChange={handleChange}
                         placeholder={field === 'pincode' ? '6-digit pincode' : field}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 ${
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple ${
                           errors[field] ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />

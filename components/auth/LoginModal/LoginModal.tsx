@@ -119,7 +119,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           transition={{ duration: 0.2 }}
           className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
         >
-          <div className="relative bg-linear-to-r from-blue-600 to-blue-400 p-6">
+          <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-6">
             <button
               onClick={onClose}
               aria-label="Close modal"
@@ -131,7 +131,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               Welcome Back
             </Title>
 
-            <Paragraph className="text-blue-100 mt-1 text-sm sm:text-base">
+            <Paragraph className="text-white/80 mt-1 text-sm sm:text-base">
               Sign in to continue shopping
             </Paragraph>
           </div>
@@ -152,7 +152,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="your@email.com"
@@ -172,7 +172,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter your password"
@@ -194,14 +194,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="w-4 h-4 text-brand-purple border-gray-300 rounded focus:ring-brand-purple"
                 />
                 <span className="ml-2 text-sm text-gray-700">Remember me</span>
               </label>
               <button
                 type="button"
                 onClick={onSwitchToForgot}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                className="text-sm text-brand-purple hover:text-brand-red font-medium"
               >
                 Forgot Password?
               </button>
@@ -210,7 +210,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
@@ -221,7 +221,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 <button
                   type="button"
                   onClick={onSwitchToRegister}
-                  className="text-blue-600 hover:text-blue-700 font-medium"
+                  className="text-brand-purple hover:text-brand-red font-medium"
                 >
                   Sign up
                 </button>

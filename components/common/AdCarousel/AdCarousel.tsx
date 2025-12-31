@@ -58,7 +58,7 @@ const AdCarousel: React.FC = () => {
                 <p className="text-lg md:text-xl mb-4 opacity-90">
                   {currentAd.description}
                 </p>
-                <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors">
+                <button className="px-6 py-3 bg-brand-purple hover:bg-brand-red rounded-lg font-medium transition-colors">
                   {currentAd.buttonText}
                 </button>
               </div>

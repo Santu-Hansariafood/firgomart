@@ -82,12 +82,12 @@ export default function AdminLogin() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md overflow-hidden rounded-2xl shadow-xl bg-white"
       >
-        <div className="bg-linear-to-r from-blue-700 to-blue-500 px-6 py-5 text-white">
+        <div className="bg-linear-to-r from-brand-purple to-brand-red px-6 py-5 text-white">
           <div className="flex items-center gap-3">
             <ShieldCheck className="w-6 h-6" />
             <h1 className="text-xl font-heading font-bold">Admin Access</h1>
           </div>
-          <p className="text-sm text-blue-100 mt-1">Secure OTP verification for admin login</p>
+          <p className="text-sm text-white/80 mt-1">Secure OTP verification for admin login</p>
         </div>
 
         <div className="p-6 space-y-5">
@@ -103,13 +103,13 @@ export default function AdminLogin() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="you@company.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
                 />
               </div>
               <button
                 onClick={requestOtp}
                 disabled={loading || !validEmail}
-                className="w-full bg-linear-to-r from-blue-700 to-blue-500 text-white py-3 rounded-lg font-medium hover:from-blue-800 hover:to-blue-600 transition disabled:opacity-50"
+                className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition disabled:opacity-50"
               >
                 {loading ? "Sending..." : "Send OTP"}
               </button>

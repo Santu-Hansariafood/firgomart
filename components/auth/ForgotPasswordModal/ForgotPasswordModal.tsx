@@ -86,7 +86,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           exit={{ opacity: 0, scale: 0.95 }}
           className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
         >
-          <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-6 relative">
+          <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 relative">
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
@@ -97,7 +97,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
               Forgot Password
             </Title>
 
-            <Paragraph className="text-blue-100 mt-1">
+            <Paragraph className="text-white/80 mt-1">
               We&apos;ll send you reset instructions
             </Paragraph>
           </div>
@@ -148,7 +148,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -157,7 +157,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Sending..." : "Send Reset Instructions"}
                 </button>
@@ -167,7 +167,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                   <button
                     type="button"
                     onClick={onSwitchToLogin}
-                    className="text-blue-600 hover:text-blue-700 font-medium"
+                    className="text-brand-purple hover:text-brand-red font-medium"
                   >
                     Back to Login
                   </button>

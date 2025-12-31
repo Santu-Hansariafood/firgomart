@@ -174,7 +174,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         onClick={() => setSelectedImage(idx)}
                         className={`w-20 h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                           selectedImage === idx
-                            ? 'border-blue-600'
+                            ? 'border-brand-purple'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
@@ -195,7 +195,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
               <div>
                 <div className="mb-4">
                   {product.brand && (
-                    <span className="text-sm font-medium text-blue-600 mb-1 block">{product.brand}</span>
+                    <span className="text-sm font-medium text-brand-purple mb-1 block">{product.brand}</span>
                   )}
                   <h1 className="text-2xl font-heading font-bold text-gray-900 mb-2">
                     {product.name}
@@ -208,7 +208,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     <span className="text-sm font-medium">{product.rating || 0}</span>
                     <Star className="w-3 h-3 fill-current" />
                   </div>
-                  <span className="text-sm text-gray-500 hover:text-blue-600 cursor-pointer" onClick={() => setActiveTab('reviews')}>
+                  <span className="text-sm text-gray-500 hover:text-brand-purple cursor-pointer" onClick={() => setActiveTab('reviews')}>
                     ({product.reviews ?? 0} reviews)
                   </span>
                 </div>

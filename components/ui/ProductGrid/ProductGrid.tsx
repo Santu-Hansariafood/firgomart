@@ -281,7 +281,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   {product.discount && (
-                    <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                    <span className="absolute top-2 right-2 bg-brand-red text-white text-xs font-bold px-2 py-1 rounded">
                       {product.discount}% OFF
                     </span>
                   )}
@@ -304,7 +304,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                   <div className="flex space-x-2">
                     <button
                       onClick={() => onProductClick(product)}
-                      className="flex-1 px-3 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium"
+                      className="flex-1 px-3 py-2 border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/10 transition-colors text-sm font-medium"
                     >
                       View
                     </button>
@@ -318,7 +318,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                       disabled={(product.stock ?? 0) <= 0}
                       className={`flex-1 px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center space-x-1 ${
                         (product.stock ?? 0) > 0
-                          ? 'bg-blue-600 text-white hover:bg-blue-700'
+                          ? 'bg-brand-purple text-white hover:bg-brand-purple/90'
                           : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       }`}
                     >
@@ -335,7 +335,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
           <div ref={observerTarget} className="flex justify-center mt-8">
             {loading && (
               <div className="flex items-center space-x-2 text-gray-600">
-                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
                 <span>Loading more products...</span>
               </div>
             )}
