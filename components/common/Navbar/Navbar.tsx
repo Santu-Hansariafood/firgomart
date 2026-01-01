@@ -173,12 +173,12 @@ const Navbar: React.FC = () => {
             )}
             <button
               onClick={() => setShowCart(true)}
-              className="relative flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="relative flex items-center space-x-2 px-4 py-2 text-brand-purple hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-5 h-5 text-brand-purple" />
               <span className="font-medium">Cart</span>
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-brand-red text-white text-xs rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
@@ -267,14 +267,14 @@ const Navbar: React.FC = () => {
                   setShowCart(true)
                   setMobileMenuOpen(false)
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="w-full flex items-center justify-between px-4 py-3 text-brand-purple hover:bg-gray-100 rounded-lg"
               >
                 <div className="flex items-center space-x-2">
-                  <ShoppingCart className="w-5 h-5" />
+                  <ShoppingCart className="w-5 h-5 text-brand-purple" />
                   <span className="font-medium">Cart</span>
                 </div>
                 {cartCount > 0 && (
-                  <span className="w-6 h-6 bg-red-500 text-white text-sm rounded-full flex items-center justify-center">
+                  <span className="w-6 h-6 bg-brand-red text-white text-sm rounded-full flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}

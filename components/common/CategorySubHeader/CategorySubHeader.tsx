@@ -96,18 +96,18 @@ const CategorySubHeader: React.FC = () => {
               className="shrink-0 snap-start"
             >
               <button
-                className="flex flex-col items-center gap-2 px-3 py-2 bg-white border border-brand-purple/30 rounded-xl hover:bg-brand-purple/10 hover:shadow-md transition-all w-24 md:w-28 lg:w-32"
+                className="flex flex-col items-center gap-2 px-3 py-2 bg-white border border-brand-purple/30 rounded-xl hover:bg-brand-purple/10 hover:shadow-md transition-all w-28"
               >
-                <div className="relative rounded-full overflow-hidden bg-brand-purple/5 ring-1 ring-brand-purple mx-auto w-14 h-14 md:w-20 md:h-20 lg:w-24 lg:h-24">
+                <div className="relative rounded-full overflow-hidden bg-brand-purple/5 ring-1 ring-brand-purple mx-auto w-16 h-16">
                   <FallbackImage
                     src={category.image}
                     alt={category.name}
                     fill
-                    sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, (max-width: 1024px) 96px, 96px"
+                    sizes="64px"
                     className="object-cover"
                   />
                 </div>
-                <span className="text-xs md:text-sm font-medium text-brand-black text-center w-24 md:w-28 truncate">
+                <span className="text-[10px] md:text-xs leading-snug font-medium text-brand-black text-center whitespace-normal break-words max-w-[112px]">
                   {category.name}
                 </span>
               </button>

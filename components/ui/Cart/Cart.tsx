@@ -66,7 +66,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
         >
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-              <ShoppingBag className="w-5 h-5 text-blue-600" />
+              <ShoppingBag className="w-5 h-5 text-brand-purple" />
               <h2 className="text-lg font-heading font-bold text-gray-900">Shopping Cart</h2>
               <span className="text-sm text-gray-500">({items.length})</span>
             </div>
@@ -85,7 +85,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
               <p className="text-gray-500 mb-4">Add some products to get started</p>
               <button
                 onClick={onClose}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-2 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-lg hover:from-brand-purple/90 hover:to-brand-red/90 transition-colors"
               >
                 Continue Shopping
               </button>
@@ -197,7 +197,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   className={`w-full py-3 rounded-lg transition-colors font-medium ${
                     items.every(item => (item.stock ?? 0) <= 0)
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                      : 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90'
                   }`}
                 >
                   Proceed to Checkout

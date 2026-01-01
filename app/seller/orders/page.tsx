@@ -45,9 +45,7 @@ export default function Page() {
 
   const download = async (id: string, type: "invoice" | "label") => {
     try {
-      const res = await fetch(`/api/seller/orders/${id}/${type}`)
-      const data = await res.json()
-      console.log(type, data)
+      window.open(`/api/seller/orders/${id}/${type}?format=pdf&download=true`, "_blank")
     } catch {}
   }
 
