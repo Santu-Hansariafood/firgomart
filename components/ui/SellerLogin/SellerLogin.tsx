@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Phone, ShieldCheck, RefreshCw } from 'lucide-react'
+import { Phone, ShieldCheck, RefreshCw, X, AlertTriangle } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 
 const SellerLogin: React.FC = () => {
@@ -18,6 +18,11 @@ const SellerLogin: React.FC = () => {
   const [enteredOtp, setEnteredOtp] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  
+  // Consent Popup State
+  const [showConsent, setShowConsent] = useState(false)
+  const [consentChecked, setConsentChecked] = useState(false)
+  const [pendingSeller, setPendingSeller] = useState<any>(null)
 
   const requestOtp = async () => {
     setError('')
@@ -62,20 +67,36 @@ const SellerLogin: React.FC = () => {
       const data = await res.json()
       if (!res.ok) {
         setError(data?.error || 'Verification failed')
+        setLoading(false)
       } else {
-        const s = data?.seller
-        const user: Parameters<typeof login>[0] = {
-          id: s?.id || Date.now(),
-          email: s?.email || `${mobile}@seller.local`,
-          name: s?.name || 'Seller',
-          role: 'seller',
-        }
-        await login(user)
-        router.push(next)
+        // Instead of logging in immediately, show consent popup
+        setPendingSeller(data.seller)
+        setLoading(false)
+        setShowConsent(true)
       }
     } catch {
       setError('Network error')
-    } finally {
+      setLoading(false)
+    }
+  }
+
+  const completeLogin = async () => {
+    if (!pendingSeller) return
+    
+    setLoading(true)
+    try {
+      const s = pendingSeller
+      const user: Parameters<typeof login>[0] = {
+        id: s?.id || Date.now(),
+        email: s?.email || `${mobile}@seller.local`,
+        name: s?.name || 'Seller',
+        role: 'seller',
+      }
+      await login(user)
+      router.push(next)
+    } catch (err) {
+      console.error(err)
+      setError('Login failed during final step')
       setLoading(false)
     }
   }
@@ -164,6 +185,63 @@ const SellerLogin: React.FC = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Mandatory Consent Popup */}
+      {showConsent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden"
+          >
+            <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <div className="flex items-center gap-3 text-brand-red">
+                <AlertTriangle className="w-6 h-6" />
+                <h2 className="text-lg font-bold text-gray-900">Mandatory Action Required</h2>
+              </div>
+              <button 
+                onClick={() => setShowConsent(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-900 leading-relaxed">
+                <p>
+                  To proceed with your seller login, you must acknowledge and agree to the following terms regarding platform usage and compliance.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-4 p-4 rounded-xl border-2 border-transparent hover:bg-gray-50 transition-colors cursor-pointer" onClick={() => setConsentChecked(!consentChecked)}>
+                <div className={`mt-1 w-5 h-5 rounded border flex items-center justify-center shrink-0 transition-colors ${consentChecked ? 'bg-brand-purple border-brand-purple' : 'border-gray-300 bg-white'}`}>
+                  {consentChecked && <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed select-none">
+                  I confirm that I have read and agree to all <span className="font-semibold text-gray-900">FirgoMart policies</span>, acknowledge that all platform ownership and rights are exclusively reserved with FirgoMart, and understand that my seller account may be suspended or permanently terminated in case of any violation of applicable laws or platform rules.
+                </p>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setShowConsent(false)}
+                  className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={completeLogin}
+                  disabled={!consentChecked || loading}
+                  className="flex-1 px-4 py-3 bg-brand-purple text-white font-medium rounded-xl hover:bg-brand-purple/90 transition-all shadow-lg shadow-brand-purple/20 disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Processing...' : 'I Agree & Login'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }
