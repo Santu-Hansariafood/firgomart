@@ -2,9 +2,11 @@
 
 import { useAuth } from "@/context/AuthContext"
 import { useEffect, useState, Suspense } from "react"
-import BackButton from "@/components/common/BackButton/BackButton"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
+import dynamic from "next/dynamic"
 import CommonTable from "@/components/common/Table/CommonTable"
-import SearchBox from "@/components/common/SearchBox/SearchBox"
+const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
+const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
 
 type ProductRow = { _id: string; name: string; discount?: number }
 
@@ -46,7 +48,7 @@ export default function Page() {
   }
 
   return (
-    <Suspense fallback={<div className="p-4">Loading…</div>}>
+    <Suspense fallback={<BeautifulLoader />}>
     {!allowed ? (
       <div className="p-6">Login as seller to manage promotions.</div>
     ) : (

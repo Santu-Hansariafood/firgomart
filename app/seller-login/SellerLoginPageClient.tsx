@@ -1,9 +1,15 @@
 "use client"
 
-import React from "react"
-import SellerLogin from "@/components/ui/SellerLogin/SellerLogin"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
+import dynamic from "next/dynamic"
+import { Suspense } from "react"
+const SellerLogin = dynamic(() => import("@/components/ui/SellerLogin/SellerLogin"))
 
 export default function SellerLoginPageClient() {
-  return <SellerLogin />
+  return (
+    <Suspense fallback={<BeautifulLoader />}>
+      <SellerLogin />
+    </Suspense>
+  )
 }
 

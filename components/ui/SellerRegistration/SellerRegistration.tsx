@@ -239,9 +239,9 @@ const SellerRegistration: React.FC = () => {
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
             <div className="flex items-center space-x-3 mb-2">
               <Store className="w-8 h-8" />
-              <h1 className="text-3xl font-heading font-bold">Become a Seller</h1>
+              <h1 className="text-3xl font-heading font-bold">Sell on Firgomart</h1>
             </div>
-            <p className="text-white/80">Grow your business with us</p>
+            <p className="text-white/80">Grow your business with Firgomart</p>
           </div>
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">

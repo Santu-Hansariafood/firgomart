@@ -3,9 +3,10 @@
 import { useAuth } from "@/context/AuthContext"
 import { useEffect, useMemo, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
-import BackButton from "@/components/common/BackButton/BackButton"
+import dynamic from "next/dynamic"
 import CommonTable from "@/components/common/Table/CommonTable"
-import CommonPagination from "@/components/common/Pagination/CommonPagination"
+const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
+const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))  
 
 type OrderRow = { id: string; orderNumber: string; amount: number; status: string; createdAt?: string }
 

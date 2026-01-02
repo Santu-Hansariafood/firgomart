@@ -173,7 +173,7 @@ const Profile = () => {
   const statusBadgeClass = (s?: string) => {
     const t = String(s || "").toLowerCase();
     if (t === "pending") return "bg-yellow-100 text-yellow-800";
-    if (["paid", "processing", "shipped"].includes(t)) return "bg-blue-100 text-blue-800";
+    if (["paid", "processing", "shipped"].includes(t)) return "bg-purple-100 text-purple-800";
     if (["delivered", "completed"].includes(t)) return "bg-green-100 text-green-800";
     if (["cancelled", "refunded", "returned"].includes(t)) return "bg-red-100 text-red-800";
     return "bg-gray-100 text-gray-800";
@@ -204,15 +204,15 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-lg overflow-hidden"
         >
-          <div className="bg-gradient-to-r from-blue-600 to-blue-400 p-8 text-white">
+          <div className="bg-gradient-to-r from-brand-purple to-purple-400 p-8 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-2 border-blue-600">
-                  <span className="text-5xl font-black text-blue-700 tracking-wider leading-none">{initials}</span>
+                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-2 border-brand-purple">
+                  <span className="text-5xl font-black text-brand-purple tracking-wider leading-none">{initials}</span>
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold">{user.name}</h1>
-                  <p className="text-blue-100 mt-1">
+                  <p className="text-purple-100 mt-1">
                     {user.email || user.mobile}
                   </p>
                 </div>
@@ -332,7 +332,7 @@ const Profile = () => {
                   onChange={handleChange}
                   disabled={!isEditing}
                   rows={3}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
                     !isEditing ? "bg-gray-50" : ""
                   } border-gray-300`}
                 />
@@ -368,7 +368,7 @@ const Profile = () => {
               <div className="flex space-x-4 mt-8">
                 <button
                   onClick={handleSave}
-                  className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all"
+                  className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-brand-purple to-purple-400 text-white py-3 rounded-lg font-medium hover:from-purple-700 hover:to-purple-500 transition-all"
                 >
                   <Save className="w-5 h-5" />
                   <span>Save Changes</span>
@@ -388,7 +388,7 @@ const Profile = () => {
                 <h2 className="text-xl font-heading font-bold text-gray-900">Saved Addresses</h2>
                 <button
                   onClick={() => setShowAddAddress(!showAddAddress)}
-                  className="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors"
+                  className="px-4 py-2 bg-purple-50 text-brand-purple hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
                 >
                   {showAddAddress ? "Cancel" : "Add New Address"}
                 </button>
@@ -414,7 +414,7 @@ const Profile = () => {
                       <textarea
                         value={newAddress.address}
                         onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
                         rows={2}
                       />
                     </div>
@@ -443,14 +443,14 @@ const Profile = () => {
                       id="isDefault"
                       checked={newAddress.isDefault}
                       onChange={(e) => setNewAddress({ ...newAddress, isDefault: e.target.checked })}
-                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                      className="w-4 h-4 text-brand-purple rounded border-gray-300 focus:ring-brand-purple"
                     />
                     <label htmlFor="isDefault" className="text-sm text-gray-700">Set as default address</label>
                   </div>
                   <button
                     onClick={handleAddAddress}
                     disabled={!newAddress.address || !newAddress.city || !newAddress.pincode}
-                    className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    className="w-full py-3 bg-brand-purple text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                   >
                     Save Address
                   </button>
@@ -459,14 +459,14 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(formData.addresses || []).map((addr, idx) => (
-                  <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-white"} relative group`}>
+                  <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-50" : "border-gray-200 bg-white"} relative group`}>
                     <div className="flex justify-between items-start mb-2">
                       <div>
                         <div className="font-medium text-gray-900">{addr.name || formData.name}</div>
                         <div className="text-sm text-gray-500">{addr.mobile || formData.mobile}</div>
                       </div>
                       {addr.isDefault && (
-                        <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded">Default</span>
+                        <span className="px-2 py-1 bg-purple-100 text-brand-purple text-xs font-medium rounded">Default</span>
                       )}
                     </div>
                     <p className="text-sm text-gray-700 mb-3">
@@ -476,7 +476,7 @@ const Profile = () => {
                       {!addr.isDefault && (
                         <button
                           onClick={() => handleSetDefault(idx)}
-                          className="text-blue-600 hover:text-blue-800 font-medium"
+                          className="text-brand-purple hover:text-purple-800 font-medium"
                         >
                           Set Default
                         </button>
@@ -579,7 +579,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
           !disabled ? "" : "bg-gray-50"
         } ${error ? "border-red-500" : "border-gray-300"}`}
       />
@@ -604,7 +604,7 @@ const SimpleInput = ({
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
         disabled ? "bg-gray-50" : ""
       } ${error ? "border-red-500" : "border-gray-300"}`}
     />
@@ -632,7 +632,7 @@ const SelectField = ({
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
         disabled ? "bg-gray-50" : ""
       } border-gray-300`}
     >

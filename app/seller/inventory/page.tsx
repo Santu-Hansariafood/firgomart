@@ -3,10 +3,11 @@
 import { useAuth } from "@/context/AuthContext"
 import { useEffect, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
-import BackButton from "@/components/common/BackButton/BackButton"
+import dynamic from "next/dynamic"
 import CommonTable from "@/components/common/Table/CommonTable"
-import CommonPagination from "@/components/common/Pagination/CommonPagination"
-import SearchBox from "@/components/common/SearchBox/SearchBox"
+const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
+const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
+const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
 
 type Row = { _id: string; name: string; category?: string; stock: number }
 

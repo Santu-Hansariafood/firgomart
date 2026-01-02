@@ -1,11 +1,13 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useSession } from "next-auth/react"
-import LoginModal from "@/components/auth/LoginModal/LoginModal"
-import RegisterModal from "@/components/auth/RegisterModal/RegisterModal"
-import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal/ForgotPasswordModal"
+import dynamic from "next/dynamic"
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
+const LoginModal = dynamic(() => import("@/components/auth/LoginModal/LoginModal"))
+const RegisterModal = dynamic(() => import("@/components/auth/RegisterModal/RegisterModal"))
+const ForgotPasswordModal = dynamic(() => import("@/components/auth/ForgotPasswordModal/ForgotPasswordModal"))
 
 export default function LoginPageClient() {
   const router = useRouter()
@@ -45,7 +47,7 @@ export default function LoginPageClient() {
   }, [status, next, router])
 
   return (
-    <>
+    <Suspense fallback={<BeautifulLoader />}>
       <LoginModal
         isOpen={showLogin}
         onClose={handleClose}
@@ -62,7 +64,7 @@ export default function LoginPageClient() {
         onClose={switchToLogin}
         onSwitchToLogin={switchToLogin}
       />
-    </>
+    </Suspense>
   )
 }
 
