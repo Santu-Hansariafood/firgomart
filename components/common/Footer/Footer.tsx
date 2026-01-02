@@ -58,6 +58,7 @@ const Footer: React.FC = () => {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="https://facebook.com/firgomart"
+                target="_blank"
                 aria-label="Facebook"
                 className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors"
               >
@@ -65,6 +66,7 @@ const Footer: React.FC = () => {
               </Link>
               <Link
                 href="https://twitter.com/firgomart"
+                target="_blank"
                 aria-label="Twitter"
                 className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors"
               >
@@ -72,6 +74,7 @@ const Footer: React.FC = () => {
               </Link>
               <Link
                 href="https://instagram.com/firgomart"
+                target="_blank"
                 aria-label="Instagram"
                 className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-red transition-colors"
               >
@@ -79,6 +82,7 @@ const Footer: React.FC = () => {
               </Link>
               <Link
                 href="https://linkedin.com/company/firgomart-24logistics-private-limited/"
+                target="_blank"
                 aria-label="LinkedIn"
                 className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-purple transition-colors"
               >

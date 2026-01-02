@@ -3,16 +3,7 @@
 import { motion } from "framer-motion"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import {
-  ShoppingBag,
-  Users,
-  Footprints,
-  Sparkles,
-  Heart,
-  Home,
-  LucideIcon,
-  X,
-} from "lucide-react"
+import { X } from "lucide-react"
 
 interface Category {
   id: number
