@@ -13,38 +13,57 @@ export async function GET(request: Request) {
     const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
     const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
     const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
+    const categoryParam = (url.searchParams.get("category") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const query: Record<string, unknown> = {}
-    if (adminOnly) query.isAdminProduct = true
-    if (createdByEmail) query.createdByEmail = createdByEmail
-    let finalQuery: any = { ...query }
+    
+    // Base filters
+    const conditions: any[] = []
+
+    if (adminOnly) conditions.push({ isAdminProduct: true })
+    if (createdByEmail) conditions.push({ createdByEmail })
+
+    // GST / State Logic
     if (!createdByEmail) {
       if (deliverToState) {
-        finalQuery.$or = [
-          { isAdminProduct: true },
-          { sellerHasGST: true },
-          { sellerHasGST: false, sellerState: deliverToState },
-        ]
+        conditions.push({
+          $or: [
+            { isAdminProduct: true },
+            { sellerHasGST: true },
+            { sellerHasGST: false, sellerState: deliverToState },
+          ]
+        })
       } else {
-        finalQuery.$or = [
-          { isAdminProduct: true },
-          { sellerHasGST: true },
-        ]
+        conditions.push({
+          $or: [
+            { isAdminProduct: true },
+            { sellerHasGST: true },
+          ]
+        })
       }
     }
+
+    // Category Filter
+    if (categoryParam) {
+      const cats = categoryParam.split(",").map(c => c.trim()).filter(Boolean)
+      if (cats.length > 0) {
+        const catRegexes = cats.map(c => new RegExp(c, "i"))
+        conditions.push({ category: { $in: catRegexes } })
+      }
+    }
+
+    // Search Filter
     if (search) {
       const r = new RegExp(search, "i")
-      const searchOr = [{ name: r }, { category: r }]
-      if (finalQuery.$or) {
-        finalQuery.$and = [{ $or: finalQuery.$or }, { $or: searchOr }]
-        delete finalQuery.$or
-      } else {
-        finalQuery.$or = searchOr
-      }
+      conditions.push({
+        $or: [{ name: r }, { category: r }]
+      })
     }
+
+    const finalQuery = conditions.length > 0 ? { $and: conditions } : {}
+
     const products = await (Product as any).find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()
     return NextResponse.json({ products })
   } catch (err: any) {

@@ -92,7 +92,9 @@ const Footer: React.FC = () => {
               {[
                 ["Home", "/"],
                 ["About Us", "/about"],
-                ["Become a Seller", "/seller-registration"],
+                ["Contact Us", "/contact"],
+                ["Teams", "/teams"],
+                ["Sell on FirgoMart", "/seller-registration"],
                 ["Careers", "/careers"],
                 ["Blog", "/blog"],
               ].map(([label, link]) => (
@@ -203,7 +205,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
             <Paragraph className="text-center md:text-left">
-              © {new Date().getFullYear() } Firgomart. All Rights Reserved.
+              © 2025 - {new Date().getFullYear() } Firgomart. All Rights Reserved.
             </Paragraph>
 
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">

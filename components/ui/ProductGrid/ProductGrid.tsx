@@ -41,6 +41,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const searchParams = useSearchParams()
   const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
+  const category = (searchParams.get('category') || '').trim()
   const [deliverToState, setDeliverToState] = useState<string>(() => {
     try {
       return typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
@@ -89,7 +90,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
       const adminParam = !deliverToState ? `&adminOnly=true` : ''
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}`)
+      const categoryParam = category ? `&category=${encodeURIComponent(category)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -115,11 +117,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     } catch {
       return []
     }
-  }, [deliverToState, search])
+  }, [deliverToState, search, category])
 
   useEffect(() => {
     const loadInitial = async () => {
       setLoading(true)
+      setDisplayedProducts([]) 
       const [first, second] = await Promise.all([fetchPage(1), fetchPage(2)])
       const initial = [...first, ...second]
       setDisplayedProducts(initial)

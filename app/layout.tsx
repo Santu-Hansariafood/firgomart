@@ -7,6 +7,7 @@ import Footer from "@/components/common/Footer/Footer";
 import CategorySubHeader from "@/components/common/CategorySubHeader/CategorySubHeader";
 import Providers from "@/app/providers";
 import Script from "next/script";
+import { Suspense } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -151,7 +152,9 @@ export default function RootLayout({
       >
         <Providers>
           <Navbar />
-          <CategorySubHeader />
+          <Suspense fallback={null}>
+            <CategorySubHeader />
+          </Suspense>
           <main className="min-h-screen">{children}</main>
           <Footer />
         </Providers>
