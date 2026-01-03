@@ -78,6 +78,11 @@ export async function POST(request: Request) {
         }
       })
       const amount = orderItems.reduce((s, oi) => s + Number(oi.price) * Number(oi.quantity), 0)
+      const gstPercent = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18)
+      const gatewayFeePercent = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
+      const gstAmount = (amount * gstPercent) / 100
+      const platformFee = ((amount + gstAmount) * gatewayFeePercent) / 100
+      const finalAmount = Number((amount + gstAmount + platformFee).toFixed(2))
 
       const docs = await (Order as unknown as {
         create: (arr: unknown[], options?: { session?: ClientSession }) => Promise<unknown[]>
@@ -85,7 +90,7 @@ export async function POST(request: Request) {
         buyerEmail: buyerEmail || undefined,
         buyerName: buyerName || undefined,
         items: orderItems,
-        amount,
+        amount: finalAmount,
         status: "pending",
         address,
         city,

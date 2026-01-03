@@ -23,27 +23,22 @@ function StatusContent() {
 
     const checkStatus = async () => {
       try {
-        const res = await fetch(`/api/payment/phonepe/status/${orderId}`);
+        const res = await fetch(`/api/orders/${orderId}/tracking`);
         const data = await res.json();
-
-        if (data.status === 'confirmed' || data.status === 'completed') {
+        const statusVal = String(data?.tracking?.status || '').toLowerCase();
+        if (statusVal === 'confirmed' || statusVal === 'completed' || statusVal === 'paid') {
           setStatus('success');
           clearCart();
-        } else if (data.status === 'failed') {
+        } else if (statusVal === 'failed' || statusVal === 'cancelled' || statusVal === 'refunded') {
           setStatus('failed');
-          setMessage(data.message || 'Payment failed');
+          setMessage('Payment failed');
         } else {
-           // Retry or show pending
-           // For now, if it's pending, we might want to poll or just show pending
-           // Let's assume if not confirmed/completed/failed, it is pending
-           // If pending, maybe wait and retry? 
-           // Simple version: show pending message.
-           setMessage('Payment is processing. Please check your order history.');
-           setStatus('failed'); // Sort of failed to confirm immediately
+          setMessage('Payment is processing. Please check your order history.');
+          setStatus('failed');
         }
       } catch (err) {
         setStatus('failed');
-        setMessage('Failed to verify payment status');
+        setMessage('Failed to verify status');
       }
     };
 

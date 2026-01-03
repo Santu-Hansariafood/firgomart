@@ -54,7 +54,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [step, setStep] = useState<number>(1)
   const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
   const [lastOrder, setLastOrder] = useState<{ id?: string; orderNumber?: string } | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'qr'>('card')
+  const [paymentMethod, setPaymentMethod] = useState<'razorpay'>('razorpay')
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
@@ -149,8 +149,11 @@ const Checkout: React.FC<CheckoutProps> = ({
     (sum, item) => sum + item.price * (item.quantity ?? 1),
     0
   )
-  const tax = subtotal * 0.18
-  const total = subtotal + tax
+  const gstPercent = Number(process.env.NEXT_PUBLIC_GST_PERCENT || 18)
+  const gatewayFeePercent = Number(process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
+  const tax = subtotal * (gstPercent / 100)
+  const platformFee = (subtotal + tax) * (gatewayFeePercent / 100)
+  const total = subtotal + tax + platformFee
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -189,26 +192,77 @@ const Checkout: React.FC<CheckoutProps> = ({
         return
       }
 
-      if (paymentMethod === 'card' || paymentMethod === 'qr') {
+      if (paymentMethod === 'razorpay') {
         try {
           const orderId = data.order._id || data.order.id
-          const initRes = await fetch('/api/payment/phonepe/initiate', {
+          const initRes = await fetch('/api/payment/razorpay/initiate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderId }),
           })
           const initData = await initRes.json()
-          
-          if (initRes.ok && initData.url) {
-            window.location.href = initData.url
-            return 
-          } else {
-             setCheckoutError(initData.error || "Failed to initiate PhonePe payment")
-             return
+          if (!initRes.ok) {
+            setCheckoutError(initData?.error || "Failed to initiate Razorpay payment")
+            return
           }
-        } catch (err) {
-           setCheckoutError("Failed to connect to payment gateway")
-           return
+          const ensureScript = async () => {
+            const src = 'https://checkout.razorpay.com/v1/checkout.js'
+            if (document.querySelector(`script[src="${src}"]`)) return
+            await new Promise<void>((resolve, reject) => {
+              const s = document.createElement('script')
+              s.src = src
+              s.onload = () => resolve()
+              s.onerror = () => reject(new Error('Failed to load Razorpay'))
+              document.body.appendChild(s)
+            })
+          }
+          await ensureScript()
+          const opts: any = {
+            key: initData.keyId,
+            amount: initData.amount,
+            currency: initData.currency || 'INR',
+            name: 'FirgoMart',
+            order_id: initData.rpOrderId,
+            prefill: {
+              name: initData.buyerName || formData.fullName,
+              email: initData.buyerEmail || formData.email,
+              contact: formData.phone,
+            },
+            notes: { orderNumber: initData.orderNumber || '' },
+            handler: async function (resp: any) {
+              try {
+                const verifyRes = await fetch('/api/payment/razorpay/verify', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    orderId,
+                    razorpay_payment_id: resp.razorpay_payment_id,
+                    razorpay_order_id: resp.razorpay_order_id,
+                    razorpay_signature: resp.razorpay_signature,
+                  }),
+                })
+                const verifyData = await verifyRes.json()
+                if (verifyRes.ok && verifyData.status === 'confirmed') {
+                  setOrderPlaced(true)
+                  setLastOrder({ id: String(orderId), orderNumber: String(verifyData?.order?.orderNumber || '') })
+                  if (onRemoveItem) {
+                    cartItems.forEach(ci => onRemoveItem(ci.id))
+                  }
+                } else {
+                  setCheckoutError(verifyData?.error || "Payment verification failed")
+                }
+              } catch {
+                setCheckoutError("Failed to verify payment")
+              }
+            },
+            theme: { color: '#2563eb' },
+          }
+          const rzp = new (window as any).Razorpay(opts)
+          rzp.open()
+          return
+        } catch {
+          setCheckoutError("Failed to connect to payment gateway")
+          return
         }
       }
 
@@ -435,85 +489,55 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <h3 className="text-lg font-heading font-semibold text-gray-900 mb-4">
                       Select Payment Method
                     </h3>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="grid grid-cols-1 gap-4 mb-6">
+                      <div
+                        className={`p-4 border-2 rounded-lg transition-all ${
+                          'border-blue-600 bg-blue-50'
+                        }`}
+                      >
+                        <CreditCard className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                        <p className="text-sm font-medium text-blue-600">
+                          Pay with Razorpay (Cards, UPI, NetBanking, Wallets)
+                        </p>
+                      </div>
                       <button
                         type="button"
-                        onClick={() => setPaymentMethod('card')}
+                        onClick={() => setPaymentMethod('razorpay')}
                         className={`p-4 border-2 rounded-lg transition-all ${
-                          paymentMethod === 'card'
+                          paymentMethod === 'razorpay'
                             ? 'border-blue-600 bg-blue-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
                         <CreditCard
                           className={`w-6 h-6 mx-auto mb-2 ${
-                            paymentMethod === 'card'
+                            paymentMethod === 'razorpay'
                               ? 'text-blue-600'
                               : 'text-gray-400'
                           }`}
                         />
                         <p
                           className={`text-sm font-medium ${
-                            paymentMethod === 'card'
+                            paymentMethod === 'razorpay'
                               ? 'text-blue-600'
                               : 'text-gray-600'
                           }`}
                         >
-                          Card (via PhonePe)
-                        </p>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('qr')}
-                        className={`p-4 border-2 rounded-lg transition-all ${
-                          paymentMethod === 'qr'
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <QrCode
-                          className={`w-6 h-6 mx-auto mb-2 ${
-                            paymentMethod === 'qr'
-                              ? 'text-blue-600'
-                              : 'text-gray-400'
-                          }`}
-                        />
-                        <p
-                          className={`text-sm font-medium ${
-                            paymentMethod === 'qr'
-                              ? 'text-blue-600'
-                              : 'text-gray-600'
-                          }`}
-                        >
-                          UPI/QR (via PhonePe)
+                          Card/UPI (via Razorpay)
                         </p>
                       </button>
                     </div>
                   </div>
 
                   {/* Conditional Payment UI */}
-                  {paymentMethod === 'card' ? (
+                  {(
                     <div className="space-y-4">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
                         <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
-                          Pay by Card via PhonePe
-                        </h3>
-                        <p className="text-sm text-gray-600 mb-4">
-                          You will be redirected to PhonePe secure payment page to complete your card payment.
-                        </p>
-                        <p className="text-xl font-bold text-blue-600">
-                          ₹{total.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
-                          Pay via UPI/QR on PhonePe
+                          Pay using Razorpay
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">
-                          You will be redirected to PhonePe where you can pay using UPI/QR.
+                          You will complete payment securely with Razorpay Checkout. Supports Cards, UPI, NetBanking and Wallets.
                         </p>
                         <p className="text-xl font-bold text-blue-600">
                           ₹{total.toFixed(2)}
@@ -552,7 +576,6 @@ const Checkout: React.FC<CheckoutProps> = ({
             </motion.div>
           </div>
 
-          {/* Order Summary */}
           <div>
             <motion.div
               variants={fadeInUp}
@@ -598,8 +621,12 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="font-medium">₹{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax (18%)</span>
+                  <span className="text-gray-600">GST ({gstPercent}%)</span>
                   <span className="font-medium">₹{tax.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Platform Fee (Razorpay {gatewayFeePercent}%)</span>
+                  <span className="font-medium">₹{platformFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Delivery</span>
