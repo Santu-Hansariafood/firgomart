@@ -1,0 +1,69 @@
+{
+  "Technology & Product Team": {
+    "logo": "/window.svg",
+    "description": "Engineering and product craft the platform with performance, security, and delightful UX at global scale.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Architects scalable systems and leads engineering best practices. Passionate about performance and security. Believes in building delightful user experiences.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team",
+          "instagram": "https://www.instagram.com/firgomart.engineer",
+          "x": "https://x.com/firgomart_engineer",
+          "facebook": "https://www.facebook.com/firgomart.engineer"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Owns product strategy and ship quality features. Focuses on accessibility and ease of use. Loves data-informed decisions and rapid iteration.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team",
+          "instagram": "https://www.instagram.com/firgomart.product",
+          "x": "https://x.com/firgomart_product",
+          "facebook": "https://www.facebook.com/firgomart.product"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Creates smooth, interactive UI experiences. Champions responsiveness and performance. Enjoys crafting micro-interactions that feel alive.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team",
+          "instagram": "https://www.instagram.com/firgomart.ops",
+          "x": "https://x.com/firgomart_ops",
+          "facebook": "https://www.facebook.com/firgomart.ops"
+        }
+      }
+    ]
+  },
+  "Logistics & Operations Team": {
+    "logo": "/globe.svg",
+    "description": "Operations ensure fast, reliable deliveries with strong partner networks and meticulous processes.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Coordinates partners and optimizes delivery flows. Obsessed with reliability and timelines. Drives continuous improvement across operations.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team",
+          "instagram": "https://www.instagram.com/firgomart.ops",
+          "x": "https://x.com/firgomart_ops",
+          "facebook": "https://www.facebook.com/firgomart.ops"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Ensures warehouse and shipping coordination at scale. Focuses on safety and speed. Loves building dependable processes.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team",
+          "instagram": "https://www.instagram.com/firgomart.ops",
+          "x": "https://x.com/firgomart_ops",
+          "facebook": "https://www.facebook.com/firgomart.ops"
+        }
+      }
+    ]
+  }
+}
