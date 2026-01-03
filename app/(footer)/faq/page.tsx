@@ -166,14 +166,14 @@ const FaqPage = () => {
           </div>
           <div className="space-y-4 text-gray-800">
             <div>
-              <p className="font-semibold">Q13. How can I sell on FirgoMart?</p>
+              <p className="font-semibold">How can I sell on FirgoMart?</p>
               <p className="text-gray-700">
                 Register as a seller by contacting{" "}
                 <span className="text-brand-purple font-medium">seller@firgomart.com</span>.
               </p>
             </div>
             <div>
-              <p className="font-semibold">Q14. How are seller payments processed?</p>
+              <p className="font-semibold">How are seller payments processed?</p>
               <p className="text-gray-700">
                 Payments are settled securely and on time as per the seller agreement.
               </p>

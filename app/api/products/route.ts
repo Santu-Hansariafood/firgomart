@@ -19,13 +19,11 @@ export async function GET(request: Request) {
     const conn = await connectDB()
     const Product = getProductModel(conn)
     
-    // Base filters
     const conditions: any[] = []
 
     if (adminOnly) conditions.push({ isAdminProduct: true })
     if (createdByEmail) conditions.push({ createdByEmail })
 
-    // GST / State Logic
     if (!createdByEmail) {
       if (deliverToState) {
         conditions.push({
@@ -45,7 +43,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // Category Filter
     if (categoryParam) {
       const cats = categoryParam.split(",").map(c => c.trim()).filter(Boolean)
       if (cats.length > 0) {
@@ -54,18 +51,21 @@ export async function GET(request: Request) {
       }
     }
 
-    // Search Filter
     if (search) {
-      const r = new RegExp(search, "i")
-      conditions.push({
-        $or: [{ name: r }, { category: r }]
-      })
+      conditions.push({ $text: { $search: search } })
     }
 
     const finalQuery = conditions.length > 0 ? { $and: conditions } : {}
 
     const products = await (Product as any).find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()
-    return NextResponse.json({ products })
+    return NextResponse.json(
+      { products },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    )
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }

@@ -28,6 +28,8 @@ import { Connection, Schema, Model } from "mongoose"
   { timestamps: true }
 )
 
+ProductSchema.index({ name: "text", category: "text", brand: "text", description: "text" })
+
 export function getProductModel(conn: Connection) {
   const models = conn.models as Record<string, Model<unknown>>
   const existing = models.Product as Model<unknown> | undefined
