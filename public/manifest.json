@@ -1,0 +1,12 @@
+{
+  "name": "FirgoMart",
+  "short_name": "FirgoMart",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6b21a8",
+  "description": "Global online shopping platform with international delivery from India.",
+  "lang": "en",
+  "categories": ["shopping", "lifestyle", "ecommerce"]
+}

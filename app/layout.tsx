@@ -24,6 +24,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://firgomart.com"),
+  manifest: "/manifest.json",
 
   title: {
     default: "FirgoMart – Global Online Shopping from India",
@@ -114,6 +115,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
       <head>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#ffffff" />
         <Script
           id="firgomart-schema"
@@ -143,6 +145,19 @@ export default function RootLayout({
                 "https://twitter.com/firgomart",
               ],
             }),
+          }}
+        />
+        <Script
+          id="pwa-sw-register"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch(() => {});
+                });
+              }
+            `,
           }}
         />
       </head>
