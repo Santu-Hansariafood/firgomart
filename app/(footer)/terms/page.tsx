@@ -8,7 +8,7 @@ const page = () => {
     <div className="min-h-screen bg-gray-900 px-4 sm:px-8 py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         <Title level={1} className="text-center mb-6">
-          Terms & Conditions – FirgoMart.com
+          Terms & Conditions – FirgoMart
         </Title>
 
         <Paragraph className="text-center text-gray-400">
