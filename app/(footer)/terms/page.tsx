@@ -1,10 +1,14 @@
 "use client";
 
-import Title from "@/components/common/Title/Title";
-import Paragraph from "@/components/common/Paragraph/Paragraph";
+import dynamic from "next/dynamic";
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
+const Title = dynamic(() => import("@/components/common/Title/Title"));
+const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
+import { Suspense } from "react";
 
 const page = () => {
   return (
+    <Suspense fallback={<BeautifulLoader />}>
     <div className="min-h-screen bg-gray-900 px-4 sm:px-8 py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         <Title level={1} className="text-center mb-6">
@@ -157,6 +161,7 @@ const page = () => {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

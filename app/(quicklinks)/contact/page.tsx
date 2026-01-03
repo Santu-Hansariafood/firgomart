@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import Title from "@/components/common/Title/Title";
-import Paragraph from "@/components/common/Paragraph/Paragraph";
+import dynamic from "next/dynamic";
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
+const Title = dynamic(() => import("@/components/common/Title/Title"));
+const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from "lucide-react";
+import { Suspense, useState } from "react";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -13,20 +15,41 @@ const ContactPage = () => {
     subject: "",
     message: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission logic here
-    console.log("Form submitted:", formData);
+    if (submitting) return;
+    setSubmitting(true);
+    setResult(null);
+    try {
+      const res = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setResult({ type: "error", text: data?.error || "Submission failed" });
+      } else {
+        setResult({ type: "success", text: "Message sent successfully" });
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      }
+    } catch (err: any) {
+      setResult({ type: "error", text: "Network error" });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
+    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-gray-50 min-h-screen">
-      {/* Hero Section */}
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -49,7 +72,6 @@ const ContactPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="grid lg:grid-cols-3 gap-12">
-          {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -129,8 +151,6 @@ const ContactPage = () => {
               </p>
             </div>
           </motion.div>
-
-          {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -141,6 +161,11 @@ const ContactPage = () => {
               <h3 className="text-2xl font-bold text-gray-900 font-heading mb-6">
                 Send us a Message
               </h3>
+              {result && (
+                <div className={result.type === "success" ? "mb-4 rounded-lg bg-green-50 text-green-700 px-4 py-3" : "mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-3"}>
+                  {result.text}
+                </div>
+              )}
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <div>
@@ -174,7 +199,6 @@ const ContactPage = () => {
                     />
                   </div>
                 </div>
-
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                     Subject
@@ -190,7 +214,6 @@ const ContactPage = () => {
                     required
                   />
                 </div>
-
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
                     Message
@@ -206,13 +229,13 @@ const ContactPage = () => {
                     required
                   />
                 </div>
-
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-8 py-3 bg-brand-purple text-white rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                  disabled={submitting}
+                  className={`w-full sm:w-auto px-8 py-3 ${submitting ? "bg-purple-300" : "bg-brand-purple"} text-white rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center gap-2`}
                 >
                   <Send className="w-4 h-4" />
-                  Send Message
+                  {submitting ? "Sending..." : "Send Message"}
                 </button>
               </form>
             </div>
@@ -220,6 +243,7 @@ const ContactPage = () => {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

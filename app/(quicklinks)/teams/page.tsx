@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import Title from "@/components/common/Title/Title";
 import Paragraph from "@/components/common/Paragraph/Paragraph";
 import { motion } from "framer-motion";
@@ -18,6 +19,7 @@ import {
 
 const TeamsPage = () => {
   return (
+    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-gray-50 min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
@@ -218,6 +220,7 @@ const TeamsPage = () => {
         </motion.div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

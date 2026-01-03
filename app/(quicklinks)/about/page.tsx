@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
-import Title from "@/components/common/Title/Title";
-import Paragraph from "@/components/common/Paragraph/Paragraph";
+import dynamic from "next/dynamic";
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
+const Title = dynamic(() => import("@/components/common/Title/Title"));
+const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 import { motion } from "framer-motion";
 import { Globe, Users, TrendingUp, ShieldCheck, Rocket, Package } from "lucide-react";
+import { Suspense } from "react";
 
 const AboutPage = () => {
   const fadeInUp = {
@@ -45,8 +47,8 @@ const AboutPage = () => {
   ];
 
   return (
+    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-gray-50 min-h-screen">
-      {/* Hero Section */}
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -67,9 +69,7 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16 space-y-20">
-        {/* Mission & Vision */}
         <motion.div
           variants={staggerContainer}
           initial="initial"
@@ -112,7 +112,6 @@ const AboutPage = () => {
           </motion.div>
         </motion.div>
 
-        {/* What We Do Grid */}
         <section>
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 font-heading mb-4">
@@ -143,7 +142,6 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Values Section */}
         <section className="bg-white rounded-3xl p-8 sm:p-12 border border-gray-100">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 font-heading">
@@ -184,7 +182,6 @@ const AboutPage = () => {
           </div>
         </section>
 
-        {/* Logistics & Technology */}
         <motion.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -222,7 +219,6 @@ const AboutPage = () => {
           </div>
         </motion.section>
 
-        {/* Commitment */}
         <section className="text-center max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 font-heading mb-4">
             Our Commitment
@@ -236,6 +232,7 @@ const AboutPage = () => {
         </section>
       </div>
     </div>
+    </Suspense>
   );
 };
 

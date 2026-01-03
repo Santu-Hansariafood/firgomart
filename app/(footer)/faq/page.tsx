@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
-import Title from "@/components/common/Title/Title";
-import Paragraph from "@/components/common/Paragraph/Paragraph";
+import dynamic from "next/dynamic";
+const Title = dynamic(() => import("@/components/common/Title/Title"));
+const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 import { motion } from "framer-motion";
 import {
   HelpCircle,
@@ -15,9 +15,12 @@ import {
   Phone,
   Handshake,
 } from "lucide-react";
+import { Suspense } from "react";
+import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 
 const FaqPage = () => {
   return (
+    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-gray-50 min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
@@ -203,6 +206,7 @@ const FaqPage = () => {
         </motion.div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

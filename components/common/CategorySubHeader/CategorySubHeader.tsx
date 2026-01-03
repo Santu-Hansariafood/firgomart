@@ -35,12 +35,10 @@ const CategorySubHeader: React.FC = () => {
     typeof window !== 'undefined' &&
     window.location.hostname.toLowerCase().includes('admin')
 
+  const isHome = pathname === '/'
   const hide =
     isAdminHost ||
-    pathname.startsWith('/admin') ||
-    pathname === '/admin-login' ||
-    pathname.startsWith('/seller') ||
-    pathname === '/seller-login'
+    !isHome
 
   const toggleCategory = (catName: string) => {
     const params = new URLSearchParams(searchParams.toString())
