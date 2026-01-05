@@ -5,7 +5,7 @@ function normalizeVersion(v?: string) {
     const [d, m, y] = s.split("-")
     return `${y}-${m}-${d}`
   }
-  return "2025-01-01"
+  return "2023-08-01"
 }
 
 export const cashfreeConfig = {

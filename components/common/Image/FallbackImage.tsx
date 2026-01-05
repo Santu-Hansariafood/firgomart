@@ -4,9 +4,9 @@ import Image, { ImageProps } from "next/image"
 import { useState } from "react"
 import clsx from "clsx"
 
-type Props = Omit<ImageProps, "src"> & { src?: string }
+type Props = Omit<ImageProps, "src"> & { src?: string; frameless?: boolean }
 
-export default function FallbackImage({ src, alt, unoptimized, ...rest }: Props) {
+export default function FallbackImage({ src, alt, unoptimized, frameless, ...rest }: Props) {
   const sanitize = (v?: string) => (v || "").trim().replace(/[)]+$/g, "")
   const buildSrc = (v?: string) => {
     const s = sanitize(v)
@@ -20,10 +20,9 @@ export default function FallbackImage({ src, alt, unoptimized, ...rest }: Props)
   const safeAlt = typeof alt === "string" ? alt : ""
   const needsSizes = (rest as Partial<ImageProps>)?.fill && !(rest as Partial<ImageProps>).sizes
   const finalSizes = needsSizes ? "100vw" : (rest as Partial<ImageProps>).sizes
-  const combinedClassName = clsx(
-    "bg-[var(--background)] border border-[var(--foreground)/20]",
-    (rest as { className?: string }).className
-  )
+  const combinedClassName = frameless
+    ? (rest as { className?: string }).className
+    : clsx("bg-[var(--background)] border border-[var(--foreground)/20]", (rest as { className?: string }).className)
   return (
     <Image
       key={buildSrc(src)}
