@@ -7,14 +7,7 @@ export async function GET() {
     const conn = await connectDB()
     const Product = getProductModel(conn)
     const count = await Product.countDocuments({})
-    return NextResponse.json(
-      { count },
-      {
-        headers: {
-          "Cache-Control": "public, max-age=120, s-maxage=600, stale-while-revalidate=1200",
-        },
-      }
-    )
+    return NextResponse.json({ count })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }

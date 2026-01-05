@@ -79,7 +79,6 @@ export default function Page() {
   const [formName, setFormName] = useState("")
   const [formCategory, setFormCategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
-  const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
   const [formSellerState, setFormSellerState] = useState("")
   const [formGST, setFormGST] = useState(false)
@@ -141,7 +140,6 @@ export default function Page() {
       setFormName(product.name)
       setFormCategory(product.category || "")
       setFormPrice(String(product.price))
-      setFormOriginalPrice(String((product as any).originalPrice ?? ""))
       setFormStock(String(product.stock || 0))
       setFormSellerState(product.sellerState || "")
       setFormGST(!!product.sellerHasGST)
@@ -157,7 +155,6 @@ export default function Page() {
       setFormName("")
       setFormCategory("")
       setFormPrice("")
-      setFormOriginalPrice("")
       setFormStock("")
       setFormSellerState("")
       setFormGST(false)
@@ -213,7 +210,6 @@ export default function Page() {
       name: formName.trim(),
       category: formCategory.trim(),
       price: Number(formPrice),
-      originalPrice: formOriginalPrice ? Number(formOriginalPrice) : undefined,
       stock: Number(formStock || 0),
       sellerState: formGST ? "" : formSellerState.trim(),
       sellerHasGST: formGST,
@@ -255,17 +251,17 @@ export default function Page() {
       ) : (
         <div className="p-6 space-y-8">
           <BackButton className="mb-2" />
-          <div className="bg-gradient-to-r from-brand-purple to-brand-red p-4 rounded-xl flex items-center justify-between">
+          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Package className="w-8 h-8 text-white" />
               <div>
                 <h1 className="text-2xl font-bold text-white">Product Management</h1>
-                <p className="text-white/80 text-sm">Create, filter and manage catalog</p>
+                <p className="text-indigo-100 text-sm">Create, filter and manage catalog</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
                <span className="text-2xl font-semibold text-white">{total} Items</span>
-               <button onClick={() => openModal()} className="bg-white text-brand-purple px-4 py-2 rounded-lg flex items-center gap-2 font-medium hover:bg-brand-purple/10">
+               <button onClick={() => openModal()} className="bg-white text-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 font-medium hover:bg-blue-50">
                  <Plus className="w-4 h-4" /> Add Product
                </button>
             </div>
@@ -280,7 +276,7 @@ export default function Page() {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   placeholder="Category"
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-brand-purple focus:outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 />
               </div>
               {String(selectedGST.id) !== "true" && (
@@ -322,42 +318,18 @@ export default function Page() {
                     { key: "name", label: "Name", sortable: true },
                     { key: "category", label: "Category", sortable: true },
                     { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },
-                    { key: "originalPrice", label: "Original", render: (r) => (r as any).originalPrice ? `₹${(r as any).originalPrice}` : "" },
-                    { key: "discount", label: "Discount", render: (r) => {
-                      const op = Number((r as any).originalPrice || 0)
-                      const sp = Number(r.price || 0)
-                      if (op > sp && op > 0) {
-                        const pct = Math.round(((op - sp) / op) * 100)
-                        return `-${pct}%`
-                      }
-                      return ""
-                    } },
                     { key: "stock", label: "Stock", sortable: true },
                     { key: "brand", label: "Brand" },
                     { key: "sellerState", label: "State", sortable: true },
                     { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "" },
                     { key: "actions", label: "Actions", render: (r) => (
                         <div className="flex items-center gap-2">
-                            <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-brand-purple">
+                            <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-blue-600">
                                 <Edit className="w-4 h-4" />
                             </button>
-                            <button onClick={async () => {
-                              try {
-                                const adminEmail = (session?.user?.email || authUser?.email || "").trim()
-                                await fetch(`/api/admin/products/${(r as ProductItem).id}`, {
-                                  method: "DELETE",
-                                  headers: {
-                                    ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
-                                  },
-                                })
-                                loadProducts()
-                              } catch {}
-                            }} className="p-1 hover:bg-gray-100 rounded text-brand-red">
-                                <Trash className="w-4 h-4" />
-                            </button>
                         </div>
-                  )}
-                ]}
+                    )}
+                  ]}
                   data={products}
                   sortKey={sortKey || undefined}
                   sortOrder={sortOrder}
@@ -396,14 +368,10 @@ export default function Page() {
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
                                 <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Actual Price</label>
-                                <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
-                            </div>
-                            <div className="col-span-2">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                                 <input type="number" value={formStock} onChange={e => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                             </div>

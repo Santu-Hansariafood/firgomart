@@ -52,12 +52,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (status === "authenticated") {
       setUser(prev => ({ ...prev, ...(session?.user as User) }))
       setIsAuthenticated(true)
+      const safeJson = async (res: Response) => {
+        try {
+          return await res.json()
+        } catch {
+          try {
+            const t = await res.text()
+            return { errorText: t }
+          } catch {
+            return {}
+          }
+        }
+      }
       fetch("/api/auth/profile")
-        .then(res => res.json())
-        .then(data => {
-          if (data.user) setUser(data.user)
+        .then(async (res) => {
+          const data = await safeJson(res)
+          if (res.ok && (data as any)?.user) setUser((data as any).user as User)
         })
-        .catch(console.error)
+        .catch(() => {})
     } else if (status === "unauthenticated") {
       setUser(prev => {
         const keep = (prev as any)?.role === "admin"

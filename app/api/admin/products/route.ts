@@ -138,7 +138,6 @@ export async function POST(request: Request) {
     const name = String(body?.name || "").trim()
     const category = String(body?.category || "").trim()
     const price = Number(body?.price)
-    const originalPrice = body?.originalPrice !== undefined ? Number(body?.originalPrice) : undefined
     const stock = Number(body?.stock ?? 0)
     const sellerState = String(body?.sellerState || "").trim()
     const sellerHasGST = typeof body?.sellerHasGST === "boolean" ? body.sellerHasGST : undefined
@@ -161,7 +160,6 @@ export async function POST(request: Request) {
       images,
       category,
       price,
-      originalPrice,
       stock,
       sellerState,
       sellerHasGST,

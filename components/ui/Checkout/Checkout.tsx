@@ -6,7 +6,6 @@ import {
   CreditCard,
   MapPin,
   CheckCircle,
-  QrCode,
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
@@ -54,7 +53,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [step, setStep] = useState<number>(1)
   const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
   const [lastOrder, setLastOrder] = useState<{ id?: string; orderNumber?: string } | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'razorpay'>('razorpay')
+  const [paymentMethod, setPaymentMethod] = useState<'cashfree' | 'razorpay'>('cashfree')
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
@@ -71,6 +70,19 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [invalidItems, setInvalidItems] = useState<Array<{ id: number; name: string }>>([])
   const [validating, setValidating] = useState<boolean>(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+
+  async function safeJson(res: Response) {
+    try {
+      return await res.json()
+    } catch {
+      try {
+        const t = await res.text()
+        return { errorText: t }
+      } catch {
+        return {}
+      }
+    }
+  }
 
   useEffect(() => {
     try {
@@ -127,7 +139,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           items: cartItems.map(ci => ({ id: ci.id })),
         }),
       })
-      const data = await res.json()
+      const data = await safeJson(res)
       if (!res.ok) throw new Error(data?.error || 'Validation failed')
       const results: Array<{ id: string; deliverable: boolean }> = Array.isArray(data?.results) ? data.results : []
       const badIds = new Set(results.filter(r => !r.deliverable).map(r => String(r.id)))
@@ -179,7 +191,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      const data = await res.json()
+      const data = await safeJson(res)
       if (!res.ok) {
         if (data?.productId) {
           const pid = Number(data.productId)
@@ -192,6 +204,40 @@ const Checkout: React.FC<CheckoutProps> = ({
         return
       }
 
+      if (paymentMethod === 'cashfree') {
+        try {
+          const orderId = data.order._id || data.order.id
+          const initRes = await fetch('/api/payment/cashfree/initiate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ orderId }),
+          })
+          const initData = await safeJson(initRes)
+          if (!initRes.ok) {
+            setCheckoutError(initData?.error || initData?.errorText || "Failed to initiate Cashfree payment")
+            return
+          }
+          const ensureScript = async () => {
+            const src = 'https://sdk.cashfree.com/js/v3/cashfree.js'
+            if (document.querySelector(`script[src="${src}"]`)) return
+            await new Promise<void>((resolve, reject) => {
+              const s = document.createElement('script')
+              s.src = src
+              s.onload = () => resolve()
+              s.onerror = () => reject(new Error('Failed to load Cashfree'))
+              document.body.appendChild(s)
+            })
+          }
+          await ensureScript()
+          const cf = (window as any).Cashfree({ mode: (initData.mode === 'production' ? 'production' : 'sandbox') })
+          cf.checkout({ paymentSessionId: String(initData.paymentSessionId || ''), redirectTarget: '_self' })
+          return
+        } catch {
+          setCheckoutError("Failed to connect to payment gateway")
+          return
+        }
+      }
+
       if (paymentMethod === 'razorpay') {
         try {
           const orderId = data.order._id || data.order.id
@@ -200,9 +246,9 @@ const Checkout: React.FC<CheckoutProps> = ({
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ orderId }),
           })
-          const initData = await initRes.json()
+          const initData = await safeJson(initRes)
           if (!initRes.ok) {
-            setCheckoutError(initData?.error || "Failed to initiate Razorpay payment")
+            setCheckoutError(initData?.error || initData?.errorText || "Failed to initiate Razorpay payment")
             return
           }
           const ensureScript = async () => {
@@ -241,7 +287,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     razorpay_signature: resp.razorpay_signature,
                   }),
                 })
-                const verifyData = await verifyRes.json()
+                const verifyData = await safeJson(verifyRes)
                 if (verifyRes.ok && verifyData.status === 'confirmed') {
                   setOrderPlaced(true)
                   setLastOrder({ id: String(orderId), orderNumber: String(verifyData?.order?.orderNumber || '') })
@@ -489,17 +535,33 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <h3 className="text-lg font-heading font-semibold text-gray-900 mb-4">
                       Select Payment Method
                     </h3>
-                    <div className="grid grid-cols-1 gap-4 mb-6">
-                      <div
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('cashfree')}
                         className={`p-4 border-2 rounded-lg transition-all ${
-                          'border-blue-600 bg-blue-50'
+                          paymentMethod === 'cashfree'
+                            ? 'border-blue-600 bg-blue-50'
+                            : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
-                        <CreditCard className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-                        <p className="text-sm font-medium text-blue-600">
-                          Pay with Razorpay (Cards, UPI, NetBanking, Wallets)
+                        <CreditCard
+                          className={`w-6 h-6 mx-auto mb-2 ${
+                            paymentMethod === 'cashfree'
+                              ? 'text-blue-600'
+                              : 'text-gray-400'
+                          }`}
+                        />
+                        <p
+                          className={`text-sm font-medium ${
+                            paymentMethod === 'cashfree'
+                              ? 'text-blue-600'
+                              : 'text-gray-600'
+                          }`}
+                        >
+                          Cashfree (Cards, UPI, NetBanking, Wallets)
                         </p>
-                      </div>
+                      </button>
                       <button
                         type="button"
                         onClick={() => setPaymentMethod('razorpay')}
@@ -523,14 +585,27 @@ const Checkout: React.FC<CheckoutProps> = ({
                               : 'text-gray-600'
                           }`}
                         >
-                          Card/UPI (via Razorpay)
+                          Razorpay (Cards, UPI, NetBanking, Wallets)
                         </p>
                       </button>
                     </div>
                   </div>
 
-                  {/* Conditional Payment UI */}
-                  {(
+                  {(paymentMethod === 'cashfree') ? (
+                    <div className="space-y-4">
+                      <div className="bg-gray-50 rounded-xl p-6 text-center">
+                        <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
+                          Pay using Cashfree
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-2">
+                          You will complete payment securely with Cashfree Checkout. Supports Cards, UPI, NetBanking and Wallets.
+                        </p>
+                        <p className="text-xl font-bold text-blue-600">
+                          ₹{total.toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
                     <div className="space-y-4">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
                         <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
@@ -625,7 +700,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="font-medium">₹{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Platform Fee (Razorpay {gatewayFeePercent}%)</span>
+                  <span className="text-gray-600">Platform Fee ({gatewayFeePercent}%)</span>
                   <span className="font-medium">₹{platformFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-green-600">

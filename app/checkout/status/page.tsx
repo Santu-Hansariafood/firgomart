@@ -10,6 +10,7 @@ function StatusContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get('id');
+  const cfOrderId = searchParams.get('order_id');
   const [status, setStatus] = useState<'loading' | 'success' | 'failed'>('loading');
   const [message, setMessage] = useState('');
   const { clearCart } = useCart();
@@ -23,8 +24,30 @@ function StatusContent() {
 
     const checkStatus = async () => {
       try {
+        const safeJson = async (res: Response) => {
+          try {
+            return await res.json();
+          } catch {
+            try {
+              const t = await res.text();
+              return { errorText: t };
+            } catch {
+              return {};
+            }
+          }
+        };
+        if (cfOrderId) {
+          try {
+            const v = await fetch(`/api/payment/cashfree/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orderId, cfOrderId }),
+            })
+            await safeJson(v)
+          } catch {}
+        }
         const res = await fetch(`/api/orders/${orderId}/tracking`);
-        const data = await res.json();
+        const data = await safeJson(res);
         const statusVal = String(data?.tracking?.status || '').toLowerCase();
         if (statusVal === 'confirmed' || statusVal === 'completed' || statusVal === 'paid') {
           setStatus('success');
@@ -43,7 +66,7 @@ function StatusContent() {
     };
 
     checkStatus();
-  }, [orderId, clearCart]);
+  }, [orderId, cfOrderId, clearCart]);
 
   if (status === 'loading') {
     return (
