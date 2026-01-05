@@ -203,17 +203,17 @@ const SellerRegistration: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4 text-[var(--foreground)]">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl"
+          className="bg-[var(--background)] rounded-2xl p-8 max-w-md w-full text-center shadow-xl border border-[var(--foreground)/20]"
         >
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-heading font-bold mb-2 text-[var(--foreground)]">
             Registration Successful!
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className="mb-6 text-[var(--foreground)/70]">
             Thank you for registering as a seller.
           </p>
           <button
@@ -228,13 +228,13 @@ const SellerRegistration: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-12">
       <div className="max-w-3xl mx-auto px-4">
         <motion.div
           variants={fadeInUp}
           initial="hidden"
           animate="show"
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-[var(--background)] rounded-2xl shadow-xl overflow-hidden border border-[var(--foreground)/20]"
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
             <div className="flex items-center space-x-3 mb-2">
@@ -245,37 +245,37 @@ const SellerRegistration: React.FC = () => {
           </div>
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">
-              <h2 className="text-xl font-heading font-bold text-gray-900">
+              <h2 className="text-xl font-heading font-bold">
                 Business Information
               </h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">Business Name *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Business Name *</label>
                   <input
                     type="text"
                     name="businessName"
                     value={formData.businessName}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">Owner Name *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Owner Name *</label>
                   <input
                     type="text"
                     name="ownerName"
                     value={formData.ownerName}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                   />
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">Email *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Email *</label>
                   <input
                     type="email"
                     name="email"
@@ -283,14 +283,14 @@ const SellerRegistration: React.FC = () => {
                     onChange={handleChange}
                     onBlur={() => checkExists('email', formData.email)}
                     required
-                    className={`w-full px-4 py-2 border rounded-lg ${errors.email ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.email ? 'border-red-500' : ''}`}
                   />
                   {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                   {checking === 'email' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </div>
 
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">Phone *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Phone *</label>
                   <input
                     type="tel"
                     name="phone"
@@ -299,32 +299,32 @@ const SellerRegistration: React.FC = () => {
                     onBlur={() => checkExists('phone', formData.phone)}
                     required
                     pattern="[0-9]{10}"
-                    className={`w-full px-4 py-2 border rounded-lg ${errors.phone ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.phone ? 'border-red-500' : ''}`}
                   />
                   {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                   {checking === 'phone' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </div>
               </div>
               <div>
-                <label className="block mb-1 text-gray-700 text-sm">Business Address *</label>
+                <label className="block mb-1 text-[var(--foreground)/80] text-sm">Business Address *</label>
                 <textarea
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                 />
               </div>
-              <h2 className="text-xl font-heading font-bold text-gray-900">Location</h2>
+              <h2 className="text-xl font-heading font-bold">Location</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">Country *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Country *</label>
                   <select
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border rounded-lg bg-white"
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                   >
                     <option value="">Select Country</option>
                     {sortedCountries.map(c => (
@@ -335,14 +335,14 @@ const SellerRegistration: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">State *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">State *</label>
                   <select
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
                     required
                     disabled={!states.length}
-                    className="w-full px-4 py-2 border rounded-lg bg-white"
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                   >
                     <option value="">Select State</option>
                     {states.map(st => (
@@ -355,14 +355,14 @@ const SellerRegistration: React.FC = () => {
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">District *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">District *</label>
                   <select
                     name="district"
                     value={formData.district}
                     onChange={handleChange}
                     required
                     disabled={!districts.length}
-                    className="w-full px-4 py-2 border rounded-lg bg-white"
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                   >
                     <option value="">Select District</option>
                     {districts.map(dc => (
@@ -373,19 +373,19 @@ const SellerRegistration: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block mb-1 text-gray-700 text-sm">City *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">City *</label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 border rounded-lg"
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                   />
                 </div>
               </div>
               <div>
-                <label className="block mb-1 text-gray-700 text-sm">Pincode *</label>
+                <label className="block mb-1 text-[var(--foreground)/80] text-sm">Pincode *</label>
                 <input
                   type="text"
                   name="pincode"
@@ -395,11 +395,11 @@ const SellerRegistration: React.FC = () => {
                   onChange={handleChange}
                   pattern="[0-9]{6}"
                   required
-                  className="w-full px-4 py-2 border rounded-lg"
+                  className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                 />
               </div>
             </div>
-            <div className="space-y-4 pt-6 border-t border-gray-300">
+            <div className="space-y-4 pt-6 border-t border-[var(--foreground)/20]">
               <h2 className="text-xl font-heading font-bold">Tax Information</h2>
 
               <div className="flex items-center gap-2">
@@ -409,12 +409,12 @@ const SellerRegistration: React.FC = () => {
                   checked={formData.hasGST}
                   onChange={handleChange}
                 />
-                <label>I have GST Number</label>
+                <label className="text-[var(--foreground)/80]">I have GST Number</label>
               </div>
 
               {formData.hasGST ? (
                 <>
-                  <label className="block mb-1 text-gray-700 text-sm">GST Number *</label>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">GST Number *</label>
                   <input
                     type="text"
                     name="gstNumber"
@@ -423,7 +423,7 @@ const SellerRegistration: React.FC = () => {
                     onBlur={() => checkExists('gstNumber', formData.gstNumber)}
                     pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
                     required
-                    className={`w-full px-4 py-2 border rounded-lg ${errors.gstNumber ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.gstNumber ? 'border-red-500' : ''}`}
                   />
                   {errors.gstNumber && <p className="text-red-500 text-xs mt-1">{errors.gstNumber}</p>}
                   {checking === 'gstNumber' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
@@ -431,7 +431,7 @@ const SellerRegistration: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <label className="block mb-1 text-gray-700 text-sm">PAN Number *</label>
+                    <label className="block mb-1 text-[var(--foreground)/80] text-sm">PAN Number *</label>
                     <input
                       type="text"
                       name="panNumber"
@@ -440,14 +440,14 @@ const SellerRegistration: React.FC = () => {
                       onBlur={() => checkExists('panNumber', formData.panNumber)}
                       pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
                       required
-                      className={`w-full px-4 py-2 border rounded-lg ${errors.panNumber ? 'border-red-500' : ''}`}
+                      className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.panNumber ? 'border-red-500' : ''}`}
                     />
                     {errors.panNumber && <p className="text-red-500 text-xs mt-1">{errors.panNumber}</p>}
                     {checking === 'panNumber' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                   </div>
 
                   <div>
-                    <label className="block mb-1 text-gray-700 text-sm">Aadhaar Number *</label>
+                    <label className="block mb-1 text-[var(--foreground)/80] text-sm">Aadhaar Number *</label>
                     <input
                       type="text"
                       name="aadhaar"
@@ -455,17 +455,17 @@ const SellerRegistration: React.FC = () => {
                       onChange={handleChange}
                       pattern="[0-9]{12}"
                       required
-                      className="w-full px-4 py-2 border rounded-lg"
+                      className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
                     />
                   </div>
                 </div>
               )}
             </div>
-            <div className="pt-6 border-t border-gray-300 space-y-3">
+            <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
               <h2 className="text-xl font-heading font-bold">Business Logo</h2>
 
-              <div className="border-2 border-dashed p-6 text-center rounded-lg">
-                <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
+              <div className="border-2 border-dashed p-6 text-center rounded-lg border-[var(--foreground)/30]">
+                <Upload className="w-12 h-12 mx-auto text-[var(--foreground)/50] mb-2" />
 
                 <label className="cursor-pointer text-brand-purple font-medium">
                   Upload Logo
@@ -489,7 +489,7 @@ const SellerRegistration: React.FC = () => {
             >
               Submit Registration
             </button>
-            <div className="pt-4 text-center border-t">
+            <div className="pt-4 text-center border-t border-[var(--foreground)/20]">
               <p className="text-sm">
                 Already have an account?{' '}
                 <Link href="/seller-login" className="text-brand-purple">

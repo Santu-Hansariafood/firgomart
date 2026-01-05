@@ -197,12 +197,12 @@ const Profile = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-4xl mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-lg overflow-hidden"
+          className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-lg overflow-hidden"
         >
           <div className="bg-gradient-to-r from-brand-purple to-purple-400 p-8 text-white">
             <div className="flex items-center justify-between">
@@ -230,19 +230,19 @@ const Profile = () => {
           </div>
 
           <div className="p-8">
-            <div className="mb-6 p-4 border rounded-lg bg-white border-gray-200">
+            <div className="mb-6 p-4 border rounded-lg bg-[var(--background)] border-gray-200">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
                   <div className="text-xs text-gray-500">Name</div>
-                  <div className="text-lg font-medium text-gray-900">{(formData.name || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[var(--foreground)]">{(formData.name || "").trim() || "—"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Email</div>
-                  <div className="text-lg font-medium text-gray-900">{(formData.email || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[var(--foreground)]">{(formData.email || "").trim() || "—"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Mobile</div>
-                  <div className="text-lg font-medium text-gray-900">{(formData.mobile || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[var(--foreground)]">{(formData.mobile || "").trim() || "—"}</div>
                 </div>
               </div>
             </div>
@@ -320,7 +320,7 @@ const Profile = () => {
               />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 text-[var(--foreground)]">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Address
               </label>
@@ -385,7 +385,7 @@ const Profile = () => {
 
             <div className="mt-8 pt-8 border-t border-gray-200">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-heading font-bold text-gray-900">Saved Addresses</h2>
+                <h2 className="text-xl font-heading font-bold text-[var(--foreground)]">Saved Addresses</h2>
                 <button
                   onClick={() => setShowAddAddress(!showAddAddress)}
                   className="px-4 py-2 bg-purple-50 text-brand-purple hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
@@ -395,7 +395,7 @@ const Profile = () => {
               </div>
 
               {showAddAddress && (
-                <div className="mb-6 p-6 bg-gray-50 rounded-xl border border-gray-200 animate-in fade-in slide-in-from-top-4">
+                  <div className="mb-6 p-6 bg-[var(--background)] rounded-xl border border-gray-200 animate-in fade-in slide-in-from-top-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <SimpleInput
                       label="Name"
@@ -459,22 +459,22 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(formData.addresses || []).map((addr, idx) => (
-                  <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-50" : "border-gray-200 bg-white"} relative group`}>
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <div className="font-medium text-gray-900">{addr.name || formData.name}</div>
-                        <div className="text-sm text-gray-500">{addr.mobile || formData.mobile}</div>
+                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-50" : "border-gray-200 bg-[var(--background)]"} relative group`}>
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <div className="font-medium text-[var(--foreground)]">{addr.name || formData.name}</div>
+                          <div className="text-sm text-gray-500">{addr.mobile || formData.mobile}</div>
+                        </div>
+                        {addr.isDefault && (
+                          <span className="px-2 py-1 bg-purple-100 text-brand-purple text-xs font-medium rounded">Default</span>
+                        )}
                       </div>
-                      {addr.isDefault && (
-                        <span className="px-2 py-1 bg-purple-100 text-brand-purple text-xs font-medium rounded">Default</span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-700 mb-3">
-                      {addr.address}, {addr.city}, {addr.state} - {addr.pincode}
-                    </p>
-                    <div className="flex items-center gap-3 text-sm">
-                      {!addr.isDefault && (
-                        <button
+                      <p className="text-sm text-[var(--foreground)] mb-3">
+                        {addr.address}, {addr.city}, {addr.state} - {addr.pincode}
+                      </p>
+                      <div className="flex items-center gap-3 text-sm">
+                        {!addr.isDefault && (
+                          <button
                           onClick={() => handleSetDefault(idx)}
                           className="text-brand-purple hover:text-purple-800 font-medium"
                         >
@@ -511,10 +511,10 @@ const Profile = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-lg overflow-hidden mt-6"
+          className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-lg overflow-hidden mt-6"
         >
           <div className="p-8">
-            <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">Previous Orders</h2>
+            <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">Previous Orders</h2>
             {loadingOrders ? (
               <div className="text-gray-600">Loading...</div>
             ) : orders.length === 0 ? (

@@ -1,7 +1,8 @@
 "use client"
 
 import Image, { ImageProps } from "next/image"
-import { useEffect, useState } from "react"
+import { useState } from "react"
+import clsx from "clsx"
 
 type Props = Omit<ImageProps, "src"> & { src?: string }
 
@@ -16,20 +17,23 @@ export default function FallbackImage({ src, alt, unoptimized, ...rest }: Props)
     return "/logo/firgomart.png"
   }
   const [cur, setCur] = useState(buildSrc(src))
-  useEffect(() => {
-    setCur(buildSrc(src))
-  }, [src])
   const safeAlt = typeof alt === "string" ? alt : ""
-  const needsSizes = (rest as any)?.fill && !(rest as { sizes?: string }).sizes
-  const finalSizes = needsSizes ? "100vw" : (rest as { sizes?: string }).sizes
+  const needsSizes = (rest as Partial<ImageProps>)?.fill && !(rest as Partial<ImageProps>).sizes
+  const finalSizes = needsSizes ? "100vw" : (rest as Partial<ImageProps>).sizes
+  const combinedClassName = clsx(
+    "bg-[var(--background)] border border-[var(--foreground)/20]",
+    (rest as { className?: string }).className
+  )
   return (
     <Image
+      key={buildSrc(src)}
       src={cur || "/logo/firgomart.png"}
       alt={safeAlt}
       onError={() => setCur("/logo/firgomart.png")}
       unoptimized={unoptimized ?? true}
       sizes={finalSizes}
       {...rest}
+      className={combinedClassName}
     />
   )
 }

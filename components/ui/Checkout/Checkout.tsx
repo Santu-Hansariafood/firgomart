@@ -359,7 +359,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackButton href="/" className="mb-6" />
 
@@ -370,7 +370,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-white border rounded-xl p-6"
+              className="bg-[var(--background)] border rounded-xl p-6 text-[var(--foreground)]"
             >
               {/* Progress Bar */}
               <div className="flex items-center space-x-4 mb-6">
@@ -411,7 +411,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   }}
                   className="space-y-4"
                 >
-                  <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                     Delivery Address
                   </h2>
 
@@ -526,7 +526,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               {/* Step 2: Payment */}
               {step === 2 && (
                 <form onSubmit={handlePlaceOrder} className="space-y-4">
-                  <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">
+                  <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                     Payment Details
                   </h2>
 
@@ -594,7 +594,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   {(paymentMethod === 'cashfree') ? (
                     <div className="space-y-4">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
+                        <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
                           Pay using Cashfree
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">
@@ -608,7 +608,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   ) : (
                     <div className="space-y-4">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-gray-900 mb-2">
+                        <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
                           Pay using Razorpay
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">
@@ -656,9 +656,9 @@ const Checkout: React.FC<CheckoutProps> = ({
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-white border rounded-xl p-6 sticky top-24"
+              className="bg-[var(--background)] border rounded-xl p-6 sticky top-24 text-[var(--foreground)]"
             >
-              <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">
+              <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                 Order Summary
               </h2>
 

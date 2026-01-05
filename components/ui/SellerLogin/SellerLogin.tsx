@@ -22,7 +22,8 @@ const SellerLogin: React.FC = () => {
   // Consent Popup State
   const [showConsent, setShowConsent] = useState(false)
   const [consentChecked, setConsentChecked] = useState(false)
-  const [pendingSeller, setPendingSeller] = useState<any>(null)
+  interface PendingSeller { id?: string | number; email?: string; name?: string }
+  const [pendingSeller, setPendingSeller] = useState<PendingSeller | null>(null)
 
   const requestOtp = async () => {
     setError('')
@@ -107,12 +108,12 @@ const SellerLogin: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-12">
       <div className="max-w-md mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl overflow-hidden"
+          className="bg-[var(--background)] rounded-2xl shadow-xl overflow-hidden border border-[var(--foreground)/20]"
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 text-white">
             <div className="flex items-center space-x-3">
@@ -125,15 +126,15 @@ const SellerLogin: React.FC = () => {
           <div className="p-6 space-y-5">
             {!otpSent ? (
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+                <label className="block text-sm font-medium text-[var(--foreground)/80] mb-2">Mobile Number</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
                   <input
                     type="tel"
                     value={mobile}
                     onChange={e => setMobile(e.target.value)}
                     placeholder="Enter 10-digit mobile number"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)]"
                   />
                 </div>
                 {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -144,7 +145,7 @@ const SellerLogin: React.FC = () => {
                 >
                   {loading ? 'Sending OTP...' : 'Request OTP'}
                 </button>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-[var(--foreground)/60]">
                   Demo note: No SMS is sent. A sample OTP will be shown.
                 </p>
               </div>
@@ -155,13 +156,13 @@ const SellerLogin: React.FC = () => {
                     Your OTP: <span className="font-semibold">{generatedOtp}</span>
                   </div>
                 )}
-                <label className="block text-sm font-medium text-gray-700 mb-2">Enter OTP</label>
+                <label className="block text-sm font-medium text-[var(--foreground)/80] mb-2">Enter OTP</label>
                 <input
                   type="tel"
                   value={enteredOtp}
                   onChange={e => setEnteredOtp(e.target.value)}
                   placeholder="6-digit code"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                  className="w-full px-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)]"
                 />
                 {error && <p className="text-red-600 text-sm">{error}</p>}
                 <div className="flex gap-3">
@@ -175,7 +176,7 @@ const SellerLogin: React.FC = () => {
                   <button
                     type="button"
                     onClick={resendOtp}
-                    className="flex items-center justify-center gap-2 flex-1 bg-gray-100 text-gray-800 py-3 rounded-lg font-medium hover:bg-gray-200 transition"
+                    className="flex items-center justify-center gap-2 flex-1 bg-[var(--foreground)/10] text-[var(--foreground)] py-3 rounded-lg font-medium hover:bg-[var(--foreground)/20] transition"
                   >
                     <RefreshCw className="w-4 h-4" /> Resend OTP
                   </button>

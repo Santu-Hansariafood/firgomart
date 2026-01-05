@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-10 mb-8 sm:mb-10">
           <div>
             <Image src="/logo/firgomart.png" alt="FirgoMart Logo" width={100} height={20} className="mb-4" />
-            <Paragraph className="mb-4">
+            <Paragraph className="mb-4 text-gray-300">
               FirgoMart is a multi-category brand offering quality fashion footwear accessories and daily lifestyle products We focus on reliable quality fast delivery and a smooth shopping experience for every customer
             </Paragraph>
             <div className="flex flex-wrap gap-3">
@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
           <div>
-            <Title level={4} className="mb-4">Quick Links</Title>
+            <Title level={4} className="mb-4 text-white">Quick Links</Title>
             <ul className="space-y-2 text-sm">
               {[
                 ["Home", "/"],
@@ -111,7 +111,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           <div>
-            <Title level={4} className="mb-4">Customer Service</Title>
+            <Title level={4} className="mb-4 text-white">Customer Service</Title>
             <ul className="space-y-2 text-sm">
               {[
                 ["Help Center", "/help"],
@@ -129,7 +129,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           <div>
-            <Title level={4} className="mb-4">Company & Contact</Title>
+            <Title level={4} className="mb-4 text-white">Company & Contact</Title>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start space-x-2">
                 <Landmark className="w-4 h-4 mt-1 shrink-0" />
@@ -185,7 +185,7 @@ const Footer: React.FC = () => {
         </div>
         <div className="border-t border-gray-800 pt-6 sm:pt-8 mb-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <Title level={5}>We Accept Payments</Title>
+            <Title level={5} className="text-white">We Accept Payments</Title>
 
             <div className="flex flex-wrap items-center gap-4">
               <div className="flex items-center space-x-2">
@@ -208,7 +208,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
-            <Paragraph className="text-center md:text-left">
+            <Paragraph className="text-center md:text-left text-gray-300">
               © 2025 - {new Date().getFullYear() } Firgomart. All Rights Reserved.
             </Paragraph>
 

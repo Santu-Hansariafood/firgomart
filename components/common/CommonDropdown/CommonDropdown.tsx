@@ -61,12 +61,12 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
 
   return (
     <div className={clsx("w-full relative", className)}>
-      {label && <p className="text-sm mb-1 font-medium text-gray-600">{label}</p>}
+      {label && <p className="text-sm mb-1 font-medium text-[var(--foreground)/70]">{label}</p>}
 
       {/* Selected box */}
       <div
         className={clsx(
-          "rounded-xl border flex flex-wrap gap-2 items-center justify-between px-4 py-3 cursor-pointer bg-white",
+          "rounded-xl border border-[var(--foreground)/20] flex flex-wrap gap-2 items-center justify-between px-4 py-3 cursor-pointer bg-[var(--background)] text-[var(--foreground)]",
           open && "ring-2 ring-brand-purple"
         )}
         onClick={() => setOpen(!open)}
@@ -92,12 +92,12 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
                 </span>
               ))
             ) : (
-              <span className="text-gray-400">{placeholder}</span>
+              <span className="text-[var(--foreground)/50]">{placeholder}</span>
             )
           ) : selected ? (
             <span>{(selected as DropdownItem).label}</span>
           ) : (
-            <span className="text-gray-400">{placeholder}</span>
+            <span className="text-[var(--foreground)/50]">{placeholder}</span>
           )}
         </div>
 
@@ -112,10 +112,10 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
 
       {/* Dropdown list */}
       {open && (
-        <div className="absolute left-0 right-0 mt-2 border rounded-xl bg-white shadow-lg max-h-64 overflow-auto z-50 p-2">
+        <div className="absolute left-0 right-0 mt-2 border border-[var(--foreground)/20] rounded-xl bg-[var(--background)] text-[var(--foreground)] shadow-lg max-h-64 overflow-auto z-50 p-2">
           {/* Search Input */}
           <input
-            className="w-full border px-3 py-2 rounded-lg mb-2 outline-none"
+            className="w-full border border-[var(--foreground)/20] bg-[var(--background)] text-[var(--foreground)] px-3 py-2 rounded-lg mb-2 outline-none"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -136,7 +136,7 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
           ))}
 
           {filteredOptions.length === 0 && (
-            <p className="text-center text-gray-400 py-2">No results found</p>
+            <p className="text-center text-[var(--foreground)/50] py-2">No results found</p>
           )}
         </div>
       )}

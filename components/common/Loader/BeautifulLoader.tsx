@@ -7,8 +7,8 @@ type Props = { label?: string }
 
 export default function BeautifulLoader({ label = "Loading" }: Props) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-white via-brand-purple/5 to-brand-red/10 backdrop-blur-sm">
-      <div className="bg-white/80 border border-brand-purple/20 rounded-2xl shadow-2xl px-8 py-6 flex flex-col items-center gap-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)]/85 backdrop-blur-sm">
+      <div className="bg-[var(--background)] border border-brand-purple/20 rounded-2xl shadow-2xl px-8 py-6 flex flex-col items-center gap-5">
         <div className="relative w-24 h-24 sm:w-28 sm:h-28">
           <motion.div
             className="absolute inset-0 rounded-full border-4 border-t-transparent border-brand-purple"
@@ -31,13 +31,13 @@ export default function BeautifulLoader({ label = "Loading" }: Props) {
         </div>
         <div className="flex flex-col items-center gap-3 w-64">
           <motion.div
-            className="text-base sm:text-lg font-semibold text-gray-800"
+            className="text-base sm:text-lg font-semibold text-[var(--foreground)]"
             animate={{ opacity: [0.6, 1, 0.6] }}
             transition={{ repeat: Infinity, duration: 1.8 }}
           >
             {label}…
           </motion.div>
-          <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-gray-300 dark:bg-gray-700 overflow-hidden">
             <motion.div
               className="h-full rounded-full bg-linear-to-r from-brand-purple via-brand-red to-brand-purple"
               initial={{ x: "-20%" }}

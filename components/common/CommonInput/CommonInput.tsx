@@ -24,7 +24,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-1 w-full">
-      {label && <label className="text-sm font-medium text-gray-600">{label}</label>}
+      {label && <label className="text-sm font-medium text-[var(--foreground)/70]">{label}</label>}
 
       <input
         type={type}
@@ -33,7 +33,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className={clsx(
-          "w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500",
+          "w-full rounded-xl border border-[var(--foreground)/20] px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--background)] text-[var(--foreground)]",
           className
         )}
       />

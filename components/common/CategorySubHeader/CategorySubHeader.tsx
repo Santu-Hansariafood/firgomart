@@ -62,7 +62,7 @@ const CategorySubHeader: React.FC = () => {
   if (hide) return null
 
   return (
-    <div className="relative z-30 bg-white border-b border-gray-100">
+    <div className="relative z-30 bg-[var(--background)] border-b border-[var(--foreground)/10]">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2">
         <div
           className="
@@ -95,7 +95,7 @@ const CategorySubHeader: React.FC = () => {
                     ${
                       isActive
                         ? 'bg-brand-purple/10 scale-105'
-                        : 'hover:bg-gray-50'
+                        : 'hover:bg-[var(--background)/80]'
                     }
                   `}
                 >
@@ -114,7 +114,7 @@ const CategorySubHeader: React.FC = () => {
                       ${
                         isActive
                           ? 'ring-brand-purple'
-                          : 'ring-gray-200 group-hover:ring-brand-purple/30'
+                          : 'ring-[var(--foreground)/20] group-hover:ring-brand-purple/30'
                       }
                     `}
                   >
@@ -134,7 +134,7 @@ const CategorySubHeader: React.FC = () => {
                       className={`block ${
                         isActive
                           ? 'text-brand-purple font-semibold'
-                          : 'text-gray-600'
+                          : 'text-[var(--foreground)/70]'
                       }`}
                     >
                       {category.name}

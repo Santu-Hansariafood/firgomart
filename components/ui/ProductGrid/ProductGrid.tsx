@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Eye } from 'lucide-react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
@@ -39,7 +39,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [loading, setLoading] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(true)
   const searchParams = useSearchParams()
-  const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
   const category = (searchParams.get('category') || '').trim()
   const [deliverToState, setDeliverToState] = useState<string>(() => {
@@ -54,14 +53,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [geoAsked, setGeoAsked] = useState<boolean>(false)
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
-  const isNextImageAllowed = (src: string) => {
-    try {
-      const u = new URL(src)
-      return u.hostname === 'res.cloudinary.com' || u.hostname === 'images.pexels.com'
-    } catch {
-      return false
-    }
-  }
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
 
   type ApiProduct = {
@@ -212,13 +203,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   }, [loadMore])
 
   return (
-    <section className="py-8 bg-gray-50">
+    <section className="py-8 bg-[var(--background)]">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-6">
-          <h2 className="text-xl sm:text-2xl font-heading font-bold text-gray-900">Featured Products</h2>
+          <h2 className="text-xl sm:text-2xl font-heading font-bold text-[var(--foreground)]">Featured Products</h2>
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <label className="text-sm text-gray-600">Deliver to</label>
+            <label className="text-sm text-[var(--foreground)/60]">Deliver to</label>
             <select
               value={deliverToState}
               onChange={(e) => {
@@ -227,14 +218,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 try { localStorage.setItem('deliverToState', val) } catch {}
                 setPage(1)
               }}
-              className="px-3 py-2 border rounded-lg bg-white text-sm w-40 sm:w-48"
+              className="px-3 py-2 border border-[var(--foreground)/20] rounded-lg bg-[var(--background)] text-[var(--foreground)] text-sm w-40 sm:w-48"
             >
               <option value="">Select State</option>
               {locationData.countries.find(c => c.country === 'India')?.states.map(s => (
                 <option key={s.state} value={s.state}>{s.state}</option>
               ))}
             </select>
-            <p className="text-gray-600 hidden md:block whitespace-nowrap">
+            <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
               {displayedProducts.length} products
             </p>
           </div>
@@ -243,18 +234,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         {displayedProducts.length === 0 && loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl overflow-hidden shadow-sm">
-                <div className="aspect-square bg-gray-200 animate-pulse" />
+              <div key={i} className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm border border-[var(--foreground)/10]">
+                <div className="aspect-square bg-[var(--foreground)/10] animate-pulse" />
                 <div className="p-4 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-3/4 animate-pulse" />
-                  <div className="h-3 bg-gray-200 rounded w-1/2 animate-pulse" />
-                  <div className="h-8 bg-gray-200 rounded w-full animate-pulse" />
+                  <div className="h-4 bg-[var(--foreground)/10] rounded w-3/4 animate-pulse" />
+                  <div className="h-3 bg-[var(--foreground)/10] rounded w-1/2 animate-pulse" />
+                  <div className="h-8 bg-[var(--foreground)/10] rounded w-full animate-pulse" />
                 </div>
               </div>
             ))}
           </div>
         ) : displayedProducts.length === 0 ? (
-          <div className="bg-white border rounded-xl p-6 text-center text-gray-600">No products available</div>
+          <div className="bg-[var(--background)] border border-[var(--foreground)/20] rounded-xl p-6 text-center text-[var(--foreground)/60]">No products available</div>
         ) : (
           <motion.div
             variants={staggerContainer}
@@ -267,7 +258,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
               <motion.div
                 key={product.id}
                 variants={fadeInUp}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow"
+                className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-[var(--foreground)/10]"
               >
                 <div
                   className="relative aspect-square overflow-hidden cursor-pointer group"
@@ -290,18 +281,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                   )}
                 </div>
                 <div className="p-4">
-                  <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">{product.name}</h3>
-                  <p className="text-xs text-gray-500 mb-2">{product.category}</p>
+                  <h3 className="text-sm font-medium text-[var(--foreground)] mb-1 line-clamp-2">{product.name}</h3>
+                  <p className="text-xs text-[var(--foreground)/60] mb-2">{product.category}</p>
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <span className="text-lg font-bold text-gray-900">₹{formatPrice(product.price)}</span>
+                      <span className="text-lg font-bold text-[var(--foreground)]">₹{formatPrice(product.price)}</span>
                       {product.originalPrice && (
-                        <span className="text-sm text-gray-400 line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
+                        <span className="text-sm text-[var(--foreground)/50] line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                     <div className="flex items-center space-x-1">
                       <span className="text-yellow-500">★</span>
-                      <span className="text-sm text-gray-600">{product.rating}</span>
+                      <span className="text-sm text-[var(--foreground)/60]">{product.rating}</span>
                     </div>
                   </div>
                   <div className="flex space-x-2">
@@ -322,7 +313,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                       className={`flex-1 px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center space-x-1 ${
                         (product.stock ?? 0) > 0
                           ? 'bg-brand-purple text-white hover:bg-brand-purple/90'
-                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          : 'bg-[var(--foreground)/10] text-[var(--foreground)/40] cursor-not-allowed'
                       }`}
                     >
                       <ShoppingCart className="w-4 h-4" />
@@ -337,7 +328,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         {hasMore && (
           <div ref={observerTarget} className="flex justify-center mt-8">
             {loading && (
-              <div className="flex items-center space-x-2 text-gray-600">
+              <div className="flex items-center space-x-2 text-[var(--foreground)/60]">
                 <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
                 <span>Loading more products...</span>
               </div>

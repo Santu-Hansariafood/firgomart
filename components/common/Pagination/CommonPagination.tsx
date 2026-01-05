@@ -27,11 +27,11 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
   const pages = range(start, end)
 
   return (
-    <div className={clsx("flex items-center gap-2", className)}>
+    <div className={clsx("flex items-center gap-2 text-[var(--foreground)]", className)}>
       <button
         className={clsx(
           "px-3 py-1 rounded border",
-          currentPage === 1 ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"
+          currentPage === 1 ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-[var(--background)] hover:bg-gray-100"
         )}
         disabled={currentPage === 1}
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
@@ -40,8 +40,8 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
       </button>
       {start > 1 && (
         <>
-          <button className="px-3 py-1 rounded border bg-white hover:bg-gray-50" onClick={() => onPageChange(1)}>1</button>
-          {start > 2 && <span className="px-2 text-gray-500">…</span>}
+          <button className="px-3 py-1 rounded border bg-[var(--background)] hover:bg-gray-100" onClick={() => onPageChange(1)}>1</button>
+          {start > 2 && <span className="px-2 text-[color:color-mix(in oklab,var(--foreground) 60%, transparent)]">…</span>}
         </>
       )}
       {pages.map((p) => (
@@ -49,7 +49,7 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
           key={p}
           className={clsx(
             "px-3 py-1 rounded border",
-            p === currentPage ? "bg-blue-600 text-white border-blue-600" : "bg-white hover:bg-gray-50"
+            p === currentPage ? "bg-blue-600 text-white border-blue-600" : "bg-[var(--background)] hover:bg-gray-100"
           )}
           onClick={() => onPageChange(p)}
         >
@@ -58,8 +58,8 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
       ))}
       {end < totalPages && (
         <>
-          {end < totalPages - 1 && <span className="px-2 text-gray-500">…</span>}
-          <button className="px-3 py-1 rounded border bg-white hover:bg-gray-50" onClick={() => onPageChange(totalPages)}>
+          {end < totalPages - 1 && <span className="px-2 text-[color:color-mix(in oklab,var(--foreground) 60%, transparent)]">…</span>}
+          <button className="px-3 py-1 rounded border bg-[var(--background)] hover:bg-gray-100" onClick={() => onPageChange(totalPages)}>
             {totalPages}
           </button>
         </>
@@ -67,14 +67,14 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
       <button
         className={clsx(
           "px-3 py-1 rounded border",
-          currentPage === totalPages ? "bg-gray-100 text-gray-400 cursor-not-allowed" : "bg-white hover:bg-gray-50"
+          currentPage === totalPages ? "bg-gray-200 text-gray-500 cursor-not-allowed" : "bg-[var(--background)] hover:bg-gray-100"
         )}
         disabled={currentPage === totalPages}
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
       >
         Next
       </button>
-      <span className="ml-2 text-sm text-gray-600">Page {currentPage} of {totalPages}</span>
+      <span className="ml-2 text-sm text-[color:color-mix(in oklab,var(--foreground) 70%, transparent)]">Page {currentPage} of {totalPages}</span>
     </div>
   )
 }

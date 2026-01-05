@@ -12,7 +12,7 @@ const Paragraph: React.FC<ParagraphProps> = ({ children, className }) => {
   return (
     <p
       className={clsx(
-        "text-sm sm:text-base leading-relaxed text-gray-300",
+        "text-sm sm:text-base leading-relaxed text-[var(--foreground)]",
         className
       )}
     >

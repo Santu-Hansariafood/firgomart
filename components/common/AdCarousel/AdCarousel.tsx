@@ -31,7 +31,7 @@ const AdCarousel: React.FC = () => {
   const currentAd: Advertisement = advertisements[current]
 
   return (
-    <section className="bg-gray-100 py-8">
+    <section className="bg-[var(--background)] py-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-xl">
           <AnimatePresence mode="wait">
@@ -69,16 +69,16 @@ const AdCarousel: React.FC = () => {
           <button
             onClick={prev}
             aria-label="Previous Slide"
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/90] hover:bg-[var(--background)] rounded-full flex items-center justify-center shadow-lg transition-colors"
           >
-            <ChevronLeft className="w-6 h-6 text-gray-900" />
+            <ChevronLeft className="w-6 h-6 text-[var(--foreground)]" />
           </button>
           <button
             onClick={next}
             aria-label="Next Slide"
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/90] hover:bg-[var(--background)] rounded-full flex items-center justify-center shadow-lg transition-colors"
           >
-            <ChevronRight className="w-6 h-6 text-gray-900" />
+            <ChevronRight className="w-6 h-6 text-[var(--foreground)]" />
           </button>
 
           {/* Dots indicator */}
@@ -89,7 +89,7 @@ const AdCarousel: React.FC = () => {
                 onClick={() => setCurrent(index)}
                 aria-label={`Go to slide ${index + 1}`}
                 className={`w-2 h-2 rounded-full transition-all ${
-                  index === current ? 'bg-white w-8' : 'bg-white/50'
+                  index === current ? 'bg-[var(--foreground)] w-8' : 'bg-[var(--foreground)/50]'
                 }`}
               />
             ))}

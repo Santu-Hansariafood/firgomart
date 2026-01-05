@@ -21,8 +21,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen text-gray-700">
-        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2" />
+      <div className="flex items-center justify-center h-screen text-[var(--foreground)] bg-[var(--background)]">
+        <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin mr-2" />
         Checking authentication...
       </div>
     )

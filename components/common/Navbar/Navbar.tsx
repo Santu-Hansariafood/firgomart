@@ -12,6 +12,8 @@ import {
   User,
   LogOut,
   ChevronDown,
+  Moon,
+  Sun,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/context/AuthContext"
@@ -29,6 +31,7 @@ const Navbar: React.FC = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [theme, setTheme] = useState<"light" | "dark">("light")
 
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
@@ -60,6 +63,29 @@ const Navbar: React.FC = () => {
     }
   }, [isAuthenticated])
 
+  useEffect(() => {
+    try {
+      const saved = typeof window !== "undefined" ? localStorage.getItem("theme") as "light" | "dark" | null : null
+      const systemDark = typeof window !== "undefined" ? window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches : false
+      const nextTheme: "light" | "dark" = saved || (systemDark ? "dark" : "light")
+      setTheme(nextTheme)
+      if (typeof document !== "undefined") {
+        document.documentElement.setAttribute("data-theme", nextTheme)
+      }
+    } catch {}
+  }, [])
+
+  const toggleTheme = () => {
+    const nextTheme: "light" | "dark" = theme === "light" ? "dark" : "light"
+    setTheme(nextTheme)
+    try {
+      localStorage.setItem("theme", nextTheme)
+    } catch {}
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-theme", nextTheme)
+    }
+  }
+
   const handleSwitchToRegister = () => {
     setShowLoginModal(false)
     setShowRegisterModal(true)
@@ -82,7 +108,7 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md">
+    <nav className="sticky top-0 z-50 bg-[var(--background)] text-[var(--foreground)] shadow-md">
       <div className="max-w-screen-xl mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
 
@@ -119,7 +145,7 @@ const Navbar: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-red-600">
                     <span className="text-base font-black text-red-700 leading-none">{initials}</span>
@@ -134,12 +160,12 @@ const Navbar: React.FC = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50"
+                      className="absolute right-0 mt-2 w-48 bg-[var(--background)] text-[var(--foreground)] rounded-lg shadow-lg py-2 z-50"
                     >
                       <Link
                         href="/profile"
                         onClick={() => setShowUserMenu(false)}
-                        className="flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-gray-100 transition-colors"
                       >
                         <User className="w-4 h-4" />
                         <span>My Profile</span>
@@ -173,16 +199,24 @@ const Navbar: React.FC = () => {
             )}
             <button
               onClick={() => setShowCart(true)}
-              className="relative flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              className="relative flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-gray-100 rounded-lg transition-colors"
               suppressHydrationWarning
             >
-              <ShoppingCart className="w-5 h-5 text-gray-700" />
+              <ShoppingCart className="w-5 h-5" />
               <span className="font-medium">Cart</span>
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Toggle theme"
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
           </div>
           <button
@@ -272,7 +306,7 @@ const Navbar: React.FC = () => {
                 suppressHydrationWarning
               >
                 <div className="flex items-center space-x-2">
-                  <ShoppingCart className="w-5 h-5 text-gray-700" />
+                  <ShoppingCart className="w-5 h-5" />
                   <span className="font-medium">Cart</span>
                 </div>
                 {cartCount > 0 && (
