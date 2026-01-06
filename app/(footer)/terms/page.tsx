@@ -9,17 +9,17 @@ import { Suspense } from "react";
 const page = () => {
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="min-h-screen bg-gray-900 px-4 sm:px-8 py-12">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
       <div className="max-w-4xl mx-auto space-y-8">
         <Title level={1} className="text-center mb-6">
           Terms & Conditions – FirgoMart
         </Title>
 
-        <Paragraph className="text-center text-gray-400">
-          Effective Date: <span className="text-white">01 January 2025</span>
+        <Paragraph className="text-center text-[var(--foreground)/60]">
+          Effective Date: <span className="text-[var(--foreground)]">01 January 2025</span>
         </Paragraph>
 
-        <div className="bg-gray-800/60 p-6 sm:p-8 rounded-2xl shadow-lg space-y-6 border border-gray-700">
+        <div className="bg-[var(--foreground)/10] p-6 sm:p-8 rounded-2xl shadow-lg space-y-6 border border-[var(--foreground)/20]">
 
           <Paragraph>
             <strong>Owned & Operated By:</strong> FirgoMart 24Logistics Private Limited <br />

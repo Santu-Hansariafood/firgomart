@@ -135,7 +135,7 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4 flex-none">
             <Link
               href="/seller-registration"
-              className="flex items-center space-x-2 px-4 py-2 text-brand-purple hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
             >
               <Store className="w-5 h-5" />
               <span className="font-medium">Sell on Firgomart</span>
@@ -145,9 +145,9 @@ const Navbar: React.FC = () => {
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-gray-100 rounded-lg transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
                 >
-                  <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-red-600">
+                  <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
                     <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                   </div>
                   <span className="font-medium">{user?.name?.split(" ")[0] || user?.email}</span>
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
                       <Link
                         href="/profile"
                         onClick={() => setShowUserMenu(false)}
-                        className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-gray-100 transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors"
                       >
                         <User className="w-4 h-4" />
                         <span>My Profile</span>
@@ -199,7 +199,7 @@ const Navbar: React.FC = () => {
             )}
             <button
               onClick={() => setShowCart(true)}
-              className="relative flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-gray-100 rounded-lg transition-colors"
+              className="relative flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
               suppressHydrationWarning
             >
               <ShoppingCart className="w-5 h-5" />
@@ -212,7 +212,7 @@ const Navbar: React.FC = () => {
             </button>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg hover:bg-[var(--foreground)/10] transition-colors"
               aria-label="Toggle theme"
               title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
@@ -221,7 +221,7 @@ const Navbar: React.FC = () => {
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-lg"
+            className="md:hidden p-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -241,14 +241,14 @@ const Navbar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-t border-gray-200"
+            className="md:hidden bg-[var(--background)] border-t border-[var(--foreground)/20]"
           >
             <div className="px-4 py-4 space-y-3">
               {!isAuthenticated && (
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false) }}
-                    className="px-4 py-3 text-brand-purple hover:bg-gray-100 rounded-lg font-medium transition-colors"
+                    className="px-4 py-3 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg font-medium transition-colors"
                   >
                     Login
                   </button>
@@ -262,9 +262,9 @@ const Navbar: React.FC = () => {
               )}
               {isAuthenticated && (
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between px-4 py-3 bg-[var(--foreground)/5] rounded-lg">
                   <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border border-red-600">
+                      <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
                         <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                       </div>
                       <span className="font-medium truncate max-w-[10rem]">
@@ -282,7 +282,7 @@ const Navbar: React.FC = () => {
                   <Link
                     href="/profile"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center space-x-2 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                    className="flex items-center space-x-2 px-4 py-3 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
                   >
                     <User className="w-5 h-5" />
                     <span className="font-medium">My Profile</span>
@@ -292,7 +292,7 @@ const Navbar: React.FC = () => {
               <Link
                 href="/seller-registration"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-2 px-4 py-3 text-brand-purple hover:bg-gray-100 rounded-lg"
+                className="flex items-center space-x-2 px-4 py-3 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg"
               >
                 <Store className="w-5 h-5" />
                 <span className="font-medium">Sell on Firgomart</span>
@@ -302,7 +302,7 @@ const Navbar: React.FC = () => {
                   setShowCart(true)
                   setMobileMenuOpen(false)
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg"
+                className="w-full flex items-center justify-between px-4 py-3 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
                 suppressHydrationWarning
               >
                 <div className="flex items-center space-x-2">

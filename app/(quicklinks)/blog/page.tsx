@@ -18,7 +18,7 @@ import { Suspense } from "react";
 const BlogPage = () => {
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -50,15 +50,15 @@ const BlogPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <ShoppingCart className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Shopping Guides
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Product recommendations, buying tips, and comparisons</li>
               <li>Learn how to shop smart and safely online</li>
               <li>Discover new products and deals</li>
@@ -70,13 +70,13 @@ const BlogPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Seller Insights</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Seller Insights</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Best practices for selling online</li>
               <li>Tips on product listings, pricing, and promotions</li>
               <li>Insights into logistics and fulfillment strategies</li>
@@ -88,15 +88,15 @@ const BlogPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Logistics & Delivery
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Behind-the-scenes of supply chain and delivery</li>
               <li>How FirgoMart ensures timely deliveries</li>
               <li>Innovations in last-mile logistics</li>
@@ -108,13 +108,13 @@ const BlogPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Megaphone className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Company Updates</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Company Updates</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Announcements and platform improvements</li>
               <li>New features and product launches</li>
               <li>Policy changes and service updates</li>
@@ -126,13 +126,13 @@ const BlogPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <TrendingUp className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Industry Trends</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Industry Trends</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Latest developments in e-commerce</li>
               <li>Global trade and market analysis</li>
               <li>Technology and innovation highlights</li>
@@ -145,22 +145,22 @@ const BlogPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="mt-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+          className="mt-16 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
         >
           <div className="flex items-center gap-3 mb-3">
             <Shield className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-gray-900">Our Commitment</h3>
+            <h3 className="text-xl font-bold text-[var(--foreground)]">Our Commitment</h3>
           </div>
-          <Paragraph className="text-gray-700">
+          <Paragraph className="text-[var(--foreground)/70]">
             We publish well-researched, easy-to-understand, and useful content.
             Our goal is to add value to our community and build trust through
             transparency and knowledge sharing.
           </Paragraph>
           <div className="mt-6">
-            <h4 className="text-lg font-semibold text-gray-900 mb-2">
+            <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
               Stay Connected
             </h4>
-            <Paragraph className="text-gray-700">
+            <Paragraph className="text-[var(--foreground)/70]">
               Check back regularly for new articles, updates, and insights from
               FirgoMart.
             </Paragraph>

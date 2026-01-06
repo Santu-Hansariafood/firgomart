@@ -22,7 +22,7 @@ import { Suspense } from "react";
 const CareersPage = () => {
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -54,15 +54,15 @@ const CareersPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100"
+            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
           >
             <div className="flex items-center gap-3 mb-3">
               <Sparkles className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-lg font-bold text-[var(--foreground)]">
                 Why Work With FirgoMart?
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Fast-growing global e-commerce environment</li>
               <li>Learning, growth, and career development</li>
               <li>Collaborative and inclusive culture</li>
@@ -75,15 +75,15 @@ const CareersPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100"
+            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
           >
             <div className="flex items-center gap-3 mb-3">
               <Users className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-lg font-bold text-[var(--foreground)]">
                 Career Opportunities
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li className="flex items-center gap-2"><Monitor className="w-4 h-4 text-brand-purple" /> Technology & Software Development</li>
               <li className="flex items-center gap-2"><Package className="w-4 h-4 text-brand-purple" /> Logistics & Supply Chain Operations</li>
               <li className="flex items-center gap-2"><Truck className="w-4 h-4 text-brand-purple" /> Warehouse & Delivery Operations</li>
@@ -97,15 +97,15 @@ const CareersPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100"
+            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
           >
             <div className="flex items-center gap-3 mb-3">
               <Target className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-gray-900">
+              <h3 className="text-lg font-bold text-[var(--foreground)]">
                 Growth & Development
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Continuous learning and skill development</li>
               <li>Career progression opportunities</li>
               <li>On-the-job training and mentorship</li>
@@ -117,13 +117,13 @@ const CareersPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="p-6 bg-white rounded-2xl shadow-sm border border-gray-100"
+            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
           >
             <div className="flex items-center gap-3 mb-3">
               <Users className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-gray-900">Our Work Culture</h3>
+              <h3 className="text-lg font-bold text-[var(--foreground)]">Our Work Culture</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Respectful and supportive workplace</li>
               <li>Teamwork and open communication</li>
               <li>Innovation and problem-solving mindset</li>
@@ -136,13 +136,13 @@ const CareersPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+          className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
         >
           <div className="flex items-center gap-3 mb-3">
             <Mail className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-gray-900">How to Apply</h3>
+            <h3 className="text-xl font-bold text-[var(--foreground)]">How to Apply</h3>
           </div>
-          <div className="space-y-2 text-gray-700">
+          <div className="space-y-2 text-[var(--foreground)/70]">
             <p>If you’re interested in joining FirgoMart, we’d love to hear from you.</p>
             <p>Send your resume to <span className="font-medium text-brand-purple">careers@firgomart.com</span></p>
             <p>Subject Line: <span className="font-medium">Position Name – Your Name</span></p>
@@ -153,10 +153,10 @@ const CareersPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.25 }}
-          className="mt-8 rounded-2xl border border-gray-100 bg-purple-50 p-8"
+          className="mt-8 rounded-2xl border border-[var(--foreground)/10] bg-brand-purple/10 p-8"
         >
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Join Us</h3>
-          <Paragraph className="text-gray-700">
+          <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">Join Us</h3>
+          <Paragraph className="text-[var(--foreground)/70]">
             Be a part of FirgoMart’s journey to build a trusted global e-commerce and logistics platform.
             Together, let’s shape the future of online shopping and delivery.
           </Paragraph>

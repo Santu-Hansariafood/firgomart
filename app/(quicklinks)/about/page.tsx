@@ -48,7 +48,7 @@ const AboutPage = () => {
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -79,15 +79,15 @@ const AboutPage = () => {
         >
           <motion.div
             variants={fadeInUp}
-            className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+            className="bg-[var(--background)] p-8 rounded-2xl shadow-sm border border-[var(--foreground)/10] hover:shadow-md transition-shadow"
           >
             <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
               <Rocket className="w-6 h-6 text-brand-purple" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4 font-heading">
+            <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4 font-heading">
               Our Mission
             </h3>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-[var(--foreground)/70] leading-relaxed">
               Our mission is to build a trusted global e-commerce ecosystem that
               empowers sellers, delights customers, and delivers products
               efficiently through advanced logistics solutions.
@@ -96,15 +96,15 @@ const AboutPage = () => {
 
           <motion.div
             variants={fadeInUp}
-            className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+            className="bg-[var(--background)] p-8 rounded-2xl shadow-sm border border-[var(--foreground)/10] hover:shadow-md transition-shadow"
           >
             <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
               <TrendingUp className="w-6 h-6 text-brand-purple" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4 font-heading">
+            <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4 font-heading">
               Our Vision
             </h3>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-[var(--foreground)/70] leading-relaxed">
               To become a globally recognized e-commerce and logistics brand that
               connects businesses and consumers beyond borders, driven by
               innovation, quality, and trust.
@@ -114,10 +114,10 @@ const AboutPage = () => {
 
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 font-heading mb-4">
+            <h2 className="text-3xl font-bold text-[var(--foreground)] font-heading mb-4">
               What We Do
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-[var(--foreground)/70] max-w-2xl mx-auto">
               We combine innovative technology with efficient logistics to create a
               smooth and reliable shopping experience across regions.
             </p>
@@ -130,21 +130,21 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white p-6 rounded-xl border border-gray-100 text-center hover:border-brand-purple/30 transition-colors"
+                className="bg-[var(--background)] p-6 rounded-xl border border-[var(--foreground)/10] text-center hover:border-brand-purple/30 transition-colors"
               >
                 <div className="mb-4 flex justify-center">{feature.icon}</div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2 font-heading">
+                <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2 font-heading">
                   {feature.title}
                 </h4>
-                <p className="text-sm text-gray-600">{feature.desc}</p>
+                <p className="text-sm text-[var(--foreground)/70]">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
         </section>
 
-        <section className="bg-white rounded-3xl p-8 sm:p-12 border border-gray-100">
+        <section className="bg-[var(--background)] rounded-3xl p-8 sm:p-12 border border-[var(--foreground)/10]">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 font-heading">
+            <h2 className="text-3xl font-bold text-[var(--foreground)] font-heading">
               Our Core Values
             </h2>
           </div>
@@ -174,8 +174,8 @@ const AboutPage = () => {
               <div key={idx} className="flex gap-4">
                 <div className="w-2 h-2 mt-2.5 rounded-full bg-brand-purple shrink-0" />
                 <div>
-                  <h4 className="font-bold text-gray-900 mb-1">{value.title}</h4>
-                  <p className="text-sm text-gray-600">{value.desc}</p>
+                  <h4 className="font-bold text-[var(--foreground)] mb-1">{value.title}</h4>
+                  <p className="text-sm text-[var(--foreground)/70]">{value.desc}</p>
                 </div>
               </div>
             ))}
@@ -189,10 +189,10 @@ const AboutPage = () => {
           className="grid md:grid-cols-2 gap-12 items-center"
         >
           <div className="order-2 md:order-1">
-            <h2 className="text-3xl font-bold text-gray-900 font-heading mb-6">
+            <h2 className="text-3xl font-bold text-[var(--foreground)] font-heading mb-6">
               Logistics & Technology
             </h2>
-            <div className="space-y-4 text-gray-600 leading-relaxed">
+            <div className="space-y-4 text-[var(--foreground)/70] leading-relaxed">
               <p>
                 FirgoMart operates with a strong logistics backbone that supports
                 timely deliveries and efficient order fulfillment.
@@ -208,7 +208,7 @@ const AboutPage = () => {
               </p>
             </div>
           </div>
-          <div className="order-1 md:order-2 bg-purple-50 rounded-2xl p-8 h-64 flex items-center justify-center">
+          <div className="order-1 md:order-2 bg-brand-purple/10 rounded-2xl p-8 h-64 flex items-center justify-center">
             {/* Placeholder for an image or illustration */}
             <div className="text-center">
               <Package className="w-16 h-16 text-brand-purple mx-auto mb-4 opacity-50" />
@@ -220,10 +220,10 @@ const AboutPage = () => {
         </motion.section>
 
         <section className="text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-gray-900 font-heading mb-4">
+          <h2 className="text-2xl font-bold text-[var(--foreground)] font-heading mb-4">
             Our Commitment
           </h2>
-          <p className="text-gray-600">
+          <p className="text-[var(--foreground)/70]">
             FirgoMart is committed to delivering quality products, reliable
             services, and exceptional customer experiences. As we continue to grow
             globally, we remain focused on building long-term trust with our

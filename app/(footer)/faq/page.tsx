@@ -21,7 +21,7 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const FaqPage = () => {
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -47,13 +47,13 @@ const FaqPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <ShoppingCart className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Shopping</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Shopping</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>How to search and compare products</li>
               <li>Placing orders and applying coupons</li>
               <li>Understanding product availability</li>
@@ -65,13 +65,13 @@ const FaqPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <CreditCard className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Payments</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Payments</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Supported payment methods</li>
               <li>Payment failures and retries</li>
               <li>Invoices and billing information</li>
@@ -83,13 +83,13 @@ const FaqPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Shipping</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Shipping</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Delivery timelines and coverage</li>
               <li>Shipping charges and policies</li>
               <li>Real-time order tracking</li>
@@ -101,13 +101,13 @@ const FaqPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <RotateCcw className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Returns & Refunds</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Returns & Refunds</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Return eligibility and conditions</li>
               <li>How to request a return</li>
               <li>Refund processing and timelines</li>
@@ -119,13 +119,13 @@ const FaqPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Seller Support</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Seller Support</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Seller registration and onboarding</li>
               <li>Product listing guidelines</li>
               <li>Order management support</li>
@@ -137,13 +137,13 @@ const FaqPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <Shield className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">Account & Security</h3>
+              <h3 className="text-xl font-bold text-[var(--foreground)]">Account & Security</h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Creating and managing your account</li>
               <li>Updating personal details</li>
               <li>Password and login assistance</li>
@@ -158,32 +158,32 @@ const FaqPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+          className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
         >
           <div className="flex items-center gap-3 mb-4">
             <Store className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-gray-900">Seller FAQs</h3>
+            <h3 className="text-xl font-bold text-[var(--foreground)]">Seller FAQs</h3>
           </div>
-          <div className="space-y-4 text-gray-800">
+          <div className="space-y-4 text-[var(--foreground)/80]">
             <div>
               <p className="font-semibold">How can I sell on FirgoMart?</p>
-              <p className="text-gray-700">
+              <p className="text-[var(--foreground)/70]">
                 Register as a seller by contacting{" "}
                 <span className="text-brand-purple font-medium">seller@firgomart.com</span>.
               </p>
             </div>
             <div>
               <p className="font-semibold">How are seller payments processed?</p>
-              <p className="text-gray-700">
+              <p className="text-[var(--foreground)/70]">
                 Payments are settled securely and on time as per the seller agreement.
               </p>
             </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6 mt-8">
-            <div className="rounded-xl border border-gray-100 p-6">
-              <h4 className="text-lg font-bold text-gray-900 mb-3">Still Have Questions?</h4>
-              <ul className="space-y-2 text-gray-700">
+            <div className="rounded-xl border border-[var(--foreground)/10] p-6">
+              <h4 className="text-lg font-bold text-[var(--foreground)] mb-3">Still Have Questions?</h4>
+              <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-brand-purple" /> Email: support@firgomart.com
                 </li>
@@ -192,12 +192,12 @@ const FaqPage = () => {
                 </li>
               </ul>
             </div>
-            <div className="rounded-xl border border-gray-100 p-6 bg-purple-50">
+            <div className="rounded-xl border border-[var(--foreground)/10] p-6 bg-brand-purple/10">
               <div className="flex items-center gap-2 mb-2">
                 <Handshake className="w-5 h-5 text-brand-purple" />
-                <h4 className="text-lg font-bold text-gray-900">Our Goal</h4>
+                <h4 className="text-lg font-bold text-[var(--foreground)]">Our Goal</h4>
               </div>
-              <p className="text-gray-700">
+              <p className="text-[var(--foreground)/70]">
                 FirgoMart aims to make your shopping and selling experience simple, transparent,
                 and reliable.
               </p>

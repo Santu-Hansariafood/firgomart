@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useState, useMemo } from "react";
+import React, { Suspense, useState } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import Title from "@/components/common/Title/Title";
 import Paragraph from "@/components/common/Paragraph/Paragraph";
@@ -23,11 +23,28 @@ import {
 import FallbackImage from "@/components/common/Image/FallbackImage";
 import teamsJson from "@/data/teams.json";
 
+type TeamData = Record<string, {
+  logo?: string
+  description?: string
+  members?: Array<{
+    name: string
+    image: string
+    bio?: string
+    links?: {
+      linkedin?: string
+      instagram?: string
+      x?: string
+      facebook?: string
+    }
+  }>
+}>
+
 const TeamsPage = () => {
   const [activeTitle, setActiveTitle] = useState<string | null>(null)
+  const tjson = teamsJson as TeamData
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -51,7 +68,7 @@ const TeamsPage = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
         <div className="text-center mb-12">
-          <Paragraph className="text-gray-700">
+          <Paragraph className="text-[var(--foreground)/70]">
             We believe in collaboration, innovation, accountability, and
             continuous improvement. Every team at FirgoMart plays a vital role
             in ensuring quality service and customer satisfaction.
@@ -63,15 +80,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Monitor className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Technology & Product Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Develops and maintains the FirgoMart website and platforms</li>
               <li>Ensures smooth performance, security, and scalability</li>
               <li>Implements new features to improve user experience</li>
@@ -92,15 +109,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.05 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Package className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Logistics & Operations Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Manages order fulfillment and delivery processes</li>
               <li>Coordinates warehouses and shipping partners</li>
               <li>Ensures safe handling and timely delivery</li>
@@ -121,15 +138,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Seller Management Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Supports seller onboarding and verification</li>
               <li>Assists with listings and order management</li>
               <li>Ensures compliance with quality standards</li>
@@ -150,15 +167,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Headphones className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Customer Support Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Handles customer queries and feedback</li>
               <li>Assists with orders, payments, and returns</li>
               <li>Provides clear and timely communication</li>
@@ -179,15 +196,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Megaphone className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Marketing & Growth Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Drives brand awareness and global growth</li>
               <li>Manages digital marketing and campaigns</li>
               <li>Analyzes customer behavior and trends</li>
@@ -208,15 +225,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Wallet className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Finance & Administration Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Manages secure payments and settlements</li>
               <li>Handles compliance and financial reporting</li>
               <li>Oversees vendor payments and expenses</li>
@@ -237,15 +254,15 @@ const TeamsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <Target className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-[var(--foreground)]">
                 Leadership & Strategy Team
               </h3>
             </div>
-            <ul className="space-y-2 text-gray-700">
+            <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Defines vision, mission, and long-term goals</li>
               <li>Oversees business growth and expansion</li>
               <li>Ensures ethical practices and governance</li>
@@ -278,14 +295,14 @@ const TeamsPage = () => {
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-white rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden"
+                className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden"
               >
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
                       <div className="relative w-10 h-10">
                         <FallbackImage
-                          src={(teamsJson as any)?.[activeTitle]?.logo || "/globe.svg"}
+                          src={activeTitle ? (tjson[activeTitle]?.logo || "/globe.svg") : "/globe.svg"}
                           alt="logo"
                           fill
                           sizes="40px"
@@ -295,14 +312,14 @@ const TeamsPage = () => {
                         />
                       </div>
                     </motion.div>
-                    <h3 className="text-2xl font-bold text-gray-900">{activeTitle}</h3>
+                    <h3 className="text-2xl font-bold text-[var(--foreground)]">{activeTitle}</h3>
                   </div>
-                  <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-gray-700">
-                    {(teamsJson as any)?.[activeTitle]?.description || "Team details coming soon."}
+                  <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[var(--foreground)/70]">
+                    {activeTitle ? (tjson[activeTitle]?.description || "Team details coming soon.") : "Team details coming soon."}
                   </motion.p>
                   <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {(((teamsJson as any)?.[activeTitle]?.members) || []).map((m: any, idx: number) => (
-                      <motion.div key={m.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: idx * 0.05 }} className="border rounded-xl overflow-hidden">
+                    {(activeTitle ? (tjson[activeTitle]?.members || []) : []).map((m, idx) => (
+                      <motion.div key={m.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: idx * 0.05 }} className="border border-[var(--foreground)/10] rounded-xl overflow-hidden">
                         <div className="relative w-full aspect-[4/3]">
                           <FallbackImage
                             src={m.image}
@@ -315,27 +332,27 @@ const TeamsPage = () => {
                           />
                         </div>
                         <div className="p-4">
-                          <div className="font-semibold text-gray-900">{m.name}</div>
-                          {m?.bio && <p className="mt-2 text-sm text-gray-600 line-clamp-3">{m.bio}</p>}
+                          <div className="font-semibold text-[var(--foreground)]">{m.name}</div>
+                          {m?.bio && <p className="mt-2 text-sm text-[var(--foreground)/70] line-clamp-3">{m.bio}</p>}
                           <div className="mt-3 flex items-center gap-3">
                             {m?.links?.linkedin && (
-                              <a href={m.links.linkedin} target="_blank" className="w-8 h-8 rounded-full bg-gray-100 hover:bg-purple-100 flex items-center justify-center">
-                                <Linkedin className="w-4 h-4 text-gray-700" />
+                              <a href={m.links.linkedin} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                                <Linkedin className="w-4 h-4 text-[var(--foreground)]" />
                               </a>
                             )}
                             {m?.links?.instagram && (
-                              <a href={m.links.instagram} target="_blank" className="w-8 h-8 rounded-full bg-gray-100 hover:bg-purple-100 flex items-center justify-center">
-                                <Instagram className="w-4 h-4 text-gray-700" />
+                              <a href={m.links.instagram} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                                <Instagram className="w-4 h-4 text-[var(--foreground)]" />
                               </a>
                             )}
                             {m?.links?.x && (
-                              <a href={m.links.x} target="_blank" className="w-8 h-8 rounded-full bg-gray-100 hover:bg-purple-100 flex items-center justify-center">
-                                <Twitter className="w-4 h-4 text-gray-700" />
+                              <a href={m.links.x} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                                <Twitter className="w-4 h-4 text-[var(--foreground)]" />
                               </a>
                             )}
                             {m?.links?.facebook && (
-                              <a href={m.links.facebook} target="_blank" className="w-8 h-8 rounded-full bg-gray-100 hover:bg-purple-100 flex items-center justify-center">
-                                <Facebook className="w-4 h-4 text-gray-700" />
+                              <a href={m.links.facebook} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                                <Facebook className="w-4 h-4 text-[var(--foreground)]" />
                               </a>
                             )}
                           </div>
@@ -361,23 +378,23 @@ const TeamsPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.35 }}
-          className="mt-16 bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+          className="mt-16 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
         >
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-gray-900">Our Work Culture</h3>
+            <h3 className="text-xl font-bold text-[var(--foreground)]">Our Work Culture</h3>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-purple-50 text-gray-800">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
               Team-driven and collaborative environment
             </div>
-            <div className="p-4 rounded-xl bg-purple-50 text-gray-800">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
               Focus on learning and growth
             </div>
-            <div className="p-4 rounded-xl bg-purple-50 text-gray-800">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
               Respect, transparency, and accountability
             </div>
-            <div className="p-4 rounded-xl bg-purple-50 text-gray-800">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
               Innovation-oriented mindset
             </div>
           </div>
