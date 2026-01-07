@@ -3,32 +3,26 @@
 import { motion } from "framer-motion"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import categoriesData from "@/data/categories.json"
 
-interface Category {
-  id: number
-  name: string
-  image: string
-}
+type JsonCategory = { name: string; image: string }
+const categories: Array<{ id: number; name: string; image: string }> =
+  (categoriesData as { categories: JsonCategory[] }).categories.map((c, i) => ({
+    id: i + 1,
+    name: c.name,
+    image: c.image,
+  }))
 
 interface Props {
   activeCategory: string | null
   onCategorySelect: (category: string | null) => void
 }
 
-const categories: Category[] = [
-  { id: 1, name: "Women's Fashion", image: "/image/women.webp" },
-  { id: 2, name: "Men's Casual Wear", image: "/image/man.webp" },
-  { id: 3, name: "Footwear", image: "/image/foot.webp" },
-  { id: 4, name: "Jewellery & Accessories", image: "/image/juallery.webp" },
-  { id: 5, name: "Beauty & Skincare", image: "/image/beauti.webp" },
-  { id: 6, name: "Home & Kitchen", image: "/image/home.webp" },
-]
-
 const CategorySubHeader: React.FC = () => {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const currentCategories = searchParams.get('category')?.split(',').filter(Boolean) || []
+  const currentSelected = (searchParams.get('category') || '').trim()
 
   const isAdminHost =
     typeof window !== 'undefined' &&
@@ -41,20 +35,11 @@ const CategorySubHeader: React.FC = () => {
 
   const toggleCategory = (catName: string) => {
     const params = new URLSearchParams(searchParams.toString())
-    let newCats = [...currentCategories]
-    
-    if (newCats.includes(catName)) {
-      newCats = newCats.filter(c => c !== catName)
-    } else {
-      newCats.push(catName)
-    }
-
-    if (newCats.length > 0) {
-      params.set('category', newCats.join(','))
-    } else {
+    if (currentSelected === catName) {
       params.delete('category')
+    } else {
+      params.set('category', catName)
     }
-
     router.push(`/?${params.toString()}`, { scroll: false })
   }
 
@@ -75,8 +60,8 @@ const CategorySubHeader: React.FC = () => {
           "
         >
           {categories.map((category, index) => {
-            const isActive = currentCategories.includes(category.name)
-            const isFootwear = category.name === 'Footwear'
+            const isActive = currentSelected === category.name
+            const isFootwear = category.name.startsWith('Footwear')
 
             return (
               <motion.div

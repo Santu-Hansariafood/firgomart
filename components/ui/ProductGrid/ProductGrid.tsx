@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Eye } from 'lucide-react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import locationData from '@/data/country.json'
+import categoriesData from '@/data/categories.json'
+import CommonDropdown from '@/components/common/CommonDropdown/CommonDropdown'
 
 interface Product {
   id: string | number
@@ -14,6 +16,7 @@ interface Product {
   image: string
   images?: string[]
   category: string
+  subcategory?: string
   price: number
   originalPrice?: number
   discount?: number
@@ -39,8 +42,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [loading, setLoading] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(true)
   const searchParams = useSearchParams()
+  const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
   const category = (searchParams.get('category') || '').trim()
+  const subcategory = (searchParams.get('subcategory') || '').trim()
   const [deliverToState, setDeliverToState] = useState<string>(() => {
     try {
       return typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
@@ -62,6 +67,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     image?: string
     images?: string[]
     category: string
+    subcategory?: string
     price: number
     originalPrice?: number
     discount?: number
@@ -76,13 +82,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     stock?: number
   }
 
+  type DropdownItem = { id: string | number; label: string }
+  type JsonCategory = { name: string; subcategories?: string[] }
+  const subcategoryOptionsFor = useCallback((cat: string): DropdownItem[] => {
+    const entry = ((categoriesData as { categories: JsonCategory[] }).categories || []).find((c) => c.name === cat)
+    const subs: string[] = Array.isArray(entry?.subcategories) ? entry!.subcategories : []
+    return subs.map((s) => ({ id: s, label: s }))
+  }, [])
+
   const fetchPage = useCallback(async (pageNum: number) => {
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
       const adminParam = !deliverToState ? `&adminOnly=true` : ''
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
       const categoryParam = category ? `&category=${encodeURIComponent(category)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}`)
+      const subcategoryParam = subcategory ? `&subcategory=${encodeURIComponent(subcategory)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -92,6 +107,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
         images: Array.isArray(p.images) ? p.images : undefined,
         category: p.category,
+        subcategory: p.subcategory,
         price: p.price,
         originalPrice: p.originalPrice,
         discount: p.discount,
@@ -108,7 +124,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     } catch {
       return []
     }
-  }, [deliverToState, search, category])
+  }, [deliverToState, search, category, subcategory])
 
   useEffect(() => {
     const loadInitial = async () => {
@@ -202,6 +218,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     }
   }, [loadMore])
 
+  useEffect(() => {
+    const opts = category ? subcategoryOptionsFor(category).map(o => o.label) : []
+    if (!category && subcategory) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('subcategory')
+      router.push(`/?${params.toString()}`, { scroll: false })
+    } else if (subcategory && opts.length > 0 && !opts.includes(subcategory)) {
+      const params = new URLSearchParams(searchParams.toString())
+      params.delete('subcategory')
+      router.push(`/?${params.toString()}`, { scroll: false })
+    }
+  }, [category, subcategory, searchParams, router, subcategoryOptionsFor])
+
   return (
     <section className="py-8 bg-[var(--background)]">
       <div className="max-w-7xl mx-auto px-4">
@@ -209,6 +238,25 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-6">
           <h2 className="text-xl sm:text-2xl font-heading font-bold text-[var(--foreground)]">Featured Products</h2>
           <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <div className="w-40 sm:w-56">
+              <CommonDropdown
+                placeholder="Select Category"
+                options={((categoriesData as { categories: { name: string }[] }).categories || []).map((c) => ({
+                  id: c.name,
+                  label: c.name,
+                }))}
+                selected={category ? { id: category, label: category } : null}
+                onChange={(v) => {
+                  if (Array.isArray(v)) return
+                  const params = new URLSearchParams(searchParams.toString())
+                  params.set('category', v.label)
+                  params.delete('subcategory')
+                  router.push(`/?${params.toString()}`, { scroll: false })
+                  setPage(1)
+                }}
+                className="min-w-[10rem]"
+              />
+            </div>
             <label className="text-sm text-[var(--foreground)/60]">Deliver to</label>
             <select
               value={deliverToState}
@@ -225,6 +273,23 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 <option key={s.state} value={s.state}>{s.state}</option>
               ))}
             </select>
+            {category && subcategoryOptionsFor(category).length > 0 && (
+              <div className="w-40 sm:w-56">
+                <CommonDropdown
+                  placeholder="Select Subcategory"
+                  options={subcategoryOptionsFor(category)}
+                  selected={subcategory ? { id: subcategory, label: subcategory } : null}
+                  onChange={(v) => {
+                    if (Array.isArray(v)) return
+                    const params = new URLSearchParams(searchParams.toString())
+                    params.set('subcategory', v.label)
+                    router.push(`/?${params.toString()}`, { scroll: false })
+                    setPage(1)
+                  }}
+                  className="min-w-[10rem]"
+                />
+              </div>
+            )}
             <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
               {displayedProducts.length} products
             </p>

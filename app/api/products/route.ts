@@ -14,12 +14,13 @@ export async function GET(request: Request) {
     const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
     const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
     const categoryParam = (url.searchParams.get("category") || "").trim()
+    const subcategoryParam = (url.searchParams.get("subcategory") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
     
-    const conditions: any[] = []
+    const conditions: Record<string, unknown>[] = []
 
     if (adminOnly) conditions.push({ isAdminProduct: true })
     if (createdByEmail) conditions.push({ createdByEmail })
@@ -51,13 +52,21 @@ export async function GET(request: Request) {
       }
     }
 
+    if (subcategoryParam) {
+      const subs = subcategoryParam.split(",").map(s => s.trim()).filter(Boolean)
+      if (subs.length > 0) {
+        const subRegexes = subs.map(s => new RegExp(s, "i"))
+        conditions.push({ subcategory: { $in: subRegexes } })
+      }
+    }
+
     if (search) {
       conditions.push({ $text: { $search: search } })
     }
 
     const finalQuery = conditions.length > 0 ? { $and: conditions } : {}
 
-    const products = await (Product as any).find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()
+    const products = await Product.find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()
     return NextResponse.json(
       { products },
       {
@@ -66,8 +75,9 @@ export async function GET(request: Request) {
         },
       }
     )
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "unknown"
+    return NextResponse.json({ error: "Server error", reason: msg }, { status: 500 })
   }
 }
 
@@ -136,7 +146,7 @@ export async function POST(request: Request) {
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const doc = await (Product as any).create({
+    const doc = await Product.create({
       name,
       image,
       images: Array.isArray(images) ? images : [],
@@ -159,7 +169,8 @@ export async function POST(request: Request) {
     })
 
     return NextResponse.json({ product: doc.toObject() }, { status: 201 })
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : "unknown"
+    return NextResponse.json({ error: "Server error", reason: msg }, { status: 500 })
   }
 }
