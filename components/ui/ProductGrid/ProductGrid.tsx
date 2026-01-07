@@ -232,14 +232,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         </div>
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm border border-[var(--foreground)/10]">
                 <div className="aspect-square bg-[var(--foreground)/10] animate-pulse" />
-                <div className="p-4 space-y-2">
-                  <div className="h-4 bg-[var(--foreground)/10] rounded w-3/4 animate-pulse" />
-                  <div className="h-3 bg-[var(--foreground)/10] rounded w-1/2 animate-pulse" />
-                  <div className="h-8 bg-[var(--foreground)/10] rounded w-full animate-pulse" />
+                <div className="p-2 sm:p-4 space-y-2">
+                  <div className="h-3 sm:h-4 bg-[var(--foreground)/10] rounded w-3/4 animate-pulse" />
+                  <div className="h-2.5 sm:h-3 bg-[var(--foreground)/10] rounded w-1/2 animate-pulse" />
+                  <div className="h-6 sm:h-8 bg-[var(--foreground)/10] rounded w-full animate-pulse" />
                 </div>
               </div>
             ))}
@@ -252,7 +252,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6"
+            className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6"
           >
             {displayedProducts.map((product) => (
               <motion.div
@@ -261,44 +261,44 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-[var(--foreground)/10]"
               >
                 <div
-                  className="relative aspect-square overflow-hidden cursor-pointer group"
+                  className="relative aspect-[4/5] sm:aspect-square overflow-hidden cursor-pointer group"
                   onClick={() => onProductClick(product)}
                 >
                   <FallbackImage
                     src={product.image}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 640px) 45vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
+                    sizes="(max-width: 640px) 30vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                    <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   {product.discount && (
-                    <span className="absolute top-2 right-2 bg-brand-red text-white text-xs font-bold px-2 py-1 rounded">
+                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
                       {product.discount}% OFF
                     </span>
                   )}
                 </div>
-                <div className="p-4">
-                  <h3 className="text-sm font-medium text-[var(--foreground)] mb-1 line-clamp-2">{product.name}</h3>
-                  <p className="text-xs text-[var(--foreground)/60] mb-2">{product.category}</p>
-                  <div className="flex items-center justify-between mb-3">
+                <div className="p-2 sm:p-4">
+                  <h3 className="text-[11px] sm:text-sm font-medium text-[var(--foreground)] mb-1 line-clamp-2">{product.name}</h3>
+                  <p className="text-[10px] sm:text-xs text-[var(--foreground)/60] mb-2">{product.category}</p>
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <div>
-                      <span className="text-lg font-bold text-[var(--foreground)]">₹{formatPrice(product.price)}</span>
+                      <span className="text-sm sm:text-lg font-bold text-[var(--foreground)]">₹{formatPrice(product.price)}</span>
                       {product.originalPrice && (
-                        <span className="text-sm text-[var(--foreground)/50] line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
+                        <span className="text-[11px] sm:text-sm text-[var(--foreground)/50] line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                     <div className="flex items-center space-x-1">
                       <span className="text-yellow-500">★</span>
-                      <span className="text-sm text-[var(--foreground)/60]">{product.rating}</span>
+                      <span className="text-[10px] sm:text-sm text-[var(--foreground)/60]">{product.rating}</span>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-1.5">
                     <button
                       onClick={() => onProductClick(product)}
-                      className="flex-1 px-3 py-2 border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/10 transition-colors text-sm font-medium"
+                      className="flex-1 px-2 py-1.5 sm:px-3 sm:py-2 border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/10 transition-colors text-[11px] sm:text-sm font-medium"
                     >
                       View
                     </button>
@@ -310,13 +310,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                         }
                       }}
                       disabled={(product.stock ?? 0) <= 0}
-                      className={`flex-1 px-3 py-2 rounded-lg transition-colors text-sm font-medium flex items-center justify-center space-x-1 ${
+                      className={`flex-1 px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg transition-colors text-[11px] sm:text-sm font-medium flex items-center justify-center space-x-1 ${
                         (product.stock ?? 0) > 0
                           ? 'bg-brand-purple text-white hover:bg-brand-purple/90'
                           : 'bg-[var(--foreground)/10] text-[var(--foreground)/40] cursor-not-allowed'
                       }`}
                     >
-                      <ShoppingCart className="w-4 h-4" />
+                      <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>{(product.stock ?? 0) > 0 ? 'Add' : 'Sold'}</span>
                     </button>
                   </div>
