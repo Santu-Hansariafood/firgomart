@@ -79,6 +79,7 @@ export async function GET(request: Request) {
       name: p.name,
       image: p.image,
       category: p.category,
+      subcategory: p.subcategory,
       price: p.price,
       originalPrice: p.originalPrice,
       discount: p.discount,
@@ -137,6 +138,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const name = String(body?.name || "").trim()
     const category = String(body?.category || "").trim()
+    const subcategory = String(body?.subcategory || "").trim()
     const price = Number(body?.price)
     const stock = Number(body?.stock ?? 0)
     const sellerState = String(body?.sellerState || "").trim()
@@ -159,6 +161,7 @@ export async function POST(request: Request) {
       image,
       images,
       category,
+      subcategory,
       price,
       stock,
       sellerState,

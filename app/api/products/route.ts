@@ -141,6 +141,7 @@ export async function POST(request: Request) {
       image,
       images: Array.isArray(images) ? images : [],
       category,
+      subcategory: typeof body?.subcategory === "string" ? String(body.subcategory).trim() : undefined,
       price,
       originalPrice,
       discount,

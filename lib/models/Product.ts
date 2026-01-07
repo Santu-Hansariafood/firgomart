@@ -6,6 +6,7 @@ import { Connection, Schema, Model } from "mongoose"
     image: { type: String, required: true },
     images: { type: [String], default: [] },
     category: { type: String, index: true },
+    subcategory: { type: String, index: true },
     price: { type: Number, required: true },
     originalPrice: { type: Number },
     discount: { type: Number },
@@ -28,7 +29,7 @@ import { Connection, Schema, Model } from "mongoose"
   { timestamps: true }
 )
 
-ProductSchema.index({ name: "text", category: "text", brand: "text", description: "text" })
+ProductSchema.index({ name: "text", category: "text", subcategory: "text", brand: "text", description: "text" })
 
 export function getProductModel(conn: Connection) {
   const models = conn.models as Record<string, Model<unknown>>

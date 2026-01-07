@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from "react"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
-import { categories as categoryList } from "@/data/mockData"
+import categoriesData from "@/data/categories.json"
 import locationData  from "@/data/country.json"
 import { Package, Edit, Trash, X, Plus } from "lucide-react"
 import dynamic from "next/dynamic"
@@ -21,6 +21,7 @@ type ProductItem = {
   id: string
   name: string
   category?: string
+  subcategory?: string
   price: number
   stock?: number
   sellerState?: string
@@ -60,7 +61,12 @@ export default function Page() {
   const india = (locationData.countries as Country[]).find((c) => c.country === "India")
   const stateOptions: DropdownItem[] = (india?.states || []).map((s) => ({ id: s.state, label: s.state }))
   const [selectedState, setSelectedState] = useState<DropdownItem | null>(null)
-  const categoryOptions: DropdownItem[] = categoryList.map((c) => ({ id: c.name, label: c.name }))
+  const categoryOptions: DropdownItem[] = (categoriesData as any).categories.map((c: { name: string }) => ({ id: c.name, label: c.name }))
+  const subcategoryOptionsFor = (cat: string): DropdownItem[] => {
+    const entry = ((categoriesData as any).categories || []).find((c: { name: string }) => c.name === cat)
+    const subs: string[] = Array.isArray(entry?.subcategories) ? entry!.subcategories : []
+    return subs.map((s) => ({ id: s, label: s }))
+  }
   const gstOptions: DropdownItem[] = [
     { id: "", label: "GST: Any" },
     { id: "true", label: "GST: Yes" },
@@ -78,6 +84,7 @@ export default function Page() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [formName, setFormName] = useState("")
   const [formCategory, setFormCategory] = useState("")
+  const [formSubcategory, setFormSubcategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
   const [formStock, setFormStock] = useState("")
   const [formSellerState, setFormSellerState] = useState("")
@@ -90,7 +97,12 @@ export default function Page() {
   const [formAddInfo, setFormAddInfo] = useState("")
   const [images, setImages] = useState<string[]>([])
 
-  const onFormCategoryChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setFormCategory(v.label) }
+  const onFormCategoryChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) {
+      setFormCategory(v.label)
+      setFormSubcategory("")
+    }
+  }
   const onFormSellerStateChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setFormSellerState(v.label) }
 
   const loadProducts = async () => {
@@ -139,6 +151,7 @@ export default function Page() {
       setEditingId(product.id)
       setFormName(product.name)
       setFormCategory(product.category || "")
+      setFormSubcategory((product as any).subcategory || "")
       setFormPrice(String(product.price))
       setFormStock(String(product.stock || 0))
       setFormSellerState(product.sellerState || "")
@@ -154,6 +167,7 @@ export default function Page() {
       setEditingId(null)
       setFormName("")
       setFormCategory("")
+      setFormSubcategory("")
       setFormPrice("")
       setFormStock("")
       setFormSellerState("")
@@ -209,6 +223,7 @@ export default function Page() {
     const payload = {
       name: formName.trim(),
       category: formCategory.trim(),
+      subcategory: formSubcategory.trim(),
       price: Number(formPrice),
       stock: Number(formStock || 0),
       sellerState: formGST ? "" : formSellerState.trim(),
@@ -403,6 +418,17 @@ export default function Page() {
                                 placeholder="Select Category"
                             />
                         </div>
+                        {formCategory && subcategoryOptionsFor(formCategory).length > 0 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+                            <CommonDropdown
+                              options={subcategoryOptionsFor(formCategory)}
+                              selected={formSubcategory ? { id: formSubcategory, label: formSubcategory } : null}
+                              onChange={(v) => { if (!Array.isArray(v)) setFormSubcategory(v.label) }}
+                              placeholder="Select Subcategory"
+                            />
+                          </div>
+                        )}
                         <div>
                              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
                              <input value={formBrand} onChange={e => setFormBrand(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. Nike, Apple" />

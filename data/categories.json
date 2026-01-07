@@ -1,0 +1,102 @@
+{
+  "categories": [
+    {
+      "name": "Women's Fashion",
+      "key": "womens-fashion",
+      "image": "/image/women.webp",
+      "subcategories": [
+        "Kurtis & Tunics",
+        "Sarees",
+        "Tops & T-Shirts",
+        "Dresses",
+        "Leggings & Bottom Wear",
+        "Nightwear & Loungewear",
+        "Dupattas & Stoles"
+      ]
+    },
+    {
+      "name": "Men's Casual Wear",
+      "key": "mens-casual-wear",
+      "image": "/image/man.webp",
+      "subcategories": [
+        "T-Shirts",
+        "Casual Shirts",
+        "Jeans",
+        "Trousers & Track Pants",
+        "Shorts",
+        "Hoodies & Jackets"
+      ]
+    },
+    {
+      "name": "Footwear – Women",
+      "key": "footwear-women",
+      "image": "/image/foot.webp",
+      "subcategories": [
+        "Flats",
+        "Heels",
+        "Sandals",
+        "Slippers & Flip-Flops",
+        "Casual Shoes"
+      ]
+    },
+    {
+      "name": "Footwear – Men",
+      "key": "footwear-men",
+      "image": "/image/foot.webp",
+      "subcategories": [
+        "Casual Shoes",
+        "Sneakers",
+        "Formal Shoes",
+        "Sandals",
+        "Slippers & Flip-Flops"
+      ]
+    },
+    {
+      "name": "Jewellery & Accessories",
+      "key": "jewellery-accessories",
+      "image": "/image/juallery.webp",
+      "subcategories": [
+        "Earrings",
+        "Necklaces",
+        "Bangles & Bracelets",
+        "Rings",
+        "Jewellery Sets",
+        "Watches",
+        "Sunglasses",
+        "Wallets",
+        "Belts"
+      ]
+    },
+    {
+      "name": "Beauty & Skincare",
+      "key": "beauty-skincare",
+      "image": "/image/beauti.webp",
+      "subcategories": [
+        "Face Wash & Cleansers",
+        "Face Creams & Moisturizers",
+        "Serums & Sunscreens",
+        "Lipsticks",
+        "Kajal & Eyeliner",
+        "Hair Oils",
+        "Shampoo & Conditioners",
+        "Perfumes",
+        "Deodorants"
+      ]
+    },
+    {
+      "name": "Home & Kitchen",
+      "key": "home-kitchen",
+      "image": "/image/home.webp",
+      "subcategories": [
+        "Bedsheets",
+        "Curtains",
+        "Cushions & Covers",
+        "Home Décor Items",
+        "Cookware",
+        "Kitchen Tools & Accessories",
+        "Storage Containers",
+        "Water Bottles"
+      ]
+    }
+  ]
+}

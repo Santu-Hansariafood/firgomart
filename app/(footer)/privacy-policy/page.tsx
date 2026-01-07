@@ -15,7 +15,7 @@ const PrivacyPolicyPage = () => {
           Privacy Policy – FirgoMart.com
         </Title>
         <Paragraph className="text-center text-[var(--foreground)/60]">
-          Effective Date: <span className="text-[var(--foreground)]">26 July</span>
+          Effective Date: <span className="text-[var(--foreground)]">26 July 2025</span>
         </Paragraph>
         <div className="bg-[var(--foreground)/10] p-6 sm:p-8 rounded-2xl shadow-lg space-y-6 border border-[var(--foreground)/20]">
           <Paragraph>

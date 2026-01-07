@@ -26,7 +26,7 @@ const Footer: React.FC = () => {
   const [policyType, setPolicyType] = useState<"privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate" | null>(null);
   const [showTop, setShowTop] = useState(false);
   const addressText =
-    "Plot No. 678, Majherpara PO, Hatiara PS, Newtown, Chota Masjid, North 24 Parganas, Kolkata, West Bengal – 700157";
+    "Plot No. 678 1st Floor, Majherpara, P.O. Hatiara, P.S. Newtown, near Chota Masjid, Baguiati, Kolkata, West Bengal 700157";
   const addressHref =
     "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(addressText + ", RF Manzil");
   useEffect(() => {
@@ -116,6 +116,7 @@ const Footer: React.FC = () => {
               {[
                 ["Help Center", "/help"],
                 ["Track Order", "/track-order"],
+                ["Trust & Safety", "/trust-safety"],
                 ["Returns & Refunds", "/returns"],
                 ["Shipping Info", "/shipping"],
                 ["FAQs", "/faq"],
@@ -162,11 +163,6 @@ const Footer: React.FC = () => {
                   <span className="block">{addressText}</span>
                 </Link>
               </li>
-              <li className="flex items-start space-x-2">
-                <Landmark className="w-4 h-4 mt-1 shrink-0" />
-                <div>Landmark: RF Manzil</div>
-              </li>
-
               <li className="flex items-center space-x-2">
                 <Phone className="w-4 h-4 shrink-0" />
                 <a href="tel:+918100660080" className="hover:text-white transition-colors">
