@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { X } from "lucide-react"
 
 interface Category {
   id: number
@@ -62,7 +61,7 @@ const CategorySubHeader: React.FC = () => {
   if (hide) return null
 
   return (
-    <div className="relative z-30 bg-[var(--background)] border-b border-[var(--foreground)/10]">
+    <div className="relative z-30 bg-[var(--background)] border-b border-[var(--foreground)/10] mt-2 sm:mt-3">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2">
         <div
           className="
@@ -99,14 +98,11 @@ const CategorySubHeader: React.FC = () => {
                     }
                   `}
                 >
-                  {/* Remove Badge */}
                   {isActive && (
                     <div className="absolute -top-1 -right-1 bg-brand-purple text-white rounded-full p-0.5 shadow-sm z-10">
-                      <X size={10} strokeWidth={3} />
                     </div>
                   )}
 
-                  {/* Image */}
                   <div
                     className={`
                       relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden
@@ -119,15 +115,15 @@ const CategorySubHeader: React.FC = () => {
                     `}
                   >
                     <FallbackImage
-                      src={category.image}
-                      alt={category.name}
-                      fill
-                      sizes="(max-width: 640px) 48px, 56px"
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    sizes="(max-width: 640px) 48px, 56px"
+                    className="object-cover object-center rounded-full transition-transform duration-500"
+                  />
+
                   </div>
 
-                  {/* Label */}
                   <span className="text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[5.5rem] min-h-[2.4em]">
                     {isFootwear && <span className="block invisible">.</span>}
                     <span
