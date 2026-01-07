@@ -13,11 +13,6 @@ const categories: Array<{ id: number; name: string; image: string }> =
     image: c.image,
   }))
 
-interface Props {
-  activeCategory: string | null
-  onCategorySelect: (category: string | null) => void
-}
-
 const CategorySubHeader: React.FC = () => {
   const pathname = usePathname()
   const router = useRouter()
@@ -61,7 +56,6 @@ const CategorySubHeader: React.FC = () => {
         >
           {categories.map((category, index) => {
             const isActive = currentSelected === category.name
-            const isFootwear = category.name.startsWith('Footwear')
 
             return (
               <motion.div
@@ -110,7 +104,6 @@ const CategorySubHeader: React.FC = () => {
                   </div>
 
                   <span className="text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[5.5rem] min-h-[2.4em]">
-                    {isFootwear && <span className="block invisible">.</span>}
                     <span
                       className={`block ${
                         isActive

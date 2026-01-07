@@ -274,20 +274,39 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
               ))}
             </select>
             {category && subcategoryOptionsFor(category).length > 0 && (
-              <div className="w-40 sm:w-56">
-                <CommonDropdown
-                  placeholder="Select Subcategory"
-                  options={subcategoryOptionsFor(category)}
-                  selected={subcategory ? { id: subcategory, label: subcategory } : null}
-                  onChange={(v) => {
-                    if (Array.isArray(v)) return
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                {subcategoryOptionsFor(category).map((opt, idx) => {
+                  const active = subcategory === opt.label
+                  return (
+                    <button
+                      key={`${String(opt.id)}-${idx}`}
+                      onClick={() => {
+                        const params = new URLSearchParams(searchParams.toString())
+                        params.set('subcategory', opt.label)
+                        router.push(`/?${params.toString()}`, { scroll: false })
+                        setPage(1)
+                      }}
+                      className={`inline-flex items-center px-3 py-1.5 rounded-full border text-xs sm:text-sm transition ${
+                        active
+                          ? 'bg-brand-purple text-white border-brand-purple'
+                          : 'bg-[var(--background)] text-[var(--foreground)/70] border-[var(--foreground)/20] hover:border-brand-purple/40'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
+                <button
+                  onClick={() => {
                     const params = new URLSearchParams(searchParams.toString())
-                    params.set('subcategory', v.label)
+                    params.delete('subcategory')
                     router.push(`/?${params.toString()}`, { scroll: false })
                     setPage(1)
                   }}
-                  className="min-w-[10rem]"
-                />
+                  className="inline-flex items-center px-3 py-1.5 rounded-full border text-xs sm:text-sm bg-[var(--background)] text-[var(--foreground)/70] border-[var(--foreground)/20] hover:border-brand-purple/40"
+                >
+                  Clear
+                </button>
               </div>
             )}
             <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
