@@ -185,8 +185,8 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   </div>
                   <div className="pt-2 border-t border-gray-200 flex justify-between">
                     <span className="font-heading font-bold text-[var(--foreground)]">Total</span>
-                    <span className="font-heading font-bold text-[var(--foreground)] text-lg">
-                      ₹{total.toFixed(2)}
+                    <span className="font-sans font-bold text-[var(--foreground)] text-lg">
+                        {"\u20B9"}{total.toFixed(2)}
                     </span>
                   </div>
                 </div>
