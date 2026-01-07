@@ -244,6 +244,21 @@ export default function Page() {
     } catch {}
   }
 
+  const handleDelete = async (id: string) => {
+    try {
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch(`/api/admin/products/${encodeURIComponent(id)}`, {
+        method: "DELETE",
+        headers: {
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+      })
+      if (res.ok) {
+        loadProducts()
+      }
+    } catch {}
+  }
+
   return (
     <Suspense fallback={<BeautifulLoader/>}>
       {!allowed ? (
@@ -326,6 +341,9 @@ export default function Page() {
                         <div className="flex items-center gap-2">
                             <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-blue-600">
                                 <Edit className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => handleDelete((r as ProductItem).id)} className="p-1 hover:bg-red-50 rounded text-red-600">
+                                <Trash className="w-4 h-4" />
                             </button>
                         </div>
                     )}
