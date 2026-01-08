@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User } from 'lucide-react'
+import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
@@ -140,25 +140,42 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 sm:mb-8">
               {/* Image Section */}
               <div>
-                <div className="relative aspect-square rounded-xl overflow-hidden bg-[var(--foreground)/10] mb-4 cursor-zoom-in" onClick={() => setLightboxOpen(true)}>
-                  <FallbackImage
-                    src={images[selectedImage]}
-                    alt={product.name}
-                    fill
-                    className="object-contain p-2"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
+              <div
+                className="relative aspect-square rounded-xl overflow-hidden bg-[var(--foreground)/10] mb-4 cursor-pointer"
+                onClick={(e) => {
+                  if (images.length > 1) {
+                    e.stopPropagation()
+                    nextImage()
+                  } else {
+                    setLightboxOpen(true)
+                  }
+                }}
+              >
+                <FallbackImage
+                  src={images[selectedImage]}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-2"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <button
+                  onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
+                  className="absolute top-2 right-2 w-8 h-8 bg-[var(--background)/80] rounded-full flex items-center justify-center shadow hover:bg-[var(--background)] transition-colors z-10"
+                  aria-label="Open lightbox"
+                >
+                  <ZoomIn className="w-4 h-4 text-[var(--foreground)]" />
+                </button>
                   {images.length > 1 && (
                     <>
                       <button
                         onClick={(e) => { e.stopPropagation(); prevImage() }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--background)/90] rounded-full flex items-center justify-center shadow-lg hover:bg-[var(--background)] transition-colors"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--background)/90] rounded-full flex items-center justify-center shadow-lg hover:bg-[var(--background)] transition-colors z-10"
                       >
                         <ChevronLeft className="w-5 h-5 text-[var(--foreground)]" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); nextImage() }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--background)/90] rounded-full flex items-center justify-center shadow-lg hover:bg-[var(--background)] transition-colors"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--background)/90] rounded-full flex items-center justify-center shadow-lg hover:bg-[var(--background)] transition-colors z-10"
                       >
                         <ChevronRight className="w-5 h-5 text-[var(--foreground)]" />
                       </button>
@@ -411,8 +428,25 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           </div>
 
           {lightboxOpen && (
-            <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center" onClick={() => setLightboxOpen(false)}>
-              <div className="relative w-full h-full md:w-[90vw] md:h-[90vh]">
+            <div
+              className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+              onClick={() => setLightboxOpen(false)}
+              role="dialog"
+              aria-modal="true"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowRight') nextImage()
+                else if (e.key === 'ArrowLeft') prevImage()
+                else if (e.key === 'Escape') setLightboxOpen(false)
+              }}
+            >
+              <div
+                className="relative w-full h-full md:w-[90vw] md:h-[90vh]"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  if (images.length > 1) nextImage()
+                }}
+              >
                 <FallbackImage
                   src={images[selectedImage]}
                   alt={product.name}
@@ -421,8 +455,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                   className="object-contain"
                 />
                 <button
-                  onClick={() => setLightboxOpen(false)}
-                  className="absolute top-4 right-4 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center"
+                  onClick={(e) => { e.stopPropagation(); setLightboxOpen(false) }}
+                  className="absolute top-4 right-4 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center z-10"
                 >
                   <X className="w-5 h-5 text-[var(--foreground)]" />
                 </button>
@@ -430,13 +464,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     <>
                         <button
                         onClick={(e) => { e.stopPropagation(); prevImage() }}
-                        className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center"
+                        className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center z-10"
                         >
                         <ChevronLeft className="w-6 h-6 text-[var(--foreground)]" />
                         </button>
                         <button
                         onClick={(e) => { e.stopPropagation(); nextImage() }}
-                        className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center"
+                        className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center z-10"
                         >
                         <ChevronRight className="w-6 h-6 text-[var(--foreground)]" />
                         </button>
