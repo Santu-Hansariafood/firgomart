@@ -280,7 +280,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         )}
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm border border-[var(--foreground)/10]">
                 <div className="aspect-square bg-[var(--foreground)/10] animate-pulse" />
@@ -300,7 +300,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6"
+            className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4 lg:gap-6"
           >
             {displayedProducts.map((product) => (
               <motion.div
@@ -309,14 +309,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-[var(--foreground)/10]"
               >
                 <div
-                  className="relative aspect-[4/5] sm:aspect-square overflow-hidden cursor-pointer group"
+                  className="relative aspect-square overflow-hidden cursor-pointer group"
                   onClick={() => onProductClick(product)}
                 >
                   <FallbackImage
                     src={product.image}
                     alt={product.name}
                     fill
-                    sizes="(max-width: 640px) 30vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
+                    sizes="(max-width: 640px) 33vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -343,7 +343,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                       <span className="text-[10px] sm:text-sm text-[var(--foreground)/60]">{product.rating}</span>
                     </div>
                   </div>
-                  <div className="flex space-x-1.5">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:space-x-1.5">
                     <button
                       onClick={() => onProductClick(product)}
                       className="flex-1 px-2 py-1.5 sm:px-3 sm:py-2 border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/10 transition-colors text-[11px] sm:text-sm font-medium"
