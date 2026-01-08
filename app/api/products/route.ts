@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import type { FilterQuery, Model } from "mongoose"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 import { getServerSession } from "next-auth"
@@ -64,9 +65,14 @@ export async function GET(request: Request) {
       conditions.push({ $text: { $search: search } })
     }
 
-    const finalQuery = conditions.length > 0 ? { $and: conditions } : {}
+    const finalQuery: FilterQuery<unknown> = conditions.length > 0 ? { $and: conditions } : {}
 
-    const products = await Product.find(finalQuery).sort("-createdAt").skip(skip).limit(limit).lean()
+    const ProductModel = Product as unknown as Model<Record<string, unknown>>
+    const products = await ProductModel.find(finalQuery as FilterQuery<Record<string, unknown>>)
+      .sort("-createdAt")
+      .skip(skip)
+      .limit(limit)
+      .lean()
     return NextResponse.json(
       { products },
       {
@@ -146,7 +152,7 @@ export async function POST(request: Request) {
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const doc = await Product.create({
+    const doc = await (Product as any).create({
       name,
       image,
       images: Array.isArray(images) ? images : [],
