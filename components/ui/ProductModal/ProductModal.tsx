@@ -329,7 +329,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
               </div>
             </div>
 
-            {/* Tabs Section */}
             <div className="border-t border-[var(--foreground)/20] pt-6">
                 <div className="flex gap-6 border-b border-[var(--foreground)/20] mb-6">
                     <button onClick={() => setActiveTab('desc')} className={`pb-2 font-medium transition-colors ${activeTab === 'desc' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-[var(--foreground)/60]'}`}>Description</button>
