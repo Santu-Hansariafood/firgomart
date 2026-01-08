@@ -3,12 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Eye } from 'lucide-react'
+import { ShoppingCart, Eye, X } from 'lucide-react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
-import locationData from '@/data/country.json'
 import categoriesData from '@/data/categories.json'
-import CommonDropdown from '@/components/common/CommonDropdown/CommonDropdown'
 
 interface Product {
   id: string | number
@@ -235,85 +233,51 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     <section className="py-8 bg-[var(--background)]">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-6">
-          <h2 className="text-xl sm:text-2xl font-heading font-bold text-[var(--foreground)]">Featured Products</h2>
-          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-            <div className="w-40 sm:w-56">
-              <CommonDropdown
-                placeholder="Select Category"
-                options={((categoriesData as { categories: { name: string }[] }).categories || []).map((c) => ({
-                  id: c.name,
-                  label: c.name,
-                }))}
-                selected={category ? { id: category, label: category } : null}
-                onChange={(v) => {
-                  if (Array.isArray(v)) return
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3">
+          <h2 className="text-xl sm:text-2xl font-heading font-bold text-[var(--foreground)]">FirgoMart Products</h2>
+          <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
+            {displayedProducts.length} products
+          </p>
+        </div>
+        {category && subcategoryOptionsFor(category).length > 0 && (
+          <div className="mb-6">
+            <div className="flex flex-wrap gap-2">
+              {subcategoryOptionsFor(category).map((opt, idx) => {
+                const active = subcategory === opt.label
+                return (
+                  <button
+                    key={`${String(opt.id)}-${idx}`}
+                    onClick={() => {
+                      const params = new URLSearchParams(searchParams.toString())
+                      params.set('subcategory', opt.label)
+                      router.push(`/?${params.toString()}`, { scroll: false })
+                      setPage(1)
+                    }}
+                    className={`inline-flex items-center px-3 py-1.5 rounded-full border text-xs sm:text-sm transition ${
+                      active
+                        ? 'bg-brand-purple text-white border-brand-purple'
+                        : 'bg-[var(--background)] text-[var(--foreground)/70] border-[var(--foreground)/20] hover:border-brand-purple/40'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+              <button
+                onClick={() => {
                   const params = new URLSearchParams(searchParams.toString())
-                  params.set('category', v.label)
                   params.delete('subcategory')
                   router.push(`/?${params.toString()}`, { scroll: false })
                   setPage(1)
                 }}
-                className="min-w-[10rem]"
-              />
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs sm:text-sm bg-brand-red text-white border-brand-red hover:bg-brand-red/90"
+              >
+                <X className="w-3 h-3" />
+                <span>Clear</span>
+              </button>
             </div>
-            <label className="text-sm text-[var(--foreground)/60]">Deliver to</label>
-            <select
-              value={deliverToState}
-              onChange={(e) => {
-                const val = e.target.value
-                setDeliverToState(val)
-                try { localStorage.setItem('deliverToState', val) } catch {}
-                setPage(1)
-              }}
-              className="px-3 py-2 border border-[var(--foreground)/20] rounded-lg bg-[var(--background)] text-[var(--foreground)] text-sm w-40 sm:w-48"
-            >
-              <option value="">Select State</option>
-              {locationData.countries.find(c => c.country === 'India')?.states.map(s => (
-                <option key={s.state} value={s.state}>{s.state}</option>
-              ))}
-            </select>
-            {category && subcategoryOptionsFor(category).length > 0 && (
-              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                {subcategoryOptionsFor(category).map((opt, idx) => {
-                  const active = subcategory === opt.label
-                  return (
-                    <button
-                      key={`${String(opt.id)}-${idx}`}
-                      onClick={() => {
-                        const params = new URLSearchParams(searchParams.toString())
-                        params.set('subcategory', opt.label)
-                        router.push(`/?${params.toString()}`, { scroll: false })
-                        setPage(1)
-                      }}
-                      className={`inline-flex items-center px-3 py-1.5 rounded-full border text-xs sm:text-sm transition ${
-                        active
-                          ? 'bg-brand-purple text-white border-brand-purple'
-                          : 'bg-[var(--background)] text-[var(--foreground)/70] border-[var(--foreground)/20] hover:border-brand-purple/40'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  )
-                })}
-                <button
-                  onClick={() => {
-                    const params = new URLSearchParams(searchParams.toString())
-                    params.delete('subcategory')
-                    router.push(`/?${params.toString()}`, { scroll: false })
-                    setPage(1)
-                  }}
-                  className="inline-flex items-center px-3 py-1.5 rounded-full border text-xs sm:text-sm bg-[var(--background)] text-[var(--foreground)/70] border-[var(--foreground)/20] hover:border-brand-purple/40"
-                >
-                  Clear
-                </button>
-              </div>
-            )}
-            <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
-              {displayedProducts.length} products
-            </p>
           </div>
-        </div>
+        )}
 
         {displayedProducts.length === 0 && loading ? (
           <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
