@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
 import { getProductModel } from "@/lib/models/Product"
+import { getPaymentModel } from "@/lib/models/Payment"
 import { findSellerAcrossDBs } from "@/lib/models/Seller"
 import PDFDocument from "pdfkit"
 import fs from "fs"
@@ -20,6 +21,38 @@ type OrderLean = {
   items?: OrderItem[]
 }
 
+function amountInWords(amount: number): string {
+  const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+  const two = (n: number) => n < 20 ? ones[n] : `${tens[Math.floor(n / 10)]}${n % 10 ? ` ${ones[n % 10]}` : ""}`
+  const three = (n: number) => n < 100 ? two(n) : `${ones[Math.floor(n / 100)]} Hundred${n % 100 ? ` ${two(n % 100)}` : ""}`
+  const toIndianWords = (n: number) => {
+    if (n === 0) return "Zero"
+    let s: string[] = []
+    let rem = n
+    const crore = Math.floor(rem / 10000000)
+    rem = rem % 10000000
+    const lakh = Math.floor(rem / 100000)
+    rem = rem % 100000
+    const thousand = Math.floor(rem / 1000)
+    rem = rem % 1000
+    const hundredRest = rem
+    if (crore) s.push(`${three(crore)} Crore`)
+    if (lakh) s.push(`${three(lakh)} Lakh`)
+    if (thousand) s.push(`${three(thousand)} Thousand`)
+    if (hundredRest) s.push(three(hundredRest))
+    return s.join(" ")
+  }
+  const rupees = Math.floor(amount)
+  const paise = Math.round((amount - rupees) * 100)
+  const r = toIndianWords(rupees)
+  if (paise > 0) {
+    const p = toIndianWords(paise)
+    return `Rupees ${r} and ${p} Paise Only`
+  }
+  return `Rupees ${r} Only`
+}
+
 export async function GET(request: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await ctx.params
@@ -29,6 +62,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     const conn = await connectDB()
     const Order = getOrderModel(conn)
     const Product = getProductModel(conn)
+    const Payment = getPaymentModel(conn)
     const doc = await (Order as unknown as {
       findById: (id: string) => { lean: () => Promise<OrderLean | null> }
     }).findById(id).lean()
@@ -42,13 +76,14 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       const pid = ((doc.items || [])[0] as unknown as { productId?: unknown })?.productId as { toString?: () => string } | undefined
       const productId = pid?.toString?.() || (pid as unknown as string | undefined)
       if (productId) {
-        const p = await (Product as unknown as { findById: (id: string) => { lean: () => Promise<any> } }).findById(productId).lean()
-        sellerState = typeof p?.sellerState === "string" ? p.sellerState : undefined
-        const sellerEmail = typeof p?.createdByEmail === "string" ? p.createdByEmail : undefined
+        type ProductLean = { sellerState?: string; createdByEmail?: string }
+        const p = await (Product as unknown as { findById: (id: string) => { lean: () => Promise<ProductLean | null> } }).findById(productId).lean()
+        sellerState = typeof p?.sellerState === "string" ? p!.sellerState : undefined
+        const sellerEmail = typeof p?.createdByEmail === "string" ? p!.createdByEmail : undefined
         if (sellerEmail) {
           const found = await findSellerAcrossDBs({ email: sellerEmail })
           if (found?.seller) {
-            const s = found.seller as any
+            const s = found.seller as { businessName?: unknown; gstNumber?: unknown; state?: unknown }
             sellerBusiness = String(s.businessName || "")
             sellerGST = String(s.gstNumber || "")
             if (!sellerState && typeof s.state === "string") sellerState = s.state
@@ -59,6 +94,13 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     try {
       logoBuf = fs.readFileSync(path.join(process.cwd(), "public", "logo", "firgomart.png"))
     } catch {}
+    let paymentMethod = ""
+    let paymentRef = ""
+    try {
+      const pay = await (Payment as unknown as { findOne: (q: any) => { sort: (s: string) => { lean: () => Promise<any> } } }).findOne({ orderNumber: doc.orderNumber }).sort("-createdAt").lean()
+      paymentMethod = String(pay?.method || "")
+      paymentRef = String(pay?.transactionId || "")
+    } catch {}
     const sum = (doc.items || []).reduce((s: number, it: OrderItem) => s + Number(it.price || 0) * Number(it.quantity || 1), 0)
     if (format === "pdf") {
       const pdf = new PDFDocument({ size: "A4", margin: 50 })
@@ -66,11 +108,14 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       pdf.on("data", (c) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)))
       const done = new Promise<void>((resolve) => pdf.on("end", () => resolve()))
       if (logoBuf) {
-        try { pdf.image(logoBuf, 50, 40, { width: 64 }) } catch {}
+        try { pdf.image(logoBuf, 50, 40, { width: 80 }) } catch {}
       }
       pdf.fontSize(20).fillColor("#000000").text("Receipt", logoBuf ? 120 : 50, logoBuf ? 50 : pdf.y, { align: "left" })
       pdf.fontSize(10).fillColor("#4b5563").text(`FirgoMart 24Logistics Private Limited`, logoBuf ? 120 : 50, pdf.y + 2)
       pdf.fontSize(10).fillColor("#4b5563").text(`Admin GSTIN: ${ADMIN_GST}`, logoBuf ? 120 : 50)
+      try {
+        pdf.save().rect(50, 90, pdf.page.width - 100, 6).fill("#6d28d9").restore()
+      } catch {}
       pdf.moveDown(0.5)
       pdf.fontSize(12).fillColor("#666666").text(`Order Number: ${doc.orderNumber || ""}`)
       pdf.fillColor("#666666").text(`Status: ${doc.status || ""}`)
@@ -79,8 +124,9 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       pdf.roundedRect(pdf.x, pdf.y, pdf.page.width - 100, 80, 8).stroke("#e5e7eb")
       pdf.moveDown(0.2)
       pdf.text(`Buyer: ${doc.buyerName || ""}${doc.buyerEmail ? ` (${doc.buyerEmail})` : ""}`, { width: pdf.page.width - 100, continued: false })
-      pdf.text(`Ship To: ${(doc.address || "")}${doc.city ? `, ${doc.city}` : ""}${doc.state ? `, ${doc.state}` : ""}${(doc as any).pincode ? `, ${(doc as any).pincode}` : ""}${doc.country ? `, ${doc.country}` : ""}`, { width: pdf.page.width - 100 })
+      pdf.text(`Ship To: ${(doc.address || "")}${doc.city ? `, ${doc.city}` : ""}${doc.state ? `, ${doc.state}` : ""}${((doc as unknown as { pincode?: string }).pincode) ? `, ${((doc as unknown as { pincode?: string }).pincode)}` : ""}${doc.country ? `, ${doc.country}` : ""}`, { width: pdf.page.width - 100 })
       pdf.text(`Seller: ${sellerBusiness || "—"}${sellerGST ? ` • GSTIN: ${sellerGST}` : ""}`, { width: pdf.page.width - 100 })
+      pdf.text(`Payment Method: ${paymentMethod || "—"}${paymentRef ? ` • Reference No: ${paymentRef}` : ""}`, { width: pdf.page.width - 100 })
       pdf.moveDown(0.8)
       const startX = 50
       const colItem = startX
@@ -104,7 +150,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         y += 18
       }
       pdf.moveTo(startX, y + 2).lineTo(pdf.page.width - 50, y + 2).stroke("#e5e7eb")
-      const GST_RATE = 0.18
+      const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
+      const FEE_RATE = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2) / 100
       const buyerState = String(doc.state || "").trim().toLowerCase()
       const sellerSt = String(sellerState || "").trim().toLowerCase()
       let igst = 0, cgst = 0, sgst = 0
@@ -114,20 +161,30 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         cgst = sum * (GST_RATE / 2)
         sgst = sum * (GST_RATE / 2)
       }
-      const grand = sum + igst + cgst + sgst
+      const taxTotal = igst + cgst + sgst
+      const platformFee = (sum + taxTotal) * FEE_RATE
+      const grand = sum + taxTotal + platformFee
       pdf.fontSize(12).fillColor("#111827").text("Subtotal", colPrice, y + 10)
       pdf.text(`₹${sum.toFixed(2)}`, colAmt, y + 10)
       if (igst > 0) {
-        pdf.text("IGST (18%)", colPrice, y + 28)
+        pdf.text(`IGST (${(GST_RATE * 100).toFixed(2)}%)`, colPrice, y + 28)
         pdf.text(`₹${igst.toFixed(2)}`, colAmt, y + 28)
       } else {
-        pdf.text("CGST (9%)", colPrice, y + 28)
+        const half = (GST_RATE * 100) / 2
+        pdf.text(`CGST (${half.toFixed(2)}%)`, colPrice, y + 28)
         pdf.text(`₹${cgst.toFixed(2)}`, colAmt, y + 28)
-        pdf.text("SGST (9%)", colPrice, y + 46)
+        pdf.text(`SGST (${half.toFixed(2)}%)`, colPrice, y + 46)
         pdf.text(`₹${sgst.toFixed(2)}`, colAmt, y + 46)
       }
-      pdf.font("Helvetica-Bold").text("Total", colPrice, y + (igst > 0 ? 46 : 64))
-      pdf.text(`₹${grand.toFixed(2)}`, colAmt, y + (igst > 0 ? 46 : 64))
+      const baseY = y + (igst > 0 ? 46 : 64)
+      pdf.text(`Platform Fee (${(FEE_RATE * 100).toFixed(2)}%)`, colPrice, baseY + 18)
+      pdf.text(`₹${platformFee.toFixed(2)}`, colAmt, baseY + 18)
+      pdf.font("Helvetica-Bold").text("Total", colPrice, baseY + 36)
+      pdf.text(`₹${grand.toFixed(2)}`, colAmt, baseY + 36)
+      pdf.moveDown(0.2)
+      pdf.fontSize(11).fillColor("#111827").text(`Amount in words: ${amountInWords(grand)}`, 50, pdf.y)
+      pdf.moveDown(0.2)
+      pdf.fontSize(11).fillColor("#6d28d9").text("Thank you for using FirgoMart platform.", 50, pdf.y)
       pdf.end()
       await done
       const buf = Buffer.concat(chunks)
@@ -136,6 +193,22 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       headers["Content-Disposition"] = download ? `attachment; filename="${fname}"` : `inline; filename="${fname}"`
       return new NextResponse(buf, { status: 200, headers })
     }
+    const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
+    const FEE_RATE = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2) / 100
+    const buyerState = String(doc.state || "").trim().toLowerCase()
+    const sellerSt = String(sellerState || "").trim().toLowerCase()
+    let igst = 0, cgst = 0, sgst = 0
+    if (buyerState && sellerSt && buyerState !== sellerSt) {
+      igst = sum * GST_RATE
+    } else {
+      cgst = sum * (GST_RATE / 2)
+      sgst = sum * (GST_RATE / 2)
+    }
+    const taxTotal = igst + cgst + sgst
+    const platformFee = (sum + taxTotal) * FEE_RATE
+    const grand = sum + taxTotal + platformFee
+    const qrString = encodeURIComponent(`Order: ${doc.orderNumber || ""}; Status: ${doc.status || ""}; Total: ₹${grand.toFixed(2)}; Email: ${doc.buyerEmail || ""}`)
+    const amountWordsText = amountInWords(grand)
     const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -144,22 +217,57 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Receipt ${doc.orderNumber}</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 24px; color: #111827; }
-    h1 { font-size: 20px; margin-bottom: 8px; }
+    body { font-family: Arial, sans-serif; margin: 24px; color: #111827; background: #ffffff; }
     .muted { color: #6b7280; }
     .box { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin-top: 12px; }
     table { width: 100%; border-collapse: collapse; margin-top: 8px; }
     th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e5e7eb; }
     .total { font-weight: bold; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+    .letterhead { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-radius: 12px; color: #ffffff; background: linear-gradient(90deg, #6d28d9, #ef4444); }
+    .lh-left { display: flex; align-items: center; gap: 12px; }
+    .lh-title { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
+    .lh-sub { font-size: 12px; opacity: 0.9; }
+    .lh-right { text-align: right; }
+    .brand-rule { height: 4px; background: linear-gradient(90deg, #6d28d9, #ef4444); border-radius: 4px; margin: 12px 0 16px; }
+    thead th { background: #f5f3ff; color: #4c1d95; }
+    .thanks { margin-top: 16px; padding: 10px 12px; border: 1px dashed #e5e7eb; border-radius: 8px; background: #faf5ff; color: #4c1d95; font-weight: 600; }
+    .actions { margin-top: 16px; text-align: right; }
+    .print-btn { background: #2563eb; color: #ffffff; border: none; border-radius: 8px; padding: 10px 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; }
+    .print-btn:hover { background: #1e40af; }
+    @media print { .actions { display: none; } }
+    .qrimg { width: 120px; height: 120px; border-radius: 8px; background: #ffffff; padding: 4px; display: inline-block; }
   </style>
 </head>
 <body>
-  <h1>Receipt</h1>
-  <div class="muted">Order Number: ${doc.orderNumber}</div>
-  <div class="muted">Status: ${doc.status}</div>
-  <div class="box">
-    <div><strong>Buyer:</strong> ${doc.buyerName || ""} ${doc.buyerEmail ? `(${doc.buyerEmail})` : ""}</div>
-    <div><strong>Ship To:</strong> ${doc.address || ""}, ${doc.city || ""}, ${doc.state || ""}, ${doc.country || ""}</div>
+  <div class="letterhead">
+    <div class="lh-left">
+      <img src="/logo/firgomart.png" alt="FirgoMart" width="64" height="64" />
+      <div>
+        <div class="lh-title">FirgoMart</div>
+        <div class="lh-sub">FirgoMart 24Logistics Private Limited</div>
+      </div>
+    </div>
+    <div class="lh-right">
+      <div>Admin GSTIN: ${ADMIN_GST}</div>
+      <div>Order: ${doc.orderNumber}</div>
+      <div>Status: ${doc.status}</div>
+      <img class="qrimg" src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${qrString}" alt="QR Code" />
+    </div>
+  </div>
+  <div class="brand-rule"></div>
+  <div class="box grid">
+    <div>
+      <div><strong>Buyer:</strong> ${doc.buyerName || ""} ${doc.buyerEmail ? `(${doc.buyerEmail})` : ""}</div>
+      <div><strong>Ship To:</strong> ${doc.address || ""}, ${doc.city || ""}, ${doc.state || ""}, ${doc.country || ""}</div>
+    </div>
+    <div>
+      <div><strong>Seller:</strong> ${sellerBusiness || "—"}</div>
+      <div><strong>Seller GSTIN:</strong> ${sellerGST || "—"}</div>
+      <div class="muted">Scan the QR in header for order details</div>
+      <div><strong>Payment Method:</strong> ${paymentMethod || "—"}${paymentRef ? ` • <strong>Reference No:</strong> ${paymentRef}` : ""}</div>
+    </div>
   </div>
   <div class="box">
     <table>
@@ -173,9 +281,26 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           const amt = qty * price
           return `<tr><td>${it.name}</td><td>${qty}</td><td>₹${price.toFixed(2)}</td><td>₹${amt.toFixed(2)}</td></tr>`
         }).join("")}
-        <tr><td colspan="3" class="total">Total</td><td class="total">₹${sum.toFixed(2)}</td></tr>
       </tbody>
     </table>
+  </div>
+  <div class="box">
+    <table>
+      <tbody>
+        <tr><td>Subtotal</td><td style="text-align:right;">₹${sum.toFixed(2)}</td></tr>
+        ${igst > 0
+          ? `<tr><td>IGST (${(GST_RATE * 100).toFixed(2)}%)</td><td style="text-align:right;">₹${igst.toFixed(2)}</td></tr>`
+          : `<tr><td>CGST (${((GST_RATE * 100) / 2).toFixed(2)}%)</td><td style="text-align:right;">₹${cgst.toFixed(2)}</td></tr>
+             <tr><td>SGST (${((GST_RATE * 100) / 2).toFixed(2)}%)</td><td style="text-align:right;">₹${sgst.toFixed(2)}</td></tr>`}
+        <tr><td>Platform Fee (${(FEE_RATE * 100).toFixed(2)}%)</td><td style="text-align:right;">₹${platformFee.toFixed(2)}</td></tr>
+        <tr><td class="total">Total</td><td class="total" style="text-align:right;">₹${grand.toFixed(2)}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box"><div><strong>Amount in words:</strong> ${amountWordsText}</div></div>
+  <div class="thanks">Thank you for using FirgoMart platform.</div>
+  <div class="actions">
+    <button class="print-btn" onclick="window.print()">Print Receipt</button>
   </div>
 </body>
 </html>
@@ -188,4 +313,3 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     return NextResponse.json({ error: "Server error", reason }, { status: 500 })
   }
 }
-

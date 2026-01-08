@@ -1,21 +1,60 @@
 "use client";
 
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, type SVGProps } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import {
-  User,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Edit2,
-  Save,
-  X,
-} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import Image from "@/components/common/Image/FallbackImage";
 
+const User = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <circle cx="12" cy="8" r="4" />
+    <path d="M4 20c0-4 16-4 16 0" />
+  </svg>
+)
+const Mail = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M4 4h16v16H4z" />
+    <path d="M4 6l8 6 8-6" />
+  </svg>
+)
+const Phone = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M22 16.92a16 16 0 0 1-6.92-6.92" />
+    <path d="M16 2l-3 3a6 6 0 0 0 7 7l3-3" />
+  </svg>
+)
+const MapPin = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M12 21s-7-4.35-7-10a7 7 0 1 1 14 0c0 5.65-7 10-7 10z" />
+    <circle cx="12" cy="11" r="3" />
+  </svg>
+)
+const Calendar = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="3" y="4" width="18" height="18" rx="2" />
+    <path d="M16 2v4M8 2v4M3 10h18" />
+  </svg>
+)
+const Edit2 = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
+  </svg>
+)
+const Save = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M4 4h16v16H4z" />
+    <path d="M16 4v6H8V4" />
+    <path d="M8 20h8v-6H8z" />
+  </svg>
+)
+const X = (props: SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M6 6l12 12M6 18L18 6" />
+  </svg>
+)
 interface UserData {
   name?: string;
   email?: string;
@@ -514,7 +553,13 @@ const Profile = () => {
           className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-lg overflow-hidden mt-6"
         >
           <div className="p-8">
-            <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">Previous Orders</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-heading font-bold text-[var(--foreground)]">Previous Orders</h2>
+              <div className="flex items-center gap-2">
+                <Image src="/logo/firgomart.png" alt="FirgoMart" width={32} height={32} frameless className="rounded-md" />
+                <span className="text-sm text-gray-600">FirgoMart</span>
+              </div>
+            </div>
             {loadingOrders ? (
               <div className="text-gray-600">Loading...</div>
             ) : orders.length === 0 ? (
@@ -522,18 +567,20 @@ const Profile = () => {
             ) : (
               <div className="space-y-3">
                 {orders.map(o => (
-                  <div key={o.id} className="flex items-center justify-between border rounded-lg p-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <div className="font-medium">Order {o.orderNumber || o.id}</div>
-                        <span className={`text-xs px-2 py-1 rounded ${statusBadgeClass(o.status)}`}>{String(o.status || "").toUpperCase()}</span>
+                  <div key={o.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <div className="font-medium">Order {o.orderNumber || o.id}</div>
+                          <span className={`text-xs px-2 py-1 rounded ${statusBadgeClass(o.status)}`}>{String(o.status || "").toUpperCase()}</span>
+                        </div>
+                        <div className="text-sm text-gray-900 font-semibold">₹{Number(o.amount || 0).toFixed(2)}</div>
+                        <div className="text-xs text-gray-500">{o.createdAt ? new Date(o.createdAt).toLocaleString() : ""}</div>
                       </div>
-                      <div className="text-sm text-gray-900 font-semibold">₹{Number(o.amount || 0).toFixed(2)}</div>
-                      <div className="text-xs text-gray-500">{o.createdAt ? new Date(o.createdAt).toLocaleString() : ""}</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} className="px-3 py-1 border rounded">View Receipt</Link>
-                      <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt?format=pdf&download=true`} className="px-3 py-1 border rounded">Download PDF</Link>
+                      <div className="flex items-center gap-2">
+                        <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} className="px-3 py-1 border rounded">View Receipt</Link>
+                        <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt?format=pdf&download=true`} className="px-3 py-1 border rounded">Download PDF</Link>
+                      </div>
                     </div>
                   </div>
                 ))}
