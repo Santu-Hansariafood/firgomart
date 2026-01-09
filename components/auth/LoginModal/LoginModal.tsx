@@ -117,7 +117,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="w-full max-w-md bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/20]"
         >
           <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-6">
             <button
@@ -137,23 +137,23 @@ const LoginModal: React.FC<LoginModalProps> = ({
           </div>
           <form onSubmit={handleSubmit} className="p-6 space-y-4 sm:space-y-5">
             {errors.submit && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-500/10 border border-red-500/30 text-red-500 px-4 py-3 rounded-lg text-sm">
                 {errors.submit}
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                    errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
                   }`}
                   placeholder="your@email.com"
                 />
@@ -162,25 +162,25 @@ const LoginModal: React.FC<LoginModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                    errors.password ? 'border-red-500' : 'border-[var(--foreground)/20]'
                   }`}
                   placeholder="Enter your password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(prev => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[var(--foreground)]"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -194,9 +194,9 @@ const LoginModal: React.FC<LoginModalProps> = ({
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 text-brand-purple border-gray-300 rounded focus:ring-brand-purple"
+                  className="w-4 h-4 text-brand-purple border-[var(--foreground)/20] rounded focus:ring-brand-purple"
                 />
-                <span className="ml-2 text-sm text-gray-700">Remember me</span>
+                <span className="ml-2 text-sm text-[var(--foreground)/70]">Remember me</span>
               </label>
               <button
                 type="button"
@@ -215,8 +215,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
 
-            <div className="text-center pt-4 border-t border-gray-200">
-              <Paragraph className="text-sm text-gray-600">
+            <div className="text-center pt-4 border-t border-[var(--foreground)/20]">
+              <Paragraph className="text-sm text-[var(--foreground)/70]">
                 Don’t have an account?{' '}
                 <button
                   type="button"
