@@ -62,10 +62,39 @@ export default function Page() {
     completedAt?: string
     completionVerified?: boolean
     items?: Array<{ name?: string; quantity: number; price: number }>
+    tracking?: { courier?: string; trackingNumber?: string; status?: string }
   } | null>(null)
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [groupByDay, setGroupByDay] = useState(false)
+
+  const [trackingCourier, setTrackingCourier] = useState("")
+  const [trackingNumber, setTrackingNumber] = useState("")
+
+  useEffect(() => {
+    if (selectedOrder) {
+      setTrackingCourier(selectedOrder.tracking?.courier || "")
+      setTrackingNumber(selectedOrder.tracking?.trackingNumber || "")
+    }
+  }, [selectedOrder])
+
+  const saveTracking = async () => {
+    if (!selectedOrder) return
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courier: trackingCourier, trackingNumber: trackingNumber }),
+      })
+      if (res.ok) {
+        alert("Tracking updated successfully")
+      } else {
+        alert("Failed to update tracking")
+      }
+    } catch {
+      alert("Error updating tracking")
+    }
+  }
 
   const statusOptions: DropdownItem[] = [
     { id: "", label: "All Status" },
@@ -352,6 +381,41 @@ export default function Page() {
                 Close
               </button>
             </div>
+            
+            <div className="border p-3 rounded-lg bg-gray-50 space-y-2">
+              <div className="font-semibold text-gray-800">Tracking Information</div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-gray-600">Courier</label>
+                  <input
+                    type="text"
+                    value={trackingCourier}
+                    onChange={(e) => setTrackingCourier(e.target.value)}
+                    placeholder="e.g. BlueDart, Shiprocket"
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-600">Tracking Number</label>
+                  <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={(e) => setTrackingNumber(e.target.value)}
+                    placeholder="e.g. 1234567890"
+                    className="w-full border rounded px-2 py-1 text-sm"
+                  />
+                </div>
+                <div className="flex items-end">
+                   <button
+                     onClick={saveTracking}
+                     className="px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800"
+                   >
+                     Update Tracking
+                   </button>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <div className="font-medium">{selectedOrder.buyerName}</div>

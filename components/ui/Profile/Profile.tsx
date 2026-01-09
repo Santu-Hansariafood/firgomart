@@ -6,55 +6,8 @@ import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 import Image from "@/components/common/Image/FallbackImage";
+import { Truck, FileText, User, Mail, Phone, MapPin, Calendar, Edit2, Save, X } from "lucide-react";
 
-const User = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <circle cx="12" cy="8" r="4" />
-    <path d="M4 20c0-4 16-4 16 0" />
-  </svg>
-)
-const Mail = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M4 4h16v16H4z" />
-    <path d="M4 6l8 6 8-6" />
-  </svg>
-)
-const Phone = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M22 16.92a16 16 0 0 1-6.92-6.92" />
-    <path d="M16 2l-3 3a6 6 0 0 0 7 7l3-3" />
-  </svg>
-)
-const MapPin = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M12 21s-7-4.35-7-10a7 7 0 1 1 14 0c0 5.65-7 10-7 10z" />
-    <circle cx="12" cy="11" r="3" />
-  </svg>
-)
-const Calendar = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <rect x="3" y="4" width="18" height="18" rx="2" />
-    <path d="M16 2v4M8 2v4M3 10h18" />
-  </svg>
-)
-const Edit2 = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M12 20h9" />
-    <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-  </svg>
-)
-const Save = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M4 4h16v16H4z" />
-    <path d="M16 4v6H8V4" />
-    <path d="M8 20h8v-6H8z" />
-  </svg>
-)
-const X = (props: SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-    <path d="M6 6l12 12M6 18L18 6" />
-  </svg>
-)
 interface UserData {
   name?: string;
   email?: string;
@@ -102,6 +55,24 @@ const Profile = () => {
     pincode: "",
     isDefault: false
   })
+
+  const [trackingModalOpen, setTrackingModalOpen] = useState(false)
+  const [trackingData, setTrackingData] = useState<any>(null)
+  const [loadingTracking, setLoadingTracking] = useState(false)
+
+  const handleTrackOrder = async (orderId: string) => {
+    setLoadingTracking(true)
+    setTrackingModalOpen(true)
+    setTrackingData(null)
+    try {
+        const res = await fetch(`/api/orders/${orderId}/tracking`)
+        if (res.ok) {
+            const data = await res.json()
+            setTrackingData(data.tracking || data)
+        }
+    } catch {}
+    setLoadingTracking(false)
+  }
 
   useEffect(() => {
     if (user) {
@@ -571,15 +542,29 @@ const Profile = () => {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <div className="font-medium">Order {o.orderNumber || o.id}</div>
+                          <button onClick={() => handleTrackOrder(o.id)} className="font-medium hover:text-brand-purple hover:underline text-left">
+                            Order {o.orderNumber || o.id}
+                          </button>
                           <span className={`text-xs px-2 py-1 rounded ${statusBadgeClass(o.status)}`}>{String(o.status || "").toUpperCase()}</span>
                         </div>
                         <div className="text-sm text-gray-900 font-semibold">₹{Number(o.amount || 0).toFixed(2)}</div>
                         <div className="text-xs text-gray-500">{o.createdAt ? new Date(o.createdAt).toLocaleString() : ""}</div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} className="px-3 py-1 border rounded">View Receipt</Link>
-                        <Link href={`/api/orders/${encodeURIComponent(o.id)}/receipt?format=pdf&download=true`} className="px-3 py-1 border rounded">Download PDF</Link>
+                        <button 
+                          onClick={() => handleTrackOrder(o.id)} 
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-purple text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium"
+                        >
+                          <Truck className="w-4 h-4" />
+                          Track
+                        </button>
+                        <Link 
+                          href={`/api/orders/${encodeURIComponent(o.id)}/receipt`} 
+                          className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors text-sm font-medium"
+                        >
+                          <FileText className="w-4 h-4" />
+                          Receipt
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -589,6 +574,71 @@ const Profile = () => {
           </div>
         </motion.div>
       </div>
+
+      {trackingModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md relative shadow-xl">
+             <button 
+               onClick={() => setTrackingModalOpen(false)}
+               className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+             >
+               <X className="w-6 h-6" />
+             </button>
+             <h3 className="text-xl font-bold mb-4">Track Order</h3>
+             {loadingTracking ? (
+                <div className="py-8 text-center text-gray-600">Loading tracking info...</div>
+             ) : trackingData ? (
+                <div className="space-y-4">
+                   <div className="grid grid-cols-2 gap-4">
+                     <div>
+                       <div className="text-xs text-gray-500 uppercase">Order Number</div>
+                       <div className="font-semibold text-gray-900">{trackingData.orderNumber}</div>
+                     </div>
+                     <div>
+                       <div className="text-xs text-gray-500 uppercase">Status</div>
+                       <div className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${statusBadgeClass(trackingData.status)}`}>
+                          {(trackingData.status || "").toUpperCase()}
+                       </div>
+                     </div>
+                   </div>
+                   
+                   {(trackingData.courier || trackingData.trackingNumber) && (
+                     <div className="bg-gray-50 p-3 rounded-lg border space-y-2">
+                       {trackingData.courier && (
+                         <div>
+                           <div className="text-xs text-gray-500 uppercase">Courier</div>
+                           <div className="font-medium text-gray-900">{trackingData.courier}</div>
+                         </div>
+                       )}
+                       {trackingData.trackingNumber && (
+                         <div>
+                           <div className="text-xs text-gray-500 uppercase">Tracking Number</div>
+                           <div className="font-medium text-gray-900 font-mono">{trackingData.trackingNumber}</div>
+                         </div>
+                       )}
+                     </div>
+                   )}
+
+                   {trackingData.lastUpdate && (
+                     <div>
+                        <div className="text-xs text-gray-500 uppercase">Last Update</div>
+                        <div className="text-sm text-gray-800">{new Date(trackingData.lastUpdate).toLocaleString()}</div>
+                     </div>
+                   )}
+                   
+                   {/* Fallback if no specific tracking info yet */}
+                   {!trackingData.courier && !trackingData.trackingNumber && (
+                     <div className="text-sm text-gray-600 italic">
+                       Tracking details will be updated once the order is shipped.
+                     </div>
+                   )}
+                </div>
+             ) : (
+                <div className="text-center py-4 text-gray-500">Tracking information not available</div>
+             )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

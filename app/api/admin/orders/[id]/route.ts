@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
+import { getShipmentModel } from "@/lib/models/Shipment"
 import mongoose from "mongoose"
 
 function isAdminEmail(email?: string | null) {
@@ -64,6 +65,10 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       doc = await OrderM.findOne({ orderNumber: id }).lean()
     }
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    
+    const Shipment = getShipmentModel(conn)
+    const shipmentDoc = await (Shipment as any).findOne({ orderId: (doc as any)._id }).lean()
+
     type OrderLean = {
       _id?: { toString?: () => string } | string
       orderNumber?: string
@@ -112,6 +117,11 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           price: Number(it.price),
         }
       }) : [],
+      tracking: shipmentDoc ? {
+        trackingNumber: shipmentDoc.trackingNumber,
+        courier: shipmentDoc.courier,
+        status: shipmentDoc.status
+      } : null
     }
     return NextResponse.json({ order: safe })
   } catch (err: unknown) {
@@ -127,21 +137,56 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
     const { id } = await ctx.params
     const body = await request.json().catch(() => ({} as Record<string, unknown>))
     const status = String((body as Record<string, unknown>)?.status || "")
+    const courier = String((body as Record<string, unknown>)?.courier || "")
+    const trackingNumber = String((body as Record<string, unknown>)?.trackingNumber || "")
+
     const update: Record<string, unknown> = {}
     if (status) update.status = status
-    if (!Object.keys(update).length) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
+
+    if (!Object.keys(update).length && !courier && !trackingNumber) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
+    
     const conn = await connectDB()
     const Order = getOrderModel(conn)
+    const Shipment = getShipmentModel(conn)
+
     type OrderModelLike2 = {
       findByIdAndUpdate: (id: string, u: Record<string, unknown>, opts: Record<string, unknown>) => { lean: () => Promise<unknown> }
       findOneAndUpdate: (q: Record<string, unknown>, u: Record<string, unknown>, opts: Record<string, unknown>) => { lean: () => Promise<unknown> }
+      findById: (id: string) => { lean: () => Promise<unknown> }
+      findOne: (q: Record<string, unknown>) => { lean: () => Promise<unknown> }
     }
     const OM = Order as unknown as OrderModelLike2
-    const doc = mongoose.Types.ObjectId.isValid(id)
-      ? await OM.findByIdAndUpdate(id, update, { new: true }).lean()
-      : await OM.findOneAndUpdate({ orderNumber: id }, update, { new: true }).lean()
-    if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
-    const d = doc as { _id?: { toString?: () => string } | string; status?: string }
+    
+    let orderDoc: any = null
+    if (Object.keys(update).length > 0) {
+      orderDoc = mongoose.Types.ObjectId.isValid(id)
+        ? await OM.findByIdAndUpdate(id, update, { new: true }).lean()
+        : await OM.findOneAndUpdate({ orderNumber: id }, update, { new: true }).lean()
+    } else {
+       orderDoc = mongoose.Types.ObjectId.isValid(id)
+        ? await OM.findById(id).lean()
+        : await OM.findOne({ orderNumber: id }).lean()
+    }
+
+    if (!orderDoc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    
+    // Update Shipment if tracking info provided
+    if (courier || trackingNumber) {
+       const shipmentUpdate: any = { orderId: orderDoc._id, orderNumber: orderDoc.orderNumber }
+       if (courier) shipmentUpdate.courier = courier
+       if (trackingNumber) shipmentUpdate.trackingNumber = trackingNumber
+       if (status) shipmentUpdate.status = status
+       shipmentUpdate.lastUpdate = new Date()
+       
+       const ShipmentM = Shipment as any
+       await ShipmentM.findOneAndUpdate(
+         { orderId: orderDoc._id },
+         { $set: shipmentUpdate },
+         { upsert: true, new: true }
+       )
+    }
+
+    const d = orderDoc as { _id?: { toString?: () => string } | string; status?: string }
     const idStr = typeof d._id === "object" && d._id && "toString" in d._id ? (d._id as { toString: () => string }).toString() : String(d._id ?? "")
     return NextResponse.json({ order: { id: idStr, status: d.status ?? "" } })
   } catch (err: unknown) {
