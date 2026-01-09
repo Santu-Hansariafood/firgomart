@@ -1,0 +1,116 @@
+{
+  "meta": {
+    "title": "Return, Refund & Cancellation Policy – FirgoMart",
+    "effectiveDate": "26 July 2025",
+    "company": "FirgoMart 24Logistics Private Limited"
+  },
+  "intro": "This Return, Refund & Cancellation Policy governs the terms under which products purchased on the FirgoMart platform may be returned, cancelled, or refunded.",
+  "sections": [
+    {
+      "id": "scope",
+      "icon": "RotateCcw",
+      "title": "Scope",
+      "points": [
+        "Applicable to all customers purchasing on FirgoMart",
+        "Valid for website and mobile application orders",
+        "Applies to FirgoMart and third-party sellers",
+        "Seller-specific terms may apply where disclosed"
+      ]
+    },
+    {
+      "id": "eligibility",
+      "icon": "PackageX",
+      "title": "Return Eligibility",
+      "points": [
+        "Damaged, defective, or incorrect products",
+        "Product does not match description",
+        "Return request within 7 days of delivery",
+        "Unused, unwashed, and original condition",
+        "Original packaging, tags, and accessories intact"
+      ]
+    },
+    {
+      "id": "nonReturnable",
+      "icon": "Ban",
+      "title": "Non-Returnable Items",
+      "points": [
+        "Personal care, beauty, cosmetics, hygiene products",
+        "Innerwear and intimate apparel",
+        "Customized or made-to-order products",
+        "Items marked as Non-Returnable"
+      ]
+    },
+    {
+      "id": "process",
+      "icon": "ClipboardList",
+      "title": "Return Process",
+      "points": [
+        "Login to FirgoMart account",
+        "Go to My Orders",
+        "Select order and click Request Return",
+        "Choose reason and submit",
+        "Pickup or self-ship instructions provided after approval"
+      ]
+    },
+    {
+      "id": "refund",
+      "icon": "Wallet",
+      "title": "Refund Policy",
+      "points": [
+        "Refund to original payment method",
+        "COD refunds via bank transfer or wallet",
+        "Initiated within 3–7 working days after inspection",
+        "Bank credit time depends on provider"
+      ]
+    },
+    {
+      "id": "cancellation",
+      "icon": "Truck",
+      "title": "Cancellation Policy",
+      "points": [
+        "Orders cancellable before dispatch",
+        "Shipped orders cannot be cancelled",
+        "FirgoMart may cancel due to stock, pricing, fraud, or delivery issues",
+        "Full refund issued for seller-initiated cancellations"
+      ]
+    },
+    {
+      "id": "exchange",
+      "icon": "PackageX",
+      "title": "Exchange Policy",
+      "points": [
+        "Direct exchanges are not available",
+        "Eligible products can be returned and reordered"
+      ]
+    },
+    {
+      "id": "shipping",
+      "icon": "Truck",
+      "title": "Shipping Charges",
+      "points": [
+        "Shipping charges are non-refundable",
+        "Refunded only for damaged, defective, or incorrect items",
+        "Reverse pickup charges may apply"
+      ]
+    },
+    {
+      "id": "marketplace",
+      "icon": "Globe",
+      "title": "Seller-Specific Policies",
+      "points": [
+        "Return timelines may vary by seller",
+        "Seller terms shown on product page",
+        "FirgoMart facilitates resolution as per policy"
+      ]
+    }
+  ],
+  "support": {
+    "email": "support@firgomart.com",
+    "phone": "+91 81006 60080"
+  },
+  "legal": {
+    "governingLaw": "Laws of India",
+    "jurisdiction": "Courts in India",
+    "amendment": "Policy may be updated anytime without prior notice"
+  }
+}

@@ -130,21 +130,100 @@
       "title": "7. Governing Law",
       "content": "These Terms are governed by Indian law. Disputes fall under the jurisdiction of courts in Kolkata, West Bengal."
     }
-  ]
-  ,
+  ],
   "cookiesPolicy": [
-    { "title": "Cookie Policy", "effectiveDate": "26 July 2025" },
     {
-      "title": "1. What Are Cookies?",
-      "content": "Cookies are small text files stored on your device to help websites function, improve user experience, and analyze usage."
+      "title": "Cookie Policy – FirgoMart",
+      "effectiveDate": "26 July 2025",
+      "intro": "This Cookie Policy explains how FirgoMart uses cookies and similar tracking technologies on its website and mobile application. By continuing to use the Platform, you consent to the use of cookies in accordance with this Policy."
     },
     {
-      "title": "2. Types We Use",
-      "content": "Essential cookies (required for the site), Performance cookies (analytics), Functional cookies (preferences), and Marketing cookies (offers and recommendations)."
+      "title": "1. What Are Cookies",
+      "content": "Cookies are small text files stored on your device (computer, mobile phone, or tablet) when you visit a website or use an application. They help recognize your device, remember preferences, and improve user experience."
     },
     {
-      "title": "3. Managing Cookies",
-      "content": "You can control cookies via your browser settings. Disabling certain cookies may affect site functionality."
+      "title": "2. Types of Cookies We Use",
+      "subSections": [
+        {
+          "title": "2.1 Essential Cookies",
+          "points": [
+            "Enable user login and authentication",
+            "Support cart and checkout functionality",
+            "Ensure security and fraud prevention",
+            "Mandatory for Platform operation"
+          ]
+        },
+        {
+          "title": "2.2 Performance & Analytics Cookies",
+          "points": [
+            "Track pages visited and time spent",
+            "Collect error reports and performance data",
+            "Data is aggregated and anonymized",
+            "Used to improve Platform performance"
+          ]
+        },
+        {
+          "title": "2.3 Functional Cookies",
+          "points": [
+            "Remember language preferences",
+            "Store location settings",
+            "Save login details where applicable",
+            "Enhance personalization and convenience"
+          ]
+        },
+        {
+          "title": "2.4 Advertising & Marketing Cookies",
+          "points": [
+            "Display relevant advertisements",
+            "Measure marketing campaign effectiveness",
+            "Prevent repetitive advertisements",
+            "May be placed by third-party advertising partners"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "3. Third-Party Cookies",
+      "content": "Some cookies may be placed by third-party service providers such as analytics providers, advertising networks, and payment or security partners. FirgoMart does not control these cookies, and their use is governed by the respective third-party privacy policies."
+    },
+    {
+      "title": "4. How We Use Cookie Data",
+      "points": [
+        "Ensure secure and smooth Platform operation",
+        "Improve website and app functionality",
+        "Analyze user behavior and trends",
+        "Personalize content and advertisements",
+        "Comply with legal and regulatory requirements"
+      ]
+    },
+    {
+      "title": "5. Managing Cookies",
+      "points": [
+        "Through browser settings",
+        "Through mobile device settings",
+        "Via cookie preference tools on the Platform (if enabled)",
+        "Disabling cookies may affect Platform functionality"
+      ]
+    },
+    {
+      "title": "6. Mobile Application Tracking",
+      "content": "In mobile applications, FirgoMart may use SDKs, device identifiers, and app analytics tools. These technologies function similarly to cookies and help improve app performance and user experience."
+    },
+    {
+      "title": "7. Data Protection and Security",
+      "content": "All information collected through cookies is handled in accordance with FirgoMart’s Privacy Policy. Reasonable security measures are implemented to protect cookie-related data."
+    },
+    {
+      "title": "8. Changes to This Cookie Policy",
+      "content": "FirgoMart reserves the right to update or modify this Cookie Policy at any time. Any changes will be effective immediately upon publication on the Platform."
+    },
+    {
+      "title": "9. Contact Information",
+      "content": "For questions regarding this Cookie Policy, please contact FirgoMart 24Logistics Private Limited at support@firgomart.com."
+    },
+    {
+      "title": "10. Governing Law and Jurisdiction",
+      "content": "This Cookie Policy shall be governed by and construed in accordance with the laws of India. All disputes shall be subject to the exclusive jurisdiction of competent courts in India."
     }
   ],
   "disclaimer": [
