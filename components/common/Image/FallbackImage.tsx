@@ -1,7 +1,7 @@
 "use client"
 
 import Image, { ImageProps } from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import clsx from "clsx"
 
 type Props = Omit<ImageProps, "src"> & { src?: string; frameless?: boolean }
@@ -16,7 +16,11 @@ export default function FallbackImage({ src, alt, unoptimized, frameless, ...res
     }
     return "/logo/firgomart.png"
   }
-  const [cur, setCur] = useState(buildSrc(src))
+  const safeSrc = buildSrc(src)
+  const [cur, setCur] = useState(safeSrc)
+  useEffect(() => {
+    setCur(safeSrc)
+  }, [safeSrc])
   const safeAlt = typeof alt === "string" ? alt : ""
   const needsSizes = (rest as Partial<ImageProps>)?.fill && !(rest as Partial<ImageProps>).sizes
   const finalSizes = needsSizes ? "100vw" : (rest as Partial<ImageProps>).sizes
@@ -25,7 +29,6 @@ export default function FallbackImage({ src, alt, unoptimized, frameless, ...res
     : clsx("bg-[var(--background)] border border-[var(--foreground)/20]", (rest as { className?: string }).className)
   return (
     <Image
-      key={buildSrc(src)}
       src={cur || "/logo/firgomart.png"}
       alt={safeAlt}
       onError={() => setCur("/logo/firgomart.png")}

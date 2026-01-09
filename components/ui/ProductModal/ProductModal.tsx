@@ -66,6 +66,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
 
   useEffect(() => {
+    setSelectedImage(0)
+  }, [product.id])
+
+  useEffect(() => {
     if (activeTab === 'reviews') {
       fetchReviews()
     }
