@@ -52,7 +52,7 @@ const ReturnsPage = () => {
         <div className="max-w-7xl mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {policy.sections.map((section, index) => {
-              const Icon = iconMap[section.icon];
+              const Icon = iconMap[section.icon as keyof typeof iconMap] || iconMap.RotateCcw;
               return (
                 <motion.div
                   key={section.id}
