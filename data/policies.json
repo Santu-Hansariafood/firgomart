@@ -1,36 +1,100 @@
 {
   "privacyPolicy": [
     {
-      "title": "Privacy Policy – FirgoMart.com",
-      "effectiveDate": "26 July 2025 2025"
+      "title": "Privacy Policy – FirgoMart",
+      "effectiveDate": "26 July 2025"
     },
     {
-      "title": "1. Introduction",
-      "content": "This Privacy Policy explains how FirgoMart 24Logistics Private Limited (\"FirgoMart\") collects, uses, stores, protects, and shares your information when you use our website FirgoMart.com and mobile applications."
+      "title": "Introduction",
+      "content": "FirgoMart (“FirgoMart”, “we”, “our”, or “us”) values the privacy of its users and is committed to protecting personal data shared with us. This Privacy Policy explains the manner in which information is collected, used, stored, processed, disclosed, and protected when you access or use the FirgoMart website, mobile application, or related services (collectively, the “Platform”).\n\nBy accessing or using the Platform, you acknowledge that you have read, understood, and agree to be bound by this Privacy Policy."
     },
     {
-      "title": "2. Information We Collect",
-      "content": "We may collect Personal Information (name, phone, email, addresses), Payment & Financial Information (transaction IDs, masked details handled by gateways), and Technical Information (IP, device, browser, cookies, location if permitted)."
+      "title": "1. Definitions",
+      "content": "For the purposes of this Privacy Policy:\n• “Personal Information” means information that identifies a natural person\n• “Sensitive Personal Data or Information (SPDI)” shall have the meaning assigned under the Information Technology (SPDI) Rules, 2011\n• “User” “You” or “Your” refers to any person accessing or using the Platform\n• “Platform” refers to the FirgoMart website, mobile application, and related services"
     },
     {
-      "title": "3. How We Use Your Information",
-      "content": "Processing orders and deliveries; customer support; fraud detection; improving performance; sending offers and notifications (opt-out available); and legal compliance. We never sell your personal data."
+      "title": "2. Scope and Applicability",
+      "content": "This Privacy Policy applies to:\n• Visitors, registered users, customers, and sellers\n• Information collected online through the Platform\n• Information collected during transactions, communications, or customer support\n\nThis Policy does not apply to third-party websites or services linked from the Platform."
     },
     {
-      "title": "4. Sharing of Information",
-      "content": "Shared only with verified delivery partners, payment gateways, IT service providers, or government authorities when legally required. No unauthorized third-party sharing."
+      "title": "3. Information We Collect",
+      "content": "3.1 Information Provided Directly by You\n• Full name\n• Mobile number\n• Email address\n• Shipping and billing addresses\n• Account credentials\n• Order details, invoices, and customer communications\n\n3.2 Sensitive Personal Data or Information (SPDI)\n• Payment-related information required to process transactions\nFirgoMart does not store debit card, credit card, CVV, or banking credentials. Payments are processed through RBI-authorized third-party payment gateways.\n\n3.3 Automatically Collected Information\n• IP address and device identifiers\n• Browser, OS, and device type\n• Usage patterns, clickstream data, and logs\n• Cookies, pixels, and similar tracking technologies"
     },
     {
-      "title": "5. Data Storage & Security",
-      "content": "We follow ISO/IEC 27001-aligned practices. Data is stored securely on servers located in India, compliant with applicable laws."
+      "title": "4. Lawful Basis for Processing",
+      "content": "FirgoMart processes personal data based on:\n• User consent\n• Performance of a contract (order fulfillment)\n• Compliance with legal obligations\n• Legitimate business interests"
     },
     {
-      "title": "6. User Rights",
-      "content": "You may request access, correction, deletion of non-essential data, or unsubscribe from marketing communications by contacting support."
+      "title": "5. Purpose of Data Processing",
+      "content": "Information is collected and used for:\n• User registration and authentication\n• Order processing, payment handling, and delivery\n• Customer support and grievance redressal\n• Platform analytics and service improvement\n• Fraud detection and security monitoring\n• Legal, regulatory, and audit compliance"
     },
     {
-      "title": "7. Contact",
-      "content": "Support: support@firgomart.com | Help: help@firgomart.com | Address: 48/2B, Radhanath Chowdhury Road, Kolkata – 700015, West Bengal, India."
+      "title": "6. Cookies and Tracking Technologies",
+      "content": "FirgoMart uses cookies and similar technologies to:\n• Enable essential platform functionality\n• Store user preferences\n• Analyze traffic and usage behavior\n\nUsers may control cookies via browser or device settings; however, disabling cookies may affect certain features."
+    },
+    {
+      "title": "7. Data Sharing and Disclosure",
+      "content": "FirgoMart does not sell or rent personal data.\n\nInformation may be shared only with:\n• Logistics and delivery partners\n• Payment gateway service providers\n• Sellers (marketplace model)\n• IT and service providers acting on our behalf\n• Government or statutory authorities as required by law\n\nAll third parties are bound by confidentiality and data protection obligations."
+    },
+    {
+      "title": "8. Cross-Border Data Transfer",
+      "content": "Personal data may be stored or processed on servers located within or outside India. FirgoMart ensures that such transfers comply with applicable data protection laws and reasonable security safeguards."
+    },
+    {
+      "title": "9. Data Security Measures",
+      "content": "FirgoMart implements reasonable security practices, including:\n• Secure servers and encrypted data transmission\n• Access control and authentication mechanisms\n• Regular system monitoring\n\nDespite best efforts, absolute security cannot be guaranteed."
+    },
+    {
+      "title": "10. Data Retention Policy",
+      "content": "Personal data is retained only for as long as necessary to:\n• Fulfill stated purposes\n• Comply with legal and regulatory obligations\n• Resolve disputes and enforce agreements"
+    },
+    {
+      "title": "11. User Rights and Choices",
+      "content": "Users may:\n• Access and review personal data\n• Request correction or updates\n• Request account deletion (subject to legal obligations)\n• Withdraw consent where applicable\n\nRequests may be submitted via the contact details below."
+    },
+    {
+      "title": "12. User Obligations",
+      "content": "Users agree to:\n• Provide accurate and complete information\n• Maintain confidentiality of login credentials\n• Use the Platform in compliance with applicable laws\n\nFirgoMart is not responsible for inaccuracies provided by users."
+    },
+    {
+      "title": "13. Third-Party Links and Services",
+      "content": "The Platform may contain links to third-party websites or services. FirgoMart is not responsible for their privacy practices or content."
+    },
+    {
+      "title": "14. Children’s Data",
+      "content": "The Platform is not intended for individuals under 18 years of age. FirgoMart does not knowingly collect personal data of minors."
+    },
+    {
+      "title": "15. Limitation of Liability",
+      "content": "FirgoMart shall not be liable for:\n• Unauthorized access beyond reasonable control\n• Acts or omissions of third-party service providers\n• User negligence or misuse of the Platform"
+    },
+    {
+      "title": "16. Indemnification",
+      "content": "Users agree to indemnify and hold harmless FirgoMart from any claims, damages, or liabilities arising from misuse of the Platform or violation of this Privacy Policy."
+    },
+    {
+      "title": "17. Force Majeure",
+      "content": "FirgoMart shall not be liable for failure or delay in performance due to events beyond reasonable control, including natural disasters, technical failures, or governmental actions."
+    },
+    {
+      "title": "18. Severability",
+      "content": "If any provision of this Privacy Policy is held invalid, the remaining provisions shall continue in full force and effect."
+    },
+    {
+      "title": "19. Waiver",
+      "content": "Failure by FirgoMart to enforce any provision shall not constitute a waiver of such provision."
+    },
+    {
+      "title": "20. Communication Address & Grievance Redressal",
+      "content": "In accordance with the Information Technology Act, 2000 and applicable rules:\n\nCompany Name: FirgoMart 24Logistics Private Limited\nEmail: support@firgomart.com\n\nCommunication Address: Plot No. 678, 1st Floor,\nMajherpara, P.O. Hatiara, P.S. Newtown,\nNear Chota Masjid, Baguiati,\nKolkata, West Bengal – 700157, India\n\nAll grievances will be addressed within the time period prescribed under applicable law."
+    },
+    {
+      "title": "21. Amendments",
+      "content": "FirgoMart reserves the right to modify this Privacy Policy at any time. Updated versions will be effective upon publication on the Platform."
+    },
+    {
+      "title": "22. Governing Law and Jurisdiction",
+      "content": "This Privacy Policy shall be governed by the laws of India. All disputes shall be subject to the exclusive jurisdiction of competent courts in India."
     }
   ],
   "termsOfService": [
