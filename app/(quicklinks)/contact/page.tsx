@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
@@ -9,6 +9,9 @@ import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from "lucide-react";
 import { Suspense, useState } from "react";
 
 const ContactPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const [formData, setFormData] = useState({
     name: "",
     email: "",

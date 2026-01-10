@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
@@ -9,6 +10,11 @@ import { Globe, Users, TrendingUp, ShieldCheck, Rocket, Package } from "lucide-r
 import { Suspense } from "react";
 
 const AboutPage = () => {
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },

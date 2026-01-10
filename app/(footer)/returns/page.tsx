@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import policy from "@/data/returnsPolicy.json";
 
@@ -33,6 +33,9 @@ const iconMap = {
 };
 
 const ReturnsPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
       <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">

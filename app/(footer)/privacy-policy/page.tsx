@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from "react";
 import Loading from "@/app/loading";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
@@ -8,6 +8,9 @@ const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const PrivacyPolicyPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const header = policies.privacyPolicy[0];
   const sections = policies.privacyPolicy.slice(1);
 

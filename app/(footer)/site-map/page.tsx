@@ -1,13 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import policies from "@/data/policies.json";
 import Loading from "@/app/loading";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const SitemapPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const sections = policies.sitemap || [];
   const header = sections.find((s: any) => s.effectiveDate) || null;
 

@@ -1,9 +1,10 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import Title from "@/components/common/Title/Title";
 import Paragraph from "@/components/common/Paragraph/Paragraph";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import {
   Users,
   Monitor,
@@ -40,6 +41,9 @@ type TeamData = Record<string, {
 }>
 
 const TeamsPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   const [activeTitle, setActiveTitle] = useState<string | null>(null)
   const tjson = teamsJson as TeamData
   return (
@@ -314,46 +318,53 @@ const TeamsPage = () => {
                     </motion.div>
                     <h3 className="text-2xl font-bold text-[var(--foreground)]">{activeTitle}</h3>
                   </div>
-                  <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[var(--foreground)/70]">
+                  <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[var(--foreground)/70] text-base sm:text-lg mb-6">
                     {activeTitle ? (tjson[activeTitle]?.description || "Team details coming soon.") : "Team details coming soon."}
                   </motion.p>
-                  <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 snap-x sm:snap-none scrollbar-hide -mx-6 px-6 sm:mx-0 sm:px-0">
                     {(activeTitle ? (tjson[activeTitle]?.members || []) : []).map((m, idx) => (
-                      <motion.div key={m.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: idx * 0.05 }} className="border border-[var(--foreground)/10] rounded-xl overflow-hidden">
-                        <div className="relative w-full aspect-[4/3]">
+                      <motion.div 
+                        key={`${activeTitle}-${m.name}-${idx}`} 
+                        initial={{ opacity: 0, y: 12 }} 
+                        animate={{ opacity: 1, y: 0 }} 
+                        transition={{ duration: 0.3, delay: idx * 0.05 }} 
+                        className="border border-[var(--foreground)/10] rounded-xl overflow-hidden min-w-[260px] w-[260px] sm:w-auto sm:min-w-0 snap-center shrink-0"
+                      >
+                        <div className="relative w-full h-48 overflow-hidden bg-[var(--foreground)/5]">
                           <FallbackImage
                             src={m.image}
                             alt={m.name}
                             fill
                             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            unoptimized={false}
-                            priority
                             className="object-cover"
-                          />
+                            priority={activeTitle !== null}
+                            unoptimized={false}
+                            />
+
                         </div>
                         <div className="p-4">
                           <div className="font-semibold text-[var(--foreground)]">{m.name}</div>
                           {m?.bio && <p className="mt-2 text-sm text-[var(--foreground)/70] line-clamp-3">{m.bio}</p>}
                           <div className="mt-3 flex items-center gap-3">
                             {m?.links?.linkedin && (
-                              <a href={m.links.linkedin} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                              <Link href={m.links.linkedin} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
                                 <Linkedin className="w-4 h-4 text-[var(--foreground)]" />
-                              </a>
+                              </Link>
                             )}
                             {m?.links?.instagram && (
-                              <a href={m.links.instagram} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                              <Link href={m.links.instagram} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
                                 <Instagram className="w-4 h-4 text-[var(--foreground)]" />
-                              </a>
+                              </Link>
                             )}
                             {m?.links?.x && (
-                              <a href={m.links.x} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                              <Link href={m.links.x} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
                                 <Twitter className="w-4 h-4 text-[var(--foreground)]" />
-                              </a>
+                              </Link>
                             )}
                             {m?.links?.facebook && (
-                              <a href={m.links.facebook} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
+                              <Link href={m.links.facebook} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
                                 <Facebook className="w-4 h-4 text-[var(--foreground)]" />
-                              </a>
+                              </Link>
                             )}
                           </div>
                         </div>

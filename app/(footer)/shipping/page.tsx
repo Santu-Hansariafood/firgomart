@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
@@ -17,6 +18,9 @@ import {
 import { Suspense } from "react";
 
 const ShippingPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">

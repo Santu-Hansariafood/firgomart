@@ -65,5 +65,155 @@
         }
       }
     ]
+  },
+  "Seller Management Team": {
+    "logo": "/store.svg",
+    "description": "Empowering sellers with tools and support to grow their business and reach millions of customers.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Dedicated to seller success and platform growth.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Expert in vendor relations and catalog management.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Ensures quality standards and compliance.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      }
+    ]
+  },
+  "Customer Support Team": {
+    "logo": "/headphones.svg",
+    "description": "Dedicated to resolving queries and ensuring a seamless shopping experience for every customer.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Customer success champion.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Resolution specialist and feedback analyst.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Ensures timely and effective communication.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      }
+    ]
+  },
+  "Marketing & Growth Team": {
+    "logo": "/megaphone.svg",
+    "description": "Driving brand visibility and customer engagement through creative campaigns and data-driven strategies.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Brand strategist and creative director.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Digital marketing and growth hacker.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Social media and community manager.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      }
+    ]
+  },
+  "Finance & Administration Team": {
+    "logo": "/wallet.svg",
+    "description": "Ensuring financial integrity, compliance, and operational efficiency across the organization.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Financial planning and analysis expert.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Compliance and risk management lead.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Administrative operations manager.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      }
+    ]
+  },
+  "Leadership & Strategy Team": {
+    "logo": "/target.svg",
+    "description": "Guiding FirgoMart's vision and strategy to innovate and lead in the global e-commerce market.",
+    "members": [
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Visionary leader and strategic planner.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Business development and expansion lead.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      },
+      {
+        "name": "FirgoMart Team",
+        "image": "/logo/firgomart.png",
+        "bio": "Innovation and culture evangelist.",
+        "links": {
+          "linkedin": "https://www.linkedin.com/in/firgomart-team"
+        }
+      }
+    ]
   }
 }
