@@ -170,7 +170,6 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
 
     if (!orderDoc) return NextResponse.json({ error: "Not found" }, { status: 404 })
     
-    // Update Shipment if tracking info provided
     if (courier || trackingNumber) {
        const shipmentUpdate: any = { orderId: orderDoc._id, orderNumber: orderDoc.orderNumber }
        if (courier) shipmentUpdate.courier = courier

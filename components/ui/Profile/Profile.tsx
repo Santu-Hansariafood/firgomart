@@ -632,6 +632,21 @@ const Profile = () => {
                        Tracking details will be updated once the order is shipped.
                      </div>
                    )}
+
+                   <div className="mt-4 pt-4 border-t border-gray-200">
+                     <div className="text-xs text-gray-500 uppercase mb-2">Tracking History</div>
+                     {trackingData.events && trackingData.events.length > 0 ? (
+                       <ul className="space-y-2">
+                         {trackingData.events.map((event: any, index: number) => (
+                           <li key={index} className="text-sm text-gray-600">
+                             {new Date(event.time).toLocaleString()}: {event.status} {event.location && `at ${event.location}`}
+                           </li>
+                         ))}
+                       </ul>
+                     ) : (
+                       <p className="text-sm text-gray-500 mt-1">No tracking events available yet.</p>
+                     )}
+                   </div>
                 </div>
              ) : (
                 <div className="text-center py-4 text-gray-500">Tracking information not available</div>
