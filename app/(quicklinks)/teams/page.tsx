@@ -44,8 +44,20 @@ const TeamsPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+  
   const [activeTitle, setActiveTitle] = useState<string | null>(null)
   const tjson = teamsJson as TeamData
+  useEffect(() => {
+  if (activeTitle) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [activeTitle]);
+
   return (
     <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
@@ -299,9 +311,19 @@ const TeamsPage = () => {
                 exit={{ scale: 0.95, opacity: 0 }}
                 transition={{ type: "spring", stiffness: 260, damping: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-xl w-full max-w-3xl overflow-hidden"
+                className="
+  bg-[var(--background)] 
+  text-[var(--foreground)] 
+  rounded-2xl 
+  shadow-xl 
+  w-full 
+  max-w-3xl
+  max-h-[90vh]
+  overflow-y-auto
+  overscroll-contain
+"
               >
-                <div className="p-6">
+                <div className="p-6 touch-pan-y">
                   <div className="flex items-center gap-3 mb-4">
                     <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
                       <div className="relative w-10 h-10">
@@ -321,7 +343,24 @@ const TeamsPage = () => {
                   <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[var(--foreground)/70] text-base sm:text-lg mb-6">
                     {activeTitle ? (tjson[activeTitle]?.description || "Team details coming soon.") : "Team details coming soon."}
                   </motion.p>
-                  <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible pb-4 sm:pb-0 snap-x sm:snap-none scrollbar-hide -mx-6 px-6 sm:mx-0 sm:px-0">
+                  <div
+  className="
+    flex
+    gap-4
+    overflow-x-auto
+    overflow-y-hidden
+    snap-x snap-mandatory
+    scrollbar-hide
+    -mx-6 px-6 pb-4
+
+    sm:grid
+    sm:grid-cols-2
+    lg:grid-cols-3
+    sm:overflow-visible
+    sm:snap-none
+    sm:mx-0 sm:px-0 sm:pb-0
+  "
+>
                     {(activeTitle ? (tjson[activeTitle]?.members || []) : []).map((m, idx) => (
                       <motion.div 
                         key={`${activeTitle}-${m.name}-${idx}`} 
