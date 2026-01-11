@@ -117,11 +117,12 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           price: Number(it.price),
         }
       }) : [],
-      tracking: shipmentDoc ? {
-        trackingNumber: shipmentDoc.trackingNumber,
-        courier: shipmentDoc.courier,
-        status: shipmentDoc.status
-      } : null
+      tracking: Array.isArray((d as any).tracking) && (d as any).tracking.length > 0 ? (d as any).tracking : (shipmentDoc ? [{
+        number: shipmentDoc.trackingNumber,
+        url: "", // No URL in shipment model
+        courier: shipmentDoc.courier
+      }] : []),
+      deliveryFee: Number((d as any).deliveryFee || 0)
     }
     return NextResponse.json({ order: safe })
   } catch (err: unknown) {
@@ -137,17 +138,16 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
     const { id } = await ctx.params
     const body = await request.json().catch(() => ({} as Record<string, unknown>))
     const status = String((body as Record<string, unknown>)?.status || "")
-    const courier = String((body as Record<string, unknown>)?.courier || "")
-    const trackingNumber = String((body as Record<string, unknown>)?.trackingNumber || "")
-
+    const tracking = (body as Record<string, unknown>)?.tracking as Array<{ number: string; url: string }> | undefined
+    
     const update: Record<string, unknown> = {}
     if (status) update.status = status
+    if (tracking) update.tracking = tracking
 
-    if (!Object.keys(update).length && !courier && !trackingNumber) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
+    if (!Object.keys(update).length) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
     
     const conn = await connectDB()
     const Order = getOrderModel(conn)
-    const Shipment = getShipmentModel(conn)
 
     type OrderModelLike2 = {
       findByIdAndUpdate: (id: string, u: Record<string, unknown>, opts: Record<string, unknown>) => { lean: () => Promise<unknown> }
@@ -170,21 +170,6 @@ export async function PATCH(request: Request, ctx: { params: Promise<{ id: strin
 
     if (!orderDoc) return NextResponse.json({ error: "Not found" }, { status: 404 })
     
-    if (courier || trackingNumber) {
-       const shipmentUpdate: any = { orderId: orderDoc._id, orderNumber: orderDoc.orderNumber }
-       if (courier) shipmentUpdate.courier = courier
-       if (trackingNumber) shipmentUpdate.trackingNumber = trackingNumber
-       if (status) shipmentUpdate.status = status
-       shipmentUpdate.lastUpdate = new Date()
-       
-       const ShipmentM = Shipment as any
-       await ShipmentM.findOneAndUpdate(
-         { orderId: orderDoc._id },
-         { $set: shipmentUpdate },
-         { upsert: true, new: true }
-       )
-    }
-
     const d = orderDoc as { _id?: { toString?: () => string } | string; status?: string }
     const idStr = typeof d._id === "object" && d._id && "toString" in d._id ? (d._id as { toString: () => string }).toString() : String(d._id ?? "")
     return NextResponse.json({ order: { id: idStr, status: d.status ?? "" } })

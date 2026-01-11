@@ -5,6 +5,8 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
+import { X } from "lucide-react"
+
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -62,37 +64,62 @@ export default function Page() {
     completedAt?: string
     completionVerified?: boolean
     items?: Array<{ name?: string; quantity: number; price: number }>
-    tracking?: { courier?: string; trackingNumber?: string; status?: string }
+    tracking?: Array<{ number: string; url: string }>
+    deliveryFee?: number
   } | null>(null)
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
   const [groupByDay, setGroupByDay] = useState(false)
 
-  const [trackingCourier, setTrackingCourier] = useState("")
-  const [trackingNumber, setTrackingNumber] = useState("")
+  const [trackingList, setTrackingList] = useState<Array<{ number: string; url: string }>>([])
+  const [newTrackNum, setNewTrackNum] = useState("")
+  const [newTrackUrl, setNewTrackUrl] = useState("")
+  const [editStatus, setEditStatus] = useState("")
+  const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (selectedOrder) {
-      setTrackingCourier(selectedOrder.tracking?.courier || "")
-      setTrackingNumber(selectedOrder.tracking?.trackingNumber || "")
+      if (Array.isArray(selectedOrder.tracking)) {
+        setTrackingList(selectedOrder.tracking)
+      } else {
+        setTrackingList([])
+      }
+      setEditStatus(selectedOrder.status || "")
     }
   }, [selectedOrder])
 
-  const saveTracking = async () => {
+  const addTracking = () => {
+    if (!newTrackNum) return
+    setTrackingList(prev => [...prev, { number: newTrackNum, url: newTrackUrl }])
+    setNewTrackNum("")
+    setNewTrackUrl("")
+  }
+
+  const removeTracking = (idx: number) => {
+    setTrackingList(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  const saveOrderChanges = async () => {
     if (!selectedOrder) return
     try {
       const res = await fetch(`/api/admin/orders/${selectedOrder.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ courier: trackingCourier, trackingNumber: trackingNumber }),
+        body: JSON.stringify({ 
+            tracking: trackingList,
+            status: editStatus
+        }),
       })
       if (res.ok) {
-        alert("Tracking updated successfully")
+        alert("Order updated successfully")
+        // Update local state
+        setSelectedOrder(prev => prev ? { ...prev, status: editStatus, tracking: trackingList } : null)
+        setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: editStatus } : o))
       } else {
-        alert("Failed to update tracking")
+        alert("Failed to update order")
       }
     } catch {
-      alert("Error updating tracking")
+      alert("Error updating order")
     }
   }
 
@@ -168,6 +195,11 @@ export default function Page() {
   }, [allowed, page, selectedStatus, selectedCountry, selectedState, search, sortKey, sortOrder])
 
   const updateStatus = async (id: string, status: string) => {
+    setUpdatingIds(prev => {
+        const n = new Set(prev)
+        n.add(id)
+        return n
+    })
     try {
       const res = await fetch(`/api/admin/orders/${id}`, {
         method: "PATCH",
@@ -178,6 +210,11 @@ export default function Page() {
         setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o))
       }
     } catch {}
+    setUpdatingIds(prev => {
+        const n = new Set(prev)
+        n.delete(id)
+        return n
+    })
   }
 
   return (
@@ -299,12 +336,18 @@ export default function Page() {
                             <div className="text-xs text-gray-500">{r.buyerEmail}</div>
                           </div>
                           <div className="min-w-[120px] font-medium">₹{r.amount}</div>
-                          <div className="min-w-[160px]">
-                            <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
+                          <div className="min-w-[160px] relative">
+                            <select 
+                                defaultValue={r.status} 
+                                disabled={updatingIds.has(r.id)}
+                                className={`border rounded px-2 py-1 w-full ${updatingIds.has(r.id) ? 'bg-gray-50 text-gray-400' : ''}`}
+                                onChange={(e) => updateStatus(r.id, e.currentTarget.value)}
+                            >
                               {statusOptions.filter(s => s.id !== "").map(s => (
                                 <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
                               ))}
                             </select>
+                            {updatingIds.has(r.id) && <span className="absolute -top-4 left-0 text-[10px] text-blue-600 font-bold animate-pulse">Saving...</span>}
                           </div>
                           <div className="text-sm text-gray-600">{[r.city, r.state, r.country].filter(Boolean).join(", ")}</div>
                         </div>
@@ -321,11 +364,19 @@ export default function Page() {
                   { key: "buyerEmail", label: "Email" },
                   { key: "amount", label: "Amount", sortable: true, render: (r) => `₹${r.amount}` },
                   { key: "status", label: "Status", sortable: true, render: (r) => (
-                    <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
-                      {statusOptions.filter(s => s.id !== "").map(s => (
-                        <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                        <select 
+                            defaultValue={r.status} 
+                            disabled={updatingIds.has(r.id)}
+                            className={`border rounded px-2 py-1 ${updatingIds.has(r.id) ? 'bg-gray-50 text-gray-400' : ''}`} 
+                            onChange={(e) => updateStatus(r.id, e.currentTarget.value)}
+                        >
+                          {statusOptions.filter(s => s.id !== "").map(s => (
+                            <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
+                          ))}
+                        </select>
+                        {updatingIds.has(r.id) && <span className="absolute -top-4 left-0 text-[10px] text-blue-600 font-bold animate-pulse">Saving...</span>}
+                    </div>
                   ) },
                   { key: "city", label: "City" },
                   { key: "state", label: "State" },
@@ -367,78 +418,191 @@ export default function Page() {
         </div>
 
         {selectedOrder && (
-          <div className="border rounded-xl bg-white p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-lg font-semibold">{selectedOrder.orderNumber}</div>
-                <div className="text-sm text-gray-600">{selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : ""}</div>
-              </div>
-              <button
-                type="button"
-                className="px-3 py-2 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
-                onClick={() => setSelectedOrder(null)}
-              >
-                Close
-              </button>
-            </div>
-            
-            <div className="border p-3 rounded-lg bg-gray-50 space-y-2">
-              <div className="font-semibold text-gray-800">Tracking Information</div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+              
+              {/* Header */}
+              <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Courier</label>
-                  <input
-                    type="text"
-                    value={trackingCourier}
-                    onChange={(e) => setTrackingCourier(e.target.value)}
-                    placeholder="e.g. BlueDart, Shiprocket"
-                    className="w-full border rounded px-2 py-1 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-gray-600">Tracking Number</label>
-                  <input
-                    type="text"
-                    value={trackingNumber}
-                    onChange={(e) => setTrackingNumber(e.target.value)}
-                    placeholder="e.g. 1234567890"
-                    className="w-full border rounded px-2 py-1 text-sm"
-                  />
-                </div>
-                <div className="flex items-end">
-                   <button
-                     onClick={saveTracking}
-                     className="px-3 py-1 bg-black text-white rounded text-sm hover:bg-gray-800"
-                   >
-                     Update Tracking
-                   </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div>
-                <div className="font-medium">{selectedOrder.buyerName}</div>
-                <div className="text-sm text-gray-600">{selectedOrder.buyerEmail}</div>
-              </div>
-              <div className="font-medium">₹{selectedOrder.amount}</div>
-              <div>
-                <span className="text-sm text-gray-600">Status</span>
-                <div className="font-medium">{selectedOrder.status}</div>
-              </div>
-            </div>
-            <div className="text-sm text-gray-700">{[selectedOrder.address, selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}</div>
-            <div className="border-t pt-3">
-              <div className="font-semibold mb-2">Items</div>
-              <div className="divide-y">
-                {(selectedOrder.items || []).map((it, idx) => (
-                  <div key={idx} className="py-2 flex items-center justify-between">
-                    <div className="text-gray-900">{it.name}</div>
-                    <div className="text-gray-600">Qty: {it.quantity}</div>
-                    <div className="font-medium">₹{it.price}</div>
+                  <h2 className="text-xl font-bold text-gray-800">{selectedOrder.orderNumber}</h2>
+                  <div className="text-sm text-gray-500">
+                    Placed on {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "Unknown"}
                   </div>
-                ))}
+                </div>
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5 text-gray-600" />
+                </button>
               </div>
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                
+                {/* Top Section: Customer & Address */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Customer Details</h3>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Name:</span>
+                        <span className="font-medium">{selectedOrder.buyerName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">Email:</span>
+                        <span className="font-medium">{selectedOrder.buyerEmail}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 p-4 rounded-lg border">
+                    <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Shipping Address</h3>
+                    <div className="text-sm text-gray-800 leading-relaxed">
+                      {selectedOrder.address}<br/>
+                      {[selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Items Section */}
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Order Items</h3>
+                  <div className="border rounded-lg overflow-hidden">
+                    <table className="w-full text-sm text-left">
+                      <thead className="bg-gray-100 text-gray-600 font-medium border-b">
+                        <tr>
+                          <th className="px-4 py-2">Item</th>
+                          <th className="px-4 py-2 text-center">Qty</th>
+                          <th className="px-4 py-2 text-right">Price</th>
+                          <th className="px-4 py-2 text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y">
+                        {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                          selectedOrder.items.map((item, idx) => (
+                            <tr key={idx} className="bg-white">
+                              <td className="px-4 py-3 font-medium text-gray-900">{item.name || "Unknown Item"}</td>
+                              <td className="px-4 py-3 text-center text-gray-600">{item.quantity}</td>
+                              <td className="px-4 py-3 text-right text-gray-600">₹{item.price}</td>
+                              <td className="px-4 py-3 text-right font-medium text-gray-900">₹{item.price * item.quantity}</td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={4} className="px-4 py-3 text-center text-gray-500">No items found</td>
+                          </tr>
+                        )}
+                      </tbody>
+                      <tfoot className="bg-gray-50 font-medium">
+                         <tr>
+                           <td colSpan={3} className="px-4 py-2 text-right text-gray-600">Subtotal</td>
+                           <td className="px-4 py-2 text-right">₹{selectedOrder.items?.reduce((s, i) => s + (i.price * i.quantity), 0) || 0}</td>
+                         </tr>
+                         <tr>
+                           <td colSpan={3} className="px-4 py-2 text-right text-gray-600">Delivery Fee</td>
+                           <td className="px-4 py-2 text-right">₹{selectedOrder.deliveryFee || 0}</td>
+                         </tr>
+                         <tr className="border-t border-gray-200">
+                           <td colSpan={3} className="px-4 py-3 text-right text-gray-900 text-base font-bold">Total Amount</td>
+                           <td className="px-4 py-3 text-right text-base font-bold text-brand-purple">₹{selectedOrder.amount}</td>
+                         </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Tracking & Status Section */}
+                <div className="bg-blue-50 border border-blue-100 p-5 rounded-xl space-y-5">
+                   <div className="flex flex-col md:flex-row gap-6">
+                      <div className="flex-1">
+                        <label className="text-sm font-bold text-gray-700 block mb-2">Order Status</label>
+                        <select 
+                            value={editStatus} 
+                            onChange={(e) => setEditStatus(e.target.value)}
+                            className="w-full border border-blue-200 rounded-lg px-3 py-2 font-medium bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        >
+                            {statusOptions.filter(s => s.id !== "").map(s => (
+                                <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
+                            ))}
+                        </select>
+                      </div>
+                      
+                      {/* Tracking List Display */}
+                      <div className="flex-1">
+                          <label className="text-sm font-bold text-gray-700 block mb-2">Current Tracking</label>
+                          {trackingList.length > 0 ? (
+                            <div className="space-y-2 max-h-[120px] overflow-y-auto pr-1">
+                              {trackingList.map((t, i) => (
+                                <div key={i} className="flex items-center justify-between bg-white p-2 rounded border shadow-sm">
+                                   <div className="flex-1 min-w-0">
+                                     <div className="font-medium text-sm truncate">{t.number}</div>
+                                     {t.url && <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 truncate block hover:underline">{t.url}</a>}
+                                   </div>
+                                   <button onClick={() => removeTracking(i)} className="ml-2 text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50">
+                                      <X className="w-4 h-4" />
+                                   </button>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="text-sm text-gray-500 italic">No tracking info added</div>
+                          )}
+                      </div>
+                   </div>
+
+                   {/* Add Tracking Form */}
+                   <div className="pt-4 border-t border-blue-200">
+                      <h4 className="text-sm font-bold text-gray-700 mb-3">Add Tracking Information</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
+                        <div className="md:col-span-3">
+                          <input
+                            type="text"
+                            value={newTrackNum}
+                            onChange={(e) => setNewTrackNum(e.target.value)}
+                            placeholder="Tracking Number"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div className="md:col-span-3">
+                          <input
+                            type="text"
+                            value={newTrackUrl}
+                            onChange={(e) => setNewTrackUrl(e.target.value)}
+                            placeholder="Tracking URL (https://...)"
+                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                          />
+                        </div>
+                        <div className="md:col-span-1">
+                           <button
+                             onClick={addTracking}
+                             className="w-full h-full min-h-[38px] bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                           >
+                             Add
+                           </button>
+                        </div>
+                      </div>
+                   </div>
+                </div>
+
+              </div>
+
+              {/* Footer Actions */}
+              <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+                 <button
+                   onClick={() => setSelectedOrder(null)}
+                   className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50"
+                 >
+                   Cancel
+                 </button>
+                 <button
+                   onClick={saveOrderChanges}
+                   className="px-6 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 shadow-lg transform active:scale-95 transition-all"
+                 >
+                   Save All Changes
+                 </button>
+              </div>
+
             </div>
           </div>
         )}

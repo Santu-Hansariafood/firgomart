@@ -89,6 +89,7 @@ export default function Page() {
   const [category, setCategory] = useState<string>("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   
   // Form States
   const [formName, setFormName] = useState("")

@@ -19,6 +19,13 @@ const OrderSchema = new Schema(
     city: { type: String },
     state: { type: String, index: true },
     country: { type: String, index: true },
+    tracking: [
+      {
+        number: { type: String },
+        url: { type: String },
+      },
+    ],
+    deliveryFee: { type: Number, default: 0 },
     completionOtp: { type: String },
     completionOtpExpires: { type: Date },
     completionVerified: { type: Boolean, default: false, index: true },

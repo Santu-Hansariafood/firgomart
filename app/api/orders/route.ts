@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const Order = getOrderModel(conn)
 
     const ids = items.map((i) => i.id)
-    type ProductLean = { _id: string; name: string; price?: number; stock?: number }
+    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string }
     const products = await (Product as unknown as { find: (q: unknown) => { lean: () => Promise<ProductLean[]> } })
       .find({ _id: { $in: ids } }).lean()
     const prodMap: Record<string, ProductLean> = {}
@@ -50,6 +50,54 @@ export async function POST(request: Request) {
       if (available < it.quantity) {
         return NextResponse.json({ error: "Insufficient stock", productId: it.id, available }, { status: 409 })
       }
+    }
+    
+    // Calculate Delivery Fee
+    let totalVolumetricWeight = 0
+    let totalActualWeight = 0
+    
+    for (const it of items) {
+      const p = prodMap[it.id]
+      // Weight to KG
+      let w = Number(p.weight || 0)
+      const wUnit = String(p.weightUnit || "kg").toLowerCase().trim()
+      if (wUnit === "g") w = w / 1000
+      if (wUnit === "mg") w = w / 1000000
+      
+      // Dims to CM
+      const toCm = (v: number, u: string) => {
+        const unit = u.toLowerCase().trim()
+        if (unit === "m") return v * 100
+        if (unit === "mm") return v / 10
+        if (unit === "in") return v * 2.54
+        if (unit === "ft") return v * 30.48
+        return v
+      }
+      const dUnit = String(p.dimensionUnit || "cm")
+      const hCm = toCm(Number(p.height || 0), dUnit)
+      const wCm = toCm(Number(p.width || 0), dUnit)
+      const depthCm = 10 // Assumed depth
+      
+      const vol = (hCm * wCm * depthCm) / 5000
+      
+      totalActualWeight += (w * it.quantity)
+      totalVolumetricWeight += (vol * it.quantity)
+    }
+    
+    const chargeable = Math.max(totalActualWeight, totalVolumetricWeight)
+    const deliveryFee = chargeable > 0 ? Math.ceil(50 + (Math.ceil(chargeable) * 20)) : 0
+
+    // Dry Run / Fee Calculation Check
+    if (body.dryRun) {
+      const itemsAmount = items.reduce((s, it) => {
+         const p = prodMap[it.id]
+         return s + (Number(p.price || 0) * it.quantity)
+      }, 0)
+      return NextResponse.json({ 
+        deliveryFee, 
+        itemsAmount,
+        total: itemsAmount + deliveryFee 
+      })
     }
 
     const session: ClientSession = await (conn as unknown as { startSession: () => Promise<ClientSession> }).startSession()
@@ -82,7 +130,7 @@ export async function POST(request: Request) {
       const gatewayFeePercent = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
       const gstAmount = (amount * gstPercent) / 100
       const platformFee = ((amount + gstAmount) * gatewayFeePercent) / 100
-      const finalAmount = Number((amount + gstAmount + platformFee).toFixed(2))
+      const finalAmount = Number((amount + gstAmount + platformFee + deliveryFee).toFixed(2))
 
       const docs = await (Order as unknown as {
         create: (arr: unknown[], options?: { session?: ClientSession }) => Promise<unknown[]>
@@ -96,6 +144,7 @@ export async function POST(request: Request) {
         city,
         state,
         country,
+        deliveryFee,
       }], { session })
       created = (docs as unknown[])[0]
     })

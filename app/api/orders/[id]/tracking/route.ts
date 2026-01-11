@@ -17,6 +17,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       status: shipment?.status || order.status,
       trackingNumber: shipment?.trackingNumber || null,
       courier: shipment?.courier || null,
+      // Add tracking array from Order model
+      tracking: Array.isArray(order.tracking) ? order.tracking : [],
       lastUpdate: shipment?.lastUpdate || null,
       events: Array.isArray(shipment?.events) ? shipment?.events : [],
       destination: shipment?.destination || order.city || order.state || null,

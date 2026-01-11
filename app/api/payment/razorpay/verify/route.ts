@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const order = await (Order as any).findById(orderId)
     if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 })
 
-    order.status = "confirmed"
+    order.status = "paid"
     order.completedAt = new Date()
     await order.save()
 

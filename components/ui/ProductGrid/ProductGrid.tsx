@@ -341,7 +341,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     <div>
                       <span className="text-sm sm:text-lg font-bold text-[var(--foreground)]">₹{formatPrice(product.price)}</span>
                       {product.originalPrice && (
-                        <span className="text-[11px] sm:text-sm text-[var(--foreground)/50] line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
+                        <>
+                          <span className="text-[11px] sm:text-sm text-[var(--foreground)/50] line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
+                          {product.discount && (
+                            <span className="text-[10px] sm:text-xs text-green-600 font-bold ml-2">
+                                {product.discount}% OFF
+                            </span>
+                          )}
+                        </>
                       )}
                     </div>
                     <div className="flex items-center space-x-1">

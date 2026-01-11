@@ -601,6 +601,30 @@ const Profile = () => {
                        </div>
                      </div>
                    </div>
+
+                   {/* Multiple Tracking Links */}
+                   {trackingData.tracking && Array.isArray(trackingData.tracking) && trackingData.tracking.length > 0 && (
+                     <div className="bg-gray-50 p-3 rounded-lg border space-y-3">
+                       <div className="text-xs text-gray-500 uppercase font-semibold">Tracking Information</div>
+                       <div className="space-y-3">
+                         {trackingData.tracking.map((t: any, idx: number) => (
+                           <div key={idx} className="flex flex-col text-sm border-b border-gray-200 last:border-0 pb-2 last:pb-0">
+                             <span className="font-medium text-gray-900">Tracking #: {t.number}</span>
+                             {t.url && (
+                               <a 
+                                 href={t.url.startsWith('http') ? t.url : `https://${t.url}`} 
+                                 target="_blank" 
+                                 rel="noopener noreferrer"
+                                 className="text-brand-purple hover:underline break-all flex items-center gap-1 mt-1"
+                               >
+                                 Track Package ↗
+                               </a>
+                             )}
+                           </div>
+                         ))}
+                       </div>
+                     </div>
+                   )}
                    
                    {(trackingData.courier || trackingData.trackingNumber) && (
                      <div className="bg-gray-50 p-3 rounded-lg border space-y-2">

@@ -25,6 +25,11 @@ interface Product {
   about?: string
   additionalInfo?: string
   stock?: number
+  height?: number
+  width?: number
+  weight?: number
+  dimensionUnit?: string
+  weightUnit?: string
 }
 
 interface Review {

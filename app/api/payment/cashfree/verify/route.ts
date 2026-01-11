@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const resp = await getCashfreeOrder(cfOrderId)
     const status = String(resp.order_status || "").toUpperCase()
     if (status === "PAID") {
-      order.status = "confirmed"
+      order.status = "paid"
       order.completedAt = new Date()
       await order.save()
       const paymentsResp = Array.isArray(resp.payments) ? resp.payments : []

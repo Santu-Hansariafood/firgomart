@@ -70,6 +70,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [invalidItems, setInvalidItems] = useState<Array<{ id: number; name: string }>>([])
   const [validating, setValidating] = useState<boolean>(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [deliveryFee, setDeliveryFee] = useState<number>(0)
 
   async function safeJson(res: Response) {
     try {
@@ -124,6 +125,32 @@ const Checkout: React.FC<CheckoutProps> = ({
     } catch {}
   }, [user])
 
+  useEffect(() => {
+    const fetchFee = async () => {
+      const valid = cartItems.filter(item => (item.stock ?? 0) > 0)
+      if (valid.length === 0) {
+        setDeliveryFee(0)
+        return
+      }
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            items: valid.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+            dryRun: true 
+          }),
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setDeliveryFee(data.deliveryFee || 0)
+        }
+      } catch {}
+    }
+    const timer = setTimeout(fetchFee, 500) // Debounce slightly
+    return () => clearTimeout(timer)
+  }, [cartItems])
+
   async function validateDelivery(stateVal: string) {
     if (!stateVal) {
       setInvalidItems([])
@@ -165,7 +192,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const gatewayFeePercent = Number(process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
   const tax = subtotal * (gstPercent / 100)
   const platformFee = (subtotal + tax) * (gatewayFeePercent / 100)
-  const total = subtotal + tax + platformFee
+  const total = subtotal + tax + platformFee + deliveryFee
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -705,7 +732,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 </div>
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Delivery</span>
-                  <span className="font-medium">FREE</span>
+                  <span className="font-medium">{deliveryFee > 0 ? `₹${deliveryFee}` : 'FREE'}</span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 flex justify-between">
                   <span className="font-heading font-bold text-gray-900">
