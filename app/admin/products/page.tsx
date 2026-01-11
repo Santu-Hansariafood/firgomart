@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import categoriesData from "@/data/categories.json"
 import locationData  from "@/data/country.json"
-import { Package, Edit, Trash, X, Plus } from "lucide-react"
+import { Package, Edit, Trash, X, Plus, Crop } from "lucide-react"
 import dynamic from "next/dynamic"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
@@ -16,6 +16,7 @@ const CommonPagination = dynamic(() => import("@/components/common/Pagination/Co
 const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
 const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
 const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
+const ImageCropper = dynamic(() => import("@/components/common/ImageCropper/ImageCropper"))
 
 type ProductItem = {
   id: string
@@ -23,6 +24,7 @@ type ProductItem = {
   category?: string
   subcategory?: string
   price: number
+  originalPrice?: number
   stock?: number
   sellerState?: string
   sellerHasGST?: boolean
@@ -36,6 +38,11 @@ type ProductItem = {
   description?: string
   image?: string
   images?: string[]
+  height?: number
+  width?: number
+  weight?: number
+  dimensionUnit?: string
+  weightUnit?: string
 }
 
 type DropdownItem = { id: string | number; label: string }
@@ -82,10 +89,13 @@ export default function Page() {
   const [category, setCategory] = useState<string>("")
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
+  
+  // Form States
   const [formName, setFormName] = useState("")
   const [formCategory, setFormCategory] = useState("")
   const [formSubcategory, setFormSubcategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
+  const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
   const [formSellerState, setFormSellerState] = useState("")
   const [formGST, setFormGST] = useState(false)
@@ -96,6 +106,29 @@ export default function Page() {
   const [formDesc, setFormDesc] = useState("")
   const [formAddInfo, setFormAddInfo] = useState("")
   const [images, setImages] = useState<string[]>([])
+
+  // Dimensions & Weight
+  const [formHeight, setFormHeight] = useState("")
+  const [formWidth, setFormWidth] = useState("")
+  const [formWeight, setFormWeight] = useState("")
+  const [formDimensionUnit, setFormDimensionUnit] = useState("cm")
+  const [formWeightUnit, setFormWeightUnit] = useState("kg")
+
+  // Cropping
+  const [croppingImageIndex, setCroppingImageIndex] = useState<number | null>(null)
+
+  const dimensionUnits = [
+    { id: "cm", label: "cm" },
+    { id: "inch", label: "inch" },
+    { id: "mm", label: "mm" },
+    { id: "m", label: "m" }
+  ]
+  const weightUnits = [
+    { id: "kg", label: "kg" },
+    { id: "g", label: "g" },
+    { id: "mg", label: "mg" },
+    { id: "lb", label: "lb" }
+  ]
 
   const onFormCategoryChange = (v: DropdownItem | DropdownItem[]) => {
     if (!Array.isArray(v)) {
@@ -153,6 +186,7 @@ export default function Page() {
       setFormCategory(product.category || "")
       setFormSubcategory((product as any).subcategory || "")
       setFormPrice(String(product.price))
+      setFormOriginalPrice(String(product.originalPrice || ""))
       setFormStock(String(product.stock || 0))
       setFormSellerState(product.sellerState || "")
       setFormGST(!!product.sellerHasGST)
@@ -163,12 +197,19 @@ export default function Page() {
       setFormDesc(product.description || "")
       setFormAddInfo(product.additionalInfo || "")
       setImages(product.images && product.images.length ? product.images : (product.image ? [product.image] : []))
+      
+      setFormHeight(String(product.height || ""))
+      setFormWidth(String(product.width || ""))
+      setFormWeight(String(product.weight || ""))
+      setFormDimensionUnit(product.dimensionUnit || "cm")
+      setFormWeightUnit(product.weightUnit || "kg")
     } else {
       setEditingId(null)
       setFormName("")
       setFormCategory("")
       setFormSubcategory("")
       setFormPrice("")
+      setFormOriginalPrice("")
       setFormStock("")
       setFormSellerState("")
       setFormGST(false)
@@ -179,12 +220,23 @@ export default function Page() {
       setFormDesc("")
       setFormAddInfo("")
       setImages([])
+      
+      setFormHeight("")
+      setFormWidth("")
+      setFormWeight("")
+      setFormDimensionUnit("cm")
+      setFormWeightUnit("kg")
     }
+    setCroppingImageIndex(null)
     setIsModalOpen(true)
   }
 
   const onFiles = async (files: FileList | null) => {
     if (!files) return
+    if (images.length + files.length > 6) {
+        alert("Maximum 6 images allowed")
+        return
+    }
     const arr: string[] = []
     for (const file of Array.from(files)) {
       const data = await new Promise<string>((resolve) => {
@@ -201,7 +253,25 @@ export default function Page() {
     setImages(prev => prev.filter((_, i) => i !== index))
   }
 
+  const startCrop = (index: number) => {
+    setCroppingImageIndex(index)
+  }
+
+  const onCropComplete = (croppedImage: string) => {
+    if (croppingImageIndex !== null) {
+      setImages(prev => {
+        const next = [...prev]
+        next[croppingImageIndex] = croppedImage
+        return next
+      })
+      setCroppingImageIndex(null)
+    }
+  }
+
   const handleSave = async () => {
+    if (isSubmitting) return
+    setIsSubmitting(true)
+
     let uploaded: string[] = []
     
     const newImages = images.filter(img => img.startsWith("data:"))
@@ -220,11 +290,19 @@ export default function Page() {
     const finalImages = [...existingImages, ...uploaded]
     const adminEmail = (session?.user?.email || authUser?.email || "").trim()
 
+    const price = Number(formPrice)
+    const originalPrice = formOriginalPrice ? Number(formOriginalPrice) : undefined
+    const discount = originalPrice && originalPrice > price 
+        ? Math.round(((originalPrice - price) / originalPrice) * 100) 
+        : 0
+
     const payload = {
       name: formName.trim(),
       category: formCategory.trim(),
       subcategory: formSubcategory.trim(),
-      price: Number(formPrice),
+      price,
+      originalPrice,
+      discount,
       stock: Number(formStock || 0),
       sellerState: formGST ? "" : formSellerState.trim(),
       sellerHasGST: formGST,
@@ -236,6 +314,11 @@ export default function Page() {
       about: formAbout.trim(),
       description: formDesc.trim(),
       additionalInfo: formAddInfo.trim(),
+      height: formHeight ? Number(formHeight) : undefined,
+      width: formWidth ? Number(formWidth) : undefined,
+      weight: formWeight ? Number(formWeight) : undefined,
+      dimensionUnit: formDimensionUnit,
+      weightUnit: formWeightUnit
     }
 
     try {
@@ -256,7 +339,9 @@ export default function Page() {
         if (!editingId) setPage(1)
         loadProducts()
       }
-    } catch {}
+    } catch {} finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleDelete = async (id: string) => {
@@ -399,10 +484,14 @@ export default function Page() {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                             <input value={formName} onChange={e => setFormName(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-3 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
-                                <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
+                                <label className="block text-sm font-medium text-gray-700 mb-1">MRP</label>
+                                <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Original" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                                <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Sale" />
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
@@ -432,6 +521,37 @@ export default function Page() {
                         <div>
                              <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
                              <input value={formBrand} onChange={e => setFormBrand(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. Nike, Apple" />
+                        </div>
+                        
+                        {/* Dimensions & Weight */}
+                        <div className="grid grid-cols-2 gap-4">
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Height</label>
+                                <div className="flex gap-1">
+                                    <input type="number" value={formHeight} onChange={e => setFormHeight(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Height" />
+                                    <select value={formDimensionUnit} onChange={e => setFormDimensionUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
+                                        {dimensionUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
+                                    </select>
+                                </div>
+                             </div>
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Width</label>
+                                <div className="flex gap-1">
+                                    <input type="number" value={formWidth} onChange={e => setFormWidth(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Width" />
+                                    <select value={formDimensionUnit} onChange={e => setFormDimensionUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
+                                        {dimensionUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
+                                    </select>
+                                </div>
+                             </div>
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Weight</label>
+                                <div className="flex gap-1">
+                                    <input type="number" value={formWeight} onChange={e => setFormWeight(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Weight" />
+                                    <select value={formWeightUnit} onChange={e => setFormWeightUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
+                                        {weightUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
+                                    </select>
+                                </div>
+                             </div>
                         </div>
                     </div>
 
@@ -483,14 +603,17 @@ export default function Page() {
                         </div>
                         
                         <div className="space-y-4">
-                             <h3 className="font-semibold text-gray-700">Images</h3>
+                             <h3 className="font-semibold text-gray-700">Images (Max 6)</h3>
                              <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} className="text-sm" />
                              <div className="flex flex-wrap gap-2 mt-2">
                                 {images.map((src, i) => (
                                     <div key={i} className="relative group">
                                         <FallbackImage src={src} alt="preview" width={80} height={80} className="object-cover rounded border" />
-                                        <button onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                             <X className="w-3 h-3" />
+                                        </button>
+                                        <button onClick={() => startCrop(i)} className="absolute bottom-1 right-1 bg-blue-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Crop">
+                                            <Crop className="w-3 h-3" />
                                         </button>
                                     </div>
                                 ))}
@@ -498,14 +621,21 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
-                <div className="p-6 border-t bg-gray-50 flex justify-end gap-3 sticky bottom-0 rounded-b-xl">
-                    <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-100">Cancel</button>
-                    <button onClick={handleSave} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        {editingId ? "Update Product" : "Create Product"}
-                    </button>
+                <div className="p-6 border-t flex justify-end gap-3 bg-white z-10 sticky bottom-0">
+                  <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium" disabled={isSubmitting}>Cancel</button>
+                  <button onClick={handleSave} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
+                    {isSubmitting ? "Saving..." : (editingId ? "Update Product" : "Create Product")}
+                  </button>
                 </div>
               </div>
             </div>
+          )}
+          {croppingImageIndex !== null && images[croppingImageIndex] && (
+            <ImageCropper 
+                imageSrc={images[croppingImageIndex]} 
+                onCancel={() => setCroppingImageIndex(null)}
+                onCropComplete={onCropComplete}
+            />
           )}
         </div>
       )}

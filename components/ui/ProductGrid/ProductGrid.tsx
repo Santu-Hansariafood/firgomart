@@ -308,17 +308,23 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 variants={fadeInUp}
                 className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-[var(--foreground)/10]"
               >
-                <div
-                  className="relative aspect-square overflow-hidden cursor-pointer group"
+                <div 
+                  className="relative aspect-[4/5] overflow-hidden bg-gray-100 group cursor-pointer"
                   onClick={() => onProductClick(product)}
                 >
-                  <FallbackImage
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    sizes="(max-width: 640px) 33vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
+                  <div className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-hide no-scrollbar">
+                    {(product.images && product.images.length > 0 ? product.images : [product.image]).map((img, i) => (
+                        <div key={i} className="min-w-full h-full relative snap-center">
+                            <FallbackImage
+                                src={sanitizeImageUrl(img)}
+                                alt={`${product.name} ${i + 1}`}
+                                fill
+                                sizes="(max-width: 640px) 33vw, (max-width: 768px) 30vw, (max-width: 1024px) 22vw, 20vw"
+                                className="object-cover"
+                            />
+                        </div>
+                    ))}
+                  </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                     <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
