@@ -71,8 +71,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     if (status === "authenticated") {
-      setUser(prev => ({ ...prev, ...(session?.user as User) }))
-      setIsAuthenticated(true)
+      const sUser = (session?.user as User) || null
+      const cleaned = sUser ? { ...sUser } : null
+      if (cleaned && String(cleaned.role || "").toLowerCase() !== "seller") {
+        delete (cleaned as any).sellerDetails
+      }
+      setUser(cleaned)
+      setIsAuthenticated(!!cleaned)
       const safeJson = async (res: Response) => {
         try {
           return await res.json()
@@ -88,18 +93,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       fetch("/api/auth/profile")
         .then(async (res) => {
           const data = await safeJson(res)
-          if (res.ok && (data as any)?.user) setUser((data as any).user as User)
+          if (res.ok && (data as any)?.user) {
+            const u = (data as any).user as User
+            if (String(u.role || "").toLowerCase() !== "seller") delete (u as any).sellerDetails
+            setUser(u)
+            setIsAuthenticated(true)
+          }
         })
         .catch(() => {})
     } else if (status === "unauthenticated") {
-      setUser(prev => {
-        const keep = (prev as any)?.role === "admin"
-        return keep ? prev : null
-      })
-      setIsAuthenticated(prev => {
-        const keep = !!(user && (user as any).role === "admin")
-        return keep ? true : false
-      })
+      setUser(null)
+      setIsAuthenticated(false)
     }
     setLoading(status === "loading")
   }, [status, session])
@@ -152,6 +156,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = () => {
     signOut({ redirect: false })
     router.push("/login")
+    setUser(null)
+    setIsAuthenticated(false)
   }
 
   const updateUser = async (updatedData: Partial<User>) => {
