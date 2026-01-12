@@ -75,7 +75,10 @@ export default function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploading, setUploading] = useState(false)
   const categoryOptions = (categoriesData.categories || []).map((c: { name: string }) => ({ id: c.name, label: c.name }))
-  const stateOptions: DropdownItem[] = (locationData.states || []).map((s: { name: string; code: string }) => ({ id: s.code, label: s.name }))
+  type IndiaState = { state: string }
+  type Country = { country: string; states?: IndiaState[] }
+  const india = (locationData.countries as Country[]).find((c) => c.country === "India")
+  const stateOptions: DropdownItem[] = (india?.states || []).map((s) => ({ id: s.state, label: s.state }))
   const gstOptions: DropdownItem[] = [
     { id: "", label: "GST: All" },
     { id: "true", label: "GST: Yes" },
