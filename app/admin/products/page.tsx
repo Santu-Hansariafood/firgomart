@@ -40,9 +40,25 @@ type ProductItem = {
   images?: string[]
   height?: number
   width?: number
+  length?: number
   weight?: number
   dimensionUnit?: string
+  lengthUnit?: string
   weightUnit?: string
+  hsnCode?: string
+  gstNumber?: string
+}
+
+const gstStateMap: Record<string, string> = {
+  "01": "Jammu and Kashmir", "02": "Himachal Pradesh", "03": "Punjab", "04": "Chandigarh",
+  "05": "Uttarakhand", "06": "Haryana", "07": "Delhi", "08": "Rajasthan", "09": "Uttar Pradesh",
+  "10": "Bihar", "11": "Sikkim", "12": "Arunachal Pradesh", "13": "Nagaland", "14": "Manipur",
+  "15": "Mizoram", "16": "Tripura", "17": "Meghalaya", "18": "Assam", "19": "West Bengal",
+  "20": "Jharkhand", "21": "Odisha", "22": "Chhattisgarh", "23": "Madhya Pradesh", "24": "Gujarat",
+  "25": "Daman and Diu", "26": "Dadra and Nagar Haveli", "27": "Maharashtra", "28": "Andhra Pradesh",
+  "29": "Karnataka", "30": "Goa", "31": "Lakshadweep", "32": "Kerala", "33": "Tamil Nadu",
+  "34": "Puducherry", "35": "Andaman and Nicobar Islands", "36": "Telangana", "37": "Andhra Pradesh",
+  "38": "Ladakh", "97": "Other Territory", "99": "Centre Jurisdiction"
 }
 
 type DropdownItem = { id: string | number; label: string }
@@ -106,13 +122,17 @@ export default function Page() {
   const [formAbout, setFormAbout] = useState("")
   const [formDesc, setFormDesc] = useState("")
   const [formAddInfo, setFormAddInfo] = useState("")
+  const [formHSNCode, setFormHSNCode] = useState("")
+  const [formGSTNumber, setFormGSTNumber] = useState("")
   const [images, setImages] = useState<string[]>([])
 
   // Dimensions & Weight
   const [formHeight, setFormHeight] = useState("")
   const [formWidth, setFormWidth] = useState("")
+  const [formLength, setFormLength] = useState("")
   const [formWeight, setFormWeight] = useState("")
   const [formDimensionUnit, setFormDimensionUnit] = useState("cm")
+  const [formLengthUnit, setFormLengthUnit] = useState("cm")
   const [formWeightUnit, setFormWeightUnit] = useState("kg")
 
   // Cropping
@@ -180,6 +200,14 @@ export default function Page() {
     if (formGST) setFormSellerState("")
   }, [formGST])
 
+  useEffect(() => {
+    if (formGSTNumber.length >= 2) {
+      const code = formGSTNumber.substring(0, 2)
+      const state = gstStateMap[code]
+      if (state) setFormSellerState(state)
+    }
+  }, [formGSTNumber])
+
   const openModal = (product?: ProductItem) => {
     if (product) {
       setEditingId(product.id)
@@ -197,12 +225,16 @@ export default function Page() {
       setFormAbout(product.about || "")
       setFormDesc(product.description || "")
       setFormAddInfo(product.additionalInfo || "")
+      setFormHSNCode(product.hsnCode || "")
+      setFormGSTNumber(product.gstNumber || "")
       setImages(product.images && product.images.length ? product.images : (product.image ? [product.image] : []))
       
       setFormHeight(String(product.height || ""))
       setFormWidth(String(product.width || ""))
+      setFormLength(String(product.length || ""))
       setFormWeight(String(product.weight || ""))
       setFormDimensionUnit(product.dimensionUnit || "cm")
+      setFormLengthUnit(product.lengthUnit || "cm")
       setFormWeightUnit(product.weightUnit || "kg")
     } else {
       setEditingId(null)
@@ -220,12 +252,16 @@ export default function Page() {
       setFormAbout("")
       setFormDesc("")
       setFormAddInfo("")
+      setFormHSNCode("")
+      setFormGSTNumber("")
       setImages([])
       
       setFormHeight("")
       setFormWidth("")
+      setFormLength("")
       setFormWeight("")
       setFormDimensionUnit("cm")
+      setFormLengthUnit("cm")
       setFormWeightUnit("kg")
     }
     setCroppingImageIndex(null)
@@ -251,7 +287,11 @@ export default function Page() {
   }
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index))
+    setImages(prev => {
+        const next = [...prev]
+        if (index < next.length) next[index] = ""
+        return next
+    })
   }
 
   const startCrop = (index: number) => {
@@ -269,26 +309,42 @@ export default function Page() {
     }
   }
 
+  const handleImageSlotChange = async (index: number, files: FileList | null) => {
+    if (!files || !files[0]) return
+    const file = files[0]
+    const data = await new Promise<string>((resolve) => {
+      const r = new FileReader()
+      r.onload = () => resolve(String(r.result))
+      r.readAsDataURL(file)
+    })
+    setImages(prev => {
+        const next = [...prev]
+        while (next.length <= index) next.push("")
+        next[index] = data
+        return next
+    })
+  }
+
   const handleSave = async () => {
     if (isSubmitting) return
     setIsSubmitting(true)
 
-    let uploaded: string[] = []
-    
-    const newImages = images.filter(img => img.startsWith("data:"))
-    const existingImages = images.filter(img => !img.startsWith("data:"))
-    
-    if (newImages.length) {
-      try {
-        const up = await fetch(`/api/upload/image`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ images: newImages }) })
-        const upJson = await up.json()
-        if (up.ok && Array.isArray(upJson.urls)) {
-            uploaded = upJson.urls
+    const resolvedImages = await Promise.all(images.map(async (img) => {
+        if (!img) return ""
+        if (img.startsWith("data:")) {
+            try {
+                 const res = await fetch(`/api/upload/image`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ images: [img] }) })
+                 if (res.ok) {
+                    const data = await res.json()
+                    return data.urls[0] || ""
+                 }
+            } catch {}
+            return ""
         }
-      } catch {}
-    }
+        return img
+    }))
     
-    const finalImages = [...existingImages, ...uploaded]
+    const finalImages = resolvedImages.filter(Boolean)
     const adminEmail = (session?.user?.email || authUser?.email || "").trim()
 
     const price = Number(formPrice)
@@ -317,9 +373,13 @@ export default function Page() {
       additionalInfo: formAddInfo.trim(),
       height: formHeight ? Number(formHeight) : undefined,
       width: formWidth ? Number(formWidth) : undefined,
+      length: formLength ? Number(formLength) : undefined,
       weight: formWeight ? Number(formWeight) : undefined,
       dimensionUnit: formDimensionUnit,
-      weightUnit: formWeightUnit
+      lengthUnit: formLengthUnit,
+      weightUnit: formWeightUnit,
+      hsnCode: formHSNCode.trim(),
+      gstNumber: formGSTNumber.trim()
     }
 
     try {
@@ -527,6 +587,15 @@ export default function Page() {
                         {/* Dimensions & Weight */}
                         <div className="grid grid-cols-2 gap-4">
                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Length</label>
+                                <div className="flex gap-1">
+                                    <input type="number" value={formLength} onChange={e => setFormLength(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Length" />
+                                    <select value={formLengthUnit} onChange={e => setFormLengthUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
+                                        {dimensionUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
+                                    </select>
+                                </div>
+                             </div>
+                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Height</label>
                                 <div className="flex gap-1">
                                     <input type="number" value={formHeight} onChange={e => setFormHeight(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Height" />
@@ -586,11 +655,21 @@ export default function Page() {
                     <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                             <h3 className="font-semibold text-gray-700">Seller & Tax</h3>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">HSN Code</label>
+                                <input value={formHSNCode} onChange={e => setFormHSNCode(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="HSN Code" />
+                            </div>
                             <div className="flex items-center gap-2">
                                 <input id="gst_modal" type="checkbox" checked={formGST} onChange={(e) => setFormGST(e.target.checked)} />
                                 <label htmlFor="gst_modal" className="text-sm font-medium text-gray-700">Seller has GST</label>
                             </div>
-                            {!formGST && (
+                            {formGST ? (
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">GST Number</label>
+                                    <input value={formGSTNumber} onChange={e => setFormGSTNumber(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="GST Number" maxLength={15} />
+                                    {formSellerState && <p className="text-xs text-green-600 mt-1">Detected State: {formSellerState}</p>}
+                                </div>
+                            ) : (
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Seller State</label>
                                     <CommonDropdown
@@ -604,18 +683,35 @@ export default function Page() {
                         </div>
                         
                         <div className="space-y-4">
-                             <h3 className="font-semibold text-gray-700">Images (Max 6)</h3>
-                             <input type="file" multiple accept="image/*" onChange={(e) => onFiles(e.target.files)} className="text-sm" />
-                             <div className="flex flex-wrap gap-2 mt-2">
-                                {images.map((src, i) => (
-                                    <div key={i} className="relative group">
-                                        <FallbackImage src={src} alt="preview" width={80} height={80} className="object-cover rounded border" />
-                                        <button onClick={() => removeImage(i)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                            <X className="w-3 h-3" />
-                                        </button>
-                                        <button onClick={() => startCrop(i)} className="absolute bottom-1 right-1 bg-blue-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10" title="Crop">
-                                            <Crop className="w-3 h-3" />
-                                        </button>
+                             <h3 className="font-semibold text-gray-700">Product Images (6 Slots)</h3>
+                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                                {[0, 1, 2, 3, 4, 5].map((index) => (
+                                    <div key={index} className="space-y-2">
+                                        <label className="block text-xs font-medium text-gray-600">Image {index + 1}</label>
+                                        <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-2 h-32 flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                                            {images[index] ? (
+                                                <div className="relative w-full h-full group">
+                                                    <FallbackImage src={images[index]} alt={`Image ${index + 1}`} fill className="object-contain rounded" />
+                                                    <button onClick={() => removeImage(index)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm">
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                    <button onClick={() => startCrop(index)} className="absolute bottom-1 right-1 bg-blue-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm" title="Crop">
+                                                        <Crop className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <div className="text-center">
+                                                    <span className="text-gray-400 text-xs">Upload</span>
+                                                </div>
+                                            )}
+                                            <input 
+                                                type="file" 
+                                                accept="image/*" 
+                                                onChange={(e) => handleImageSlotChange(index, e.target.files)} 
+                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                disabled={!!images[index]}
+                                            />
+                                        </div>
                                     </div>
                                 ))}
                              </div>

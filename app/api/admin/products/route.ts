@@ -96,6 +96,16 @@ export async function GET(request: Request) {
       about: p.about,
       additionalInfo: p.additionalInfo,
       description: p.description,
+      height: p.height,
+      width: p.width,
+      length: p.length,
+      weight: p.weight,
+      dimensionUnit: p.dimensionUnit,
+      lengthUnit: p.lengthUnit,
+      weightUnit: p.weightUnit,
+      hsnCode: p.hsnCode,
+      gstNumber: p.gstNumber,
+      images: p.images || [],
     }))
     return NextResponse.json({ products: safe, total })
   } catch (err: any) {
@@ -152,6 +162,16 @@ export async function POST(request: Request) {
     const additionalInfo = String(body?.additionalInfo || "").trim()
     const description = String(body?.description || "").trim()
 
+    const height = body?.height ? Number(body.height) : undefined
+    const width = body?.width ? Number(body.width) : undefined
+    const length = body?.length ? Number(body.length) : undefined
+    const weight = body?.weight ? Number(body.weight) : undefined
+    const dimensionUnit = String(body?.dimensionUnit || "")
+    const lengthUnit = String(body?.lengthUnit || "")
+    const weightUnit = String(body?.weightUnit || "")
+    const hsnCode = String(body?.hsnCode || "").trim()
+    const gstNumber = String(body?.gstNumber || "").trim()
+
     if (!name || !price || !image) return NextResponse.json({ error: "name, price, image required" }, { status: 400 })
 
     const conn = await connectDB()
@@ -174,6 +194,15 @@ export async function POST(request: Request) {
       about,
       additionalInfo,
       description,
+      height,
+      width,
+      length,
+      weight,
+      dimensionUnit,
+      lengthUnit,
+      weightUnit,
+      hsnCode,
+      gstNumber,
     })
     return NextResponse.json({ product: { id: doc._id?.toString?.() || String(doc._id) } }, { status: 201 })
   } catch (err: any) {
