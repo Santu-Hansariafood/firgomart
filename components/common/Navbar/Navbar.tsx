@@ -264,20 +264,6 @@ const Navbar: React.FC = () => {
                     )}
                   </AnimatePresence>
 
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={() => setShowLoginModal(true)}
-                      className="px-3 py-2 text-brand-purple hover:bg-gray-100 rounded-lg font-medium transition-colors"
-                    >
-                      Login
-                    </button>
-                    <button
-                      onClick={() => setShowRegisterModal(true)}
-                      className="px-3 py-2 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all"
-                    >
-                      Register
-                    </button>
-                  </div>
                 </div>
               ) : (
                 <div className="relative">
@@ -436,22 +422,6 @@ const Navbar: React.FC = () => {
                 <Store className="w-5 h-5" />
                 <span className="font-medium">Sell on Firgomart</span>
               </Link>
-              {(isAuthenticated && user?.role === "seller") && (
-                <div className="grid grid-cols-2 gap-3 mt-3">
-                  <button
-                    onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false) }}
-                    className="px-4 py-3 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg font-medium transition-colors"
-                  >
-                    Login
-                  </button>
-                  <button
-                    onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false) }}
-                    className="px-4 py-3 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all"
-                  >
-                    Register
-                  </button>
-                </div>
-              )}
               <button
                 onClick={() => {
                   setShowCart(true)

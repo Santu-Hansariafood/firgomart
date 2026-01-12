@@ -5,11 +5,12 @@ import { useEffect, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import dynamic from "next/dynamic"
 import CommonTable from "@/components/common/Table/CommonTable"
+import FallbackImage from "@/components/common/Image/FallbackImage"
 const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
 const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
 
-type Row = { _id: string; name: string; category?: string; stock: number }
+type Row = { _id: string; name: string; category?: string; stock: number; price?: number; image?: string; createdAt?: string }
 
 export default function Page() {
   const { user } = useAuth()
@@ -22,6 +23,10 @@ export default function Page() {
   const pageSize = 100
   const [search, setSearch] = useState("")
   const [bulkText, setBulkText] = useState("")
+  const [minStock, setMinStock] = useState<string>("")
+  const [maxStock, setMaxStock] = useState<string>("")
+  const [sortKey, setSortKey] = useState<string | null>("createdAt")
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
   const load = async () => {
     if (!email) return
@@ -32,14 +37,31 @@ export default function Page() {
       params.set("page", String(page))
       params.set("limit", String(pageSize))
       if (search) params.set("search", search)
+      if (sortKey) params.set("sortBy", String(sortKey))
+      params.set("sortOrder", sortOrder)
       const res = await fetch(`/api/seller/products?${params.toString()}`)
       const data = await res.json()
-      if (res.ok) { setRows(data.products || []); setTotal(Number(data.total || 0)) } else { setRows([]); setTotal(0) }
+      if (res.ok) {
+        const items: Row[] = data.products || []
+        const min = minStock ? Number(minStock) : undefined
+        const max = maxStock ? Number(maxStock) : undefined
+        const filtered = items.filter(r => {
+          const s = Number(r.stock || 0)
+          if (min !== undefined && s < min) return false
+          if (max !== undefined && s > max) return false
+          return true
+        })
+        setRows(filtered)
+        setTotal(Number(data.total || 0))
+      } else {
+        setRows([])
+        setTotal(0)
+      }
     } catch { setRows([]); setTotal(0) }
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [email, page, search])
+  useEffect(() => { load() }, [email, page, search, minStock, maxStock, sortKey, sortOrder])
 
   const updateStock = async (id: string, stock: number) => {
     try { await fetch(`/api/seller/products`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, stock, sellerEmail: email }) }); load() } catch {}
@@ -70,24 +92,41 @@ export default function Page() {
       <h1 className="text-2xl font-semibold">Inventory Management</h1>
 
       <div className="bg-white border rounded-xl p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <SearchBox value={search} onChange={setSearch} placeholder="Search inventory" />
-          <span className="text-sm text-gray-600">Total: {total}</span>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+          <div>
+            <label className="text-sm mb-1 font-medium text-gray-600">Min Stock</label>
+            <input type="number" value={minStock} onChange={(e) => setMinStock(e.target.value)} className="w-full px-3 py-2 border rounded" />
+          </div>
+          <div>
+            <label className="text-sm mb-1 font-medium text-gray-600">Max Stock</label>
+            <input type="number" value={maxStock} onChange={(e) => setMaxStock(e.target.value)} className="w-full px-3 py-2 border rounded" />
+          </div>
+          <div className="md:col-span-2">
+            <SearchBox value={search} onChange={setSearch} placeholder="Search inventory" />
+          </div>
         </div>
         {loading ? (
           <BeautifulLoader />
         ) : (
           <CommonTable<Row>
             columns={[
+              { key: "image", label: "Image", render: (r) => (
+                <div className="relative w-12 h-10">
+                  <FallbackImage src={typeof r.image === "string" ? r.image : ""} alt={r.name} width={48} height={40} className="object-cover rounded border" />
+                </div>
+              ) },
               { key: "name", label: "Product", sortable: true },
               { key: "category", label: "Category" },
+              { key: "price", label: "Price", sortable: true, render: (r) => `₹${Number(r.price || 0).toFixed(2)}` },
               { key: "stock", label: "Stock", sortable: true, render: (r) => (
                 <input type="number" defaultValue={r.stock} className="w-24 px-2 py-1 border rounded" onBlur={(e) => updateStock(r._id, Number(e.currentTarget.value))} />
               ) },
+              { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
             ]}
             data={rows}
-            sortKey={"createdAt"}
-            sortOrder="desc"
+            sortKey={sortKey || undefined}
+            sortOrder={sortOrder}
+            onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
             rowKey={(r) => r._id}
           />
         )}
