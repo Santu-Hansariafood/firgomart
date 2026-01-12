@@ -601,8 +601,6 @@ const Profile = () => {
                        </div>
                      </div>
                    </div>
-
-                   {/* Multiple Tracking Links */}
                    {trackingData.tracking && Array.isArray(trackingData.tracking) && trackingData.tracking.length > 0 && (
                      <div className="bg-gray-50 p-3 rounded-lg border space-y-3">
                        <div className="text-xs text-gray-500 uppercase font-semibold">Tracking Information</div>
@@ -650,7 +648,6 @@ const Profile = () => {
                      </div>
                    )}
                    
-                   {/* Fallback if no specific tracking info yet */}
                    {!trackingData.courier && !trackingData.trackingNumber && (
                      <div className="text-sm text-gray-600 italic">
                        Tracking details will be updated once the order is shipped.

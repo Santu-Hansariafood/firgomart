@@ -80,8 +80,6 @@ const AdCarousel: React.FC = () => {
           >
             <ChevronRight className="w-6 h-6 text-[var(--foreground)]" />
           </button>
-
-          {/* Dots indicator */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
             {advertisements.map((_, index) => (
               <button

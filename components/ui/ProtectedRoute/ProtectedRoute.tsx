@@ -28,7 +28,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     )
   }
 
-  // Render children only if user is authenticated
   return <>{user ? children : null}</>
 }
 

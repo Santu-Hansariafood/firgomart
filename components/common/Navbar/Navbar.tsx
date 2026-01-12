@@ -123,8 +123,6 @@ const Navbar: React.FC = () => {
     setShowUserMenu(false)
   }
 
-  // Seller details now come from user.sellerDetails populated during seller login
-
   return (
     <nav className="sticky top-0 z-50 bg-[var(--background)] text-[var(--foreground)] shadow-md">
       <div className="max-w-screen-xl mx-auto px-3 sm:px-4">

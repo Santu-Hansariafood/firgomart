@@ -147,7 +147,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         }
       } catch {}
     }
-    const timer = setTimeout(fetchFee, 500) // Debounce slightly
+    const timer = setTimeout(fetchFee, 500)
     return () => clearTimeout(timer)
   }, [cartItems])
 
@@ -347,7 +347,6 @@ const Checkout: React.FC<CheckoutProps> = ({
     } catch {}
   }
 
-  // ORDER SUCCESS PAGE
   if (orderPlaced) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -389,9 +388,7 @@ const Checkout: React.FC<CheckoutProps> = ({
     <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-6xl mx-auto px-4">
         <BackButton href="/" className="mb-6" />
-
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Section */}
           <div className="lg:col-span-2">
             <motion.div
               variants={fadeInUp}
@@ -399,7 +396,6 @@ const Checkout: React.FC<CheckoutProps> = ({
               animate="show"
               className="bg-[var(--background)] border rounded-xl p-6 text-[var(--foreground)]"
             >
-              {/* Progress Bar */}
               <div className="flex items-center space-x-4 mb-6">
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -427,8 +423,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <CreditCard className="w-5 h-5" />
                 </div>
               </div>
-
-              {/* Step 1: Address */}
               {step === 1 && (
                 <form
                   onSubmit={async (e) => {
@@ -441,7 +435,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                     Delivery Address
                   </h2>
-
                   <div className="grid md:grid-cols-2 gap-4">
                     <input
                       type="text"
@@ -462,7 +455,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                       className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-
                   <input
                     type="tel"
                     name="phone"
@@ -473,7 +465,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                     pattern="[0-9]{10}"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-
                   <textarea
                     name="address"
                     placeholder="Address *"
@@ -483,7 +474,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-
                   <div className="grid md:grid-cols-3 gap-4">
                     <input
                       type="text"
@@ -549,15 +539,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                   )}
                 </form>
               )}
-
-              {/* Step 2: Payment */}
               {step === 2 && (
                 <form onSubmit={handlePlaceOrder} className="space-y-4">
                   <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                     Payment Details
                   </h2>
-
-                  {/* Payment Method Selection */}
                   <div className="mb-6">
                     <h3 className="text-lg font-heading font-semibold text-gray-900 mb-4">
                       Select Payment Method

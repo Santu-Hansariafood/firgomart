@@ -19,7 +19,6 @@ const SellerLogin: React.FC = () => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
-  // Consent Popup State
   const [showConsent, setShowConsent] = useState(false)
   const [consentChecked, setConsentChecked] = useState(false)
   interface PendingSeller { id?: string | number; email?: string; name?: string }

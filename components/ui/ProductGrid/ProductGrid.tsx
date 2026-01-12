@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Eye, X } from 'lucide-react'
 import ProductImageSlider from '@/components/common/ProductImageSlider/ProductImageSlider'
-// import FallbackImage from '@/components/common/Image/FallbackImage'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
 

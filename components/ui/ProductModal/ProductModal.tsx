@@ -55,7 +55,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'desc' | 'info' | 'reviews'>('desc')
   
-  // Reviews State
   const [reviews, setReviews] = useState<Review[]>([])
   const [loadingReviews, setLoadingReviews] = useState(false)
   const [reviewFormOpen, setReviewFormOpen] = useState(false)
@@ -78,7 +77,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
     if (activeTab === 'reviews') {
       fetchReviews()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, product.id])
 
   const fetchReviews = async () => {
@@ -134,7 +132,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           onClick={(e) => e.stopPropagation()}
           className="bg-[var(--background)] text-[var(--foreground)] rounded-xl sm:rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col border border-[var(--foreground)/20]"
         >
-          {/* Header */}
           <div className="sticky top-0 bg-[var(--background)] border-b border-[var(--foreground)/20] px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-20">
             <h2 className="text-xl font-heading font-bold truncate pr-4">{product.name}</h2>
             <button
@@ -147,7 +144,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
 
           <div className="p-4 sm:p-6 overflow-y-auto">
             <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 sm:mb-8">
-              {/* Image Section */}
               <div>
               <div
                 className="relative aspect-square rounded-xl overflow-hidden bg-[var(--foreground)/10] mb-4 cursor-pointer"
@@ -273,8 +269,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         </div>
                     </div>
                 )}
-
-                {/* About Product */}
                 {product.about && (
                     <div className="mb-6 p-4 bg-[var(--foreground)/10] rounded-lg">
                         <h3 className="font-medium mb-2">About this item</h3>

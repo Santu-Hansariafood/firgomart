@@ -62,8 +62,6 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
   return (
     <div className={clsx("w-full relative", className)}>
       {label && <p className="text-sm mb-1 font-medium text-[var(--foreground)/70]">{label}</p>}
-
-      {/* Selected box */}
       <div
         className={clsx(
           "rounded-xl border border-[var(--foreground)/20] flex flex-wrap gap-2 items-center justify-between px-4 py-3 cursor-pointer bg-[var(--background)] text-[var(--foreground)]",
@@ -71,7 +69,6 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
         )}
         onClick={() => setOpen(!open)}
       >
-        {/* Selected items */}
         <div className="flex flex-wrap gap-2 w-full">
           {multiple ? (
             (selected as DropdownItem[])?.length > 0 ? (
@@ -109,19 +106,14 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
           )}
         />
       </div>
-
-      {/* Dropdown list */}
       {open && (
         <div className="absolute left-0 right-0 mt-2 border border-[var(--foreground)/20] rounded-xl bg-[var(--background)] text-[var(--foreground)] shadow-lg max-h-64 overflow-auto z-50 p-2">
-          {/* Search Input */}
           <input
             className="w-full border border-[var(--foreground)/20] bg-[var(--background)] text-[var(--foreground)] px-3 py-2 rounded-lg mb-2 outline-none"
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
-          {/* Options */}
           {filteredOptions.map((item) => (
             <div
               key={item.id}

@@ -36,15 +36,13 @@ export default function ProductImageSlider({
       onMouseLeave={() => setPaused(false)}
     >
       <FallbackImage
-        key={index} // forces fade animation
+        key={index}
         src={images[index]}
         alt={name}
         fill
         className="object-cover transition-opacity duration-500"
         sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
       />
-
-      {/* dots */}
       {images.length > 1 && (
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
           {images.map((_, i) => (
