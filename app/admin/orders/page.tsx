@@ -32,6 +32,7 @@ type DropdownItem = { id: string | number; label: string }
 export default function Page() {
   const { data: session } = useSession()
   const { user: authUser } = useAuth()
+  const adminEmail = useMemo(() => (session?.user?.email || authUser?.email || "").trim(), [session, authUser])
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
     const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
@@ -104,7 +105,10 @@ export default function Page() {
     try {
       const res = await fetch(`/api/admin/orders/${selectedOrder.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
         body: JSON.stringify({ 
             tracking: trackingList,
             status: editStatus
@@ -157,7 +161,6 @@ export default function Page() {
   const loadOrders = async () => {
     setLoading(true)
     try {
-      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
       const params = new URLSearchParams()
       params.set("page", String(page))
       params.set("limit", String(pageSize))
@@ -203,7 +206,10 @@ export default function Page() {
     try {
       const res = await fetch(`/api/admin/orders/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
         body: JSON.stringify({ status }),
       })
       if (res.ok) {
@@ -285,7 +291,11 @@ export default function Page() {
                   const id = orderIdQuery.trim()
                   if (!id) { setSelectedOrder(null); return }
                   try {
-                    const res = await fetch(`/api/admin/orders/${encodeURIComponent(id)}`)
+                    const res = await fetch(`/api/admin/orders/${encodeURIComponent(id)}`, {
+                      headers: {
+                        ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+                      },
+                    })
                     const data = await res.json()
                     if (res.ok) setSelectedOrder(data.order || null)
                     else setSelectedOrder(null)
@@ -387,7 +397,11 @@ export default function Page() {
                       className="px-3 py-1 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
                       onClick={async () => {
                         try {
-                          const res = await fetch(`/api/admin/orders/${encodeURIComponent(r.id)}`)
+                          const res = await fetch(`/api/admin/orders/${encodeURIComponent(r.id)}`, {
+                            headers: {
+                              ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+                            },
+                          })
                           const data = await res.json()
                           if (res.ok) setSelectedOrder(data.order || null)
                         } catch {}

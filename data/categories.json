@@ -28,7 +28,7 @@
       ]
     },
     {
-      "name": "Footwear – Women",
+      "name": "Women's Footwear",
       "key": "footwear-women",
       "image": "/image/foot.webp",
       "subcategories": [
@@ -40,7 +40,7 @@
       ]
     },
     {
-      "name": "Footwear – Men",
+      "name": "Men's Footwear",
       "key": "footwear-men",
       "image": "/image/foot.webp",
       "subcategories": [
