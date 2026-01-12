@@ -99,92 +99,209 @@
   ],
   "termsOfService": [
     {
-      "title": "Terms & Conditions – FirgoMart.com",
-      "effectiveDate": "26 July 2025"
+      "title": "Terms and Conditions – FirgoMart",
+      "effectiveDate": "26 July 2025",
+      "intro": "These Terms and Conditions (\"Terms\") govern the access to and use of the FirgoMart website, mobile application, and related services (collectively, the \"Platform\"). The Platform is owned and operated by FirgoMart (\"we\", \"our\", \"us\"). By accessing, browsing, registering, or transacting on the Platform, you agree to be bound by these Terms. If you do not agree, please do not use the Platform."
     },
     {
-      "title": "1. Introduction",
-      "content": "These Terms govern your access to and use of FirgoMart.com, owned and operated by FirgoMart 24Logistics Private Limited. By using our website or mobile application, you agree to these Terms."
+      "title": "1. Definitions",
+      "points": [
+        "\"User\", \"You\", or \"Your\" means any person who accesses or uses the Platform",
+        "\"Platform\" refers to the FirgoMart website, mobile application, and services",
+        "\"Product(s)\" means goods listed for sale on the Platform",
+        "\"Seller\" means a third-party seller offering products through the Platform (where applicable)"
+      ]
     },
     {
       "title": "2. Eligibility",
-      "content": "You must be 18+ years old, have a valid mobile number and email, and use the platform only for lawful purchases."
+      "points": [
+        "You must be at least 18 years of age",
+        "You must be capable of entering into a legally binding contract under Indian law",
+        "By using the Platform, you represent and warrant that you meet these eligibility requirements"
+      ]
     },
     {
       "title": "3. Account Registration",
-      "content": "Provide accurate information, maintain confidentiality of login credentials, and take responsibility for all activities under your account."
+      "points": [
+        "You may be required to create an account to place orders",
+        "You are responsible for maintaining the confidentiality of your login credentials",
+        "You agree to provide accurate, complete, and updated information",
+        "FirgoMart shall not be liable for any loss arising from unauthorized use of your account"
+      ]
     },
     {
-      "title": "4. Products & Services",
-      "content": "Products are subject to availability, are described as accurately as possible, and are provided by verified sellers or FirgoMart. Listings may be updated or discontinued at any time."
+      "title": "4. Platform Usage",
+      "points": [
+        "Not to use the Platform for any unlawful or prohibited purpose",
+        "Not to upload or transmit any harmful, misleading, or infringing content",
+        "Not to attempt unauthorized access to the Platform or its systems",
+        "FirgoMart reserves the right to suspend or terminate accounts violating these Terms"
+      ]
     },
     {
-      "title": "5. Pricing & Payment",
-      "content": "Prices may include or exclude applicable taxes. Accepted methods include UPI, Credit/Debit Cards, Net Banking, Wallets, and other approved gateways. FirgoMart may cancel suspicious transactions."
+      "title": "5. Product Information & Pricing",
+      "points": [
+        "Product images are for illustrative purposes only",
+        "Prices, descriptions, and availability are subject to change without prior notice",
+        "FirgoMart reserves the right to correct any pricing or listing errors"
+      ]
     },
     {
-      "title": "6. Shipping, Returns & Refunds",
-      "content": "Delivery timelines are estimates and may vary. Returns and refunds are governed by the Refund & Return Policy, which varies by category."
+      "title": "6. Orders & Acceptance",
+      "points": [
+        "Placing an order constitutes an offer to purchase",
+        "FirgoMart reserves the right to accept or reject any order",
+        "An order is confirmed only after payment confirmation and order acknowledgment"
+      ]
     },
     {
-      "title": "7. Governing Law",
-      "content": "These Terms are governed by Indian law. Disputes fall under the jurisdiction of courts in Kolkata, West Bengal."
+      "title": "7. Payments",
+      "points": [
+        "Payments must be made through authorized payment methods available on the Platform",
+        "FirgoMart does not store debit or credit card details",
+        "All payments are processed via RBI-authorized third-party payment gateways"
+      ]
+    },
+    {
+      "title": "8. Shipping & Delivery",
+      "points": [
+        "Delivery timelines are estimates and may vary due to logistics or external factors",
+        "FirgoMart shall not be liable for delays beyond reasonable control",
+        "Risk of loss passes to the user upon delivery"
+      ]
+    },
+    {
+      "title": "9. Returns, Refunds & Cancellations",
+      "content": "Returns, refunds, and cancellations are governed by the Return, Refund & Cancellation Policy, which forms an integral part of these Terms."
+    },
+    {
+      "title": "10. Marketplace Disclaimer (If Applicable)",
+      "points": [
+        "FirgoMart may act as a marketplace connecting buyers and third-party sellers",
+        "FirgoMart does not manufacture or own seller-listed products",
+        "Seller is solely responsible for product quality, warranties, and compliance"
+      ]
+    },
+    {
+      "title": "11. Intellectual Property Rights",
+      "content": "All content on the Platform, including logos, text, images, and software, is the property of FirgoMart. Unauthorized use, copying, or distribution is strictly prohibited."
+    },
+    {
+      "title": "12. User Content",
+      "points": [
+        "Any reviews, feedback, or content submitted by users may be used by FirgoMart for marketing or operational purposes",
+        "You grant FirgoMart a non-exclusive, royalty-free, perpetual license to use such content"
+      ]
+    },
+    {
+      "title": "13. Third-Party Links",
+      "content": "The Platform may contain links to third-party websites. FirgoMart is not responsible for their content or practices."
+    },
+    {
+      "title": "14. Limitation of Liability",
+      "points": [
+        "FirgoMart shall not be liable for indirect, incidental, or consequential damages",
+        "Liability, if any, shall be limited to the value of the order in question"
+      ]
+    },
+    {
+      "title": "15. Indemnification",
+      "points": [
+        "Your misuse of the Platform",
+        "Violation of these Terms",
+        "Infringement of third-party rights"
+      ]
+    },
+    {
+      "title": "16. Force Majeure",
+      "content": "FirgoMart shall not be liable for failure or delay in performance due to events beyond reasonable control, including natural disasters, technical failures, strikes, or governmental actions."
+    },
+    {
+      "title": "17. Suspension & Termination",
+      "points": [
+        "Suspend or terminate access without prior notice for violation of these Terms",
+        "Remove or disable content that violates applicable laws or policies"
+      ]
+    },
+    {
+      "title": "18. Severability",
+      "content": "If any provision of these Terms is held invalid or unenforceable, the remaining provisions shall continue in full force."
+    },
+    {
+      "title": "19. Waiver",
+      "content": "Failure by FirgoMart to enforce any provision shall not constitute a waiver of such provision."
+    },
+    {
+      "title": "20. Communication Address & Grievance Redressal",
+      "content": "In accordance with the Information Technology Act, 2000 and applicable rules, users may contact us at: Company Name: FirgoMart, Email: support@firgomart.com, Communication Address: Plot No. 678, 1st Floor, Majherpara, P.O. Hatiara, P.S. Newtown, Near Chota Masjid, Baguiati, Kolkata, West Bengal – 700157, India."
+    },
+    {
+      "title": "21. Amendments",
+      "content": "FirgoMart reserves the right to modify these Terms at any time. Updated Terms will be effective upon posting on the Platform."
+    },
+    {
+      "title": "22. Governing Law & Jurisdiction",
+      "content": "These Terms shall be governed by and construed in accordance with the laws of India. All disputes shall be subject to the exclusive jurisdiction of competent courts in India."
     }
   ],
   "cookiesPolicy": [
     {
       "title": "Cookie Policy – FirgoMart",
       "effectiveDate": "26 July 2025",
-      "intro": "This Cookie Policy explains how FirgoMart uses cookies and similar tracking technologies on its website and mobile application. By continuing to use the Platform, you consent to the use of cookies in accordance with this Policy."
+      "intro": "This Cookie Policy explains how FirgoMart (\"FirgoMart\", \"we\", \"our\", or \"us\") uses cookies and similar tracking technologies on the FirgoMart website and mobile application (collectively, the \"Platform\"). This Policy should be read together with our Privacy Policy and Terms and Conditions. By continuing to use the Platform, you consent to the use of cookies in accordance with this Cookie Policy."
     },
     {
       "title": "1. What Are Cookies",
-      "content": "Cookies are small text files stored on your device (computer, mobile phone, or tablet) when you visit a website or use an application. They help recognize your device, remember preferences, and improve user experience."
+      "content": "Cookies are small text files that are stored on your device (computer, mobile phone, or tablet) when you visit a website or use an application. Cookies help the Platform recognize your device, remember preferences, and improve user experience."
     },
     {
       "title": "2. Types of Cookies We Use",
       "subSections": [
         {
           "title": "2.1 Essential Cookies",
+          "content": "These cookies are mandatory for the Platform to function properly. They enable:",
           "points": [
-            "Enable user login and authentication",
-            "Support cart and checkout functionality",
-            "Ensure security and fraud prevention",
-            "Mandatory for Platform operation"
+            "User login and authentication",
+            "Cart and checkout functionality",
+            "Security and fraud prevention",
+            "Without these cookies, the Platform may not function correctly"
           ]
         },
         {
           "title": "2.2 Performance & Analytics Cookies",
+          "content": "These cookies help us understand how users interact with the Platform by collecting information such as:",
           "points": [
-            "Track pages visited and time spent",
-            "Collect error reports and performance data",
-            "Data is aggregated and anonymized",
-            "Used to improve Platform performance"
+            "Pages visited",
+            "Time spent on pages",
+            "Error reports and performance data",
+            "Data is aggregated and anonymized and used to improve Platform performance"
           ]
         },
         {
           "title": "2.3 Functional Cookies",
+          "content": "These cookies allow the Platform to remember:",
           "points": [
-            "Remember language preferences",
-            "Store location settings",
-            "Save login details where applicable",
-            "Enhance personalization and convenience"
+            "Language preferences",
+            "Location settings",
+            "Saved login details (where applicable)",
+            "They enhance user convenience and personalization"
           ]
         },
         {
           "title": "2.4 Advertising & Marketing Cookies",
+          "content": "These cookies may be used to:",
           "points": [
             "Display relevant advertisements",
-            "Measure marketing campaign effectiveness",
-            "Prevent repetitive advertisements",
-            "May be placed by third-party advertising partners"
+            "Measure the effectiveness of marketing campaigns",
+            "Prevent repetitive ads",
+            "Third-party advertising partners may place their own cookies subject to their privacy policies"
           ]
         }
       ]
     },
     {
       "title": "3. Third-Party Cookies",
-      "content": "Some cookies may be placed by third-party service providers such as analytics providers, advertising networks, and payment or security partners. FirgoMart does not control these cookies, and their use is governed by the respective third-party privacy policies."
+      "content": "Some cookies may be placed by third-party service providers, including analytics providers, advertising networks, and payment or security service providers. FirgoMart does not control third-party cookies, and their use is governed by the respective third-party privacy policies."
     },
     {
       "title": "4. How We Use Cookie Data",
@@ -201,29 +318,29 @@
       "points": [
         "Through browser settings",
         "Through mobile device settings",
-        "Via cookie preference tools on the Platform (if enabled)",
-        "Disabling cookies may affect Platform functionality"
+        "Via cookie preference tools available on the Platform (if enabled)",
+        "Disabling cookies may affect certain features and functionalities of the Platform"
       ]
     },
     {
       "title": "6. Mobile Application Tracking",
-      "content": "In mobile applications, FirgoMart may use SDKs, device identifiers, and app analytics tools. These technologies function similarly to cookies and help improve app performance and user experience."
+      "content": "In mobile applications, FirgoMart may use Software Development Kits (SDKs), device identifiers, and app analytics tools. These technologies function similarly to cookies and help improve app performance and user experience."
     },
     {
       "title": "7. Data Protection and Security",
-      "content": "All information collected through cookies is handled in accordance with FirgoMart’s Privacy Policy. Reasonable security measures are implemented to protect cookie-related data."
+      "content": "All information collected through cookies is handled in accordance with FirgoMart’s Privacy Policy. FirgoMart implements reasonable security measures to protect cookie-related data."
     },
     {
       "title": "8. Changes to This Cookie Policy",
-      "content": "FirgoMart reserves the right to update or modify this Cookie Policy at any time. Any changes will be effective immediately upon publication on the Platform."
+      "content": "FirgoMart reserves the right to update or modify this Cookie Policy at any time. Any changes will be effective upon posting on the Platform."
     },
     {
       "title": "9. Contact Information",
-      "content": "For questions regarding this Cookie Policy, please contact FirgoMart 24Logistics Private Limited at support@firgomart.com."
+      "content": "If you have any questions regarding this Cookie Policy, you may contact us at: Company Name: FirgoMart 24Logistics Private Limited, Email: support@firgomart.com."
     },
     {
       "title": "10. Governing Law and Jurisdiction",
-      "content": "This Cookie Policy shall be governed by and construed in accordance with the laws of India. All disputes shall be subject to the exclusive jurisdiction of competent courts in India."
+      "content": "This Cookie Policy shall be governed by and construed in accordance with the laws of India. Any disputes shall be subject to the exclusive jurisdiction of competent courts in India."
     }
   ],
   "disclaimer": [
