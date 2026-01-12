@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext'
 const SellerLogin: React.FC = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const next = searchParams.get('next') || '/seller/profile'
+  const next = searchParams.get('next') || '/seller'
   const { login } = useAuth()
 
   const [mobile, setMobile] = useState('')
@@ -70,10 +70,22 @@ const SellerLogin: React.FC = () => {
         setError(data?.error || 'Verification failed')
         setLoading(false)
       } else {
-        // Instead of logging in immediately, show consent popup
-        setPendingSeller(data.seller)
+        const s = data.seller as { id?: string | number; email?: string; name?: string }
+        let details: unknown = null
+        try {
+          const res2 = await fetch(`/api/seller/me?email=${encodeURIComponent(String(s?.email || `${mobile}@seller.local`))}`)
+          const data2 = await res2.json()
+          if (res2.ok) details = data2?.seller || null
+        } catch {}
+        await login({
+          id: s?.id || Date.now(),
+          email: s?.email || `${mobile}@seller.local`,
+          name: s?.name || 'Seller',
+          role: 'seller',
+          sellerDetails: details || undefined,
+        })
+        router.replace('/seller')
         setLoading(false)
-        setShowConsent(true)
       }
     } catch {
       setError('Network error')
@@ -87,11 +99,18 @@ const SellerLogin: React.FC = () => {
     setLoading(true)
     try {
       const s = pendingSeller
+      let details: unknown = null
+      try {
+        const res = await fetch(`/api/seller/me?email=${encodeURIComponent(String(s?.email || `${mobile}@seller.local`))}`)
+        const data = await res.json()
+        if (res.ok) details = data?.seller || null
+      } catch {}
       const user: Parameters<typeof login>[0] = {
         id: s?.id || Date.now(),
         email: s?.email || `${mobile}@seller.local`,
         name: s?.name || 'Seller',
         role: 'seller',
+        sellerDetails: details || undefined,
       }
       await login(user)
       router.push(next)

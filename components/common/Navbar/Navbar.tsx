@@ -24,6 +24,24 @@ const LoginModal = dynamic(() => import("@/components/auth/LoginModal/LoginModal
 const RegisterModal = dynamic(() => import("@/components/auth/RegisterModal/RegisterModal"))
 const ForgotPasswordModal = dynamic(() => import("@/components/auth/ForgotPasswordModal/ForgotPasswordModal"))
 
+type SellerInfo = {
+  id: string
+  businessName: string
+  ownerName: string
+  email: string
+  phone: string
+  address?: string
+  city?: string
+  state?: string
+  district?: string
+  pincode?: string
+  gstNumber?: string
+  panNumber?: string
+  hasGST?: boolean
+  businessLogoUrl?: string
+  status?: string
+}
+
 const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -31,12 +49,24 @@ const Navbar: React.FC = () => {
   const [showRegisterModal, setShowRegisterModal] = useState(false)
   const [showForgotModal, setShowForgotModal] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
-  const [theme, setTheme] = useState<"light" | "dark">("light")
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    try {
+      const saved = typeof window !== "undefined" ? (localStorage.getItem("theme") as "light" | "dark" | null) : null
+      const systemDark =
+        typeof window !== "undefined"
+          ? window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+          : false
+      return saved || (systemDark ? "dark" : "light")
+    } catch {
+      return "light"
+    }
+  })
 
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const { cartItems, setShowCart } = useCart()
   const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
+  const sellerInfo = (user?.sellerDetails || null) as SellerInfo | null
 
   const getInitials = (n?: string | null, e?: string | null) => {
     const name = String(n || "").trim()
@@ -56,24 +86,10 @@ const Navbar: React.FC = () => {
   const initials = getInitials(user?.name, user?.email)
 
   useEffect(() => {
-    if (isAuthenticated) {
-      setShowLoginModal(false)
-      setShowRegisterModal(false)
-      setShowForgotModal(false)
+    if (typeof document !== "undefined") {
+      document.documentElement.setAttribute("data-theme", theme)
     }
-  }, [isAuthenticated])
-
-  useEffect(() => {
-    try {
-      const saved = typeof window !== "undefined" ? localStorage.getItem("theme") as "light" | "dark" | null : null
-      const systemDark = typeof window !== "undefined" ? window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches : false
-      const nextTheme: "light" | "dark" = saved || (systemDark ? "dark" : "light")
-      setTheme(nextTheme)
-      if (typeof document !== "undefined") {
-        document.documentElement.setAttribute("data-theme", nextTheme)
-      }
-    } catch {}
-  }, [])
+  }, [theme])
 
   const toggleTheme = () => {
     const nextTheme: "light" | "dark" = theme === "light" ? "dark" : "light"
@@ -106,6 +122,8 @@ const Navbar: React.FC = () => {
     logout()
     setShowUserMenu(false)
   }
+
+  // Seller details now come from user.sellerDetails populated during seller login
 
   return (
     <nav className="sticky top-0 z-50 bg-[var(--background)] text-[var(--foreground)] shadow-md">
@@ -142,45 +160,166 @@ const Navbar: React.FC = () => {
             </Link>
 
             {isAuthenticated ? (
-              <div className="relative">
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
-                >
-                  <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
-                    <span className="text-base font-black text-red-700 leading-none">{initials}</span>
-                  </div>
-                  <span className="font-medium">{user?.name?.split(" ")[0] || user?.email}</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
+              user?.role === "seller" ? (
+                <div className="relative flex items-center space-x-3">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
+                  >
+                    {sellerInfo?.businessLogoUrl ? (
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[var(--foreground)/20]">
+                        <Image
+                          src={sellerInfo.businessLogoUrl}
+                          alt={sellerInfo.businessName || "Seller"}
+                          fill
+                          sizes="32px"
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
+                        <span className="text-base font-black text-red-700 leading-none">
+                          {getInitials(sellerInfo?.businessName || user?.name, user?.email)}
+                        </span>
+                      </div>
+                    )}
+                    <span className="font-medium truncate max-w-[10rem]">
+                      {sellerInfo?.businessName || user?.name || user?.email}
+                    </span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
 
-                <AnimatePresence>
-                  {showUserMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-[var(--background)] text-[var(--foreground)] rounded-lg shadow-lg py-2 z-50"
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-2 w-[22rem] bg-[var(--background)] text-[var(--foreground)] rounded-lg shadow-lg py-2 z-50 border border-[var(--foreground)/10]"
+                      >
+                        <div className="px-4 py-3">
+                          <div className="font-semibold mb-2">Seller Details</div>
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <div className="text-[var(--foreground)/60]">Business Name</div>
+                              <div className="font-medium break-words">{sellerInfo?.businessName || "—"}</div>
+                            </div>
+                            <div>
+                              <div className="text-[var(--foreground)/60]">Owner Name</div>
+                              <div className="font-medium">{sellerInfo?.ownerName || "—"}</div>
+                            </div>
+                            <div>
+                              <div className="text-[var(--foreground)/60]">Email</div>
+                              <div className="font-medium break-words">{sellerInfo?.email || user?.email || "—"}</div>
+                            </div>
+                            <div>
+                              <div className="text-[var(--foreground)/60]">Phone</div>
+                              <div className="font-medium">{sellerInfo?.phone || "—"}</div>
+                            </div>
+                            <div>
+                              <div className="text-[var(--foreground)/60]">GST Number</div>
+                              <div className="font-medium">{sellerInfo?.gstNumber || "—"}</div>
+                            </div>
+                            <div>
+                              <div className="text-[var(--foreground)/60]">PAN Number</div>
+                              <div className="font-medium">{sellerInfo?.panNumber || "—"}</div>
+                            </div>
+                            <div className="col-span-2">
+                              <div className="text-[var(--foreground)/60]">Address</div>
+                              <div className="font-medium break-words">
+                                {[
+                                  sellerInfo?.address,
+                                  sellerInfo?.city,
+                                  sellerInfo?.state,
+                                  sellerInfo?.pincode,
+                                ]
+                                  .filter(Boolean)
+                                  .join(", ") || "—"}
+                              </div>
+                            </div>
+                            <div>
+                              <div className="text-[var(--foreground)/60]">Status</div>
+                              <div className="font-medium">{sellerInfo?.status || "—"}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="px-4 pt-2 border-t border-[var(--foreground)/10]">
+                          <Link
+                            href="/seller/profile"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors rounded-lg"
+                          >
+                            <User className="w-4 h-4" />
+                            <span>Seller Profile</span>
+                          </Link>
+                          <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors rounded-lg"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span>Logout</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setShowLoginModal(true)}
+                      className="px-3 py-2 text-brand-purple hover:bg-gray-100 rounded-lg font-medium transition-colors"
                     >
-                      <Link
-                        href="/profile"
-                        onClick={() => setShowUserMenu(false)}
-                        className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors"
+                      Login
+                    </button>
+                    <button
+                      onClick={() => setShowRegisterModal(true)}
+                      className="px-3 py-2 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all"
+                    >
+                      Register
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
+                      <span className="text-base font-black text-red-700 leading-none">{initials}</span>
+                    </div>
+                    <span className="font-medium">{user?.name?.split(" ")[0] || user?.email}</span>
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="absolute right-0 mt-2 w-48 bg-[var(--background)] text-[var(--foreground)] rounded-lg shadow-lg py-2 z-50"
                       >
-                        <User className="w-4 h-4" />
-                        <span>My Profile</span>
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span>Logout</span>
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                        <Link
+                          href="/profile"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors"
+                        >
+                          <User className="w-4 h-4" />
+                          <span>My Profile</span>
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span>Logout</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              )
             ) : (
               <div className="flex items-center space-x-2">
                 <button
@@ -261,33 +400,33 @@ const Navbar: React.FC = () => {
                 </div>
               )}
               {isAuthenticated && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between px-4 py-3 bg-[var(--foreground)/5] rounded-lg">
-                  <div className="flex items-center space-x-2">
-                      <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
-                        <span className="text-base font-black text-red-700 leading-none">{initials}</span>
-                      </div>
-                      <span className="font-medium truncate max-w-[10rem]">
-                        {user?.name?.split(" ")[0] || user?.email}
-                      </span>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-4 py-3 bg-[var(--foreground)/5] rounded-lg">
+                <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
+                      <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                     </div>
-                    <button
-                      onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
-                      className="flex items-center space-x-2 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      <span>Logout</span>
-                    </button>
+                    <span className="font-medium truncate max-w-[10rem]">
+                      {user?.name?.split(" ")[0] || user?.email}
+                    </span>
                   </div>
-                  <Link
-                    href="/profile"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center space-x-2 px-4 py-3 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
+                  <button
+                    onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
+                    className="flex items-center space-x-2 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
                   >
-                    <User className="w-5 h-5" />
-                    <span className="font-medium">My Profile</span>
-                  </Link>
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
                 </div>
+                <Link
+                  href="/profile"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-4 py-3 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
+                >
+                  <User className="w-5 h-5" />
+                  <span className="font-medium">My Profile</span>
+                </Link>
+              </div>
               )}
               <Link
                 href="/seller-registration"
@@ -297,6 +436,22 @@ const Navbar: React.FC = () => {
                 <Store className="w-5 h-5" />
                 <span className="font-medium">Sell on Firgomart</span>
               </Link>
+              {(isAuthenticated && user?.role === "seller") && (
+                <div className="grid grid-cols-2 gap-3 mt-3">
+                  <button
+                    onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false) }}
+                    className="px-4 py-3 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg font-medium transition-colors"
+                  >
+                    Login
+                  </button>
+                  <button
+                    onClick={() => { setShowRegisterModal(true); setMobileMenuOpen(false) }}
+                    className="px-4 py-3 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all"
+                  >
+                    Register
+                  </button>
+                </div>
+              )}
               <button
                 onClick={() => {
                   setShowCart(true)
@@ -320,18 +475,18 @@ const Navbar: React.FC = () => {
         )}
       </AnimatePresence>
       <LoginModal
-        isOpen={showLoginModal}
+        isOpen={showLoginModal && !isAuthenticated}
         onClose={() => setShowLoginModal(false)}
         onSwitchToRegister={handleSwitchToRegister}
         onSwitchToForgot={handleSwitchToForgot}
       />
       <RegisterModal
-        isOpen={showRegisterModal}
+        isOpen={showRegisterModal && !isAuthenticated}
         onClose={() => setShowRegisterModal(false)}
         onSwitchToLogin={handleSwitchToLogin}
       />
       <ForgotPasswordModal
-        isOpen={showForgotModal}
+        isOpen={showForgotModal && !isAuthenticated}
         onClose={() => setShowForgotModal(false)}
         onSwitchToLogin={handleSwitchToLogin}
       />

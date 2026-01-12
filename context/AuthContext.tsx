@@ -4,10 +4,30 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { useRouter } from "next/navigation"
 import { useSession, signIn, signOut } from "next-auth/react"
 
+interface SellerDetails {
+  id: string
+  businessName: string
+  ownerName: string
+  email: string
+  phone: string
+  address?: string
+  city?: string
+  state?: string
+  district?: string
+  pincode?: string
+  gstNumber?: string
+  panNumber?: string
+  hasGST?: boolean
+  businessLogoUrl?: string
+  status?: string
+}
+
 interface User {
   id?: string
   email: string
   name?: string
+  role?: string
+  phone?: string
   mobile?: string
   dateOfBirth?: string
   gender?: string
@@ -15,6 +35,7 @@ interface User {
   city?: string
   state?: string
   pincode?: string
+  sellerDetails?: SellerDetails
 }
 
 interface AuthContextType {

@@ -13,7 +13,12 @@ type Product = {
   category?: string
   price: number
   stock?: number
+  discount?: number
+  status?: string
 }
+
+type OrderItem = { name?: string; quantity?: number; price?: number }
+type OrderRow = { id: string; orderNumber: string; amount: number; status: string; items?: OrderItem[] }
 
 type SellerInfo = {
   id: string
@@ -42,9 +47,10 @@ export default function SellerProfilePage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<{ id: number; label: string } | null>(null)
   const [myProducts, setMyProducts] = useState<Product[]>([])
-  const [myOrders, setMyOrders] = useState<any[]>([])
+  const [myOrders, setMyOrders] = useState<OrderRow[]>([])
   const [sellerInfo, setSellerInfo] = useState<SellerInfo | null>(null)
   const [sellerInfoError, setSellerInfoError] = useState<string | null>(null)
+  const [savingSeller, setSavingSeller] = useState(false)
 
   useEffect(() => {
     const load = async () => {
@@ -131,28 +137,111 @@ export default function SellerProfilePage() {
           <h2 className="text-xl font-heading font-bold text-gray-900 mb-4">Registration Details</h2>
           {sellerInfoError && <p className="text-sm text-red-600 mb-2">{sellerInfoError}</p>}
           {sellerInfo ? (
-            <div className="grid md:grid-cols-2 gap-4">
+            <form
+              onSubmit={async e => {
+                e.preventDefault()
+                if (!sellerInfo || !email) return
+                const approved = String(sellerInfo.status || "").toLowerCase() === "approved"
+                if (approved) return
+                setSavingSeller(true)
+                const fd = new FormData(e.currentTarget as HTMLFormElement)
+                const payload: Partial<SellerInfo> & { email: string } = {
+                  email,
+                  businessName: String(fd.get("businessName") || sellerInfo.businessName || ""),
+                  ownerName: String(fd.get("ownerName") || sellerInfo.ownerName || ""),
+                  phone: String(fd.get("phone") || sellerInfo.phone || ""),
+                  address: String(fd.get("address") || sellerInfo.address || ""),
+                  city: String(fd.get("city") || sellerInfo.city || ""),
+                  state: String(fd.get("state") || sellerInfo.state || ""),
+                  pincode: String(fd.get("pincode") || sellerInfo.pincode || ""),
+                  gstNumber: String(fd.get("gstNumber") || sellerInfo.gstNumber || ""),
+                  panNumber: String(fd.get("panNumber") || sellerInfo.panNumber || ""),
+                }
+                try {
+                  const res = await fetch("/api/seller/me", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                  })
+                  const data = await res.json()
+                  if (res.ok) setSellerInfo(data.seller || sellerInfo)
+                } catch {}
+                setSavingSeller(false)
+              }}
+              className="grid md:grid-cols-2 gap-4"
+            >
               <div className="border rounded-lg p-4">
-                <p className="text-sm text-gray-500">Business Name</p>
-                <p className="font-medium">{sellerInfo.businessName}</p>
+                <label className="block text-sm text-gray-500 mb-1">Business Name</label>
+                <input
+                  name="businessName"
+                  defaultValue={sellerInfo.businessName}
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved"}
+                  className="w-full px-3 py-2 border rounded bg-white"
+                />
               </div>
               <div className="border rounded-lg p-4">
-                <p className="text-sm text-gray-500">Owner Name</p>
-                <p className="font-medium">{sellerInfo.ownerName}</p>
+                <label className="block text-sm text-gray-500 mb-1">Owner Name</label>
+                <input
+                  name="ownerName"
+                  defaultValue={sellerInfo.ownerName}
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved"}
+                  className="w-full px-3 py-2 border rounded bg-white"
+                />
               </div>
               <div className="border rounded-lg p-4">
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium">{sellerInfo.phone}</p>
+                <label className="block text-sm text-gray-500 mb-1">Phone</label>
+                <input
+                  name="phone"
+                  defaultValue={sellerInfo.phone}
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved"}
+                  className="w-full px-3 py-2 border rounded bg-white"
+                />
               </div>
               <div className="border rounded-lg p-4">
-                <p className="text-sm text-gray-500">GST Number</p>
-                <p className="font-medium">{sellerInfo.gstNumber || "—"}</p>
+                <label className="block text-sm text-gray-500 mb-1">GST Number</label>
+                <input
+                  name="gstNumber"
+                  defaultValue={sellerInfo.gstNumber || ""}
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved"}
+                  className="w-full px-3 py-2 border rounded bg-white"
+                />
+              </div>
+              <div className="border rounded-lg p-4">
+                <label className="block text-sm text-gray-500 mb-1">PAN Number</label>
+                <input
+                  name="panNumber"
+                  defaultValue={sellerInfo.panNumber || ""}
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved"}
+                  className="w-full px-3 py-2 border rounded bg-white"
+                />
               </div>
               <div className="border rounded-lg p-4 md:col-span-2">
-                <p className="text-sm text-gray-500">Address</p>
-                <p className="font-medium">{[sellerInfo.address, sellerInfo.city, sellerInfo.state, sellerInfo.pincode].filter(Boolean).join(", ") || "—"}</p>
+                <label className="block text-sm text-gray-500 mb-1">Address</label>
+                <input
+                  name="address"
+                  defaultValue={sellerInfo.address || ""}
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved"}
+                  className="w-full px-3 py-2 border rounded bg-white mb-2"
+                />
+                <div className="grid grid-cols-3 gap-2">
+                  <input name="city" defaultValue={sellerInfo.city || ""} disabled={String(sellerInfo.status || "").toLowerCase() === "approved"} className="px-3 py-2 border rounded bg-white" placeholder="City" />
+                  <input name="state" defaultValue={sellerInfo.state || ""} disabled={String(sellerInfo.status || "").toLowerCase() === "approved"} className="px-3 py-2 border rounded bg-white" placeholder="State" />
+                  <input name="pincode" defaultValue={sellerInfo.pincode || ""} disabled={String(sellerInfo.status || "").toLowerCase() === "approved"} className="px-3 py-2 border rounded bg-white" placeholder="Pincode" />
+                </div>
               </div>
-            </div>
+              <div className="md:col-span-2 flex items-center justify-end">
+                <button
+                  type="submit"
+                  disabled={String(sellerInfo.status || "").toLowerCase() === "approved" || savingSeller}
+                  className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+                >
+                  {savingSeller ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+              {String(sellerInfo.status || "").toLowerCase() === "approved" && (
+                <p className="text-sm text-gray-600 md:col-span-2">Verified seller details cannot be edited.</p>
+              )}
+            </form>
           ) : (
             <p className="text-sm text-gray-500">No registration details found.</p>
           )}
@@ -173,7 +262,7 @@ export default function SellerProfilePage() {
               const price = Number(fd.get("price") || 0)
               const sellerEmail = email || String(fd.get("sellerEmail") || "")
               const files = (fd.getAll("images") || []).filter(Boolean) as File[]
-              let base64: string[] = []
+              const base64: string[] = []
               for (const file of files) {
                 const data = await new Promise<string>((resolve) => { const r = new FileReader(); r.onload = () => resolve(String(r.result)); r.readAsDataURL(file) })
                 base64.push(data)
@@ -185,7 +274,7 @@ export default function SellerProfilePage() {
                   const upJson = await up.json()
                   if (up.ok && Array.isArray(upJson.urls)) uploaded = upJson.urls
                 }
-                const payload: any = { name, category, price, sellerEmail, images: uploaded }
+                const payload = { name, category, price, sellerEmail, images: uploaded }
                 const res = await fetch("/api/seller/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
                 const data = await res.json()
                 if (!res.ok) setError(data?.error || "Failed to create product")
@@ -205,7 +294,7 @@ export default function SellerProfilePage() {
                 placeholder="Select category"
                 options={categoryList.map(c => ({ id: c.id, label: c.name }))}
                 selected={selectedCategory}
-                onChange={(sel) => setSelectedCategory(sel as any)}
+                onChange={(sel) => setSelectedCategory(sel as { id: number; label: string } | null)}
                 className="w-full"
               />
               <input name="price" type="number" step="0.01" placeholder="Price" className="px-3 py-2 border rounded" required />
@@ -238,7 +327,25 @@ export default function SellerProfilePage() {
                   </div>
                   <div>
                     <p className="font-medium">{p.name}</p>
-                    <p className="text-sm text-gray-600">{p.category} • ₹{p.price}</p>
+                    <div className="text-sm text-gray-600">
+                      {p.category} • ₹
+                      <input
+                        type="number"
+                        defaultValue={p.price}
+                        className="w-24 px-2 py-1 border rounded text-sm ml-1"
+                        onBlur={async (e) => {
+                          const val = Number(e.currentTarget.value)
+                          if (!Number.isFinite(val) || val < 0) return
+                          try {
+                            await fetch(`/api/seller/products`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: p._id, price: val, sellerEmail: email }),
+                            })
+                          } catch {}
+                        }}
+                      />
+                    </div>
                     <div className="mt-1 flex items-center gap-2">
                       <span className="text-xs text-gray-500">Stock:</span>
                       <input
@@ -257,6 +364,41 @@ export default function SellerProfilePage() {
                           } catch {}
                         }}
                       />
+                      <span className="text-xs text-gray-500 ml-3">Discount %:</span>
+                      <input
+                        type="number"
+                        defaultValue={p.discount ?? 0}
+                        className="w-20 px-2 py-1 border rounded text-sm"
+                        onBlur={async (e) => {
+                          const val = Number(e.currentTarget.value)
+                          if (!Number.isFinite(val) || val < 0) return
+                          try {
+                            await fetch(`/api/seller/products`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: p._id, discount: val, sellerEmail: email }),
+                            })
+                          } catch {}
+                        }}
+                      />
+                      <select
+                        defaultValue={p.status || "active"}
+                        className="ml-3 px-2 py-1 border rounded text-sm"
+                        onChange={async (e) => {
+                          const val = e.currentTarget.value
+                          try {
+                            await fetch(`/api/seller/products`, {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ id: p._id, status: val, sellerEmail: email }),
+                            })
+                          } catch {}
+                        }}
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="draft">Draft</option>
+                      </select>
                     </div>
                   </div>
                 </div>
@@ -264,6 +406,9 @@ export default function SellerProfilePage() {
               </div>
             ))}
             {myProducts.length === 0 && <p className="text-sm text-gray-500">No products yet</p>}
+          </div>
+          <div className="mt-4">
+            <a href="/seller/inventory" className="text-blue-600 hover:underline">Go to Inventory Management</a>
           </div>
         </div>
 
@@ -278,7 +423,7 @@ export default function SellerProfilePage() {
                 </div>
                 <div className="mt-2 text-sm text-gray-700">Items:</div>
                 <ul className="mt-1 text-sm text-gray-600 list-disc list-inside">
-                  {(o.items || []).map((it: any, idx: number) => (
+                  {(o.items || []).map((it: OrderItem, idx: number) => (
                     <li key={idx}>{it.name} × {it.quantity} (₹{it.price})</li>
                   ))}
                 </ul>
