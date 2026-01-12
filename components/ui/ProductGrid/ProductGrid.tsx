@@ -4,7 +4,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Eye, X } from 'lucide-react'
-import FallbackImage from '@/components/common/Image/FallbackImage'
+import ProductImageSlider from '@/components/common/ProductImageSlider/ProductImageSlider'
+// import FallbackImage from '@/components/common/Image/FallbackImage'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
 
@@ -232,7 +233,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   return (
     <section className="py-8 bg-[var(--background)]">
       <div className="max-w-7xl mx-auto px-4">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3">
           <h2 className="text-xl sm:text-2xl font-heading font-bold text-[var(--foreground)]">FirgoMart Products</h2>
           <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
@@ -312,20 +312,30 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                   className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-gray-100 group cursor-pointer"
                   onClick={() => onProductClick(product)}
                 >
-                  <div className="absolute inset-0 flex overflow-x-auto snap-x snap-mandatory scrollbar-hide no-scrollbar">
-                    {(product.images && product.images.length > 0 ? product.images : [product.image]).map((img, i) => (
-                        <div key={i} className="min-w-full h-full relative snap-center">
-                            <FallbackImage
-                                src={sanitizeImageUrl(img)}
-                                alt={`${product.name} ${i + 1}`}
-                                fill
-                                sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                                className="object-cover"
-                            />
-                        </div>
-                    ))}
-                  </div>
+                  <div
+                      className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-gray-100 group cursor-pointer"
+                      onClick={() => onProductClick(product)}
+                    >
+                    <ProductImageSlider
+                    images={
+                      product.images && product.images.length > 0
+                        ? product.images.map(sanitizeImageUrl)
+                        : [sanitizeImageUrl(product.image)]
+                    }
+                    name={product.name}
+                    interval={1800}
+                  />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                    <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
+
+                  {product.discount && (
+                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
+                      {product.discount}% OFF
+                    </span>
+                  )}
+                </div>      
+                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                     <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   {product.discount && (
