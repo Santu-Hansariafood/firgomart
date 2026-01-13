@@ -279,7 +279,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         )}
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 md:gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 md:gap-4 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm border border-[var(--foreground)/10]">
                 <div className="aspect-square bg-[var(--foreground)/10] animate-pulse" />
@@ -299,7 +299,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 md:gap-4 lg:gap-6"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 md:gap-4 lg:gap-6"
           >
             {displayedProducts.map((product) => (
               <motion.div
