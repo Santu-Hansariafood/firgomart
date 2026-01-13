@@ -38,6 +38,11 @@ type Seller = {
   rejectionReason?: string
   reviewedBy?: string
   reviewedAt?: string
+  bankAccount?: string
+  bankIfsc?: string
+  bankName?: string
+  bankBranch?: string
+  bankDocumentUrl?: string
 }
 
 type DropdownItem = { id: string | number; label: string }
@@ -366,6 +371,22 @@ export default function Page() {
                   <div className="text-sm text-gray-500">Address</div>
                   <div className="font-medium">{selectedSeller.address} {selectedSeller.city} {selectedSeller.state} {selectedSeller.pincode}</div>
                 </div>
+                <div className="md:col-span-2">
+                  <div className="text-sm text-gray-500">Bank Details</div>
+                  <div className="font-medium">
+                    {(selectedSeller.bankName || "-")} • {(selectedSeller.bankBranch || "-")}
+                    <br />
+                    A/C: {(selectedSeller.bankAccount || "-")} • IFSC: {(selectedSeller.bankIfsc || "-")}
+                  </div>
+                </div>
+                {selectedSeller.bankDocumentUrl && (
+                  <div className="md:col-span-2">
+                    <div className="text-sm text-gray-500">Bank Document</div>
+                    <div className="relative w-full max-w-xs h-40">
+                      <Image src={selectedSeller.bankDocumentUrl} alt="Bank Document" fill sizes="320px" className="object-cover rounded border" unoptimized />
+                    </div>
+                  </div>
+                )}
                 <div>
                   <div className="text-sm text-gray-500">GST</div>
                   <div className="font-medium">{selectedSeller.gstNumber || "-"}</div>

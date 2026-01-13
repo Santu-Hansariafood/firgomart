@@ -6,6 +6,8 @@ import { Store, Upload, CheckCircle } from 'lucide-react'
 import { fadeInUp } from '@/utils/animations/animations'
 import Link from 'next/link'
 import locationData from '@/data/country.json'
+import dynamic from 'next/dynamic'
+const ImageCropper = dynamic(() => import('@/components/common/ImageCropper/ImageCropper'))
 
 interface SellerFormData {
   businessName: string
@@ -24,6 +26,12 @@ interface SellerFormData {
   hasGST: boolean
   businessLogo: File | null
   businessLogoUrl?: string
+  bankAccount?: string
+  bankIfsc?: string
+  bankName?: string
+  bankBranch?: string
+  bankDocumentImage?: string
+  bankDocumentUrl?: string
 }
 
 const SellerRegistration: React.FC = () => {
@@ -46,10 +54,20 @@ const SellerRegistration: React.FC = () => {
 
   const [states, setStates] = useState<string[]>([])
   const [districts, setDistricts] = useState<string[]>([])
-  const [submitted, setSubmitted] = useState<boolean>(false)
+  const [submitted, setSubmitted] = useState<boolean>(() => {
+    try {
+      return typeof window !== 'undefined' && localStorage.getItem('sellerRegSubmitted') === 'true'
+    } catch {
+      return false
+    }
+  })
   const [uploadingLogo, setUploadingLogo] = useState<boolean>(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [checking, setChecking] = useState<string | null>(null)
+  const [bankDocSrc, setBankDocSrc] = useState<string | null>(null)
+  const [croppingBankDoc, setCroppingBankDoc] = useState<boolean>(false)
+  const [showAgreementPopup, setShowAgreementPopup] = useState<boolean>(true)
+  const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false)
 
   const sortedCountries = [...locationData.countries]
     .map(c => c.country)
@@ -171,10 +189,27 @@ const SellerRegistration: React.FC = () => {
     }
   }
 
+  const handleBankDocSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const src = typeof reader.result === 'string' ? reader.result : ''
+      setBankDocSrc(src)
+      setCroppingBankDoc(true)
+    }
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (Object.keys(errors).length > 0) {
+      return
+    }
+    if (!agreedToTerms) {
+      setErrors(prev => ({ ...prev, agreement: 'Please agree to the terms and conditions' }))
+      setShowAgreementPopup(true)
       return
     }
 
@@ -186,19 +221,36 @@ const SellerRegistration: React.FC = () => {
       state: formData.state,
     }
 
-    if (payload.hasGST) {
-      payload.panNumber = ''
-      payload.aadhaar = ''
-    } else {
-      payload.gstNumber = ''
-    }
+  if (payload.hasGST) {
+    payload.panNumber = ''
+    payload.aadhaar = ''
+  } else {
+    payload.gstNumber = ''
+  }
+
+  if ((formData as any).bankDocumentImage) {
+    try {
+      const up = await fetch('/api/upload/image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: [(formData as any).bankDocumentImage] }),
+      })
+      const upJson = await up.json()
+      if (up.ok && Array.isArray(upJson.urls) && upJson.urls[0]) {
+        ;(payload as any).bankDocumentUrl = upJson.urls[0]
+      }
+    } catch {}
+  }
 
     const res = await fetch('/api/seller/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
-    if (res.ok) setSubmitted(true)
+    if (res.ok) {
+      setSubmitted(true)
+      try { localStorage.setItem('sellerRegSubmitted', 'true') } catch {}
+    }
   }
 
   if (submitted) {
@@ -214,7 +266,7 @@ const SellerRegistration: React.FC = () => {
             Registration Successful!
           </h2>
           <p className="mb-6 text-[var(--foreground)/70]">
-            Thank you for registering as a seller.
+            Thank you for registering as a seller. Please wait for admin verification. You can login to check your status after verification.
           </p>
           <button
             onClick={() => (window.location.href = '/')}
@@ -243,6 +295,40 @@ const SellerRegistration: React.FC = () => {
             </div>
             <p className="text-white/80">Grow your business with Firgomart</p>
           </div>
+          {showAgreementPopup && !submitted && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20]">
+                <h3 className="text-xl font-heading font-bold mb-4">Seller Agreement</h3>
+                <div className="space-y-3 mb-4 text-sm">
+                  <p>By continuing, you confirm that all details provided are accurate and may be used for verification.</p>
+                  <p>Your access will be enabled after admin verification is complete.</p>
+                </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <input
+                    id="agree"
+                    type="checkbox"
+                    checked={agreedToTerms}
+                    onChange={e => setAgreedToTerms(e.target.checked)}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="agree" className="text-sm">I have read and agree to the terms</label>
+                </div>
+                {errors.agreement && (
+                  <p className="text-red-500 text-xs mb-3">{errors.agreement}</p>
+                )}
+                <div className="flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAgreementPopup(false)}
+                    disabled={!agreedToTerms}
+                    className={`px-4 py-2 rounded-lg font-medium ${agreedToTerms ? 'bg-brand-purple text-white hover:bg-brand-purple/90' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
+                  >
+                    Continue
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             <div className="space-y-4">
               <h2 className="text-xl font-heading font-bold">
@@ -303,6 +389,27 @@ const SellerRegistration: React.FC = () => {
                   />
                   {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                   {checking === 'phone' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
+                </div>
+              </div>
+              <h2 className="text-xl font-heading font-bold">Bank Account Details</h2>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Account Number *</label>
+                  <input type="text" name="bankAccount" value={(formData as any).bankAccount ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
+                </div>
+                <div>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">IFSC *</label>
+                  <input type="text" name="bankIfsc" value={(formData as any).bankIfsc ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
+                </div>
+              </div>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Bank Name *</label>
+                  <input type="text" name="bankName" value={(formData as any).bankName ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
+                </div>
+                <div>
+                  <label className="block mb-1 text-[var(--foreground)/80] text-sm">Branch Name *</label>
+                  <input type="text" name="bankBranch" value={(formData as any).bankBranch ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
                 </div>
               </div>
               <div>
@@ -483,6 +590,21 @@ const SellerRegistration: React.FC = () => {
                 )}
               </div>
             </div>
+            <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
+              <h2 className="text-xl font-heading font-bold">Bank Document</h2>
+              <div className="border-2 border-dashed p-6 text-center rounded-lg border-[var(--foreground)/30]">
+                <Upload className="w-12 h-12 mx-auto text-[var(--foreground)/50] mb-2" />
+                <label className="cursor-pointer text-brand-purple font-medium">
+                  Upload Bank Document
+                  <input type="file" accept="image/*" onChange={handleBankDocSelect} className="hidden" />
+                </label>
+                {(formData as any).bankDocumentImage && (
+                  <div className="mt-3 flex justify-center">
+                    <img src={(formData as any).bankDocumentImage} alt="Bank Document" className="max-h-40 rounded border" />
+                  </div>
+                )}
+              </div>
+            </div>
             <button
               type="submit"
               className="w-full py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90"
@@ -498,6 +620,16 @@ const SellerRegistration: React.FC = () => {
               </p>
             </div>
           </form>
+          {croppingBankDoc && bankDocSrc && (
+            <ImageCropper
+              imageSrc={bankDocSrc}
+              onCropComplete={(img: string) => {
+                setFormData(prev => ({ ...prev, bankDocumentImage: img }))
+                setCroppingBankDoc(false)
+              }}
+              onCancel={() => setCroppingBankDoc(false)}
+            />
+          )}
         </motion.div>
       </div>
     </div>

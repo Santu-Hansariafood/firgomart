@@ -21,6 +21,8 @@ const SellerSchema = new Schema(
     bankAccount: { type: String },
     bankIfsc: { type: String },
     bankName: { type: String },
+    bankBranch: { type: String },
+    bankDocumentUrl: { type: String },
     status: { type: String, default: "pending" },
     reviewNotes: { type: String },
     rejectionReason: { type: String },

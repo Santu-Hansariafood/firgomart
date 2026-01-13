@@ -123,6 +123,11 @@ export async function GET(request: Request) {
       panNumber: s.panNumber,
       aadhaar: s.aadhaar,
       businessLogoUrl: s.businessLogoUrl,
+      bankAccount: s.bankAccount,
+      bankIfsc: s.bankIfsc,
+      bankName: s.bankName,
+      bankBranch: s.bankBranch,
+      bankDocumentUrl: s.bankDocumentUrl,
       createdAt: s.createdAt,
     }))
     return NextResponse.json({ sellers: safe, total })

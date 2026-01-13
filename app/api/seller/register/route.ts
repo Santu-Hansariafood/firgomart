@@ -31,6 +31,11 @@ export async function POST(request: Request) {
       businessLogoUrl,
       documentUrls,
       location,
+      bankAccount,
+      bankIfsc,
+      bankName,
+      bankBranch,
+      bankDocumentUrl,
     } = body || {}
 
     if (!businessName || !ownerName || !email || !phone) {
@@ -81,6 +86,11 @@ export async function POST(request: Request) {
       hasGST: !!hasGST,
       businessLogoUrl,
       documentUrls: Array.isArray(documentUrls) ? documentUrls : [],
+      bankAccount,
+      bankIfsc,
+      bankName,
+      bankBranch,
+      bankDocumentUrl,
       status: "pending",
     })
 
