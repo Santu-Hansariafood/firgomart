@@ -1,9 +1,11 @@
 function normalizeVersion(v?: string) {
   const s = String(v || "").trim()
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s
+  const allowed = new Set(["2023-08-01"])
+  if (allowed.has(s)) return s
   if (/^\d{2}-\d{2}-\d{4}$/.test(s)) {
     const [d, m, y] = s.split("-")
-    return `${y}-${m}-${d}`
+    const cand = `${y}-${m}-${d}`
+    if (allowed.has(cand)) return cand
   }
   return "2023-08-01"
 }
