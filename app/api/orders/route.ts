@@ -100,55 +100,37 @@ export async function POST(request: Request) {
       })
     }
 
-    const session: ClientSession = await (conn as unknown as { startSession: () => Promise<ClientSession> }).startSession()
-    let created: unknown = null
-    await session.withTransaction(async () => {
-      for (const it of items) {
-        const res = await (Product as unknown as {
-          updateOne: (filter: unknown, update: unknown, options?: { session?: ClientSession }) => Promise<{ modifiedCount: number }>
-        }).updateOne(
-          { _id: it.id, stock: { $gte: it.quantity } },
-          { $inc: { stock: -it.quantity } },
-          { session }
-        )
-        if (res.modifiedCount !== 1) {
-          throw new Error(`out_of_stock:${it.id}`)
-        }
+    const orderItems = items.map((it) => {
+      const p = prodMap[it.id] as ProductLean
+      return {
+        productId: p._id,
+        name: p.name,
+        quantity: it.quantity,
+        price: Number(p.price ?? 0),
       }
-
-      const orderItems = items.map((it) => {
-        const p = prodMap[it.id] as ProductLean
-        return {
-          productId: p._id,
-          name: p.name,
-          quantity: it.quantity,
-          price: Number(p.price ?? 0),
-        }
-      })
-      const amount = orderItems.reduce((s, oi) => s + Number(oi.price) * Number(oi.quantity), 0)
-      const gstPercent = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18)
-      const gatewayFeePercent = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
-      const gstAmount = (amount * gstPercent) / 100
-      const platformFee = ((amount + gstAmount) * gatewayFeePercent) / 100
-      const finalAmount = Number((amount + gstAmount + platformFee + deliveryFee).toFixed(2))
-
-      const docs = await (Order as unknown as {
-        create: (arr: unknown[], options?: { session?: ClientSession }) => Promise<unknown[]>
-      }).create([{
-        buyerEmail: buyerEmail || undefined,
-        buyerName: buyerName || undefined,
-        items: orderItems,
-        amount: finalAmount,
-        status: "pending",
-        address,
-        city,
-        state,
-        country,
-        deliveryFee,
-      }], { session })
-      created = (docs as unknown[])[0]
     })
-    await session.endSession()
+    const amount = orderItems.reduce((s, oi) => s + Number(oi.price) * Number(oi.quantity), 0)
+    const gstPercent = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18)
+    const gatewayFeePercent = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
+    const gstAmount = (amount * gstPercent) / 100
+    const platformFee = ((amount + gstAmount) * gatewayFeePercent) / 100
+    const finalAmount = Number((amount + gstAmount + platformFee + deliveryFee).toFixed(2))
+
+    const docs = await (Order as unknown as {
+      create: (arr: unknown[]) => Promise<unknown[]>
+    }).create([{
+      buyerEmail: buyerEmail || undefined,
+      buyerName: buyerName || undefined,
+      items: orderItems,
+      amount: finalAmount,
+      status: "pending",
+      address,
+      city,
+      state,
+      country,
+      deliveryFee,
+    }])
+    const created = (docs as unknown[])[0]
 
     const c = created as { _id?: unknown; orderNumber?: string; status?: string; amount?: number } | null
     let idStr: string | undefined = undefined
