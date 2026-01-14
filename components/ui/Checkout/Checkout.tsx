@@ -13,6 +13,12 @@ import FallbackImage from '@/components/common/Image/FallbackImage'
 import { useAuth } from '@/context/AuthContext'
 import BackButton from '@/components/common/BackButton/BackButton'
 
+const Rupee: React.FC<{ className?: string }> = ({ className }) => (
+  <span className={className} style={{ fontFamily: 'system-ui, "Segoe UI Symbol", "Noto Sans", "Arial Unicode MS", sans-serif' }}>
+    {"\u20B9"}
+  </span>
+)
+
 interface CartItem {
   id: number
   name: string
@@ -142,8 +148,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           }),
         })
         if (res.ok) {
-          const data = await res.json()
-          setDeliveryFee(data.deliveryFee || 0)
+          setDeliveryFee(0)
         }
       } catch {}
     }
@@ -192,7 +197,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const gatewayFeePercent = Number(process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2)
   const tax = subtotal * (gstPercent / 100)
   const platformFee = (subtotal + tax) * (gatewayFeePercent / 100)
-  const total = subtotal + tax + platformFee + deliveryFee
+  const total = subtotal + tax + platformFee
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -614,7 +619,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                           You will complete payment securely with Cashfree Checkout. Supports Cards, UPI, NetBanking and Wallets.
                         </p>
                         <p className="text-xl font-bold text-blue-600">
-                          ₹{total.toFixed(2)}
+                          <Rupee />{total.toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -628,7 +633,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                           You will complete payment securely with Razorpay Checkout. Supports Cards, UPI, NetBanking and Wallets.
                         </p>
                         <p className="text-xl font-bold text-blue-600">
-                          ₹{total.toFixed(2)}
+                          <Rupee />{total.toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -693,7 +698,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                         Qty: {item.quantity ?? 1}
                       </p>
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-gray-900' }`}>
-                        ₹{item.price * (item.quantity ?? 1)}
+                        <Rupee />{item.price * (item.quantity ?? 1)}
                       </p>
                       {(item.stock ?? 0) <= 0 && (
                         <span className="text-xs text-red-600 font-medium">Out of Stock (Excluded)</span>
@@ -706,26 +711,26 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="border-t border-gray-200 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">₹{subtotal.toFixed(2)}</span>
+                  <span className="font-medium"><Rupee />{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">GST ({gstPercent}%)</span>
-                  <span className="font-medium">₹{tax.toFixed(2)}</span>
+                  <span className="font-medium"><Rupee />{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Platform Fee ({gatewayFeePercent}%)</span>
-                  <span className="font-medium">₹{platformFee.toFixed(2)}</span>
+                  <span className="text-gray-600">Payment Gateway Fees ({gatewayFeePercent}%)</span>
+                  <span className="font-medium"><Rupee />{platformFee.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Delivery</span>
-                  <span className="font-medium">{deliveryFee > 0 ? `₹${deliveryFee}` : 'FREE'}</span>
+                  <span className="font-medium">{deliveryFee > 0 ? (<><Rupee />{deliveryFee}</>) : 'FREE'}</span>
                 </div>
                 <div className="pt-2 border-t border-gray-200 flex justify-between">
                   <span className="font-heading font-bold text-gray-900">
                     Total
                   </span>
                   <span className="font-heading font-bold text-gray-900 text-xl">
-                    ₹{total.toFixed(2)}
+                    <Rupee />{total.toFixed(2)}
                   </span>
                 </div>
               </div>
