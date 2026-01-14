@@ -3,7 +3,7 @@
     {
       "name": "Women's Fashion",
       "key": "womens-fashion",
-      "image": "/image/women.webp",
+      "image": "/image/woman.webp",
       "subcategories": [
         "Kurtis & Tunics",
         "Sarees",
@@ -30,7 +30,7 @@
     {
       "name": "Women's Footwear",
       "key": "footwear-women",
-      "image": "/image/foot.webp",
+      "image": "/image/womanshoos.webp",
       "subcategories": [
         "Flats",
         "Heels",
@@ -42,7 +42,7 @@
     {
       "name": "Men's Footwear",
       "key": "footwear-men",
-      "image": "/image/foot.webp",
+      "image": "/image/shoos.webp",
       "subcategories": [
         "Casual Shoes",
         "Sneakers",
@@ -54,7 +54,7 @@
     {
       "name": "Jewellery & Accessories",
       "key": "jewellery-accessories",
-      "image": "/image/juallery.webp",
+      "image": "/image/jueallary.webp",
       "subcategories": [
         "Earrings",
         "Necklaces",
