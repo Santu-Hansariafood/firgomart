@@ -8,6 +8,7 @@ import CategorySubHeader from "@/components/common/CategorySubHeader/CategorySub
 import Providers from "@/app/providers";
 import Script from "next/script";
 import { Suspense } from "react";
+import categoriesData from "@/data/categories.json";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -47,12 +48,16 @@ export const metadata: Metadata = {
     "India to Dubai shopping",
     "India to Qatar",
     "India to USA",
+    ...(((categoriesData as { categories: Array<{ name: string; subcategories?: string[] }> }).categories || []).flatMap((c) => {
+      const subs = Array.isArray(c.subcategories) ? c.subcategories : [];
+      return [c.name, ...subs];
+    }))
   ],
 
   authors: [
     {
       name: "Santu De",
-      url: "https://www.linkedin.com/in/santu-de-812571158/",
+      url: "https://www.linkedin.com/in/santude-dev/",
     },
   ],
 

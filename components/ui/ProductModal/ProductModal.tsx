@@ -6,6 +6,7 @@ import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn } from '
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
+import Script from 'next/script'
 
 interface Product {
   id: string | number
@@ -72,6 +73,68 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   useEffect(() => {
     setSelectedImage(0)
   }, [product.id])
+
+  useEffect(() => {
+    const prevTitle = document.title
+    const descTag = document.querySelector('meta[name="description"]') as HTMLMetaElement | null
+    const keysTag = document.querySelector('meta[name="keywords"]') as HTMLMetaElement | null
+    const prevDesc = descTag?.content || ''
+    const prevKeys = keysTag?.content || ''
+    const words = String(product.name || '').split(/\s+/).filter(Boolean)
+    const colorKeys = (product.colors || []).map(String)
+    const sizeKeys = (product.sizes || []).map(String)
+    const cat = String(product.category || '')
+    const brand = String(product.brand || '')
+    const ratingWord = (product.rating && product.rating >= 4.5) ? 'top rated' : ''
+    const discountWord = (product.discount && product.discount >= 25) ? 'best deal' : ''
+    const trendWord = 'trending'
+    const keywords = [
+      ...words,
+      brand,
+      cat,
+      ...colorKeys,
+      ...sizeKeys,
+      ratingWord,
+      discountWord,
+      trendWord,
+    ].filter(Boolean).join(', ')
+    const shortDesc = String(product.description || `${brand ? brand + ' ' : ''}${product.name}` || '').slice(0, 240)
+    document.title = `${product.name} | FirgoMart`
+    if (descTag) descTag.content = shortDesc
+    if (keysTag) keysTag.content = keywords
+    return () => {
+      document.title = prevTitle
+      if (descTag) descTag.content = prevDesc
+      if (keysTag) keysTag.content = prevKeys
+    }
+  }, [product])
+
+  const productSchema = (() => {
+    const imageUrls = images.map((src) => String(src))
+    const offers = {
+      '@type': 'Offer',
+      priceCurrency: 'INR',
+      price: Number(product.price || 0),
+      availability: (product.stock ?? 0) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: typeof window !== 'undefined' ? window.location.href : 'https://firgomart.com',
+    }
+    const aggregateRating = (typeof product.rating === 'number' && product.rating > 0)
+      ? { '@type': 'AggregateRating', ratingValue: product.rating, reviewCount: Number(product.reviews || 0) }
+      : undefined
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      image: imageUrls,
+      brand: product.brand ? { '@type': 'Brand', name: product.brand } : undefined,
+      category: product.category,
+      color: (product.colors || []).join(', '),
+      size: (product.sizes || []).join(', '),
+      description: product.description || undefined,
+      offers,
+      aggregateRating,
+    }
+  })()
 
   useEffect(() => {
     if (activeTab === 'reviews') {
@@ -143,6 +206,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           </div>
 
           <div className="p-4 sm:p-6 overflow-y-auto">
+            <Script
+              id={`schema-product-${String(product.id)}`}
+              type="application/ld+json"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+            />
             <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 sm:mb-8">
               <div>
               <div
@@ -214,13 +283,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
               </div>
               <div>
                 <div className="mb-4">
-                  {product.brand && (
-                    <span className="text-sm font-medium text-brand-purple mb-1 block">{product.brand}</span>
-                  )}
-                  <h1 className="text-xl sm:text-2xl font-heading font-bold mb-2">
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {product.brand && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-brand-purple/10 text-brand-purple border border-brand-purple/20 text-xs">
+                        {product.brand}
+                      </span>
+                    )}
+                    {product.category && (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 border border-blue-200 text-xs">
+                        {product.category}
+                      </span>
+                    )}
+                  </div>
+                  <h1 className="text-xl sm:text-2xl font-heading font-bold mb-2 bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
                     {product.name}
                   </h1>
-                  <p className="text-sm text-[var(--foreground)/60]">{product.category}</p>
                 </div>
                 
                 <div className="flex items-center space-x-2 mb-4">
@@ -256,6 +333,16 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                             {product.colors.map((c, i) => (
                                 <span key={i} className="px-3 py-1 border border-[var(--foreground)/20] rounded-full text-sm hover:border-brand-purple cursor-pointer">{c}</span>
                             ))}
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          {product.colors.map((c, i) => (
+                            <span
+                              key={`sw-${i}`}
+                              title={c}
+                              style={{ background: c }}
+                              className="w-5 h-5 rounded-full border border-[var(--foreground)/20]"
+                            />
+                          ))}
                         </div>
                     </div>
                 )}
@@ -341,14 +428,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
 
                 <div className="min-h-[200px]">
                     {activeTab === 'desc' && (
-                        <div className="text-[var(--foreground)/70] leading-relaxed whitespace-pre-wrap">
-                            {product.description || 'No description available.'}
+                      <div className="rounded-xl p-4 bg-gradient-to-br from-brand-purple/5 to-transparent border border-[var(--foreground)/15] shadow-sm">
+                        <div className="text-[var(--foreground)/80] leading-relaxed whitespace-pre-wrap">
+                          {product.description || 'No description available.'}
                         </div>
+                      </div>
                     )}
                     {activeTab === 'info' && (
-                        <div className="text-[var(--foreground)/70] leading-relaxed whitespace-pre-wrap">
-                             {product.additionalInfo || 'No additional information available.'}
+                      <div className="rounded-xl p-4 bg-gradient-to-br from-brand-red/5 to-transparent border border-[var(--foreground)/15] shadow-sm">
+                        <div className="text-[var(--foreground)/80] leading-relaxed whitespace-pre-wrap">
+                          {product.additionalInfo || 'No additional information available.'}
                         </div>
+                      </div>
                     )}
                     {activeTab === 'reviews' && (
                         <div>
