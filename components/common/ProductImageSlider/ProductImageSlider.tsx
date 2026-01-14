@@ -15,7 +15,7 @@ export default function ProductImageSlider({
   interval = 2000,
 }: ProductImageSliderProps) {
   const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
+  const [paused, setPaused] = useState(true)
 
   useEffect(() => {
     if (!images || images.length <= 1 || paused) return
@@ -32,8 +32,10 @@ export default function ProductImageSlider({
   return (
     <div
       className="absolute inset-0 bg-gray-100"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+      onMouseEnter={() => setPaused(false)}
+      onMouseLeave={() => setPaused(true)}
+      onTouchStart={() => setPaused(false)}
+      onTouchEnd={() => setPaused(true)}
     >
       <FallbackImage
         key={index}

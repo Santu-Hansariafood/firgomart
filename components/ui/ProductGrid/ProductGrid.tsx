@@ -311,32 +311,19 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                   className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-gray-100 group cursor-pointer"
                   onClick={() => onProductClick(product)}
                 >
-                  <div
-                      className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-gray-100 group cursor-pointer"
-                      onClick={() => onProductClick(product)}
-                    >
-                    <ProductImageSlider
-                    images={
-                      product.images && product.images.length > 0
-                        ? product.images.map(sanitizeImageUrl)
-                        : [sanitizeImageUrl(product.image)]
-                    }
-                    name={product.name}
-                    interval={1800}
+                  <ProductImageSlider
+                  images={
+                    product.images && product.images.length > 0
+                      ? product.images.map(sanitizeImageUrl)
+                      : [sanitizeImageUrl(product.image)]
+                  }
+                  name={product.name}
+                  interval={1800}
                   />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center pointer-events-none">
                     <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
 
-                  {product.discount && (
-                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
-                      {product.discount}% OFF
-                    </span>
-                  )}
-                </div>      
-                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                    <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
                   {product.discount && (
                     <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
                       {product.discount}% OFF
