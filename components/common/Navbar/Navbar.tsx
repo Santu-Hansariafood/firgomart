@@ -14,6 +14,7 @@ import {
   ChevronDown,
   Moon,
   Sun,
+  Truck,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/context/AuthContext"
@@ -291,6 +292,14 @@ const Navbar: React.FC = () => {
                         >
                           <User className="w-4 h-4" />
                           <span>My Profile</span>
+                        </Link>
+                        <Link
+                          href="/orders"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors"
+                        >
+                          <Truck className="w-4 h-4" />
+                          <span>My Orders</span>
                         </Link>
                         <button
                           onClick={handleLogout}
