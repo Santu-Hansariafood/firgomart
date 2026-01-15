@@ -136,6 +136,61 @@ export default function Page() {
   const [formLengthUnit, setFormLengthUnit] = useState("cm")
   const [formWeightUnit, setFormWeightUnit] = useState("kg")
 
+  const colorOptions: DropdownItem[] = [
+    { id: "Red", label: "Red" },
+    { id: "Blue", label: "Blue" },
+    { id: "Green", label: "Green" },
+    { id: "Black", label: "Black" },
+    { id: "White", label: "White" },
+    { id: "Yellow", label: "Yellow" },
+    { id: "Pink", label: "Pink" },
+    { id: "Purple", label: "Purple" },
+    { id: "Orange", label: "Orange" },
+    { id: "Brown", label: "Brown" },
+    { id: "Grey", label: "Grey" },
+    { id: "others", label: "Others" },
+  ]
+  const sizeOptions: DropdownItem[] = [
+    { id: "XS", label: "XS" },
+    { id: "S", label: "S" },
+    { id: "M", label: "M" },
+    { id: "L", label: "L" },
+    { id: "XL", label: "XL" },
+    { id: "XXL", label: "XXL" },
+    { id: "3XL", label: "3XL" },
+    { id: "Free Size", label: "Free Size" },
+    { id: "others", label: "Others" },
+  ]
+  const [selectedColorItems, setSelectedColorItems] = useState<DropdownItem[]>([])
+  const [selectedSizeItems, setSelectedSizeItems] = useState<DropdownItem[]>([])
+  const [otherColorInput, setOtherColorInput] = useState("")
+  const [otherSizeInput, setOtherSizeInput] = useState("")
+  const normalize = (s: string) => s.trim().toLowerCase()
+  const initSelectionsFromForm = (formStr: string, options: DropdownItem[]) => {
+    const values = formStr.split(",").map((s) => s.trim()).filter(Boolean)
+    const sel: DropdownItem[] = []
+    const others: string[] = []
+    const optMap = new Map(options.map((o) => [normalize(String(o.label)), o]))
+    values.forEach((v) => {
+      const key = normalize(v)
+      const match = optMap.get(key)
+      if (match && match.id !== "others") sel.push(match)
+      else others.push(v)
+    })
+    if (others.length > 0) sel.push({ id: "others", label: "Others" })
+    return { selected: sel, othersText: others.join(", ") }
+  }
+  const applyColorsToForm = (selected: DropdownItem[], othersText: string) => {
+    const base = selected.filter((i) => i.id !== "others").map((i) => String(i.label))
+    const extras = othersText.split(",").map((s) => s.trim()).filter(Boolean)
+    setFormColors([...base, ...extras].join(", "))
+  }
+  const applySizesToForm = (selected: DropdownItem[], othersText: string) => {
+    const base = selected.filter((i) => i.id !== "others").map((i) => String(i.label))
+    const extras = othersText.split(",").map((s) => s.trim()).filter(Boolean)
+    setFormSizes([...base, ...extras].join(", "))
+  }
+
   // Cropping
   const [croppingImageIndex, setCroppingImageIndex] = useState<number | null>(null)
 
@@ -224,6 +279,12 @@ export default function Page() {
       setFormBrand(product.brand || "")
       setFormColors((product.colors || []).join(", "))
       setFormSizes((product.sizes || []).join(", "))
+      const cInit = initSelectionsFromForm((product.colors || []).join(", "), colorOptions)
+      const sInit = initSelectionsFromForm((product.sizes || []).join(", "), sizeOptions)
+      setSelectedColorItems(cInit.selected)
+      setOtherColorInput(cInit.othersText)
+      setSelectedSizeItems(sInit.selected)
+      setOtherSizeInput(sInit.othersText)
       setFormAbout(product.about || "")
       setFormDesc(product.description || "")
       setFormAddInfo(product.additionalInfo || "")
@@ -252,6 +313,10 @@ export default function Page() {
       setFormBrand("")
       setFormColors("")
       setFormSizes("")
+      setSelectedColorItems([])
+      setOtherColorInput("")
+      setSelectedSizeItems([])
+      setOtherSizeInput("")
       setFormAbout("")
       setFormDesc("")
       setFormAddInfo("")
@@ -581,12 +646,12 @@ export default function Page() {
                         </div>
                         {formCategory && subcategoryOptionsFor(formCategory).length > 0 && (
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Product type</label>
                             <CommonDropdown
                               options={subcategoryOptionsFor(formCategory)}
                               selected={formSubcategory ? { id: formSubcategory, label: formSubcategory } : null}
                               onChange={(v) => { if (!Array.isArray(v)) setFormSubcategory(v.label) }}
-                              placeholder="Select Subcategory"
+                              placeholder="Select Product type"
                             />
                           </div>
                         )}
@@ -638,13 +703,75 @@ export default function Page() {
 
                     <div className="space-y-4">
                         <h3 className="font-semibold text-gray-700">Product Details</h3>
-                         <div>
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Colors (comma separated)</label>
-                             <input value={formColors} onChange={e => setFormColors(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Red, Blue, Green" />
+                        <div>
+                          <CommonDropdown
+                            label="Colors"
+                            options={colorOptions}
+                            selected={selectedColorItems}
+                            onChange={(v) => {
+                              if (Array.isArray(v)) {
+                                const list = v as DropdownItem[]
+                                setSelectedColorItems(list)
+                                if (list.some((i) => i.id === "others")) {
+                                  applyColorsToForm(list, otherColorInput)
+                                } else {
+                                  setOtherColorInput("")
+                                  applyColorsToForm(list, "")
+                                }
+                              }
+                            }}
+                            multiple
+                            placeholder="Select colors"
+                          />
+                          {selectedColorItems.some((i) => i.id === "others") && (
+                            <div className="mt-2">
+                              <input
+                                value={otherColorInput}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setOtherColorInput(val)
+                                  applyColorsToForm(selectedColorItems, val)
+                                }}
+                                className="w-full px-3 py-2 border rounded-lg"
+                                placeholder="Enter custom colors (comma separated)"
+                              />
+                            </div>
+                          )}
                         </div>
                         <div>
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Sizes (comma separated)</label>
-                             <input value={formSizes} onChange={e => setFormSizes(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="S, M, L, XL" />
+                          <CommonDropdown
+                            label="Sizes"
+                            options={sizeOptions}
+                            selected={selectedSizeItems}
+                            onChange={(v) => {
+                              if (Array.isArray(v)) {
+                                const list = v as DropdownItem[]
+                                setSelectedSizeItems(list)
+                                if (list.some((i) => i.id === "others")) {
+                                  applySizesToForm(list, otherSizeInput)
+                                } else {
+                                  setOtherSizeInput("")
+                                  applySizesToForm(list, "")
+                                }
+                              }
+                            }}
+                            multiple
+                            placeholder="Select sizes"
+                          />
+                          {selectedSizeItems.some((i) => i.id === "others") && (
+                            <div className="mt-2">
+                              <input
+                                value={otherSizeInput}
+                                onChange={(e) => {
+                                  const val = e.target.value
+                                  setOtherSizeInput(val)
+                                  applySizesToForm(selectedSizeItems, val)
+                                }}
+                                className="w-full px-3 py-2 border rounded-lg"
+                                placeholder="Enter custom sizes (comma separated)"
+                              />
+                            </div>
+                          )}
                         </div>
                         <div>
                              <label className="block text-sm font-medium text-gray-700 mb-1">About Product (Short Summary)</label>
