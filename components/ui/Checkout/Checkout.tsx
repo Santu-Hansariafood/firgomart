@@ -27,6 +27,7 @@ interface CartItem {
   originalPrice?: number
   quantity?: number
   stock?: number
+  unitsPerPack?: number
 }
 
 interface CheckoutProps {
@@ -694,6 +695,9 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
                         {item.name}
                       </h3>
+                      {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
+                        <p className="text-xs text-gray-500">Pack of {item.unitsPerPack}</p>
+                      )}
                       <p className="text-sm text-gray-500">
                         Qty: {item.quantity ?? 1}
                       </p>

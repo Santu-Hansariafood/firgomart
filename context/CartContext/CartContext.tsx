@@ -10,6 +10,7 @@ interface CartItem {
   originalPrice?: number;
   quantity?: number;
   stock?: number;
+  unitsPerPack?: number;
 }
 
 interface CartContextType {

@@ -89,6 +89,7 @@ export async function GET(request: Request) {
       sellerState: p.sellerState,
       sellerHasGST: p.sellerHasGST,
       stock: p.stock ?? 0,
+      unitsPerPack: p.unitsPerPack ?? 1,
       createdAt: p.createdAt,
       brand: p.brand,
       colors: p.colors,
@@ -161,6 +162,7 @@ export async function POST(request: Request) {
     const about = String(body?.about || "").trim()
     const additionalInfo = String(body?.additionalInfo || "").trim()
     const description = String(body?.description || "").trim()
+    const unitsPerPack = body?.unitsPerPack ? Number(body.unitsPerPack) : 1
 
     const height = body?.height ? Number(body.height) : undefined
     const width = body?.width ? Number(body.width) : undefined
@@ -184,6 +186,7 @@ export async function POST(request: Request) {
       subcategory,
       price,
       stock,
+      unitsPerPack,
       sellerState,
       sellerHasGST,
       isAdminProduct: true,

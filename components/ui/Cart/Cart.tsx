@@ -15,6 +15,7 @@ interface CartItem {
   quantity?: number
   image: string
   stock?: number
+  unitsPerPack?: number
 }
 
 interface CartProps {
@@ -116,6 +117,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                       <h3 className="text-sm font-medium text-[var(--foreground)] line-clamp-2 mb-1">
                         {item.name}
                       </h3>
+                      {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
+                        <div className="text-xs text-gray-500 mb-1">Pack of {item.unitsPerPack}</div>
+                      )}
                       <div className="flex items-baseline space-x-2 mb-2">
                         <span className="text-lg font-bold text-[var(--foreground)]">₹{item.price}</span>
                         {item.originalPrice && (

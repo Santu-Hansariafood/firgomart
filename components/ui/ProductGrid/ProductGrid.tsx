@@ -27,6 +27,7 @@ interface Product {
   description?: string
   reviews?: number
   stock?: number
+  unitsPerPack?: number
 }
 
 interface ProductGridProps {
@@ -78,6 +79,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     description?: string
     reviews?: number
     stock?: number
+    unitsPerPack?: number
   }
 
   type DropdownItem = { id: string | number; label: string }
@@ -118,6 +120,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         description: p.description,
         reviews: p.reviews,
         stock: p.stock,
+        unitsPerPack: p.unitsPerPack,
       })) as Product[]
     } catch {
       return []
@@ -332,7 +335,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 </div>
                 <div className="p-2 sm:p-4">
                   <h3 className="text-[11px] sm:text-sm font-semibold text-[var(--foreground)] mb-1 leading-snug line-clamp-2">{product.name}</h3>
-                  <p className="hidden sm:block text-xs text-[var(--foreground)/60] mb-2">{product.category}</p>
+                  <p className="hidden sm:block text-xs text-[var(--foreground)/60] mb-2">
+                    {product.category}
+                    {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 ? ` • Pack of ${product.unitsPerPack}` : ''}
+                  </p>
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <div>
                       <span className="text-sm sm:text-lg font-bold text-[var(--foreground)]">₹{formatPrice(product.price)}</span>

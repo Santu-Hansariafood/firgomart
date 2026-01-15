@@ -34,6 +34,7 @@ import { Connection, Schema, Model } from "mongoose"
     sizes: { type: [String], default: [] },
     about: { type: String },
     additionalInfo: { type: String },
+    unitsPerPack: { type: Number, default: 1 },
   },
   { timestamps: true }
 )

@@ -145,6 +145,7 @@ export async function POST(request: Request) {
       about,
       additionalInfo,
     } = body || {}
+    const unitsPerPack = body?.unitsPerPack ? Number(body.unitsPerPack) : 1
 
     if (!name || !image || typeof price !== "number") {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
@@ -159,6 +160,7 @@ export async function POST(request: Request) {
       category,
       subcategory: typeof body?.subcategory === "string" ? String(body.subcategory).trim() : undefined,
       price,
+      unitsPerPack,
       originalPrice,
       discount,
       rating,

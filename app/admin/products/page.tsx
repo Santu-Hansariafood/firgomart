@@ -114,6 +114,7 @@ export default function Page() {
   const [formPrice, setFormPrice] = useState("")
   const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
+  const [formUnitsPerPack, setFormUnitsPerPack] = useState("1")
   const [formSellerState, setFormSellerState] = useState("")
   const [formGST, setFormGST] = useState(false)
   const [formBrand, setFormBrand] = useState("")
@@ -217,6 +218,7 @@ export default function Page() {
       setFormPrice(String(product.price))
       setFormOriginalPrice(String(product.originalPrice || ""))
       setFormStock(String(product.stock || 0))
+      setFormUnitsPerPack(String((product as any).unitsPerPack || 1))
       setFormSellerState(product.sellerState || "")
       setFormGST(!!product.sellerHasGST)
       setFormBrand(product.brand || "")
@@ -244,6 +246,7 @@ export default function Page() {
       setFormPrice("")
       setFormOriginalPrice("")
       setFormStock("")
+      setFormUnitsPerPack("1")
       setFormSellerState("")
       setFormGST(false)
       setFormBrand("")
@@ -361,6 +364,7 @@ export default function Page() {
       originalPrice,
       discount,
       stock: Number(formStock || 0),
+      unitsPerPack: Number(formUnitsPerPack || 1),
       sellerState: formGST ? "" : formSellerState.trim(),
       sellerHasGST: formGST,
       images: finalImages,
@@ -546,18 +550,25 @@ export default function Page() {
                             <input value={formName} onChange={e => setFormName(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">MRP</label>
-                                <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Original" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
-                                <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Sale" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                                <input type="number" value={formStock} onChange={e => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
-                            </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">MRP</label>
+                            <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Original" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                            <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Sale" />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+                            <input type="number" value={formStock} onChange={e => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                            <input type="number" min={1} value={formUnitsPerPack} onChange={e => setFormUnitsPerPack(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Units per product (e.g., 1 or 2)" />
+                            <p className="text-xs text-gray-500 mt-1">Enter how many units are in this product listing.</p>
+                          </div>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
