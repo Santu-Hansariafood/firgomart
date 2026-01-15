@@ -7,6 +7,8 @@ import { fadeInUp } from '@/utils/animations/animations'
 import Link from 'next/link'
 import locationData from '@/data/country.json'
 import dynamic from 'next/dynamic'
+import Image from 'next/image'
+import BackButton from '@/components/common/BackButton/BackButton'
 const ImageCropper = dynamic(() => import('@/components/common/ImageCropper/ImageCropper'))
 
 interface SellerFormData {
@@ -66,8 +68,9 @@ const SellerRegistration: React.FC = () => {
   const [checking, setChecking] = useState<string | null>(null)
   const [bankDocSrc, setBankDocSrc] = useState<string | null>(null)
   const [croppingBankDoc, setCroppingBankDoc] = useState<boolean>(false)
-  const [showAgreementPopup, setShowAgreementPopup] = useState<boolean>(true)
+  const [showAgreementPopup, setShowAgreementPopup] = useState<boolean>(false)
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false)
+  const [pendingSubmit, setPendingSubmit] = useState<boolean>(false)
 
   const sortedCountries = [...locationData.countries]
     .map(c => c.country)
@@ -112,21 +115,48 @@ const SellerRegistration: React.FC = () => {
   ) => {
     const { name, value, type } = e.target as HTMLInputElement
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined
-
-    setErrors(prev => {
-      const newErrors = { ...prev }
-      delete newErrors[name]
-      if (name === 'hasGST') {
-        delete newErrors.gstNumber
-        delete newErrors.panNumber
-      }
-      return newErrors
-    })
+    let val = value
+    if (name === 'panNumber' || name === 'gstNumber' || name === 'bankIfsc') {
+      val = val.toUpperCase()
+    }
+    if (name === 'pincode' || name === 'aadhaar' || name === 'phone') {
+      val = val.replace(/\D/g, '')
+    }
+    if (name === 'email') {
+      val = val.trim()
+    }
+    if (name === 'ownerName' || name === 'businessName') {
+      val = val.trim()
+    }
 
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked ?? false : value
+      [name]: type === 'checkbox' ? checked ?? false : val
     }))
+
+    const validateField = (n: string, v: string) => {
+      if (n === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Invalid email format'
+      if (n === 'pincode') return /^\d{6}$/.test(v) ? '' : 'Pincode must be 6 digits'
+      if (n === 'aadhaar') return /^\d{16}$/.test(v) ? '' : 'Aadhaar must be 16 digits'
+      if (n === 'panNumber') return /^[A-Z]{5}\d{4}[A-Z]$/.test(v) ? '' : 'Invalid PAN format'
+      if (n === 'gstNumber') return /^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/.test(v) ? '' : 'Invalid GST format'
+      if (n === 'bankIfsc') return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v) ? '' : 'Invalid IFSC format'
+      if (n === 'ownerName') return /^[A-Za-z ]{2,}$/.test(v) ? '' : 'Enter a valid name'
+      if (n === 'businessName') return /^[-&.A-Za-z0-9 ]{2,}$/.test(v) ? '' : 'Enter a valid business name'
+      return ''
+    }
+    const err = validateField(name, val)
+    setErrors(prev => {
+      const next = { ...prev }
+      if (err) next[name] = err
+      else delete next[name]
+      if (name === 'hasGST') {
+        delete next.gstNumber
+        delete next.panNumber
+        delete next.aadhaar
+      }
+      return next
+    })
     if (name === 'country') {
       const countryObj = locationData.countries.find(
         item => item.country === value
@@ -201,18 +231,7 @@ const SellerRegistration: React.FC = () => {
     reader.readAsDataURL(file)
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (Object.keys(errors).length > 0) {
-      return
-    }
-    if (!agreedToTerms) {
-      setErrors(prev => ({ ...prev, agreement: 'Please agree to the terms and conditions' }))
-      setShowAgreementPopup(true)
-      return
-    }
-
+  const submitRegistration = async () => {
     const payload = {
       ...formData,
       businessLogoUrl: formData.businessLogoUrl,
@@ -221,26 +240,26 @@ const SellerRegistration: React.FC = () => {
       state: formData.state,
     }
 
-  if (payload.hasGST) {
-    payload.panNumber = ''
-    payload.aadhaar = ''
-  } else {
-    payload.gstNumber = ''
-  }
+    if (payload.hasGST) {
+      payload.panNumber = ''
+      payload.aadhaar = ''
+    } else {
+      payload.gstNumber = ''
+    }
 
-  if ((formData as any).bankDocumentImage) {
-    try {
-      const up = await fetch('/api/upload/image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: [(formData as any).bankDocumentImage] }),
-      })
-      const upJson = await up.json()
-      if (up.ok && Array.isArray(upJson.urls) && upJson.urls[0]) {
-        ;(payload as any).bankDocumentUrl = upJson.urls[0]
-      }
-    } catch {}
-  }
+    if ((formData as any).bankDocumentImage) {
+      try {
+        const up = await fetch('/api/upload/image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ images: [(formData as any).bankDocumentImage] }),
+        })
+        const upJson = await up.json()
+        if (up.ok && Array.isArray(upJson.urls) && upJson.urls[0]) {
+          ;(payload as any).bankDocumentUrl = upJson.urls[0]
+        }
+      } catch {}
+    }
 
     const res = await fetch('/api/seller/register', {
       method: 'POST',
@@ -251,6 +270,21 @@ const SellerRegistration: React.FC = () => {
       setSubmitted(true)
       try { localStorage.setItem('sellerRegSubmitted', 'true') } catch {}
     }
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    if (Object.keys(errors).length > 0) {
+      return
+    }
+    if (!agreedToTerms) {
+      setErrors(prev => ({ ...prev, agreement: 'Please agree to the terms and conditions' }))
+      setPendingSubmit(true)
+      setShowAgreementPopup(true)
+      return
+    }
+    await submitRegistration()
   }
 
   if (submitted) {
@@ -280,20 +314,38 @@ const SellerRegistration: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-12">
-      <div className="max-w-3xl mx-auto px-4">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-10">
+      <div className="max-w-3xl mx-auto px-4 space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-32 h-10 sm:w-40 sm:h-12">
+              <Image
+                src="/logo.png"
+                alt="Firgomart"
+                fill
+                sizes="160px"
+                className="object-contain"
+              />
+            </div>
+          </div>
+          <BackButton href="/" label="Back to Home" />
+        </div>
         <motion.div
           variants={fadeInUp}
           initial="hidden"
           animate="show"
-          className="bg-[var(--background)] rounded-2xl shadow-xl overflow-hidden border border-[var(--foreground)/20]"
+          className="bg-[var(--background)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/15]"
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
-            <div className="flex items-center space-x-3 mb-2">
-              <Store className="w-8 h-8" />
-              <h1 className="text-3xl font-heading font-bold">Sell on Firgomart</h1>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-3">
+                <Store className="w-9 h-9" />
+                <div>
+                  <h1 className="text-3xl font-heading font-bold">Sell on Firgomart</h1>
+                  <p className="text-white/80 text-sm sm:text-base">Grow your business with India&apos;s smart marketplace</p>
+                </div>
+              </div>
             </div>
-            <p className="text-white/80">Grow your business with Firgomart</p>
           </div>
           {showAgreementPopup && !submitted && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -319,7 +371,14 @@ const SellerRegistration: React.FC = () => {
                 <div className="flex justify-end gap-2">
                   <button
                     type="button"
-                    onClick={() => setShowAgreementPopup(false)}
+                    onClick={async () => {
+                      if (!agreedToTerms) return
+                      setShowAgreementPopup(false)
+                      if (pendingSubmit) {
+                        setPendingSubmit(false)
+                        await submitRegistration()
+                      }
+                    }}
                     disabled={!agreedToTerms}
                     className={`px-4 py-2 rounded-lg font-medium ${agreedToTerms ? 'bg-brand-purple text-white hover:bg-brand-purple/90' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}`}
                   >
@@ -342,9 +401,15 @@ const SellerRegistration: React.FC = () => {
                     name="businessName"
                     value={formData.businessName}
                     onChange={handleChange}
+                    onBlur={() => {
+                      const v = String(formData.businessName || '')
+                      const ok = /^[-&.A-Za-z0-9 ]{2,}$/.test(v)
+                      setErrors(prev => ({ ...prev, businessName: ok ? '' : 'Enter a valid business name' }))
+                    }}
                     required
-                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                    className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.businessName ? 'border-red-500' : ''}`}
                   />
+                  {errors.businessName && <p className="text-red-500 text-xs mt-1">{errors.businessName}</p>}
                 </div>
 
                 <div>
@@ -354,9 +419,15 @@ const SellerRegistration: React.FC = () => {
                     name="ownerName"
                     value={formData.ownerName}
                     onChange={handleChange}
+                    onBlur={() => {
+                      const v = String(formData.ownerName || '')
+                      const ok = /^[A-Za-z ]{2,}$/.test(v)
+                      setErrors(prev => ({ ...prev, ownerName: ok ? '' : 'Enter a valid name' }))
+                    }}
                     required
-                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                    className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.ownerName ? 'border-red-500' : ''}`}
                   />
+                  {errors.ownerName && <p className="text-red-500 text-xs mt-1">{errors.ownerName}</p>}
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
@@ -367,7 +438,12 @@ const SellerRegistration: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    onBlur={() => checkExists('email', formData.email)}
+                    onBlur={() => {
+                      const v = String(formData.email || '').trim()
+                      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+                      setErrors(prev => ({ ...prev, email: ok ? '' : 'Invalid email format' }))
+                      checkExists('email', formData.email)
+                    }}
                     required
                     className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.email ? 'border-red-500' : ''}`}
                   />
@@ -400,6 +476,7 @@ const SellerRegistration: React.FC = () => {
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">IFSC *</label>
                   <input type="text" name="bankIfsc" value={(formData as any).bankIfsc ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
+                  {(errors as any).bankIfsc && <p className="text-red-500 text-xs mt-1">{(errors as any).bankIfsc}</p>}
                 </div>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
@@ -500,10 +577,15 @@ const SellerRegistration: React.FC = () => {
                   minLength={6}
                   value={formData.pincode}
                   onChange={handleChange}
+                  onBlur={() => {
+                    const ok = /^\d{6}$/.test(String(formData.pincode || ''))
+                    setErrors(prev => ({ ...prev, pincode: ok ? '' : 'Pincode must be 6 digits' }))
+                  }}
                   pattern="[0-9]{6}"
                   required
-                  className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                  className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.pincode ? 'border-red-500' : ''}`}
                 />
+                {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>}
               </div>
             </div>
             <div className="space-y-4 pt-6 border-t border-[var(--foreground)/20]">
@@ -527,7 +609,12 @@ const SellerRegistration: React.FC = () => {
                     name="gstNumber"
                     value={formData.gstNumber}
                     onChange={handleChange}
-                    onBlur={() => checkExists('gstNumber', formData.gstNumber)}
+                    onBlur={() => {
+                      const v = String(formData.gstNumber || '').toUpperCase()
+                      const ok = /^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/.test(v)
+                      setErrors(prev => ({ ...prev, gstNumber: ok ? '' : 'Invalid GST format' }))
+                      checkExists('gstNumber', formData.gstNumber)
+                    }}
                     pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
                     required
                     className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.gstNumber ? 'border-red-500' : ''}`}
@@ -544,7 +631,12 @@ const SellerRegistration: React.FC = () => {
                       name="panNumber"
                       value={formData.panNumber}
                       onChange={handleChange}
-                      onBlur={() => checkExists('panNumber', formData.panNumber)}
+                      onBlur={() => {
+                        const v = String(formData.panNumber || '').toUpperCase()
+                        const ok = /^[A-Z]{5}\d{4}[A-Z]$/.test(v)
+                        setErrors(prev => ({ ...prev, panNumber: ok ? '' : 'Invalid PAN format' }))
+                        checkExists('panNumber', formData.panNumber)
+                      }}
                       pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
                       required
                       className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.panNumber ? 'border-red-500' : ''}`}
@@ -560,10 +652,15 @@ const SellerRegistration: React.FC = () => {
                       name="aadhaar"
                       value={formData.aadhaar ?? ''}
                       onChange={handleChange}
-                      pattern="[0-9]{12}"
+                      onBlur={() => {
+                        const ok = /^\d{16}$/.test(String(formData.aadhaar || ''))
+                        setErrors(prev => ({ ...prev, aadhaar: ok ? '' : 'Aadhaar must be 16 digits' }))
+                      }}
+                      pattern="[0-9]{16}"
                       required
-                      className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                      className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.aadhaar ? 'border-red-500' : ''}`}
                     />
+                    {errors.aadhaar && <p className="text-red-500 text-xs mt-1">{errors.aadhaar}</p>}
                   </div>
                 </div>
               )}
@@ -595,7 +692,7 @@ const SellerRegistration: React.FC = () => {
               <div className="border-2 border-dashed p-6 text-center rounded-lg border-[var(--foreground)/30]">
                 <Upload className="w-12 h-12 mx-auto text-[var(--foreground)/50] mb-2" />
                 <label className="cursor-pointer text-brand-purple font-medium">
-                  Upload Bank Document
+                  Upload Cancel Cheque or Passbook
                   <input type="file" accept="image/*" onChange={handleBankDocSelect} className="hidden" />
                 </label>
                 {(formData as any).bankDocumentImage && (
@@ -613,7 +710,7 @@ const SellerRegistration: React.FC = () => {
             </button>
             <div className="pt-4 text-center border-t border-[var(--foreground)/20]">
               <p className="text-sm">
-                Already have an account?{' '}
+                Already have an account? 
                 <Link href="/seller-login" className="text-brand-purple">
                   Log in
                 </Link>
