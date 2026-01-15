@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/common/Navbar/Navbar";
 import Footer from "@/components/common/Footer/Footer";
 import CategorySubHeader from "@/components/common/CategorySubHeader/CategorySubHeader";
+import CookieConsent from "@/components/common/CookieConsent/CookieConsent";
 import Providers from "@/app/providers";
 import Script from "next/script";
 import { Suspense } from "react";
@@ -178,6 +179,7 @@ export default function RootLayout({
           </Suspense>
           <main className="min-h-screen">{children}</main>
           <Footer />
+          <CookieConsent />
         </Providers>
       </body>
     </html>

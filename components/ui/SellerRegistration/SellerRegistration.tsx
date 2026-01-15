@@ -46,7 +46,9 @@ const SellerRegistration: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           className="bg-[var(--background)] rounded-2xl p-8 max-w-md w-full text-center shadow-xl border border-[var(--foreground)/20]"
         >
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 text-green-500 shadow-inner">
+            <CheckCircle className="w-10 h-10" />
+          </div>
           <h2 className="text-2xl font-heading font-bold mb-2 text-[var(--foreground)]">
             Registration Successful!
           </h2>
@@ -89,10 +91,18 @@ const SellerRegistration: React.FC = () => {
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center space-x-3">
-                <div>
-                  <h1 className="text-3xl font-heading font-bold">Sell on Firgomart</h1>
-                  <p className="text-white/80 text-sm sm:text-base">Grow your business with India&apos;s smart marketplace</p>
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-lg backdrop-blur-sm">
+                  <Store className="w-6 h-6" />
+                </div>
+                <div className="space-y-1">
+                  <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-white/80">
+                    Seller Registration
+                  </div>
+                  <h1 className="text-3xl font-heading font-bold leading-tight">Sell on Firgomart</h1>
+                  <p className="text-white/80 text-sm sm:text-base">
+                    Grow your business with India&apos;s smart marketplace
+                  </p>
                 </div>
               </div>
             </div>
@@ -378,14 +388,17 @@ const SellerRegistration: React.FC = () => {
             <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
               <h2 className="text-xl font-heading font-bold">Business Logo</h2>
 
-              <div className="border-2 border-dashed p-6 text-center rounded-lg border-[var(--foreground)/30]">
-                <Upload className="w-12 h-12 mx-auto text-[var(--foreground)/50] mb-2" />
-
-                <label className="cursor-pointer text-brand-purple font-medium">
+              <div className="group border-2 border-dashed p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-purple/10 text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-colors duration-200">
+                  <Upload className="w-6 h-6" />
+                </div>
+                <label className="cursor-pointer text-brand-purple font-semibold">
                   Upload Logo
                   <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </label>
-
+                <p className="mt-1 text-xs text-[var(--foreground)/60]">
+                  PNG or JPG, up to 2MB
+                </p>
                 {formData.businessLogo && (
                   <p className="text-sm text-green-600 mt-2">✓ {formData.businessLogo.name}</p>
                 )}
@@ -399,12 +412,17 @@ const SellerRegistration: React.FC = () => {
             </div>
             <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
               <h2 className="text-xl font-heading font-bold">Bank Document</h2>
-              <div className="border-2 border-dashed p-6 text-center rounded-lg border-[var(--foreground)/30]">
-                <Upload className="w-12 h-12 mx-auto text-[var(--foreground)/50] mb-2" />
-                <label className="cursor-pointer text-brand-purple font-medium">
+              <div className="group border-2 border-dashed p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-purple/10 text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-colors duration-200">
+                  <Upload className="w-6 h-6" />
+                </div>
+                <label className="cursor-pointer text-brand-purple font-semibold">
                   Upload Cancel Cheque or Passbook
                   <input type="file" accept="image/*" onChange={handleBankDocSelect} className="hidden" />
                 </label>
+                <p className="mt-1 text-xs text-[var(--foreground)/60]">
+                  Clear photo of cheque leaf or first page of passbook
+                </p>
                 {(formData as any).bankDocumentImage && (
                   <div className="mt-3 flex justify-center">
                     <img src={(formData as any).bankDocumentImage} alt="Bank Document" className="max-h-40 rounded border" />

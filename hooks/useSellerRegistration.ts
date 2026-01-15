@@ -44,9 +44,9 @@ export const useSellerRegistration = () => {
     businessLogo: null
   })
 
-  const [states, setStates] = useState<string[]>(() => {
-    const india = locationData.countries.find(c => c.country === 'India')
-    return india ? india.states.map(s => s.state).sort() : []
+ const [states] = useState<string[]>(() => {
+ const india = locationData.countries.find(c => c.country === 'India')
+   return india ? india.states.map(s => s.state).sort() : []
   })
   const [districts, setDistricts] = useState<string[]>([])
   const [submitted, setSubmitted] = useState<boolean>(() => {
