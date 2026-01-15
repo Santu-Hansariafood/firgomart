@@ -344,21 +344,116 @@
     }
   ],
   "disclaimer": [
-    { "title": "Disclaimer", "effectiveDate": "26 July 2025" },
     {
-      "title": "1. General",
-      "content": "Information on FirgoMart is provided in good faith for general purposes. We make no warranties about completeness or accuracy; use at your own discretion."
+      "title": "DISCLAIMER – FIRGOMART",
+      "effectiveDate": "25 July 2025"
     },
     {
-      "title": "2. External Links",
-      "content": "We may link to external websites. We are not responsible for their content or practices."
+      "title": "Legal Notice",
+      "content": "This Disclaimer is published in accordance with the Information Technology Act, 2000, Consumer Protection Act, 2019, and applicable Indian laws."
+    },
+    {
+      "title": "1. Platform Role Disclaimer",
+      "points": [
+        "FirgoMart operates as a technology-based marketplace intermediary.",
+        "FirgoMart does not manufacture, store, inspect, or directly sell products, unless expressly stated otherwise.",
+        "All products and services listed on the Platform are offered by independent third-party sellers."
+      ]
+    },
+    {
+      "title": "2. Product Information Disclaimer",
+      "points": [
+        "Product descriptions, images, pricing, specifications, and availability are provided by sellers.",
+        "FirgoMart does not guarantee the accuracy, completeness, or reliability of seller-provided content.",
+        "Images are for illustrative purposes only and actual products may vary."
+      ]
+    },
+    {
+      "title": "3. Warranty & Liability Disclaimer",
+      "points": [
+        "Warranty, guarantee, and after-sales services are the sole responsibility of the seller or manufacturer.",
+        "FirgoMart shall not be liable for product defects, quality issues, or misuse by customers."
+      ]
+    },
+    {
+      "title": "4. Third-Party Services Disclaimer",
+      "content": "FirgoMart may contain links or integrations with third-party services such as:",
+      "points": ["Payment gateways", "Logistics partners", "External websites"]
+    },
+    {
+      "title": "5. Limitation of Liability",
+      "points": [
+        "Indirect, incidental, or consequential damages",
+        "Loss of profits, data, or business opportunities",
+        "Delays or failures caused by force majeure events"
+      ]
+    },
+    {
+      "title": "6. Legal Compliance Disclaimer",
+      "content": "FirgoMart complies with applicable Indian laws as an intermediary under Section 79 of the Information Technology Act, 2000. Nothing in this Disclaimer limits consumer rights available under Indian law."
+    },
+    {
+      "title": "7. Governing Law & Jurisdiction",
+      "content": "This Disclaimer shall be governed by the laws of India. Courts of competent jurisdiction in India shall have exclusive authority."
     }
   ],
   "sitemap": [
-    { "title": "Sitemap", "effectiveDate": "26 July 2025" },
     {
-      "title": "1. Overview",
-      "content": "This sitemap provides a structured overview of major sections including Home, Categories, Help Center, Policies, and Seller Resources."
+      "title": "SITEMAP – FIRGOMART",
+      "effectiveDate": "25 July 2025",
+      "lastUpdated": "25 July 2025"
+    },
+    {
+      "title": "Introduction",
+      "content": "The Sitemap is provided to help users navigate the FirgoMart platform efficiently and transparently, in compliance with the Consumer Protection (E-Commerce) Rules, 2020."
+    },
+    {
+      "title": "Platform Structure",
+      "content": "The FirgoMart Sitemap includes, but is not limited to, the following sections:"
+    },
+    {
+      "title": "User-Facing Pages",
+      "points": [
+        "Home",
+        "Product Categories",
+        "Product Listing Pages",
+        "Product Detail Pages",
+        "Search & Filters"
+      ]
+    },
+    {
+      "title": "Account & Dashboard",
+      "points": [
+        "User Registration / Login",
+        "User Profile",
+        "Order History",
+        "Wishlist",
+        "Address Management"
+      ]
+    },
+    {
+      "title": "Seller Pages",
+      "points": ["Seller Registration", "Seller Dashboard", "Seller Policies"]
+    },
+    {
+      "title": "Support & Information",
+      "points": ["About Us", "Contact Us", "Customer Support", "FAQs"]
+    },
+    {
+      "title": "Legal & Compliance Pages",
+      "points": [
+        "Privacy Policy",
+        "Terms & Conditions",
+        "Return, Refund & Cancellation Policy",
+        "Shipping & Delivery Policy",
+        "Seller Agreement",
+        "Affiliate Policy",
+        "Disclaimer"
+      ]
+    },
+    {
+      "title": "Updates to the Sitemap",
+      "content": "FirgoMart reserves the right to add, remove, or modify any section of the Sitemap without prior notice, subject to applicable law."
     }
   ],
   "affiliateProgram": [
