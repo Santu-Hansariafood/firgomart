@@ -1,291 +1,42 @@
 'use client'
 
-import { useState, ChangeEvent, FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Store, Upload, CheckCircle } from 'lucide-react'
 import { fadeInUp } from '@/utils/animations/animations'
 import Link from 'next/link'
-import locationData from '@/data/country.json'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import BackButton from '@/components/common/BackButton/BackButton'
+import { useSellerRegistration } from '@/hooks/useSellerRegistration'
+
 const ImageCropper = dynamic(() => import('@/components/common/ImageCropper/ImageCropper'))
 
-interface SellerFormData {
-  businessName: string
-  ownerName: string
-  email: string
-  phone: string
-  address: string
-  country: string
-  state: string
-  district: string
-  city: string
-  pincode: string
-  gstNumber: string
-  panNumber: string
-  aadhaar?: string
-  hasGST: boolean
-  businessLogo: File | null
-  businessLogoUrl?: string
-  bankAccount?: string
-  bankIfsc?: string
-  bankName?: string
-  bankBranch?: string
-  bankDocumentImage?: string
-  bankDocumentUrl?: string
-}
-
 const SellerRegistration: React.FC = () => {
-  const [formData, setFormData] = useState<SellerFormData>({
-    businessName: '',
-    ownerName: '',
-    email: '',
-    phone: '',
-    address: '',
-    country: '',
-    state: '',
-    district: '',
-    city: '',
-    pincode: '',
-    gstNumber: '',
-    panNumber: '',
-    hasGST: true,
-    businessLogo: null
-  })
-
-  const [states, setStates] = useState<string[]>([])
-  const [districts, setDistricts] = useState<string[]>([])
-  const [submitted, setSubmitted] = useState<boolean>(() => {
-    try {
-      return typeof window !== 'undefined' && localStorage.getItem('sellerRegSubmitted') === 'true'
-    } catch {
-      return false
-    }
-  })
-  const [uploadingLogo, setUploadingLogo] = useState<boolean>(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [checking, setChecking] = useState<string | null>(null)
-  const [bankDocSrc, setBankDocSrc] = useState<string | null>(null)
-  const [croppingBankDoc, setCroppingBankDoc] = useState<boolean>(false)
-  const [showAgreementPopup, setShowAgreementPopup] = useState<boolean>(false)
-  const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false)
-  const [pendingSubmit, setPendingSubmit] = useState<boolean>(false)
-
-  const sortedCountries = [...locationData.countries]
-    .map(c => c.country)
-    .sort()
-
-  const checkExists = async (field: string, value: string) => {
-    if (!value) return
-    setChecking(field)
-    try {
-      const res = await fetch('/api/seller/check-exists', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ field, value }),
-      })
-      const data = await res.json()
-      if (data.exists) {
-        let msg = ''
-        switch (field) {
-          case 'email': msg = 'Email already registered'; break;
-          case 'phone': msg = 'Phone number already registered'; break;
-          case 'gstNumber': msg = 'GST Number already registered'; break;
-          case 'panNumber': msg = 'PAN Number already registered'; break;
-          default: msg = 'Already registered';
-        }
-        setErrors(prev => ({ ...prev, [field]: msg }))
-      } else {
-        setErrors(prev => {
-          const newErrors = { ...prev }
-          delete newErrors[field]
-          return newErrors
-        })
-      }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setChecking(null)
-    }
-  }
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target as HTMLInputElement
-    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined
-    let val = value
-    if (name === 'panNumber' || name === 'gstNumber' || name === 'bankIfsc') {
-      val = val.toUpperCase()
-    }
-    if (name === 'pincode' || name === 'aadhaar' || name === 'phone') {
-      val = val.replace(/\D/g, '')
-    }
-    if (name === 'email') {
-      val = val.trim()
-    }
-    if (name === 'ownerName' || name === 'businessName') {
-      val = val.trim()
-    }
-
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked ?? false : val
-    }))
-
-    const validateField = (n: string, v: string) => {
-      if (n === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Invalid email format'
-      if (n === 'pincode') return /^\d{6}$/.test(v) ? '' : 'Pincode must be 6 digits'
-      if (n === 'aadhaar') return /^\d{16}$/.test(v) ? '' : 'Aadhaar must be 16 digits'
-      if (n === 'panNumber') return /^[A-Z]{5}\d{4}[A-Z]$/.test(v) ? '' : 'Invalid PAN format'
-      if (n === 'gstNumber') return /^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/.test(v) ? '' : 'Invalid GST format'
-      if (n === 'bankIfsc') return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v) ? '' : 'Invalid IFSC format'
-      if (n === 'ownerName') return /^[A-Za-z ]{2,}$/.test(v) ? '' : 'Enter a valid name'
-      if (n === 'businessName') return /^[-&.A-Za-z0-9 ]{2,}$/.test(v) ? '' : 'Enter a valid business name'
-      return ''
-    }
-    const err = validateField(name, val)
-    setErrors(prev => {
-      const next = { ...prev }
-      if (err) next[name] = err
-      else delete next[name]
-      if (name === 'hasGST') {
-        delete next.gstNumber
-        delete next.panNumber
-        delete next.aadhaar
-      }
-      return next
-    })
-    if (name === 'country') {
-      const countryObj = locationData.countries.find(
-        item => item.country === value
-      )
-
-      const sortedStates =
-        countryObj?.states.map(s => s.state).sort() ?? []
-
-      setStates(sortedStates)
-      setDistricts([])
-
-      setFormData(prev => ({
-        ...prev,
-        state: '',
-        district: ''
-      }))
-    }
-    if (name === 'state') {
-      const countryObj = locationData.countries.find(
-        item => item.country === formData.country
-      )
-
-      const stateObj = countryObj?.states.find(s => s.state === value)
-
-      const sortedDistricts = stateObj?.districts.sort() ?? []
-
-      setDistricts(sortedDistricts)
-
-      setFormData(prev => ({
-        ...prev,
-        district: ''
-      }))
-    }
-  }
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setFormData(prev => ({ ...prev, businessLogo: file }))
-      const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ''
-      const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ''
-      if (cloudName && preset) {
-        const form = new FormData()
-        form.append('file', file)
-        form.append('upload_preset', preset)
-        setUploadingLogo(true)
-        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-          method: 'POST',
-          body: form,
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data?.secure_url) {
-              setFormData(prev => ({ ...prev, businessLogoUrl: data.secure_url }))
-            }
-          })
-          .catch(() => {})
-          .finally(() => setUploadingLogo(false))
-      }
-    }
-  }
-
-  const handleBankDocSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      const src = typeof reader.result === 'string' ? reader.result : ''
-      setBankDocSrc(src)
-      setCroppingBankDoc(true)
-    }
-    reader.readAsDataURL(file)
-  }
-
-  const submitRegistration = async () => {
-    const payload = {
-      ...formData,
-      businessLogoUrl: formData.businessLogoUrl,
-      documentUrls: [],
-      country: formData.country,
-      state: formData.state,
-    }
-
-    if (payload.hasGST) {
-      payload.panNumber = ''
-      payload.aadhaar = ''
-    } else {
-      payload.gstNumber = ''
-    }
-
-    if ((formData as any).bankDocumentImage) {
-      try {
-        const up = await fetch('/api/upload/image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ images: [(formData as any).bankDocumentImage] }),
-        })
-        const upJson = await up.json()
-        if (up.ok && Array.isArray(upJson.urls) && upJson.urls[0]) {
-          ;(payload as any).bankDocumentUrl = upJson.urls[0]
-        }
-      } catch {}
-    }
-
-    const res = await fetch('/api/seller/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    })
-    if (res.ok) {
-      setSubmitted(true)
-      try { localStorage.setItem('sellerRegSubmitted', 'true') } catch {}
-    }
-  }
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    if (Object.keys(errors).length > 0) {
-      return
-    }
-    if (!agreedToTerms) {
-      setErrors(prev => ({ ...prev, agreement: 'Please agree to the terms and conditions' }))
-      setPendingSubmit(true)
-      setShowAgreementPopup(true)
-      return
-    }
-    await submitRegistration()
-  }
+  const {
+    formData,
+    setFormData,
+    states,
+    districts,
+    errors,
+    checking,
+    uploadingLogo,
+    submitted,
+    bankDocSrc,
+    croppingBankDoc,
+    setCroppingBankDoc,
+    showAgreementPopup,
+    setShowAgreementPopup,
+    agreedToTerms,
+    setAgreedToTerms,
+    pendingSubmit,
+    setPendingSubmit,
+    handleChange,
+    handleFileChange,
+    handleBankDocSelect,
+    handleSubmit,
+    checkExists,
+    submitRegistration
+  } = useSellerRegistration()
 
   if (submitted) {
     return (
@@ -320,7 +71,7 @@ const SellerRegistration: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="relative w-32 h-10 sm:w-40 sm:h-12">
               <Image
-                src="/logo.png"
+                src="/logo/firgomart.png"
                 alt="Firgomart"
                 fill
                 sizes="160px"
@@ -339,7 +90,6 @@ const SellerRegistration: React.FC = () => {
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center space-x-3">
-                <Store className="w-9 h-9" />
                 <div>
                   <h1 className="text-3xl font-heading font-bold">Sell on Firgomart</h1>
                   <p className="text-white/80 text-sm sm:text-base">Grow your business with India&apos;s smart marketplace</p>
@@ -401,11 +151,6 @@ const SellerRegistration: React.FC = () => {
                     name="businessName"
                     value={formData.businessName}
                     onChange={handleChange}
-                    onBlur={() => {
-                      const v = String(formData.businessName || '')
-                      const ok = /^[-&.A-Za-z0-9 ]{2,}$/.test(v)
-                      setErrors(prev => ({ ...prev, businessName: ok ? '' : 'Enter a valid business name' }))
-                    }}
                     required
                     className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.businessName ? 'border-red-500' : ''}`}
                   />
@@ -419,11 +164,6 @@ const SellerRegistration: React.FC = () => {
                     name="ownerName"
                     value={formData.ownerName}
                     onChange={handleChange}
-                    onBlur={() => {
-                      const v = String(formData.ownerName || '')
-                      const ok = /^[A-Za-z ]{2,}$/.test(v)
-                      setErrors(prev => ({ ...prev, ownerName: ok ? '' : 'Enter a valid name' }))
-                    }}
                     required
                     className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.ownerName ? 'border-red-500' : ''}`}
                   />
@@ -438,12 +178,7 @@ const SellerRegistration: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    onBlur={() => {
-                      const v = String(formData.email || '').trim()
-                      const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-                      setErrors(prev => ({ ...prev, email: ok ? '' : 'Invalid email format' }))
-                      checkExists('email', formData.email)
-                    }}
+                    onBlur={() => checkExists('email', formData.email)}
                     required
                     className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.email ? 'border-red-500' : ''}`}
                   />
@@ -503,20 +238,13 @@ const SellerRegistration: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Country *</label>
-                  <select
+                  <input
+                    type="text"
                     name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
-                  >
-                    <option value="">Select Country</option>
-                    {sortedCountries.map(c => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                    value="India"
+                    readOnly
+                    className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] cursor-not-allowed opacity-70"
+                  />
                 </div>
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">State *</label>
@@ -577,10 +305,6 @@ const SellerRegistration: React.FC = () => {
                   minLength={6}
                   value={formData.pincode}
                   onChange={handleChange}
-                  onBlur={() => {
-                    const ok = /^\d{6}$/.test(String(formData.pincode || ''))
-                    setErrors(prev => ({ ...prev, pincode: ok ? '' : 'Pincode must be 6 digits' }))
-                  }}
                   pattern="[0-9]{6}"
                   required
                   className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.pincode ? 'border-red-500' : ''}`}
@@ -609,12 +333,7 @@ const SellerRegistration: React.FC = () => {
                     name="gstNumber"
                     value={formData.gstNumber}
                     onChange={handleChange}
-                    onBlur={() => {
-                      const v = String(formData.gstNumber || '').toUpperCase()
-                      const ok = /^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/.test(v)
-                      setErrors(prev => ({ ...prev, gstNumber: ok ? '' : 'Invalid GST format' }))
-                      checkExists('gstNumber', formData.gstNumber)
-                    }}
+                    onBlur={() => checkExists('gstNumber', formData.gstNumber)}
                     pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
                     required
                     className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.gstNumber ? 'border-red-500' : ''}`}
@@ -631,12 +350,7 @@ const SellerRegistration: React.FC = () => {
                       name="panNumber"
                       value={formData.panNumber}
                       onChange={handleChange}
-                      onBlur={() => {
-                        const v = String(formData.panNumber || '').toUpperCase()
-                        const ok = /^[A-Z]{5}\d{4}[A-Z]$/.test(v)
-                        setErrors(prev => ({ ...prev, panNumber: ok ? '' : 'Invalid PAN format' }))
-                        checkExists('panNumber', formData.panNumber)
-                      }}
+                      onBlur={() => checkExists('panNumber', formData.panNumber)}
                       pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
                       required
                       className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.panNumber ? 'border-red-500' : ''}`}
@@ -652,10 +366,6 @@ const SellerRegistration: React.FC = () => {
                       name="aadhaar"
                       value={formData.aadhaar ?? ''}
                       onChange={handleChange}
-                      onBlur={() => {
-                        const ok = /^\d{16}$/.test(String(formData.aadhaar || ''))
-                        setErrors(prev => ({ ...prev, aadhaar: ok ? '' : 'Aadhaar must be 16 digits' }))
-                      }}
                       pattern="[0-9]{16}"
                       required
                       className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.aadhaar ? 'border-red-500' : ''}`}
