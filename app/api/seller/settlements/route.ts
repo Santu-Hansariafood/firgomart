@@ -24,6 +24,8 @@ export async function GET(request: Request) {
       if (to) (q.createdAt as any).$lte = new Date(to)
     }
     const orders = await (Order as any).find(q).lean()
+    const orderIds = orders.map((o: any) => String(o._id))
+    const orderShareMap: Record<string, number> = {}
     let earnings = 0
     let totalOrders = orders.length
     let pending = 0
@@ -32,14 +34,18 @@ export async function GET(request: Request) {
       const items = (o.items || []).filter((it: any) => productIds.length ? productIds.includes(String(it.productId)) : true)
       const sum = items.reduce((s: number, it: any) => s + Number(it.price || 0) * Number(it.quantity || 1), 0)
       earnings += sum
+      orderShareMap[String(o._id)] = sum
       if (String(o.status).toLowerCase() === "pending") pending++
       if (["returned", "refunded", "cancelled"].includes(String(o.status).toLowerCase())) returned++
     }
-    const paymentsQ: any = sellerEmail ? { buyerEmail: sellerEmail } : {}
-    const payments = await (Payment as any).find(paymentsQ).sort("-createdAt").limit(50).lean()
+    const paymentsQ: any = orderIds.length ? { orderId: { $in: orderIds as any } } : {}
+    const rawPayments = await (Payment as any).find(paymentsQ).sort("-createdAt").limit(50).lean()
+    const payments = rawPayments.map((p: any) => ({
+      ...p,
+      amount: orderShareMap[String(p.orderId)] !== undefined ? orderShareMap[String(p.orderId)] : p.amount
+    }))
     return NextResponse.json({ summary: { earnings, totalOrders, pending, returned }, transactions: payments })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

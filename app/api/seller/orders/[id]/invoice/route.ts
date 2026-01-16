@@ -11,6 +11,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   try {
     const { id } = await ctx.params
     const url = new URL(request.url)
+    const sellerEmail = (url.searchParams.get("sellerEmail") || "").trim()
     const download = (url.searchParams.get("download") || "").toLowerCase() === "true"
     const format = (url.searchParams.get("format") || "json").toLowerCase()
     const conn = await connectDB()
@@ -18,9 +19,21 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     const Product = getProductModel(conn)
     const doc = await (Order as any).findById(id).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+
+    // Seller isolation logic
+    if (!sellerEmail) return NextResponse.json({ error: "Seller email required" }, { status: 400 })
+    const sellerProducts = await (Product as any).find({ createdByEmail: sellerEmail }).select({ _id: 1 }).lean()
+    const productIds = sellerProducts.map((p: any) => String(p._id))
+    const items = (doc.items || []).filter((it: any) => productIds.includes(String(it.productId)))
+    
+    // If no items belong to this seller, deny access
+    if (!items.length) return NextResponse.json({ error: "Access denied" }, { status: 403 })
+
     const completed = String(doc.status || "").toLowerCase() === "completed" || doc.completionVerified === true
     if (!completed) return NextResponse.json({ error: "Invoice available after order completion" }, { status: 403 })
-    const sum = (doc.items || []).reduce((s: number, it: any) => s + Number(it.price || 0) * Number(it.quantity || 1), 0)
+    
+    const sum = items.reduce((s: number, it: any) => s + Number(it.price || 0) * Number(it.quantity || 1), 0)
+    
     if (format === "pdf") {
       let sellerBusiness = ""
       let sellerGST = ""
@@ -28,25 +41,18 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       let sellerAddress = ""
       let logoBuf: Buffer | null = null
       const ADMIN_GST = (process.env.ADMIN_GST_NUMBER || "").trim() || "—"
+      
       try {
-        const pid = ((doc.items || [])[0] as unknown as { productId?: unknown })?.productId as { toString?: () => string } | undefined
-        const productId = pid?.toString?.() || (pid as unknown as string | undefined)
-        if (productId) {
-          const p = await (Product as unknown as { findById: (id: string) => { lean: () => Promise<any> } }).findById(productId).lean()
-          sellerState = typeof p?.sellerState === "string" ? p.sellerState : undefined
-          const sellerEmail = typeof p?.createdByEmail === "string" ? p.createdByEmail : undefined
-          if (sellerEmail) {
-            const found = await findSellerAcrossDBs({ email: sellerEmail })
-            if (found?.seller) {
-              const s = found.seller as any
-              sellerBusiness = String(s.businessName || "")
-              sellerGST = String(s.gstNumber || "")
-              sellerAddress = [s.address, s.city, s.state, s.pincode].filter((x: string) => !!x).join(", ")
-              if (!sellerState && typeof s.state === "string") sellerState = s.state
-            }
+          const found = await findSellerAcrossDBs({ email: sellerEmail })
+          if (found?.seller) {
+            const s = found.seller as any
+            sellerBusiness = String(s.businessName || "")
+            sellerGST = String(s.gstNumber || "")
+            sellerAddress = [s.address, s.city, s.state, s.pincode].filter((x: string) => !!x).join(", ")
+            if (typeof s.state === "string") sellerState = s.state
           }
-        }
       } catch {}
+
       try { logoBuf = fs.readFileSync(path.join(process.cwd(), "public", "logo", "firgomart.png")) } catch {}
       const pdf = new PDFDocument({ size: "A4", margin: 50 })
       const chunks: Buffer[] = []
@@ -80,7 +86,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       pdf.text("Amount", colAmt, pdf.y)
       pdf.moveTo(startX, pdf.y + 2).lineTo(pdf.page.width - 50, pdf.y + 2).stroke("#e5e7eb")
       let y = pdf.y + 8
-      for (const it of (doc.items || [])) {
+      for (const it of items) {
         const qty = Number(it.quantity || 1)
         const price = Number(it.price || 0)
         const amt = qty * price

@@ -1,91 +1,99 @@
 "use client"
 
-import { useAuth } from "@/context/AuthContext"
-import { useEffect, useState, Suspense } from "react"
+import { useEffect, useMemo, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
+import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
-import CommonTable from "@/components/common/Table/CommonTable"
 import FallbackImage from "@/components/common/Image/FallbackImage"
-const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
+
+const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
 const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
+const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
 
-type Row = { _id: string; name: string; category?: string; stock: number; price?: number; image?: string; createdAt?: string }
+type InventoryRow = {
+  id: string
+  name: string
+  category?: string
+  stock: number
+  price?: number
+  image?: string
+  sellerState?: string
+  sellerHasGST?: boolean
+  createdAt?: string
+}
 
 export default function Page() {
   const { user } = useAuth()
-  const email = user?.email || ""
-  const allowed = !!email
-  const [rows, setRows] = useState<Row[]>([])
+  const sellerEmail = user?.email || ""
+  const allowed = !!sellerEmail
+
+  const [items, setItems] = useState<InventoryRow[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(false)
+
   const [page, setPage] = useState(1)
   const pageSize = 100
   const [search, setSearch] = useState("")
-  const [bulkText, setBulkText] = useState("")
-  const [minStock, setMinStock] = useState<string>("")
-  const [maxStock, setMaxStock] = useState<string>("")
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
+  const [minStock, setMinStock] = useState<string>("")
+  const [maxStock, setMaxStock] = useState<string>("")
 
-  const load = async () => {
-    if (!email) return
+  const loadInventory = async () => {
     setLoading(true)
     try {
       const params = new URLSearchParams()
-      params.set("sellerEmail", email)
       params.set("page", String(page))
       params.set("limit", String(pageSize))
+      if (minStock) params.set("minStock", minStock)
+      if (maxStock) params.set("maxStock", maxStock)
       if (search) params.set("search", search)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/seller/products?${params.toString()}`)
+      if (sellerEmail) params.set("sellerEmail", sellerEmail)
+
+      const res = await fetch(`/api/seller/inventory?${params.toString()}`)
       const data = await res.json()
       if (res.ok) {
-        const items: Row[] = data.products || []
-        const min = minStock ? Number(minStock) : undefined
-        const max = maxStock ? Number(maxStock) : undefined
-        const filtered = items.filter(r => {
-          const s = Number(r.stock || 0)
-          if (min !== undefined && s < min) return false
-          if (max !== undefined && s > max) return false
-          return true
-        })
-        setRows(filtered)
+        setItems(Array.isArray(data.inventory) ? data.inventory : [])
         setTotal(Number(data.total || 0))
       } else {
-        setRows([])
+        setItems([])
         setTotal(0)
       }
-    } catch { setRows([]); setTotal(0) }
+    } catch {
+      setItems([])
+      setTotal(0)
+    }
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [email, page, search, minStock, maxStock, sortKey, sortOrder])
-
   const updateStock = async (id: string, stock: number) => {
-    try { await fetch(`/api/seller/products`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, stock, sellerEmail: email }) }); load() } catch {}
+    try {
+      const res = await fetch(`/api/seller/inventory/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ stock, sellerEmail }),
+      })
+      if (res.ok) {
+        setItems(prev => prev.map(i => i.id === id ? { ...i, stock } : i))
+      }
+    } catch {}
   }
 
-  const bulkUpdate = async () => {
-    const lines = bulkText.split(/\r?\n/).map(s => s.trim()).filter(Boolean)
-    const updates: { id: string; stock: number }[] = []
-    for (const line of lines) {
-      const parts = line.split(",").map(s => s.trim())
-      if (parts.length >= 2) {
-        const id = parts[0]
-        const stock = Number(parts[1])
-        if (id && Number.isFinite(stock)) updates.push({ id, stock })
-      }
-    }
-    for (const u of updates) { await updateStock(u.id, u.stock) }
-    setBulkText("")
-  }
+  useEffect(() => {
+    if (!allowed) return
+    loadInventory()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowed, page, minStock, maxStock, search, sortKey, sortOrder, sellerEmail])
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
     {!allowed ? (
-      <div className="p-6">Login as seller to manage inventory.</div>
+       <div className="p-6 text-center text-gray-600">Please login as seller.</div>
     ) : (
     <div className="p-4 space-y-6">
       <BackButton className="mb-2" />
@@ -101,45 +109,75 @@ export default function Page() {
             <label className="text-sm mb-1 font-medium text-gray-600">Max Stock</label>
             <input type="number" value={maxStock} onChange={(e) => setMaxStock(e.target.value)} className="w-full px-3 py-2 border rounded" />
           </div>
-          <div className="md:col-span-2">
+          <div className="md:col-span-1">
             <SearchBox value={search} onChange={setSearch} placeholder="Search inventory" />
           </div>
+          <div className="col-span-1 md:col-span-1">
+            <button
+              type="button"
+              onClick={loadInventory}
+              className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+            >
+              Refresh
+            </button>
+          </div>
         </div>
+      </div>
+
+      <div className="space-y-3">
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<Row>
+          <CommonTable
             columns={[
               { key: "image", label: "Image", render: (r) => (
                 <div className="relative w-12 h-10">
-                  <FallbackImage src={typeof r.image === "string" ? r.image : ""} alt={r.name} width={48} height={40} className="object-cover rounded border" />
+                  <FallbackImage
+                    src={typeof r.image === "string" ? r.image : ""}
+                    alt={r.name}
+                    width={48}
+                    height={40}
+                    className="object-cover rounded border"
+                  />
                 </div>
               ) },
               { key: "name", label: "Product", sortable: true },
               { key: "category", label: "Category" },
               { key: "price", label: "Price", sortable: true, render: (r) => `₹${Number(r.price || 0).toFixed(2)}` },
               { key: "stock", label: "Stock", sortable: true, render: (r) => (
-                <input type="number" defaultValue={r.stock} className="w-24 px-2 py-1 border rounded" onBlur={(e) => updateStock(r._id, Number(e.currentTarget.value))} />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    defaultValue={r.stock}
+                    className="w-24 px-2 py-1 border rounded"
+                    onBlur={(e) => {
+                      const val = Number(e.currentTarget.value)
+                      if (Number.isFinite(val) && val >= 0) updateStock(r.id, val)
+                    }}
+                  />
+                </div>
               ) },
+              { key: "sellerState", label: "State" },
+              { key: "sellerHasGST", label: "GST", render: (r) => r.sellerHasGST ? "Yes" : "No" },
               { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
             ]}
-            data={rows}
+            data={items}
             sortKey={sortKey || undefined}
             sortOrder={sortOrder}
             onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
-            rowKey={(r) => r._id}
+            rowKey={(r) => r.id}
           />
         )}
-        <div className="flex items-center justify-between">
-          <CommonPagination currentPage={page} pageSize={pageSize} totalItems={total} onPageChange={(p) => setPage(p)} />
-        </div>
-      </div>
 
-      <div className="bg-white border rounded-xl p-4 space-y-3">
-        <h2 className="text-lg font-medium">Bulk Stock Upload</h2>
-        <p className="text-sm text-gray-600">Enter lines in format: productId,stock</p>
-        <textarea value={bulkText} onChange={(e) => setBulkText(e.target.value)} rows={6} className="w-full px-3 py-2 border rounded"></textarea>
-        <button onClick={bulkUpdate} className="px-4 py-2 rounded bg-blue-600 text-white">Update</button>
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-gray-600">Total: {total}</div>
+          <CommonPagination
+            currentPage={page}
+            pageSize={pageSize}
+            totalItems={total}
+            onPageChange={(p) => setPage(p)}
+          />
+        </div>
       </div>
     </div>
     )}

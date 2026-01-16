@@ -30,8 +30,10 @@ export default function Page() {
   const statusOptions = [
     { id: "", label: "All statuses" },
     { id: "pending", label: "Pending" },
+    { id: "paid", label: "Paid" },
     { id: "packed", label: "Packed" },
     { id: "shipped", label: "Shipped" },
+    { id: "delivered", label: "Delivered" },
     { id: "completed", label: "Completed" },
     { id: "returned", label: "Returned" },
     { id: "refunded", label: "Refunded" },
@@ -74,7 +76,7 @@ export default function Page() {
 
   const download = async (id: string, type: "invoice" | "label") => {
     try {
-      window.open(`/api/seller/orders/${id}/${type}?format=pdf&download=true`, "_blank")
+      window.open(`/api/seller/orders/${id}/${type}?format=pdf&download=true&sellerEmail=${email}`, "_blank")
     } catch {}
   }
 
@@ -120,8 +122,13 @@ export default function Page() {
               { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
               { key: "status", label: "Status", sortable: true, render: (r) => (
                 <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
+                  <option value="pending">Pending</option>
+                  <option value="paid">Paid</option>
                   <option value="packed">Packed</option>
                   <option value="shipped">Shipped</option>
+                  <option value="delivered">Delivered</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="refunded">Refunded</option>
                 </select>
               ) },
               { key: "id", label: "Actions", render: (r) => (

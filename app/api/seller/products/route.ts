@@ -121,7 +121,12 @@ export async function GET(request: Request) {
     const conn = await connectDB()
     const Product = getProductModel(conn)
     const q: any = {}
-    if (sellerEmail) q.createdByEmail = sellerEmail
+    if (sellerEmail) {
+      q.createdByEmail = sellerEmail
+    } else {
+      // Enforce seller isolation - if no email provided, return empty
+      return NextResponse.json({ products: [], total: 0 })
+    }
     if (search) {
       const r = new RegExp(search, "i")
       q.$or = [{ name: r }, { category: r }]

@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import dynamic from "next/dynamic"
 import CommonTable from "@/components/common/Table/CommonTable"
+import Link from "next/link"
+import { Receipt, PlusCircle, Package, CreditCard } from "lucide-react"
 const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))  
 
@@ -61,12 +63,82 @@ export default function Page() {
     ) : (
     <div className="p-4 space-y-6">
       <BackButton className="mb-2" />
-      <h1 className="text-2xl font-semibold">Seller Home Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="border rounded-xl p-4 bg-white"><p className="text-sm text-gray-600">Today's sales</p><p className="text-2xl font-semibold">₹{todaySales.toFixed(2)}</p></div>
-        <div className="border rounded-xl p-4 bg-white"><p className="text-sm text-gray-600">Total orders</p><p className="text-2xl font-semibold">{totalOrders}</p></div>
-        <div className="border rounded-xl p-4 bg-white"><p className="text-sm text-gray-600">Pending orders</p><p className="text-2xl font-semibold">{pendingOrders}</p></div>
-        <div className="border rounded-xl p-4 bg-white"><p className="text-sm text-gray-600">Return/Cancel</p><p className="text-2xl font-semibold">{returnCancel}</p></div>
+      <div className="rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Seller Home Dashboard</h1>
+            <p className="text-indigo-100 text-sm">Your operations overview</p>
+          </div>
+          <Receipt className="w-8 h-8 opacity-80" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-indigo-100">Today's sales</p>
+            <p className="text-2xl font-semibold">₹{todaySales.toFixed(2)}</p>
+          </div>
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-indigo-100">Total orders</p>
+            <p className="text-2xl font-semibold">{totalOrders}</p>
+          </div>
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-indigo-100">Pending orders</p>
+            <p className="text-2xl font-semibold">{pendingOrders}</p>
+          </div>
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-indigo-100">Return/Cancel</p>
+            <p className="text-2xl font-semibold">{returnCancel}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h2 className="text-lg font-medium">Modules</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Link href="/seller/orders" className="group border rounded-xl p-4 bg-white hover:bg-gray-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-600/10 text-blue-600">
+                <Receipt className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-semibold">Order Management</div>
+                <div className="text-sm text-gray-600">View and update orders</div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/seller/products" className="group border rounded-xl p-4 bg-white hover:bg-gray-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-indigo-600/10 text-indigo-600">
+                <PlusCircle className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-semibold">Add Product</div>
+                <div className="text-sm text-gray-600">Create and manage catalog</div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/seller/inventory" className="group border rounded-xl p-4 bg-white hover:bg-gray-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-green-600/10 text-green-600">
+                <Package className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-semibold">Inventory Management</div>
+                <div className="text-sm text-gray-600">Track and update stock</div>
+              </div>
+            </div>
+          </Link>
+          <Link href="/seller/finance" className="group border rounded-xl p-4 bg-white hover:bg-gray-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-purple-600/10 text-purple-600">
+                <CreditCard className="w-6 h-6" />
+              </div>
+              <div>
+                <div className="font-semibold">Payments</div>
+                <div className="text-sm text-gray-600">Transactions and settlements</div>
+              </div>
+            </div>
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white border rounded-xl p-4 space-y-3">

@@ -38,21 +38,25 @@ export async function GET(request: Request) {
     const total = await (Order as any).countDocuments(q)
     const start = (page - 1) * limit
     const pageItems = items.slice(start, start + limit)
-    const safe = pageItems.map((o: any) => ({
-      id: o._id?.toString?.() || String(o._id),
-      orderNumber: o.orderNumber,
-      buyerEmail: o.buyerEmail,
-      buyerName: o.buyerName,
-      amount: o.amount,
-      status: o.status,
-      createdAt: o.createdAt,
-      items: (o.items || []).filter((it: any) => !productIds.length || productIds.includes(String(it.productId))).map((it: any) => ({
-        productId: String(it.productId || ""),
-        name: it.name,
-        quantity: it.quantity,
-        price: it.price,
-      })),
-    }))
+    const safe = pageItems.map((o: any) => {
+      const sellerItems = (o.items || []).filter((it: any) => !productIds.length || productIds.includes(String(it.productId)))
+      const sellerTotal = sellerItems.reduce((sum: number, it: any) => sum + (Number(it.price || 0) * Number(it.quantity || 1)), 0)
+      return {
+        id: o._id?.toString?.() || String(o._id),
+        orderNumber: o.orderNumber,
+        buyerEmail: o.buyerEmail,
+        buyerName: o.buyerName,
+        amount: sellerTotal,
+        status: o.status,
+        createdAt: o.createdAt,
+        items: sellerItems.map((it: any) => ({
+          productId: String(it.productId || ""),
+          name: it.name,
+          quantity: it.quantity,
+          price: it.price,
+        })),
+      }
+    })
     return NextResponse.json({ orders: safe, total })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
@@ -66,7 +70,9 @@ export async function PATCH(request: Request) {
     const status = String(body?.status || "")
     const sellerEmail = String(body?.sellerEmail || "")
     if (!orderId || !status || !sellerEmail) return NextResponse.json({ error: "id, status, sellerEmail required" }, { status: 400 })
-    if (!["packed", "shipped"].includes(status)) return NextResponse.json({ error: "status not allowed" }, { status: 400 })
+    // Allow all standard statuses as per admin panel
+    const allowedStatuses = ["pending", "paid", "packed", "shipped", "delivered", "cancelled", "refunded"]
+    if (!allowedStatuses.includes(status.toLowerCase())) return NextResponse.json({ error: "status not allowed" }, { status: 400 })
     const conn = await connectDB()
     const Order = getOrderModel(conn)
     const Product = getProductModel(conn)

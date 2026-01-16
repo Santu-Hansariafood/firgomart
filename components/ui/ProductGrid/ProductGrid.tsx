@@ -28,6 +28,7 @@ interface Product {
   reviews?: number
   stock?: number
   unitsPerPack?: number
+  isAdminProduct?: boolean
 }
 
 interface ProductGridProps {
@@ -80,6 +81,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     reviews?: number
     stock?: number
     unitsPerPack?: number
+    isAdminProduct?: boolean
   }
 
   type DropdownItem = { id: string | number; label: string }
@@ -121,6 +123,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         reviews: p.reviews,
         stock: p.stock,
         unitsPerPack: p.unitsPerPack,
+        isAdminProduct: p.isAdminProduct,
       })) as Product[]
     } catch {
       return []
@@ -326,6 +329,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center pointer-events-none">
                     <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
+
+                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded">
+                    {product.isAdminProduct ? 'Firgomart Product' : 'Other Product'}
+                  </span>
 
                   {product.discount && (
                     <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">

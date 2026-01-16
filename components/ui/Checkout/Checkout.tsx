@@ -195,11 +195,8 @@ const Checkout: React.FC<CheckoutProps> = ({
     0
   )
   const gstPercent = Number(process.env.NEXT_PUBLIC_GST_PERCENT || 18)
-  const rawGatewayFeePercent = Number(process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT)
-  const gatewayFeePercent = Number.isFinite(rawGatewayFeePercent) ? rawGatewayFeePercent : 0
   const tax = subtotal * (gstPercent / 100)
-  const platformFee = gatewayFeePercent > 0 ? (subtotal + tax) * (gatewayFeePercent / 100) : 0
-  const total = subtotal + tax + platformFee
+  const total = subtotal + tax
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -722,12 +719,6 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="text-gray-600">GST ({gstPercent}%)</span>
                   <span className="font-medium"><Rupee />{tax.toFixed(2)}</span>
                 </div>
-                {gatewayFeePercent > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Payment Gateway Fees ({gatewayFeePercent}%)</span>
-                    <span className="font-medium"><Rupee />{platformFee.toFixed(2)}</span>
-                  </div>
-                )}
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Delivery</span>
                   <span className="font-medium">{deliveryFee > 0 ? (<><Rupee />{deliveryFee}</>) : 'FREE'}</span>
