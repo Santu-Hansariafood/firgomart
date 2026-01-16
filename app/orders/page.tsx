@@ -7,6 +7,7 @@
  import { Truck, FileText, X } from "lucide-react";
  import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
  import Image from "@/components/common/Image/FallbackImage";
+ import BackButton from "@/components/common/BackButton/BackButton";
  
  type BuyerOrder = {
    id: string;
@@ -68,16 +69,21 @@
      <Suspense fallback={<BeautifulLoader />}>
      <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
        <section className="relative py-16 bg-brand-purple/10 overflow-hidden">
-         <div className="max-w-4xl mx-auto px-4 sm:px-8 text-center">
-           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-             <div className="flex items-center justify-center gap-3 mb-4">
-               <Image src="/logo/firgomart.png" alt="FirgoMart" width={40} height={40} frameless className="rounded-lg" />
-               <h1 className="text-2xl sm:text-3xl font-bold">My Orders</h1>
-             </div>
-             <p className="text-[var(--foreground)/70]">
-               View and track your previous orders.
-             </p>
-           </motion.div>
+         <div className="max-w-4xl mx-auto px-4 sm:px-8">
+           <div className="flex items-center justify-between mb-4">
+             <BackButton href="/" label="Back to Home" />
+           </div>
+           <div className="text-center">
+             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+               <div className="flex items-center justify-center gap-3 mb-4">
+                 <Image src="/logo/firgomart.png" alt="FirgoMart" width={40} height={40} frameless className="rounded-lg" />
+                 <h1 className="text-2xl sm:text-3xl font-bold">My Orders</h1>
+               </div>
+               <p className="text-[var(--foreground)/70]">
+                 View and track your previous orders.
+               </p>
+             </motion.div>
+           </div>
          </div>
        </section>
  

@@ -163,6 +163,16 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-4xl mx-auto px-4">
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[var(--foreground)]"
+          >
+            <span className="text-lg">←</span>
+            <span>Back to Home</span>
+          </button>
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
