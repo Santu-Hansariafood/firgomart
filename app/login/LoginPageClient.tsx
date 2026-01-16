@@ -43,7 +43,30 @@ export default function LoginPageClient() {
   }
 
   useEffect(() => {
-    if (status === "authenticated") router.push(next)
+    if (status !== "authenticated") return
+    const go = async () => {
+      let target = next || "/"
+      const trimmedNext = (next || "").trim()
+      if (!trimmedNext || trimmedNext === "/") {
+        try {
+          const res = await fetch("/api/auth/profile")
+          const data = await res.json().catch(() => ({}))
+          if (res.ok && (data as any)?.user) {
+            const u = (data as any).user as { role?: string | null }
+            const role = String(u.role || "").toLowerCase()
+            if (role === "seller") target = "/seller"
+            else if (role === "admin") target = "/admin"
+            else target = "/"
+          } else {
+            target = "/"
+          }
+        } catch {
+          target = "/"
+        }
+      }
+      router.push(target)
+    }
+    go()
   }, [status, next, router])
 
   return (
@@ -67,4 +90,3 @@ export default function LoginPageClient() {
     </Suspense>
   )
 }
-
