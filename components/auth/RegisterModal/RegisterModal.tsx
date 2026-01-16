@@ -65,11 +65,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     else if (!/^[A-Za-z\s]+$/.test(formData.name.trim()))
       newErrors.name = 'Only letters and spaces are allowed'
 
-    if (formData.registrationType === 'email') {
-      if (!formData.email) newErrors.email = 'Email is required'
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.email))
-        newErrors.email = 'Invalid email format'
-    } else {
+    if (!formData.email) newErrors.email = 'Email is required'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.email))
+      newErrors.email = 'Invalid email format'
+
+    if (formData.registrationType === 'mobile') {
       if (!formData.mobile) newErrors.mobile = 'Mobile number is required'
       else if (!/^[6-9]\d{9}$/.test(formData.mobile))
         newErrors.mobile = 'Invalid mobile number'
@@ -243,31 +243,31 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
                 </div>
 
-                {formData.registrationType === 'email' ? (
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                      Email Address *
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={e => {
-                          const val = e.target.value
-                          setFormData(prev => ({ ...prev, email: val }))
-                          if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
-                        }}
-                        placeholder="your@email.com"
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                          errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
-                        }`}
-                      />
-                    </div>
-                    {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                <div>
+                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    Email Address *
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={e => {
+                        const val = e.target.value
+                        setFormData(prev => ({ ...prev, email: val }))
+                        if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
+                      }}
+                      placeholder="your@email.com"
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                        errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                      }`}
+                    />
                   </div>
-                ) : (
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                </div>
+
+                {formData.registrationType === 'mobile' && (
                   <div>
                     <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                       Mobile Number *
