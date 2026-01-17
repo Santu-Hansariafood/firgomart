@@ -245,7 +245,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           })
           const initData = await safeJson(initRes)
           if (!initRes.ok) {
-            setCheckoutError(initData?.error || initData?.errorText || "Failed to initiate Cashfree payment")
+            setCheckoutError(initData?.errorText || initData?.error || "Failed to initiate Cashfree payment")
             return
           }
           const ensureScript = async () => {
