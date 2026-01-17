@@ -135,9 +135,7 @@ export const useSellerRegistration = () => {
 
     // Special handling for country (enforce India)
     if (name === 'country' && val !== 'India') {
-      // If user tries to change country, force it back or ignore if we want strict 'India only'
-      // But for UI select, usually we just don't give other options.
-      // If we want to be safe:
+      
       return 
     }
 
@@ -165,7 +163,6 @@ export const useSellerRegistration = () => {
       if (err) next[name] = err
       else delete next[name]
       
-      // Clear dependent errors if GST toggle changes
       if (name === 'hasGST') {
         delete next.gstNumber
         delete next.panNumber

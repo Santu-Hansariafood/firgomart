@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server"
-import { connectDB } from "@/lib/db/db"
-import { getEmailOtpModel } from "@/lib/models/EmailOtp"
-import nodemailer from "nodemailer"
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/db/db";
+import { getEmailOtpModel } from "@/lib/models/EmailOtp";
+import nodemailer from "nodemailer";
 
 function createTransport() {
-  const host = process.env.SMTP_HOST
-  const port = Number(process.env.SMTP_PORT || "465")
-  const user = process.env.SMTP_USER
-  const pass = process.env.SMTP_PASS
-  if (!host || !user || !pass) throw new Error("Missing SMTP configuration")
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT || "465");
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  if (!host || !user || !pass) throw new Error("Missing SMTP configuration");
   return nodemailer.createTransport({
     host,
     port,
@@ -17,39 +17,50 @@ function createTransport() {
       user,
       pass,
     },
-  })
+  });
 }
 
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json()
+    const { email } = await request.json();
     if (!email || typeof email !== "string") {
-      return NextResponse.json({ error: "Email required" }, { status: 400 })
+      return NextResponse.json({ error: "Email required" }, { status: 400 });
     }
-    const normalized = email.trim().toLowerCase()
+    const normalized = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
-      return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      );
     }
-    const conn = await connectDB()
-    const EmailOtp = getEmailOtpModel(conn)
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
-    await (EmailOtp as any).deleteMany({ email: normalized, purpose: "seller-register" })
+    const conn = await connectDB();
+    const EmailOtp = getEmailOtpModel(conn);
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    await (EmailOtp as any).deleteMany({
+      email: normalized,
+      purpose: "seller-register",
+    });
     await (EmailOtp as any).create({
       email: normalized,
       purpose: "seller-register",
       code,
       expiresAt,
       verified: false,
-    })
-    const payload: Record<string, unknown> = { success: true }
-    if (process.env.NODE_ENV !== "production") payload.otp = code
+    });
+    const payload: Record<string, unknown> = { success: true };
+    if (process.env.NODE_ENV !== "production") payload.otp = code;
     try {
-      const transport = createTransport()
-      const from = process.env.SMTP_FROM || process.env.SMTP_USER || normalized
-      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/+$/, "")
-      const logoUrl = process.env.NEXT_PUBLIC_LOGO_URL || (appUrl ? `${appUrl}/logo.png` : "")
-      const subject = "Firgomart | Verify your seller email"
+      const transport = createTransport();
+      const from = process.env.SMTP_FROM || process.env.SMTP_USER || normalized;
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").replace(
+        /\/+$/,
+        ""
+      );
+      const logoUrl =
+        process.env.NEXT_PUBLIC_LOGO_URL ||
+        (appUrl ? `${appUrl}/logo.png` : "");
+      const subject = "FirgoMart | Verify your seller email";
       const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -91,10 +102,14 @@ export async function POST(request: Request) {
         <div class="header">
           <div class="brand">
             <div class="logo-circle">
-              ${logoUrl ? `<img src="${logoUrl}" alt="Firgomart" style="max-width: 26px; max-height: 26px; border-radius: 9999px;" />` : `<span>F</span>`}
+              ${
+                logoUrl
+                  ? `<img src="${logoUrl}" alt="Firgomart" style="max-width: 26px; max-height: 26px; border-radius: 9999px;" />`
+                  : `<span>F</span>`
+              }
             </div>
             <div>
-              <div style="font-size:16px;font-weight:600;">Firgomart</div>
+              <div style="font-size:16px;font-weight:600;">FirgoMart</div>
               <div style="font-size:11px;opacity:0.9;">Smart marketplace for modern sellers</div>
             </div>
           </div>
@@ -104,7 +119,7 @@ export async function POST(request: Request) {
         <div class="content">
           <p class="greeting">Hi there,</p>
           <p class="text">
-            Thank you for choosing <strong>Firgomart</strong>. To keep your account secure, we need to verify your
+            Thank you for choosing <strong>FirgoMart</strong>. To keep your account secure, we need to verify your
             email address before you can continue with the seller registration.
           </p>
           <div class="otp-box">
@@ -125,7 +140,7 @@ export async function POST(request: Request) {
         </div>
         <div class="footer">
           <div>Best regards,</div>
-          <div><strong>Firgomart Team</strong></div>
+          <div><strong>FirgoMart Team</strong></div>
           <div class="meta" style="margin-top:8px;">
             This is an automated message for seller registration verification. Please do not reply to this email.
           </div>
@@ -134,25 +149,28 @@ export async function POST(request: Request) {
     </div>
   </body>
 </html>
-      `
+      `;
       await transport.sendMail({
         from,
         to: normalized,
         subject,
         text: `Your OTP for seller registration is ${code}. It is valid for 10 minutes.`,
         html,
-      })
-      return NextResponse.json(payload, { status: 200 })
+      });
+      return NextResponse.json(payload, { status: 200 });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "unknown"
+      const msg = e instanceof Error ? e.message : "unknown";
       if (process.env.NODE_ENV !== "production") {
-        console.error("Email OTP send failed (dev fallback)", msg)
-        return NextResponse.json(payload, { status: 200 })
+        console.error("Email OTP send failed (dev fallback)", msg);
+        return NextResponse.json(payload, { status: 200 });
       }
-      throw e
+      throw e;
     }
   } catch (err) {
-    const reason = err instanceof Error ? err.message : "unknown"
-    return NextResponse.json({ error: "Server error", reason }, { status: 500 })
+    const reason = err instanceof Error ? err.message : "unknown";
+    return NextResponse.json(
+      { error: "Server error", reason },
+      { status: 500 }
+    );
   }
 }
