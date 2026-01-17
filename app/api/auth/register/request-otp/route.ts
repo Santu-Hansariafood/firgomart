@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server"
-import { findUserAcrossDBs } from "@/lib/models/User"
+import { connectDB } from "@/lib/db/db"
+import { getEmailOtpModel } from "@/lib/models/EmailOtp"
 import nodemailer from "nodemailer"
-
-type UserDoc = {
-  email: string
-  resetOtp?: string
-  resetOtpExpires?: Date
-  save: () => Promise<unknown>
-}
 
 function createTransport() {
   const host = process.env.SMTP_HOST
@@ -29,34 +23,34 @@ function createTransport() {
 export async function POST(request: Request) {
   try {
     const { email } = await request.json()
-    if (!email) {
+    if (!email || typeof email !== "string") {
       return NextResponse.json({ error: "Email required" }, { status: 400 })
     }
-    const result = await findUserAcrossDBs(email)
-    if (!result) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    const normalized = email.trim().toLowerCase()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
-    const u = result.user as unknown as UserDoc
-    const { randomBytes } = await import("crypto")
-    const token = randomBytes(32).toString("hex")
-    const expires = new Date(Date.now() + 60 * 60 * 1000)
-    u.resetOtp = token
-    u.resetOtpExpires = expires
-    await u.save()
-
-    const normalized = String(u.email || email).trim().toLowerCase()
-    const transport = createTransport()
-    const from = process.env.SMTP_FROM || process.env.SMTP_USER || normalized
-    const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL || ""
-    const appUrl = appUrlRaw.replace(/\/+$/, "") || "http://localhost:3000"
-    const resetLink = `${appUrl}/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(
-      normalized
-    )}`
-    const subject = "FirgoMart | Reset your password"
-    const logoUrl =
-      process.env.NEXT_PUBLIC_LOGO_URL ||
-      (appUrl ? `${appUrl}/logo.png` : "")
-    const html = `
+    const conn = await connectDB()
+    const EmailOtp = getEmailOtpModel(conn)
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
+    await (EmailOtp as any).deleteMany({ email: normalized, purpose: "user-register" })
+    await (EmailOtp as any).create({
+      email: normalized,
+      purpose: "user-register",
+      code,
+      expiresAt,
+      verified: false,
+    })
+    const payload: Record<string, unknown> = { success: true }
+    if (process.env.NODE_ENV !== "production") payload.otp = code
+    try {
+      const transport = createTransport()
+      const from = process.env.SMTP_FROM || process.env.SMTP_USER || normalized
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").replace(/\/+$/, "")
+      const logoUrl = process.env.NEXT_PUBLIC_LOGO_URL || (appUrl ? `${appUrl}/logo.png` : "")
+      const subject = "FirgoMart | Verify your email"
+      const html = `
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -76,9 +70,9 @@ export async function POST(request: Request) {
       .content { padding: 24px; }
       .greeting { font-size: 14px; margin-bottom: 8px; color: #111827; }
       .text { font-size: 13px; line-height: 1.6; color: #4b5563; margin: 0 0 8px 0; }
-      .button-wrap { margin: 24px 0; text-align: center; }
-      .button { display: inline-block; padding: 12px 20px; border-radius: 9999px; background: linear-gradient(135deg, #2563eb, #22c55e); color: #f9fafb; font-size: 14px; font-weight: 600; text-decoration: none; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35); }
-      .link { font-size: 11px; color: #6b7280; word-break: break-all; margin-top: 10px; }
+      .otp-box { margin: 22px 0; padding: 16px 18px; border-radius: 12px; background: linear-gradient(135deg, rgba(129, 140, 248, 0.06), rgba(236, 72, 153, 0.12)); border: 1px solid rgba(129, 140, 248, 0.4); text-align: center; }
+      .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; background: rgba(15, 23, 42, 0.04); color: #111827; font-size: 11px; font-weight: 500; margin-bottom: 10px; }
+      .otp-value { font-size: 26px; letter-spacing: 0.32em; font-weight: 700; color: #111827; padding: 10px 16px; border-radius: 9999px; background: #ffffff; display: inline-block; box-shadow: 0 4px 18px rgba(148, 163, 184, 0.45); }
       .footer { padding: 16px 24px 22px 24px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; font-size: 11px; color: #6b7280; line-height: 1.5; }
       .meta { font-size: 11px; color: #9ca3af; margin-top: 4px; }
       @media (max-width: 600px) {
@@ -106,60 +100,62 @@ export async function POST(request: Request) {
               <div style="font-size:11px;opacity:0.9;">Smart marketplace for modern shoppers</div>
             </div>
           </div>
-          <div class="title">Reset your password</div>
-          <div class="subtitle">Click the button below to securely choose a new password for your account.</div>
+          <div class="title">Verify your email</div>
+          <div class="subtitle">Use the one-time passcode below to complete your account sign up.</div>
         </div>
         <div class="content">
           <p class="greeting">Hi there,</p>
           <p class="text">
-            We received a request to reset the password for your <strong>FirgoMart</strong> account associated with this email address.
+            Thank you for signing up with <strong>FirgoMart</strong>. To keep your account secure, we need to verify your
+            email address before you can continue.
           </p>
-          <div class="button-wrap">
-            <a href="${resetLink}" class="button">Reset Password</a>
-            <div class="link">${resetLink}</div>
+          <div class="otp-box">
+            <div class="badge">
+              <span>🔐</span>
+              <span>One-time verification code</span>
+            </div>
+            <div class="otp-value">${code}</div>
           </div>
           <p class="text">
-            This link is valid for <strong>1 hour</strong>. If you did not request a password reset, you can safely ignore this email and your current password will remain active.
+            This code is valid for <strong>10 minutes</strong>. Please do not share this OTP with anyone — our team will
+            never ask you for it.
+          </p>
+          <p class="text" style="margin-top:18px;">
+            If you did not request this email, you can safely ignore it. Your customer account will not be created without
+            completing this verification.
           </p>
         </div>
         <div class="footer">
           <div>Best regards,</div>
           <div><strong>FirgoMart Team</strong></div>
           <div class="meta" style="margin-top:8px;">
-            This is an automated message for password reset. Please do not reply to this email.
+            This is an automated message for account registration verification. Please do not reply to this email.
           </div>
         </div>
       </div>
     </div>
   </body>
 </html>
-    `
-    const text = `We received a request to reset your FirgoMart account password.
-
-If you made this request, click the link below to choose a new password:
-
-${resetLink}
-
-This link is valid for 1 hour. If you did not request a password reset, you can ignore this email.`
-
-    try {
+      `
       await transport.sendMail({
         from,
         to: normalized,
         subject,
-        text,
+        text: `Your OTP for FirgoMart account registration is ${code}. It is valid for 10 minutes.`,
         html,
       })
-    } catch (err) {
-      if (process.env.NODE_ENV === "production") {
-        const reason = err instanceof Error ? err.message : "unknown"
-        return NextResponse.json({ error: "Failed to send email", reason }, { status: 500 })
+      return NextResponse.json(payload, { status: 200 })
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "unknown"
+      if (process.env.NODE_ENV !== "production") {
+        console.error("Email OTP send failed (dev fallback)", msg)
+        return NextResponse.json(payload, { status: 200 })
       }
+      throw e
     }
-
-    return NextResponse.json({ success: true }, { status: 200 })
   } catch (err) {
     const reason = err instanceof Error ? err.message : "unknown"
     return NextResponse.json({ error: "Server error", reason }, { status: 500 })
   }
 }
+

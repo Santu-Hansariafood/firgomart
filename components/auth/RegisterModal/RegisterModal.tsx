@@ -16,10 +16,8 @@ interface RegisterModalProps {
 }
 
 interface RegisterFormData {
-  registrationType: 'email' | 'mobile'
   name: string
   email: string
-  mobile: string
   password: string
   confirmPassword: string
   address: string
@@ -41,10 +39,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 }) => {
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<RegisterFormData>({
-    registrationType: 'email',
     name: '',
     email: '',
-    mobile: '',
     password: '',
     confirmPassword: '',
     address: '',
@@ -58,6 +54,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
   const [loading, setLoading] = useState(false)
+  const [emailOtp, setEmailOtp] = useState('')
+  const [emailOtpSent, setEmailOtpSent] = useState(false)
+  const [emailOtpVerified, setEmailOtpVerified] = useState(false)
+  const [emailOtpLoading, setEmailOtpLoading] = useState(false)
+  const [emailOtpError, setEmailOtpError] = useState<string | null>(null)
 
   const validateStep1 = () => {
     const newErrors: FormErrors = {}
@@ -68,12 +69,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     if (!formData.email) newErrors.email = 'Email is required'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.email))
       newErrors.email = 'Invalid email format'
-
-    if (formData.registrationType === 'mobile') {
-      if (!formData.mobile) newErrors.mobile = 'Mobile number is required'
-      else if (!/^[6-9]\d{9}$/.test(formData.mobile))
-        newErrors.mobile = 'Invalid mobile number'
-    }
+    if (!emailOtpVerified) newErrors.email = newErrors.email || 'Please verify your email with OTP'
 
     if (!formData.password) newErrors.password = 'Password is required'
     else if (formData.password.length < 6)
@@ -114,9 +110,90 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
   }
 
+  const requestEmailOtp = async () => {
+    const email = formData.email.trim()
+    if (!email) {
+      setErrors(prev => ({ ...prev, email: 'Email is required' }))
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      setErrors(prev => ({ ...prev, email: 'Invalid email format' }))
+      return
+    }
+    setEmailOtpError(null)
+    setEmailOtpLoading(true)
+    setEmailOtpSent(false)
+    setEmailOtpVerified(false)
+    try {
+      const res = await fetch('/api/auth/register/request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const msg = (data && typeof data.error === 'string' && data.error) || 'Failed to send OTP'
+        setEmailOtpError(msg)
+        setEmailOtpSent(false)
+      } else {
+        setEmailOtpSent(true)
+      }
+    } catch {
+      setEmailOtpError('Network error while sending OTP')
+      setEmailOtpSent(false)
+    } finally {
+      setEmailOtpLoading(false)
+    }
+  }
+
+  const verifyEmailOtp = async () => {
+    const code = emailOtp.trim()
+    if (!/^\d{6}$/.test(code)) {
+      setEmailOtpError('Enter the 6-digit OTP sent to your email')
+      return
+    }
+    const email = formData.email.trim()
+    if (!email) {
+      setEmailOtpError('Email is required for OTP verification')
+      return
+    }
+    setEmailOtpLoading(true)
+    setEmailOtpError(null)
+    try {
+      const res = await fetch('/api/auth/register/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: code }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        const msg = (data && typeof data.error === 'string' && data.error) || 'Invalid or expired OTP'
+        setEmailOtpError(msg)
+        setEmailOtpVerified(false)
+      } else {
+        setEmailOtpVerified(true)
+        setErrors(prev => {
+          const next = { ...prev }
+          delete next.email
+          return next
+        })
+      }
+    } catch {
+      setEmailOtpError('Network error while verifying OTP')
+      setEmailOtpVerified(false)
+    } finally {
+      setEmailOtpLoading(false)
+    }
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     if (!validateStep2()) return
+    if (!emailOtpVerified) {
+      setErrors(prev => ({ ...prev, email: prev.email || 'Please verify your email with OTP' }))
+      setStep(1)
+      return
+    }
 
     setLoading(true)
     const payload = {
@@ -133,7 +210,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
         const addr = {
           fullName: formData.name,
           email: formData.email,
-          phone: formData.mobile,
           address: formData.address,
           city: formData.city,
           state: formData.state,
@@ -198,29 +274,6 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                    Registration Type
-                  </label>
-                  <div className="flex space-x-4">
-                    {['email', 'mobile'].map((type) => (
-                      <label key={type} className="flex items-center">
-                        <input
-                          type="radio"
-                          name="registrationType"
-                          value={type}
-                          checked={formData.registrationType === type}
-                          onChange={handleChange}
-                          className="w-4 h-4 text-brand-purple"
-                        />
-                        <span className="ml-2 text-sm text-[var(--foreground)/70] capitalize">
-                          {type}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                     First Name *
                   </label>
                   <div className="relative">
@@ -247,47 +300,59 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                     Email Address *
                   </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={e => {
-                        const val = e.target.value
-                        setFormData(prev => ({ ...prev, email: val }))
-                        if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
-                      }}
-                      placeholder="your@email.com"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                        errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
-                      }`}
-                    />
-                  </div>
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-                </div>
-
-                {formData.registrationType === 'mobile' && (
-                  <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                      Mobile Number *
-                    </label>
+                  <div className="space-y-2">
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
                       <input
-                        type="tel"
-                        name="mobile"
-                        value={formData.mobile}
-                        onChange={handleChange}
-                        placeholder="10-digit mobile number"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={e => {
+                          const val = e.target.value
+                          setFormData(prev => ({ ...prev, email: val }))
+                          if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
+                        }}
+                        placeholder="you@example.com"
                         className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                          errors.mobile ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                          errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
                         }`}
                       />
                     </div>
-                    {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
+                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+                      <div className="flex-1 flex gap-2 items-center">
+                        <input
+                          type="text"
+                          value={emailOtp}
+                          onChange={e => setEmailOtp(e.target.value)}
+                          maxLength={6}
+                          placeholder="Enter 6-digit OTP"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                        />
+                        <button
+                          type="button"
+                          onClick={verifyEmailOtp}
+                          disabled={emailOtpLoading || emailOtp.length < 6}
+                          className="px-3 py-2 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {emailOtpLoading ? 'Verifying...' : 'Verify OTP'}
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={requestEmailOtp}
+                        disabled={emailOtpLoading || !formData.email}
+                        className="px-3 py-2 text-xs font-medium rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {emailOtpLoading ? 'Sending...' : emailOtpSent ? 'Resend OTP' : 'Send OTP'}
+                      </button>
+                    </div>
+                    {emailOtpVerified && !emailOtpError && (
+                      <p className="text-green-600 text-xs">Email verified via OTP.</p>
+                    )}
+                    {emailOtpError && <p className="text-red-500 text-xs">{emailOtpError}</p>}
                   </div>
-                )}
+                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {[{

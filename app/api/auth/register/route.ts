@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getUserModel, findUserAcrossDBs } from "@/lib/models/User"
+import { getEmailOtpModel } from "@/lib/models/EmailOtp"
 import { hash } from "bcryptjs"
 
 const stateToLocationMap: Record<string, string> = {
@@ -39,6 +40,19 @@ export async function POST(request: Request) {
         { error: "Email already registered", redirectTo: "/login" },
         { status: 409 }
       )
+    }
+
+    const otpConn = await connectDB()
+    const EmailOtp = getEmailOtpModel(otpConn)
+    const normalizedEmail = String(email).trim().toLowerCase()
+    const otpDoc = await (EmailOtp as any).findOne({ email: normalizedEmail, purpose: "user-register" })
+    const otpValid =
+      otpDoc &&
+      otpDoc.verified === true &&
+      otpDoc.expiresAt &&
+      new Date(otpDoc.expiresAt).getTime() > Date.now()
+    if (!otpValid) {
+      return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
     }
 
     let targetCountry = country || "IN"
