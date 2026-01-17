@@ -35,7 +35,16 @@ const SellerRegistration: React.FC = () => {
     handleBankDocSelect,
     handleSubmit,
     checkExists,
-    submitRegistration
+    submitRegistration,
+    emailOtp,
+    setEmailOtp,
+    emailOtpSent,
+    emailOtpVerified,
+    emailOtpLoading,
+    emailOtpError,
+    requestEmailOtp,
+    verifyEmailOtp,
+    serverError
   } = useSellerRegistration()
 
   if (submitted) {
@@ -149,6 +158,11 @@ const SellerRegistration: React.FC = () => {
             </div>
           )}
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            {serverError && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {serverError}
+              </div>
+            )}
             <div className="space-y-4">
               <h2 className="text-xl font-heading font-bold">
                 Business Information
@@ -183,17 +197,53 @@ const SellerRegistration: React.FC = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Email *</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    onBlur={() => checkExists('email', formData.email)}
-                    required
-                    className={`w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.email ? 'border-red-500' : ''}`}
-                  />
-                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                  {checking === 'email' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        onBlur={() => checkExists('email', formData.email)}
+                        required
+                        className={`flex-1 px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] ${errors.email ? 'border-red-500' : ''}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={requestEmailOtp}
+                        disabled={emailOtpLoading || !formData.email || !!errors.email}
+                        className="px-3 py-2 text-xs font-medium rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {emailOtpLoading ? 'Sending...' : emailOtpSent ? 'Resend OTP' : 'Send OTP'}
+                      </button>
+                    </div>
+                    {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+                    {checking === 'email' && <p className="text-brand-purple text-xs">Checking...</p>}
+                    {emailOtpVerified && !emailOtpError && (
+                      <p className="text-green-600 text-xs">Email verified via OTP.</p>
+                    )}
+                    {emailOtpError && <p className="text-red-500 text-xs">{emailOtpError}</p>}
+                    {emailOtpSent && !emailOtpVerified && (
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="text"
+                          value={emailOtp}
+                          onChange={e => setEmailOtp(e.target.value)}
+                          maxLength={6}
+                          placeholder="Enter 6-digit OTP"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                        />
+                        <button
+                          type="button"
+                          onClick={verifyEmailOtp}
+                          disabled={emailOtpLoading || emailOtp.length < 6}
+                          className="px-3 py-2 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {emailOtpLoading ? 'Verifying...' : 'Verify OTP'}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div>

@@ -64,6 +64,12 @@ export const useSellerRegistration = () => {
   const [showAgreementPopup, setShowAgreementPopup] = useState<boolean>(false)
   const [agreedToTerms, setAgreedToTerms] = useState<boolean>(false)
   const [pendingSubmit, setPendingSubmit] = useState<boolean>(false)
+  const [emailOtp, setEmailOtp] = useState<string>('')
+  const [emailOtpSent, setEmailOtpSent] = useState<boolean>(false)
+  const [emailOtpVerified, setEmailOtpVerified] = useState<boolean>(false)
+  const [emailOtpLoading, setEmailOtpLoading] = useState<boolean>(false)
+  const [emailOtpError, setEmailOtpError] = useState<string | null>(null)
+  const [serverError, setServerError] = useState<string | null>(null)
 
   const checkExists = async (field: string, value: string) => {
     if (!value) return
@@ -115,6 +121,10 @@ export const useSellerRegistration = () => {
     }
     if (name === 'email') {
       val = val.trim()
+      setEmailOtp('')
+      setEmailOtpSent(false)
+      setEmailOtpVerified(false)
+      setEmailOtpError(null)
     }
     if (name === 'ownerName' || name === 'businessName') {
       val = val.trim() // Just trim, don't restrict typing yet, validate on blur or change? 
@@ -219,7 +229,79 @@ export const useSellerRegistration = () => {
     reader.readAsDataURL(file)
   }
 
+  const requestEmailOtp = async () => {
+    const email = formData.email.trim()
+    if (!email) {
+      setErrors(prev => ({ ...prev, email: 'Email is required for OTP' }))
+      return
+    }
+    if (errors.email) return
+    setEmailOtpError(null)
+    setEmailOtpLoading(true)
+    try {
+      const res = await fetch('/api/seller/register/request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        const msg = (data && typeof data.error === 'string' && data.error) || 'Failed to send OTP'
+        setEmailOtpError(msg)
+        setEmailOtpSent(false)
+      } else {
+        setEmailOtpSent(true)
+      }
+    } catch {
+      setEmailOtpError('Network error while sending OTP')
+      setEmailOtpSent(false)
+    } finally {
+      setEmailOtpLoading(false)
+    }
+  }
+
+  const verifyEmailOtp = async () => {
+    const code = emailOtp.trim()
+    if (!/^\d{6}$/.test(code)) {
+      setEmailOtpError('Enter the 6-digit OTP sent to your email')
+      return
+    }
+    const email = formData.email.trim()
+    if (!email) {
+      setEmailOtpError('Email is required for OTP verification')
+      return
+    }
+    setEmailOtpLoading(true)
+    setEmailOtpError(null)
+    try {
+      const res = await fetch('/api/seller/register/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: code }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        const msg = (data && typeof data.error === 'string' && data.error) || 'Invalid or expired OTP'
+        setEmailOtpError(msg)
+        setEmailOtpVerified(false)
+      } else {
+        setEmailOtpVerified(true)
+        setErrors(prev => {
+          const next = { ...prev }
+          delete next.email
+          return next
+        })
+      }
+    } catch {
+      setEmailOtpError('Network error while verifying OTP')
+      setEmailOtpVerified(false)
+    } finally {
+      setEmailOtpLoading(false)
+    }
+  }
+
   const submitRegistration = async () => {
+    setServerError(null)
     const payload = {
       ...formData,
       businessLogoUrl: formData.businessLogoUrl,
@@ -254,15 +336,39 @@ export const useSellerRegistration = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     })
+    let data: any = null
+    try {
+      data = await res.json()
+    } catch {
+      data = null
+    }
     if (res.ok) {
       setSubmitted(true)
       try { localStorage.setItem('sellerRegSubmitted', 'true') } catch {}
+      return true
+    } else {
+      const msg =
+        data && typeof data.error === 'string' && data.error
+          ? data.error
+          : 'Registration failed'
+      setServerError(msg)
+      if (msg === 'Email already registered') {
+        setErrors(prev => ({ ...prev, email: msg }))
+      }
+      if (msg === 'Phone already registered') {
+        setErrors(prev => ({ ...prev, phone: msg }))
+      }
+      return false
     }
   }
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (Object.keys(errors).length > 0) return
+    if (!emailOtpVerified) {
+      setErrors(prev => ({ ...prev, email: 'Please verify your email with OTP' }))
+      return
+    }
     if (!agreedToTerms) {
       setErrors(prev => ({ ...prev, agreement: 'Please agree to the terms and conditions' }))
       setPendingSubmit(true)
@@ -296,6 +402,15 @@ export const useSellerRegistration = () => {
     handleBankDocSelect,
     handleSubmit,
     checkExists,
-    submitRegistration
+    submitRegistration,
+    emailOtp,
+    setEmailOtp,
+    emailOtpSent,
+    emailOtpVerified,
+    emailOtpLoading,
+    emailOtpError,
+    requestEmailOtp,
+    verifyEmailOtp,
+    serverError
   }
 }

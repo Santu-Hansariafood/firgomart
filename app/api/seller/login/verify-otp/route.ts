@@ -7,7 +7,6 @@ type SellerDoc = {
   status?: string
   email?: string
   businessName?: string
-  phone?: string
   loginOtp?: string
   loginOtpExpires?: Date
   save: () => Promise<unknown>
@@ -15,11 +14,12 @@ type SellerDoc = {
 
 export async function POST(request: Request) {
   try {
-    const { phone, otp } = await request.json()
-    if (!phone || !otp) {
-      return NextResponse.json({ error: "Missing phone or otp" }, { status: 400 })
+    const { email, otp } = await request.json()
+    if (!email || !otp) {
+      return NextResponse.json({ error: "Missing email or otp" }, { status: 400 })
     }
-    const result = await findSellerAcrossDBs({ phone })
+    const normalizedEmail = String(email).trim().toLowerCase()
+    const result = await findSellerAcrossDBs({ email: normalizedEmail })
     if (!result) {
       return NextResponse.json({ error: "Seller not found" }, { status: 404 })
     }
@@ -40,7 +40,6 @@ export async function POST(request: Request) {
       id: s._id ? s._id.toString() : String((s as { id?: unknown }).id || ""),
       email: s.email,
       name: s.businessName,
-      phone: s.phone,
       role: "seller",
     }
     return NextResponse.json({ seller: safe }, { status: 200 })

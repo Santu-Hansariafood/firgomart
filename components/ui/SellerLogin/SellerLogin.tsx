@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Phone, ShieldCheck, RefreshCw, X, AlertTriangle } from 'lucide-react'
+import { Mail, ShieldCheck, RefreshCw, X, AlertTriangle } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 
 const SellerLogin: React.FC = () => {
@@ -12,7 +12,7 @@ const SellerLogin: React.FC = () => {
   const next = searchParams.get('next') || '/seller'
   const { login } = useAuth()
 
-  const [mobile, setMobile] = useState('')
+  const [email, setEmail] = useState('')
   const [otpSent, setOtpSent] = useState(false)
   const [generatedOtp, setGeneratedOtp] = useState('')
   const [enteredOtp, setEnteredOtp] = useState('')
@@ -26,8 +26,9 @@ const SellerLogin: React.FC = () => {
 
   const requestOtp = async () => {
     setError('')
-    if (!/^\d{10}$/.test(mobile)) {
-      setError('Enter a valid 10-digit mobile number')
+    const trimmed = email.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError('Enter a valid email address')
       return
     }
     setLoading(true)
@@ -35,7 +36,7 @@ const SellerLogin: React.FC = () => {
       const res = await fetch('/api/seller/login/request-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: mobile }),
+        body: JSON.stringify({ email: trimmed }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -62,7 +63,7 @@ const SellerLogin: React.FC = () => {
       const res = await fetch('/api/seller/login/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: mobile, otp: enteredOtp }),
+        body: JSON.stringify({ email: email.trim(), otp: enteredOtp }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -72,13 +73,13 @@ const SellerLogin: React.FC = () => {
         const s = data.seller as { id?: string | number; email?: string; name?: string }
         let details: unknown = null
         try {
-          const res2 = await fetch(`/api/seller/me?email=${encodeURIComponent(String(s?.email || `${mobile}@seller.local`))}`)
+          const res2 = await fetch(`/api/seller/me?email=${encodeURIComponent(String(s?.email || email.trim()))}`)
           const data2 = await res2.json()
           if (res2.ok) details = data2?.seller || null
         } catch {}
         await login({
           id: s?.id || Date.now(),
-          email: s?.email || `${mobile}@seller.local`,
+          email: s?.email || email.trim(),
           name: s?.name || 'Seller',
           role: 'seller',
           sellerDetails: details || undefined,
@@ -100,13 +101,13 @@ const SellerLogin: React.FC = () => {
       const s = pendingSeller
       let details: unknown = null
       try {
-        const res = await fetch(`/api/seller/me?email=${encodeURIComponent(String(s?.email || `${mobile}@seller.local`))}`)
+        const res = await fetch(`/api/seller/me?email=${encodeURIComponent(String(s?.email || email.trim()))}`)
         const data = await res.json()
         if (res.ok) details = data?.seller || null
       } catch {}
       const user: Parameters<typeof login>[0] = {
         id: s?.id || Date.now(),
-        email: s?.email || `${mobile}@seller.local`,
+        email: s?.email || email.trim(),
         name: s?.name || 'Seller',
         role: 'seller',
         sellerDetails: details || undefined,
@@ -144,14 +145,14 @@ const SellerLogin: React.FC = () => {
           <div className="p-6 space-y-5">
             {!otpSent ? (
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-[var(--foreground)/80] mb-2">Mobile Number</label>
+                <label className="block text-sm font-medium text-[var(--foreground)/80] mb-2">Seller Email</label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
                   <input
-                    type="tel"
-                    value={mobile}
-                    onChange={e => setMobile(e.target.value)}
-                    placeholder="Enter 10-digit mobile number"
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    placeholder="Enter registered seller email"
                     className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)]"
                   />
                 </div>
@@ -164,7 +165,7 @@ const SellerLogin: React.FC = () => {
                   {loading ? 'Sending OTP...' : 'Request OTP'}
                 </button>
                 <p className="text-xs text-[var(--foreground)/60]">
-                  Demo note: No SMS is sent. A sample OTP will be shown.
+                  OTP will be sent to your registered seller email.
                 </p>
               </div>
             ) : (

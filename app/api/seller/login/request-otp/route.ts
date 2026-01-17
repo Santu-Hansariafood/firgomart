@@ -1,20 +1,40 @@
 import { NextResponse } from "next/server"
 import { findSellerAcrossDBs } from "@/lib/models/Seller"
+import nodemailer from "nodemailer"
 
 type SellerDoc = {
+  email?: string
   status?: string
   loginOtp?: string
   loginOtpExpires?: Date
   save: () => Promise<unknown>
 }
 
+function createTransport() {
+  const host = process.env.SMTP_HOST
+  const port = Number(process.env.SMTP_PORT || "465")
+  const user = process.env.SMTP_USER
+  const pass = process.env.SMTP_PASS
+  if (!host || !user || !pass) throw new Error("Missing SMTP configuration")
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: {
+      user,
+      pass,
+    },
+  })
+}
+
 export async function POST(request: Request) {
   try {
-    const { phone } = await request.json()
-    if (!phone) {
-      return NextResponse.json({ error: "Phone required" }, { status: 400 })
+    const { email } = await request.json()
+    if (!email) {
+      return NextResponse.json({ error: "Email required" }, { status: 400 })
     }
-    const result = await findSellerAcrossDBs({ phone })
+    const normalizedEmail = String(email).trim().toLowerCase()
+    const result = await findSellerAcrossDBs({ email: normalizedEmail })
     if (!result) {
       return NextResponse.json({ error: "Seller not found" }, { status: 404 })
     }
@@ -28,6 +48,18 @@ export async function POST(request: Request) {
     s.loginOtp = otp
     s.loginOtpExpires = expires
     await s.save()
+    const targetEmail = String(s.email || normalizedEmail).trim().toLowerCase()
+    if (!targetEmail) {
+      return NextResponse.json({ error: "Seller email not configured" }, { status: 500 })
+    }
+    const transport = createTransport()
+    const from = process.env.SMTP_FROM || process.env.SMTP_USER || targetEmail
+    await transport.sendMail({
+      from,
+      to: targetEmail,
+      subject: "Firgomart seller login OTP",
+      text: `Your OTP for seller login is ${otp}. It is valid for 10 minutes.`,
+    })
     const payload: Record<string, unknown> = { success: true }
     if (process.env.NODE_ENV !== "production") payload.otp = otp
     return NextResponse.json(payload, { status: 200 })

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getSellerModel } from "@/lib/models/Seller"
+import { getEmailOtpModel } from "@/lib/models/EmailOtp"
 
 const stateToLocationMap: Record<string, string> = {
   "west bengal": "WB",
@@ -42,6 +43,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    const normalizedEmail = String(email).trim().toLowerCase()
+    const otpConn = await connectDB()
+    const EmailOtp = getEmailOtpModel(otpConn)
+    const otpDoc = await (EmailOtp as any).findOne({ email: normalizedEmail, purpose: "seller-register" })
+    const otpValid =
+      otpDoc &&
+      otpDoc.verified === true &&
+      otpDoc.expiresAt &&
+      new Date(otpDoc.expiresAt).getTime() > Date.now()
+    if (!otpValid) {
+      return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
+    }
+
     let targetCountry = (country || "IN") as string
     let targetLocation = location as string | undefined
     if (targetCountry === "IN" && !targetLocation) {
@@ -60,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     const Seller = getSellerModel(conn)
-    const existingByEmail = await (Seller as any).findOne({ email }).lean()
+    const existingByEmail = await (Seller as any).findOne({ email: normalizedEmail }).lean()
     if (existingByEmail) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 })
     }
@@ -72,7 +86,7 @@ export async function POST(request: Request) {
     const doc = await (Seller as any).create({
       businessName,
       ownerName,
-      email,
+      email: normalizedEmail,
       phone,
       address,
       country: targetCountry,
