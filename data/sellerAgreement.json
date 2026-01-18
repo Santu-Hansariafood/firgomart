@@ -1,0 +1,116 @@
+{
+  "title": "FirgoMart – Indian Seller Onboarding & Global Selling Agreement",
+  "effectiveDate": "26 July 2025",
+  "intro": [
+    "This Indian Seller Onboarding & Global Selling Agreement (\"Agreement\") governs the registration, onboarding, taxation, export, and cross-border selling obligations of Sellers located in India who register on the FirgoMart platform. FirgoMart is an Indian Private Limited e-commerce marketplace company operating under Indian law."
+  ],
+  "sections": [
+    {
+      "heading": "1. Scope & Applicability",
+      "points": [
+        "This Agreement is applicable exclusively to Sellers based and registered in India (\"Indian Sellers\").",
+        "Indian Sellers are permitted to sell products within India as well as to international customers worldwide through the FirgoMart marketplace.",
+        "FirgoMart acts solely as a technology-enabled e-commerce marketplace and intermediary and does not assume the role of seller, exporter, or importer unless expressly agreed in writing."
+      ]
+    },
+    {
+      "heading": "2. Legal Status of Parties",
+      "points": [
+        "FirgoMart is an Indian Private Limited Company incorporated under the Companies Act, 2013 and operates as an e-commerce marketplace.",
+        "Seller is an independent business entity and shall be treated as:",
+        "The actual seller of goods",
+        "The exporter for international orders",
+        "The sole compliance owner for all statutory, tax, and regulatory obligations"
+      ]
+    },
+    {
+      "heading": "3. Seller GST Declaration & Undertaking (India)",
+      "points": [
+        "The GSTIN provided at the time of registration is true, valid, active, and lawfully issued to the Seller or the Seller’s authorised Indian business entity.",
+        "All products listed on FirgoMart shall be classified correctly under applicable HSN codes and shall comply with the Goods and Services Tax Act, 2017, including rules, notifications, and amendments.",
+        "GST applied on products shall be system-determined by FirgoMart based on category-wise configuration. The Seller shall not manipulate, override, or misrepresent GST rates or HSN classifications.",
+        "Any tax demand, interest, penalty, or legal consequence arising due to incorrect GSTIN, misclassification, false declaration, or non-compliance attributable to the Seller shall be the Seller’s sole responsibility. FirgoMart shall not be liable in any manner."
+      ]
+    },
+    {
+      "heading": "4. Domestic Selling Compliance (India)",
+      "subSections": [
+        {
+          "heading": "4.1 GST-Registered Sellers",
+          "content": "For sales made within India, Sellers who are registered under GST shall comply with all applicable Indian laws, including but not limited to the Goods and Services Tax Act, 2017, the Consumer Protection (E-Commerce) Rules, 2020, the Legal Metrology Act, 2009, and the Income-tax Act, 1961, as applicable. Such Sellers may undertake intra-state, inter-state, and international sales in accordance with law."
+        },
+        {
+          "heading": "4.2 Non-GST Sellers (Aadhaar / PAN Based – Intra-State Only)",
+          "points": [
+            "FirgoMart may, at its sole discretion and subject to applicable law, permit Indian Sellers who are not registered under GST to sell products only within their respective State or Union Territory.",
+            "Such Sellers shall be onboarded on the basis of valid Aadhaar Card and PAN, along with any additional KYC documents required by FirgoMart.",
+            "Non-GST Sellers shall sell only goods permitted without GST registration or within exemption thresholds.",
+            "Non-GST Sellers shall undertake only intra-state supplies and shall not engage in inter-state or international sales without GST registration.",
+            "Invoices shall be issued without charging GST and strictly in accordance with law.",
+            "Upon crossing mandatory GST thresholds or selling GST-mandated goods, the Seller must immediately obtain GST registration and update the same on the Platform.",
+            "FirgoMart is not responsible for determining GST exemption eligibility. Full compliance responsibility rests with the Seller.",
+            "FirgoMart may restrict, suspend, or terminate selling privileges of non-GST Sellers for non-compliance, regulatory change, or platform risk."
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "5. Global / International Selling by Indian Sellers",
+      "subSections": [
+        {
+          "heading": "5.1 Permission for Global Sales",
+          "content": "FirgoMart enables Indian Sellers to sell and ship products to customers located outside India. Such transactions may qualify as exports or cross-border e-commerce transactions under Indian law."
+        },
+        {
+          "heading": "5.2 Export, Customs & FEMA Compliance",
+          "points": [
+            "Compliance with the Foreign Trade Policy of India",
+            "Compliance with the Customs Act, 1962 and export regulations",
+            "Accurate declaration of product value, HS/HSN codes, country of origin, and export documentation",
+            "Compliance with FEMA and RBI guidelines, including foreign exchange realisation",
+            "Filing of shipping bills, export invoices, and declarations",
+            "FirgoMart shall not be considered exporter or importer of record"
+          ]
+        }
+      ]
+    },
+    {
+      "heading": "6. GST & Tax Treatment for International Sales",
+      "points": [
+        "GST treatment including zero-rated supplies or IGST shall be governed by prevailing GST laws.",
+        "Seller is responsible for determining zero-rated eligibility.",
+        "Seller must file LUT/Bond where required.",
+        "Seller must claim refunds or tax credits independently.",
+        "FirgoMart is not responsible for incorrect tax treatment."
+      ]
+    },
+    {
+      "heading": "7. Platform Rights, Controls & Indemnity",
+      "points": [
+        "Withhold, adjust, or recover Seller payouts",
+        "Suspend or restrict domestic or international selling",
+        "Delist products or suspend Seller accounts",
+        "Seek compliance documents",
+        "Share Seller data with authorities as required by law",
+        "Seller shall indemnify FirgoMart for any loss, tax, duty, penalty, seizure, or legal proceedings arising from Seller non-compliance"
+      ]
+    },
+    {
+      "heading": "8. Audit, Records & Verification",
+      "points": [
+        "FirgoMart may conduct GST and export audits.",
+        "Seller shall maintain proper records.",
+        "Seller shall provide documents upon request."
+      ]
+    },
+    {
+      "heading": "9. Term, Acceptance & Governing Law",
+      "points": [
+        "Agreement remains valid for entire Seller association with FirgoMart.",
+        "Acceptance deemed upon clicking “I Agree” or completing registration.",
+        "Governing Laws include Companies Act, 2013; GST Act, 2017; Consumer Protection (E-Commerce) Rules, 2020; Legal Metrology Act, 2009; Foreign Trade Policy; FEMA; RBI Regulations; Customs Act, 1962.",
+        "Jurisdiction: Courts having jurisdiction over FirgoMart in India."
+      ]
+    }
+  ]
+}

@@ -355,6 +355,12 @@ export const useSellerRegistration = () => {
       if (msg === 'Phone already registered') {
         setErrors(prev => ({ ...prev, phone: msg }))
       }
+      if (msg === 'GST Number already registered') {
+        setErrors(prev => ({ ...prev, gstNumber: msg }))
+      }
+      if (msg === 'PAN Number already registered') {
+        setErrors(prev => ({ ...prev, panNumber: msg }))
+      }
       return false
     }
   }

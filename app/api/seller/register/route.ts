@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
-import { getSellerModel } from "@/lib/models/Seller"
+import { getSellerModel, findSellerAcrossDBs } from "@/lib/models/Seller"
 import { getEmailOtpModel } from "@/lib/models/EmailOtp"
 
 const stateToLocationMap: Record<string, string> = {
@@ -81,6 +81,20 @@ export async function POST(request: Request) {
     const existingByPhone = await (Seller as any).findOne({ phone }).lean()
     if (existingByPhone) {
       return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
+    }
+
+    if (gstNumber) {
+      const existingByGst = await findSellerAcrossDBs({ gstNumber: String(gstNumber).trim().toUpperCase() })
+      if (existingByGst) {
+        return NextResponse.json({ error: "GST Number already registered" }, { status: 409 })
+      }
+    }
+
+    if (panNumber) {
+      const existingByPan = await findSellerAcrossDBs({ panNumber: String(panNumber).trim().toUpperCase() })
+      if (existingByPan) {
+        return NextResponse.json({ error: "PAN Number already registered" }, { status: 409 })
+      }
     }
 
     const doc = await (Seller as any).create({

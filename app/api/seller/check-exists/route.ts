@@ -10,13 +10,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing field or value" }, { status: 400 })
     }
 
-    const query: any = {}
-    if (field === 'email') query.email = value
-    else if (field === 'phone') query.phone = value
-    else if (field === 'gstNumber') query.gstNumber = value
-    else if (field === 'panNumber') query.panNumber = value
-    else {
-        return NextResponse.json({ error: "Invalid field" }, { status: 400 })
+    const query: { email?: string; phone?: string; gstNumber?: string; panNumber?: string } = {}
+    if (field === "email") {
+      query.email = String(value).trim().toLowerCase()
+    } else if (field === "phone") {
+      query.phone = String(value).replace(/\D/g, "")
+    } else if (field === "gstNumber") {
+      query.gstNumber = String(value).trim().toUpperCase()
+    } else if (field === "panNumber") {
+      query.panNumber = String(value).trim().toUpperCase()
+    } else {
+      return NextResponse.json({ error: "Invalid field" }, { status: 400 })
     }
 
     const result = await findSellerAcrossDBs(query)

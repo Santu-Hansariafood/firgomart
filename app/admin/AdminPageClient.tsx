@@ -110,10 +110,14 @@ export default function AdminPageClient() {
 
   const approveSeller = async (id: string) => {
     try {
-      const res = await fetch("/api/admin/sellers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status: "approved" }),
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch(`/api/admin/sellers/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+        body: JSON.stringify({ status: "approved" }),
       })
       if (res.ok) {
         setSellers(prev => prev.filter(s => s._id !== id))

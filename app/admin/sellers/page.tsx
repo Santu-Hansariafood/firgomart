@@ -112,10 +112,14 @@ export default function Page() {
 
   const updateStatus = async (id: string, status: string) => {
     try {
-      const res = await fetch("/api/admin/sellers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, status }),
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch(`/api/admin/sellers/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        },
+        body: JSON.stringify({ status }),
       })
       if (res.ok) {
         setSellers(prev => prev.map(s => s.id === id ? { ...s, status } as Seller : s))
@@ -130,19 +134,23 @@ export default function Page() {
 
   const openReview = (seller: Seller) => {
     setSelectedSeller(seller)
-    setDecisionStatus((seller.status as any) || "pending")
+    const rawStatus = String(seller.status || "pending").toLowerCase()
+    const nextStatus: "approved" | "rejected" | "pending" =
+      rawStatus === "approved" || rawStatus === "rejected" || rawStatus === "pending" ? rawStatus : "pending"
+    setDecisionStatus(nextStatus)
     setDecisionNote(seller.reviewNotes || seller.rejectionReason || "")
   }
 
-  const saveDecision = async () => {
+  const saveDecision = async (nextStatus?: "approved" | "rejected" | "pending") => {
     if (!selectedSeller) return
     setSaving(true)
     try {
+      const finalStatus = nextStatus || decisionStatus
       const payload: Partial<Seller> = {
-        status: decisionStatus,
+        status: finalStatus,
         reviewedAt: new Date().toISOString(),
-        reviewNotes: decisionStatus === "approved" ? decisionNote : undefined,
-        rejectionReason: decisionStatus === "rejected" ? decisionNote : undefined,
+        reviewNotes: finalStatus === "approved" ? decisionNote : undefined,
+        rejectionReason: finalStatus === "rejected" ? decisionNote : undefined,
         reviewedBy: (session?.user?.email || authUser?.email || "") || undefined,
       }
       const adminEmail = (session?.user?.email || authUser?.email || "").trim()
@@ -154,9 +162,10 @@ export default function Page() {
         },
         body: JSON.stringify(payload),
       })
-      const data = await res.json()
-      if (res.ok) {
-        const updated = data.seller as any
+      const data = (await res.json()) as { seller?: Seller }
+      if (res.ok && data.seller) {
+        const updated = data.seller
+        const newStatus = String(updated.status || finalStatus || "").toLowerCase()
         setSellers(prev => prev.map(s => s.id === selectedSeller.id ? {
           ...s,
           status: updated.status,
@@ -165,14 +174,22 @@ export default function Page() {
           reviewedAt: updated.reviewedAt,
           reviewedBy: updated.reviewedBy,
         } : s))
-        setSelectedSeller({
-          ...selectedSeller,
-          status: updated.status,
-          reviewNotes: updated.reviewNotes,
-          rejectionReason: updated.rejectionReason,
-          reviewedAt: updated.reviewedAt,
-          reviewedBy: updated.reviewedBy,
-        })
+        if (newStatus === "approved") {
+          setSelectedSeller(null)
+          setDecisionStatus("approved")
+        } else {
+          setSelectedSeller({
+            ...selectedSeller,
+            status: updated.status,
+            reviewNotes: updated.reviewNotes,
+            rejectionReason: updated.rejectionReason,
+            reviewedAt: updated.reviewedAt,
+            reviewedBy: updated.reviewedBy,
+          })
+          const normalized: "approved" | "rejected" | "pending" =
+            newStatus === "approved" || newStatus === "rejected" || newStatus === "pending" ? newStatus : "pending"
+          setDecisionStatus(normalized)
+        }
       }
     } catch {}
     setSaving(false)
@@ -403,7 +420,7 @@ export default function Page() {
                   <div className="text-sm text-gray-500">Status</div>
                   <select
                     value={decisionStatus}
-                    onChange={(e) => setDecisionStatus(e.currentTarget.value as any)}
+                    onChange={(e) => setDecisionStatus(e.currentTarget.value as "approved" | "rejected" | "pending")}
                     className="border rounded-lg px-2 py-1 w-full"
                   >
                     <option value="pending">Pending</option>
@@ -434,21 +451,21 @@ export default function Page() {
                 </button>
                 <button
                   className={`px-4 py-2 rounded-lg ${saving ? "bg-gray-300 text-gray-600" : "bg-blue-600 text-white hover:bg-blue-700"}`}
-                  onClick={saveDecision}
+                  onClick={() => saveDecision()}
                   disabled={saving || (decisionStatus === "rejected" && !decisionNote)}
                 >
                   Save
                 </button>
                 <button
                   className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
-                  onClick={() => { setDecisionStatus("approved"); saveDecision() }}
+                  onClick={() => saveDecision("approved")}
                   disabled={saving}
                 >
                   Approve
                 </button>
                 <button
                   className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
-                  onClick={() => { setDecisionStatus("rejected"); saveDecision() }}
+                  onClick={() => saveDecision("rejected")}
                   disabled={saving || !decisionNote}
                 >
                   Reject

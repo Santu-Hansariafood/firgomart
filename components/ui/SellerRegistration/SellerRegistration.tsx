@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import BackButton from '@/components/common/BackButton/BackButton'
 import { useSellerRegistration } from '@/hooks/useSellerRegistration'
+import sellerAgreementContent from '@/data/sellerAgreement.json'
 
 const ImageCropper = dynamic(() => import('@/components/common/ImageCropper/ImageCropper'))
 
@@ -46,6 +47,14 @@ const SellerRegistration: React.FC = () => {
     verifyEmailOtp,
     serverError
   } = useSellerRegistration()
+
+  const agreementTitle = (sellerAgreementContent as { title?: string }).title || 'Seller Agreement'
+  const agreementIntro =
+    (sellerAgreementContent as { intro?: string[] }).intro || []
+  const agreementSections =
+    (sellerAgreementContent as {
+      sections?: { heading?: string; points?: string[] }[]
+    }).sections || []
 
   if (submitted) {
     return (
@@ -119,10 +128,28 @@ const SellerRegistration: React.FC = () => {
           {showAgreementPopup && !submitted && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20]">
-                <h3 className="text-xl font-heading font-bold mb-4">Seller Agreement</h3>
-                <div className="space-y-3 mb-4 text-sm">
-                  <p>By continuing, you confirm that all details provided are accurate and may be used for verification.</p>
+                <h3 className="text-xl font-heading font-bold mb-2">{agreementTitle}</h3>
+                <div className="text-xs text-[var(--foreground)/70] mb-3">
+                  <p>By continuing, you confirm that all details provided are accurate and may be used for verification and compliance with marketplace policies.</p>
                   <p>Your access will be enabled after admin verification is complete.</p>
+                </div>
+                <div className="mb-4 border border-[var(--foreground)/15] rounded-lg bg-[var(--background)]/80 max-h-64 overflow-y-auto p-3 text-xs leading-relaxed space-y-2">
+                  {agreementIntro.map((para, idx) => (
+                    <p key={`intro-${idx}`}>{para}</p>
+                  ))}
+                  {agreementSections.map((section, sIdx) => (
+                    <div key={`sec-${sIdx}`} className="mt-2">
+                      {section.heading && (
+                        <p className="font-semibold text-[var(--foreground)] mb-1">
+                          {section.heading}
+                        </p>
+                      )}
+                      {Array.isArray(section.points) &&
+                        section.points.map((pt, pIdx) => (
+                          <p key={`sec-${sIdx}-pt-${pIdx}`}>{pt}</p>
+                        ))}
+                    </div>
+                  ))}
                 </div>
                 <div className="flex items-center gap-2 mb-4">
                   <input
@@ -473,12 +500,35 @@ const SellerRegistration: React.FC = () => {
                 <p className="mt-1 text-xs text-[var(--foreground)/60]">
                   Clear photo of cheque leaf or first page of passbook
                 </p>
-                {(formData as any).bankDocumentImage && (
-                  <div className="mt-3 flex justify-center">
-                    <img src={(formData as any).bankDocumentImage} alt="Bank Document" className="max-h-40 rounded border" />
-                  </div>
-                )}
               </div>
+              {(formData.businessLogoUrl || (formData as any).bankDocumentImage) && (
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {formData.businessLogoUrl && (
+                    <div className="border rounded-lg p-3 bg-[var(--background)] flex flex-col items-center">
+                      <p className="text-xs text-[var(--foreground)/70] mb-2">Business Logo</p>
+                      <div className="relative w-24 h-24 sm:w-28 sm:h-28">
+                        <Image
+                          src={formData.businessLogoUrl}
+                          alt="Business Logo"
+                          fill
+                          sizes="112px"
+                          className="object-contain rounded-md border border-[var(--foreground)/20] bg-white"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  {(formData as any).bankDocumentImage && (
+                    <div className="border rounded-lg p-3 bg-[var(--background)] flex flex-col items-center">
+                      <p className="text-xs text-[var(--foreground)/70] mb-2">Bank Document</p>
+                      <img
+                        src={(formData as any).bankDocumentImage}
+                        alt="Bank Document"
+                        className="max-h-28 sm:max-h-32 rounded-md border border-[var(--foreground)/20] bg-white"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
             <button
               type="submit"
