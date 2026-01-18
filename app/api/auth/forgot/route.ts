@@ -47,8 +47,17 @@ export async function POST(request: Request) {
     const normalized = String(u.email || email).trim().toLowerCase()
     const transport = createTransport()
     const from = process.env.SMTP_FROM || process.env.SMTP_USER || normalized
-    const appUrlRaw = process.env.NEXT_PUBLIC_APP_URL || ""
-    const appUrl = appUrlRaw.replace(/\/+$/, "") || "http://localhost:3000"
+    const origin = (() => {
+      try {
+        return new URL(request.url).origin
+      } catch {
+        return ""
+      }
+    })()
+    const appUrl =
+      (process.env.NODE_ENV === "production"
+        ? (process.env.NEXT_PUBLIC_APP_URL || origin || "").replace(/\/+$/, "")
+        : (origin || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/+$/, ""))
     const resetLink = `${appUrl}/reset-password?token=${encodeURIComponent(token)}&email=${encodeURIComponent(
       normalized
     )}`
