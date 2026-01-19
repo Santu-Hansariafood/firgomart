@@ -41,9 +41,13 @@ const LoginModal: React.FC<LoginModalProps> = ({
     const newErrors: Errors = {}
 
     if (!formData.email) {
-      newErrors.email = 'Email is required'
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Invalid email format'
+      newErrors.email = 'Email or Mobile Number is required'
+    } else {
+      const isEmail = /\S+@\S+\.\S+/.test(formData.email)
+      const isMobile = /^\d{10}$/.test(formData.email.replace(/\D/g, ''))
+      if (!isEmail && !isMobile) {
+        newErrors.email = 'Invalid email or mobile number'
+      }
     }
 
     if (!formData.password) {
@@ -143,19 +147,19 @@ const LoginModal: React.FC<LoginModalProps> = ({
             )}
             <div>
               <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
-                Email Address
+                Email or Mobile Number
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
                 <input
-                  type="email"
+                  type="text"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                     errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
                   }`}
-                  placeholder="your@email.com"
+                  placeholder="Email or Mobile Number"
                 />
               </div>
               {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}

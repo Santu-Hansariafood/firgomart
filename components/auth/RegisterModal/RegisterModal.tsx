@@ -18,6 +18,7 @@ interface RegisterModalProps {
 interface RegisterFormData {
   name: string
   email: string
+  mobile: string
   password: string
   confirmPassword: string
   address: string
@@ -41,6 +42,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const [formData, setFormData] = useState<RegisterFormData>({
     name: '',
     email: '',
+    mobile: '',
     password: '',
     confirmPassword: '',
     address: '',
@@ -59,6 +61,41 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const [emailOtpVerified, setEmailOtpVerified] = useState(false)
   const [emailOtpLoading, setEmailOtpLoading] = useState(false)
   const [emailOtpError, setEmailOtpError] = useState<string | null>(null)
+  const [checking, setChecking] = useState<string | null>(null)
+
+  const isEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)
+  const isMobile = (val: string) => /^\d{10}$/.test(val.replace(/\D/g, ''))
+
+  const checkExists = async (field: string, value: string) => {
+    if (!value) return
+    setChecking(field)
+    try {
+      const res = await fetch('/api/auth/check-exists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ field, value }),
+      })
+      const data = await res.json()
+      if (data.exists) {
+        let msg = ''
+        if (field === 'email') msg = 'Email already registered'
+        else if (field === 'mobile') msg = 'Phone number already registered'
+        else msg = 'Already registered'
+        
+        setErrors(prev => ({ ...prev, [field]: msg }))
+      } else {
+        setErrors(prev => {
+           const next = { ...prev }
+           delete next[field]
+           return next
+        })
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setChecking(null)
+    }
+  }
 
   const validateStep1 = () => {
     const newErrors: FormErrors = {}
@@ -67,9 +104,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       newErrors.name = 'Only letters and spaces are allowed'
 
     if (!formData.email) newErrors.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(formData.email))
+    else if (!isEmail(formData.email))
       newErrors.email = 'Invalid email format'
     if (!emailOtpVerified) newErrors.email = newErrors.email || 'Please verify your email with OTP'
+
+    if (!formData.mobile) newErrors.mobile = 'Mobile number is required'
+    else if (!isMobile(formData.mobile))
+      newErrors.mobile = 'Invalid mobile number'
 
     if (!formData.password) newErrors.password = 'Password is required'
     else if (formData.password.length < 6)
@@ -116,7 +157,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       setErrors(prev => ({ ...prev, email: 'Email is required' }))
       return
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    if (!isEmail(email)) {
       setErrors(prev => ({ ...prev, email: 'Invalid email format' }))
       return
     }
@@ -227,12 +268,15 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       })
       if (loginRes?.ok) onClose()
       else {
-        const msg = typeof loginRes?.error === 'string' && loginRes.error.length > 0 ? loginRes.error : 'Auto login failed'
+        const msg =
+          typeof loginRes?.error === 'string' && loginRes.error.length > 0
+            ? loginRes.error
+            : 'Auto login failed'
         setErrors(prev => ({ ...prev, submit: msg }))
       }
     } else {
       const data = await res.json().catch(() => ({}))
-      setErrors(prev => ({ ...prev, submit: data?.error || 'Registration failed' }))
+      setErrors(prev => ({ ...prev, submit: (data as any)?.error || 'Registration failed' }))
     }
     setLoading(false)
   }
@@ -313,11 +357,15 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           if (errors.email) setErrors(prev => ({ ...prev, email: '' }))
                         }}
                         placeholder="you@example.com"
+                        onBlur={() => checkExists('email', formData.email)}
                         className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                           errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
                         }`}
                       />
                     </div>
+                    {checking === 'email' && (
+                      <p className="text-blue-500 text-xs mt-1">Checking availability...</p>
+                    )}
                     <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
                       <div className="flex-1 flex gap-2 items-center">
                         <input
@@ -352,6 +400,34 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                     {emailOtpError && <p className="text-red-500 text-xs">{emailOtpError}</p>}
                   </div>
                   {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    Mobile Number *
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                    <input
+                      type="tel"
+                      name="mobile"
+                      value={formData.mobile}
+                      onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '').slice(0, 10)
+                        setFormData(prev => ({ ...prev, mobile: val }))
+                        if (errors.mobile) setErrors(prev => ({ ...prev, mobile: '' }))
+                      }}
+                      onBlur={() => checkExists('mobile', formData.mobile)}
+                      placeholder="10-digit mobile number"
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                        errors.mobile ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                      }`}
+                    />
+                  </div>
+                  {checking === 'mobile' && (
+                    <p className="text-blue-500 text-xs mt-1">Checking availability...</p>
+                  )}
+                  {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

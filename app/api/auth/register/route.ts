@@ -30,32 +30,46 @@ export async function POST(request: Request) {
       location,
     } = body || {}
 
-    if (!email || !password || !name) {
+    if (!email || !mobile || !password || !name) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    const cross = await findUserAcrossDBs(email)
-    if (cross) {
-      return NextResponse.json(
-        { error: "Email already registered", redirectTo: "/login" },
-        { status: 409 }
-      )
+    if (email) {
+      const cross = await findUserAcrossDBs(email)
+      if (cross) {
+        return NextResponse.json(
+          { error: "Email already registered", redirectTo: "/login" },
+          { status: 409 }
+        )
+      }
+
+      const otpConn = await connectDB()
+      const EmailOtp = getEmailOtpModel(otpConn)
+      const normalizedEmail = String(email).trim().toLowerCase()
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const otpDoc = await (EmailOtp as any).findOne({ email: normalizedEmail, purpose: "user-register" })
+      const otpValid =
+        otpDoc &&
+        otpDoc.verified === true &&
+        otpDoc.expiresAt &&
+        new Date(otpDoc.expiresAt).getTime() > Date.now()
+      if (!otpValid) {
+        return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
+      }
     }
 
-    const otpConn = await connectDB()
-    const EmailOtp = getEmailOtpModel(otpConn)
-    const normalizedEmail = String(email).trim().toLowerCase()
-    const otpDoc = await (EmailOtp as any).findOne({ email: normalizedEmail, purpose: "user-register" })
-    const otpValid =
-      otpDoc &&
-      otpDoc.verified === true &&
-      otpDoc.expiresAt &&
-      new Date(otpDoc.expiresAt).getTime() > Date.now()
-    if (!otpValid) {
-      return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
+    if (mobile) {
+      const crossMobile = await findUserAcrossDBs({ mobile })
+      if (crossMobile) {
+        return NextResponse.json(
+          { error: "Phone number already registered" },
+          { status: 409 }
+        )
+      }
     }
 
-    let targetCountry = country || "IN"
+    const targetCountry = country || "IN"
     let targetLocation = location as string | undefined
 
     if (targetCountry === "IN" && !targetLocation) {
@@ -74,17 +88,29 @@ export async function POST(request: Request) {
       } else {
         conn = await connectDB("US")
       }
-    } catch (e) {
+    } catch {
       conn = await connectDB("US")
     }
 
     const User = getUserModel(conn)
-    const existing = await User.findOne({ email }).lean()
-    if (existing) {
-      return NextResponse.json(
-        { error: "Email already registered", redirectTo: "/login" },
-        { status: 409 }
-      )
+    if (email) {
+      const existing = await User.findOne({ email }).lean()
+      if (existing) {
+        return NextResponse.json(
+          { error: "Email already registered", redirectTo: "/login" },
+          { status: 409 }
+        )
+      }
+    }
+
+    if (mobile) {
+      const existingMobile = await User.findOne({ mobile }).lean()
+      if (existingMobile) {
+        return NextResponse.json(
+          { error: "Phone number already registered" },
+          { status: 409 }
+        )
+      }
     }
 
     const passwordHash = await hash(password, 10)
@@ -105,7 +131,8 @@ export async function POST(request: Request) {
 
     const safeUser = { id: doc._id.toString(), email: doc.email, name: doc.name }
     return NextResponse.json({ user: safeUser }, { status: 201 })
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  } catch (err: unknown) {
+    const reason = err instanceof Error ? err.message : "unknown"
+    return NextResponse.json({ error: "Server error", reason }, { status: 500 })
   }
 }

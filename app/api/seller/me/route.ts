@@ -61,10 +61,12 @@ export async function PATCH(request: Request) {
     const panNumber = typeof body?.panNumber === "string" ? body.panNumber : undefined
 
     if (phone) {
-      const existingByPhone = await (Seller as any).findOne({ phone, _id: { $ne: currentId } }).lean()
-      if (existingByPhone) {
+      const normalizedPhone = phone.replace(/\D/g, "")
+      const existingByPhone = await findSellerAcrossDBs({ phone: normalizedPhone })
+      if (existingByPhone && existingByPhone.seller && existingByPhone.seller._id?.toString() !== currentId) {
         return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
       }
+      update.phone = normalizedPhone
     }
 
     if (gstNumber) {
@@ -91,4 +93,3 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

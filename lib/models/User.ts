@@ -4,9 +4,9 @@ import { connectDB } from "@/lib/db/db"
   const UserSchema = new Schema(
     {
       name: { type: String },
-      email: { type: String, required: true, unique: true, index: true },
+      email: { type: String, unique: true, sparse: true },
       passwordHash: { type: String, required: true },
-      mobile: { type: String },
+      mobile: { type: String, unique: true, sparse: true },
       address: { type: String },
       city: { type: String },
       state: { type: String },
@@ -24,11 +24,25 @@ import { connectDB } from "@/lib/db/db"
   )
 
 export function getUserModel(conn: Connection) {
-  return (conn.models as any).User || conn.model("User", UserSchema)
+  return conn.models.User || conn.model("User", UserSchema)
 }
 
-export async function findUserAcrossDBs(email: string) {
-  const conns: Connection[] = [] as any
+export async function findUserAcrossDBs(identifier: string | { email?: string, mobile?: string }) {
+  const query: Record<string, string> = {}
+  if (typeof identifier === "string") {
+    if (/^\d{10}$/.test(identifier)) {
+      query.mobile = identifier
+    } else {
+      query.email = identifier
+    }
+  } else {
+    if (identifier.email) query.email = identifier.email
+    if (identifier.mobile) query.mobile = identifier.mobile
+  }
+  
+  if (Object.keys(query).length === 0) return null
+
+  const conns: Connection[] = []
   try {
     conns.push(await connectDB("US"))
   } catch {}
@@ -45,7 +59,7 @@ export async function findUserAcrossDBs(email: string) {
   }
   for (const conn of conns) {
     const User = getUserModel(conn)
-    const user = await User.findOne({ email })
+    const user = await User.findOne(query)
     if (user) return { conn, User, user }
   }
   return null

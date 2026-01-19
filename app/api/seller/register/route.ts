@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     }
 
     const normalizedEmail = String(email).trim().toLowerCase()
+    const normalizedPhone = String(phone).replace(/\D/g, "")
     const otpConn = await connectDB()
     const EmailOtp = getEmailOtpModel(otpConn)
     const otpDoc = await (EmailOtp as any).findOne({ email: normalizedEmail, purpose: "seller-register" })
@@ -54,6 +55,16 @@ export async function POST(request: Request) {
       new Date(otpDoc.expiresAt).getTime() > Date.now()
     if (!otpValid) {
       return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
+    }
+
+    const existingByEmail = await findSellerAcrossDBs({ email: normalizedEmail })
+    if (existingByEmail) {
+      return NextResponse.json({ error: "Email already registered" }, { status: 409 })
+    }
+
+    const existingByPhone = await findSellerAcrossDBs({ phone: normalizedPhone })
+    if (existingByPhone) {
+      return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
     }
 
     let targetCountry = (country || "IN") as string
@@ -74,14 +85,6 @@ export async function POST(request: Request) {
     }
 
     const Seller = getSellerModel(conn)
-    const existingByEmail = await (Seller as any).findOne({ email: normalizedEmail }).lean()
-    if (existingByEmail) {
-      return NextResponse.json({ error: "Email already registered" }, { status: 409 })
-    }
-    const existingByPhone = await (Seller as any).findOne({ phone }).lean()
-    if (existingByPhone) {
-      return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
-    }
 
     if (gstNumber) {
       const existingByGst = await findSellerAcrossDBs({ gstNumber: String(gstNumber).trim().toUpperCase() })
@@ -101,7 +104,7 @@ export async function POST(request: Request) {
       businessName,
       ownerName,
       email: normalizedEmail,
-      phone,
+      phone: normalizedPhone,
       address,
       country: targetCountry,
       state,
