@@ -20,9 +20,14 @@ export async function GET(request: Request) {
 
     const conn = await connectDB()
     const User = getUserModel(conn)
-    const existing = await User.findOne({ email: targetEmail }).lean()
+    const existingList = await User.find({ email: targetEmail }).lean()
+    const existing = existingList[0]
     if (existing) {
-      return NextResponse.json({ success: true, created: false, user: { id: existing._id, email: existing.email } })
+      return NextResponse.json({
+        success: true,
+        created: false,
+        user: { id: existing._id, email: existing.email },
+      })
     }
 
     const passwordHash = await hash(passwordParam, 10)
@@ -40,4 +45,3 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-
