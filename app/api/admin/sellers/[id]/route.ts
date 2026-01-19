@@ -181,7 +181,6 @@ async function sendApprovalEmail(doc: SellerDoc) {
   pdf.end()
   await pdfDone
   const pdfBuffer = Buffer.concat(chunks)
-  const prettyJsonHtml = jsonString.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -205,7 +204,6 @@ async function sendApprovalEmail(doc: SellerDoc) {
       .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; padding: 6px 10px; border-radius: 9999px; background-color: #dcfce7; color: #166534; margin-bottom: 12px; }
       .footer { padding: 16px 24px 20px 24px; font-size: 11px; color: #6b7280; background-color: #f9fafb; border-top: 1px solid #e5e7eb; }
       .meta { font-size: 11px; color: #9ca3af; margin-top: 4px; }
-      pre { background-color: #0f172a; color: #e5e7eb; padding: 12px; border-radius: 8px; font-size: 11px; overflow-x: auto; }
       @media (max-width: 600px) {
         .container { border-radius: 0; }
         .content { padding: 20px 16px; }
@@ -246,10 +244,58 @@ async function sendApprovalEmail(doc: SellerDoc) {
             You can now log in to your seller account, list products, and start selling on the marketplace in accordance with the FirgoMart Seller Agreement.
           </p>
           <p class="text">
-            A PDF summary of your registration details and a JSON copy of the data have been attached to this email for your records.
+            A PDF summary of your registration details has been attached to this email for your records. Below are your verified account details:
           </p>
-          <p class="text" style="margin-top:12px;margin-bottom:6px;"><strong>Registration snapshot (JSON):</strong></p>
-          <pre>${prettyJsonHtml}</pre>
+          
+          <div style="background-color: #f9fafb; border-radius: 12px; padding: 20px; margin-top: 20px; border: 1px solid #e5e7eb;">
+            <div style="font-size: 14px; font-weight: 600; color: #111827; margin-bottom: 16px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">
+              Seller Profile Details
+            </div>
+            
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding-bottom: 12px; width: 40%; vertical-align: top;">
+                  <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Business Name</div>
+                  <div style="font-size: 14px; color: #111827; font-weight: 500;">${safePayload.businessName}</div>
+                </td>
+                <td style="padding-bottom: 12px; width: 60%; vertical-align: top;">
+                   <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Owner Name</div>
+                   <div style="font-size: 14px; color: #111827;">${safePayload.ownerName}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding-bottom: 12px; vertical-align: top;">
+                  <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Email</div>
+                  <div style="font-size: 14px; color: #111827;">${safePayload.email}</div>
+                </td>
+                <td style="padding-bottom: 12px; vertical-align: top;">
+                   <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Phone</div>
+                   <div style="font-size: 14px; color: #111827;">${safePayload.phone}</div>
+                </td>
+              </tr>
+               <tr>
+                <td colspan="2" style="padding-bottom: 12px; vertical-align: top;">
+                  <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Address</div>
+                  <div style="font-size: 14px; color: #111827; line-height: 1.4;">
+                    ${safePayload.address}<br/>
+                    ${safePayload.city ? `${safePayload.city}, ` : ""}${safePayload.state ? `${safePayload.state} - ` : ""}${safePayload.pincode}<br/>
+                    ${safePayload.country}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding-bottom: 12px; vertical-align: top;">
+                  <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">GST Number</div>
+                  <div style="font-size: 14px; color: #111827;">${safePayload.gstNumber || "N/A"}</div>
+                </td>
+                <td style="padding-bottom: 12px; vertical-align: top;">
+                   <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">PAN Number</div>
+                   <div style="font-size: 14px; color: #111827;">${safePayload.panNumber || "N/A"}</div>
+                </td>
+              </tr>
+            </table>
+          </div>
+
           ${
             appUrl
               ? `<p class="text" style="margin-top:12px;">

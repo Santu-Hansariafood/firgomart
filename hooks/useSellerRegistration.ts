@@ -70,6 +70,7 @@ export const useSellerRegistration = () => {
   const [emailOtpLoading, setEmailOtpLoading] = useState<boolean>(false)
   const [emailOtpError, setEmailOtpError] = useState<string | null>(null)
   const [serverError, setServerError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
 
   const checkExists = async (field: string, value: string) => {
     if (!value) return
@@ -298,6 +299,8 @@ export const useSellerRegistration = () => {
   }
 
   const submitRegistration = async () => {
+    if (isSubmitting) return false
+    setIsSubmitting(true)
     setServerError(null)
     const payload = {
       ...formData,
@@ -342,6 +345,7 @@ export const useSellerRegistration = () => {
     if (res.ok) {
       setSubmitted(true)
       try { localStorage.setItem('sellerRegSubmitted', 'true') } catch {}
+      setIsSubmitting(false)
       return true
     } else {
       const msg =
@@ -361,6 +365,7 @@ export const useSellerRegistration = () => {
       if (msg === 'PAN Number already registered') {
         setErrors(prev => ({ ...prev, panNumber: msg }))
       }
+      setIsSubmitting(false)
       return false
     }
   }
@@ -414,6 +419,7 @@ export const useSellerRegistration = () => {
     emailOtpError,
     requestEmailOtp,
     verifyEmailOtp,
-    serverError
+    serverError,
+    isSubmitting
   }
 }

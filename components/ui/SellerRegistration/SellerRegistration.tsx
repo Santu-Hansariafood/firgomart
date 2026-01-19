@@ -45,7 +45,8 @@ const SellerRegistration: React.FC = () => {
     emailOtpError,
     requestEmailOtp,
     verifyEmailOtp,
-    serverError
+    serverError,
+    isSubmitting
   } = useSellerRegistration()
 
   const agreementTitle = (sellerAgreementContent as { title?: string }).title || 'Seller Agreement'
@@ -532,9 +533,10 @@ const SellerRegistration: React.FC = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90"
+              disabled={isSubmitting}
+              className="w-full py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Submit Registration
+              {isSubmitting ? 'Submitting...' : 'Submit Registration'}
             </button>
             <div className="pt-4 text-center border-t border-[var(--foreground)/20]">
               <p className="text-sm">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getEmailOtpModel } from "@/lib/models/EmailOtp"
+import { findUserAcrossDBs } from "@/lib/models/User"
 import nodemailer from "nodemailer"
 
 function createTransport() {
@@ -29,6 +30,10 @@ export async function POST(request: Request) {
     const normalized = email.trim().toLowerCase()
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
+    }
+    const existingUser = await findUserAcrossDBs(normalized)
+    if (existingUser) {
+      return NextResponse.json({ error: "Email already registered" }, { status: 409 })
     }
     const conn = await connectDB()
     const EmailOtp = getEmailOtpModel(conn)

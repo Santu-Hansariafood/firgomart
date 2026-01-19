@@ -46,6 +46,7 @@ export async function GET(request: Request) {
     const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10))
     const limit = Math.max(1, parseInt(url.searchParams.get("limit") || "100", 10))
     const status = (url.searchParams.get("status") || "").trim()
+    const gstFilter = (url.searchParams.get("gst") || "").trim().toUpperCase()
     const country = (url.searchParams.get("country") || "").trim().toUpperCase()
     const state = (url.searchParams.get("state") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
@@ -71,11 +72,15 @@ export async function GET(request: Request) {
     }
 
     const items: any[] = []
-    const counts: number[] = []
+    // We'll collect all items first, then deduplicate by ID
+    // This handles the case where multiple connections point to the same DB (e.g. dev env)
+    
     for (const conn of conns) {
       const Seller = getSellerModel(conn)
       const q: any = {}
       if (status) q.status = status
+      if (gstFilter === "GST") q.hasGST = true
+      else if (gstFilter === "NON_GST") q.hasGST = { $ne: true }
       if (state) q.state = { $regex: new RegExp(`^${state}$`, "i") }
       if (search) {
         const r = new RegExp(search, "i")
@@ -90,11 +95,20 @@ export async function GET(request: Request) {
         ]
       }
       const part = await (Seller as any).find(q).lean()
-      const cnt = await (Seller as any).countDocuments(q)
       items.push(...part)
-      counts.push(cnt)
     }
-    items.sort((a, b) => {
+
+    // Deduplicate items by _id
+    const uniqueItemsMap = new Map<string, any>()
+    items.forEach(item => {
+      const id = item._id?.toString() || String(item._id)
+      if (!uniqueItemsMap.has(id)) {
+        uniqueItemsMap.set(id, item)
+      }
+    })
+    const uniqueItems = Array.from(uniqueItemsMap.values())
+
+    uniqueItems.sort((a, b) => {
       const av = a[sortBy]
       const bv = b[sortBy]
       if (av === bv) return 0
@@ -102,9 +116,10 @@ export async function GET(request: Request) {
       if (bv === undefined) return -1 * sortOrder
       return av > bv ? sortOrder : -sortOrder
     })
-    const total = counts.reduce((s, n) => s + n, 0)
+    
+    const total = uniqueItems.length
     const start = (page - 1) * limit
-    const pageItems = items.slice(start, start + limit)
+    const pageItems = uniqueItems.slice(start, start + limit)
     const safe = pageItems.map((s: any) => ({
       id: s._id?.toString?.() || String(s._id),
       businessName: s.businessName,

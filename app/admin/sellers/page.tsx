@@ -110,6 +110,16 @@ export default function Page() {
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
+  const gstOptions: DropdownItem[] = [
+    { id: "GST", label: "GST User" },
+    { id: "NON_GST", label: "NON GST User" },
+    { id: "ALL", label: "All" },
+  ]
+  const [selectedGst, setSelectedGst] = useState<DropdownItem>(gstOptions[0])
+  const onGstFilterChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedGst(v)
+  }
+
   const updateStatus = async (id: string, status: string) => {
     try {
       const adminEmail = (session?.user?.email || authUser?.email || "").trim()
@@ -204,6 +214,7 @@ export default function Page() {
       if (selectedCountry?.id && String(selectedCountry.id) !== "ALL") params.set("country", String(selectedCountry.id))
       if (selectedState?.id) params.set("state", String(selectedState.id))
       if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
+      if (selectedGst?.id && String(selectedGst.id) !== "ALL") params.set("gst", String(selectedGst.id))
       if (search) params.set("search", search)
       if (sortKey) params.set("sortBy", String(sortKey))
       params.set("sortOrder", sortOrder)
@@ -232,7 +243,7 @@ export default function Page() {
     if (!allowed) return
     loadSellers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowed, page, selectedCountry, selectedState, selectedStatus, search, sortKey, sortOrder])
+  }, [allowed, page, selectedCountry, selectedState, selectedStatus, selectedGst, search, sortKey, sortOrder])
 
   return (
     <Suspense fallback={<div className="p-4">Loading…</div>}>
@@ -253,7 +264,7 @@ export default function Page() {
       </div>
 
       <div className="bg-white rounded-xl shadow-md p-4 space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-end">
           <div>
             <CommonDropdown
               label="Country"
@@ -279,6 +290,15 @@ export default function Page() {
               selected={selectedStatus}
               onChange={onStatusFilterChange}
               placeholder="Select status"
+            />
+          </div>
+          <div>
+            <CommonDropdown
+              label="GST Filter"
+              options={gstOptions}
+              selected={selectedGst}
+              onChange={onGstFilterChange}
+              placeholder="Select GST filter"
             />
           </div>
           <div className="md:col-span-2">
