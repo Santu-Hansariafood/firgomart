@@ -3,7 +3,9 @@ import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
 import { getPaymentModel } from "@/lib/models/Payment"
 import { getProductModel } from "@/lib/models/Product"
+import { getShipmentModel } from "@/lib/models/Shipment"
 import { getCashfreeOrder } from "@/lib/cashfree"
+import { hasShiprocketCredentials, createShiprocketShipment } from "@/lib/shiprocket"
 import type { ClientSession } from "mongoose"
 import nodemailer from "nodemailer"
 
@@ -239,6 +241,30 @@ export async function POST(request: Request) {
         } catch (e) {
           if (process.env.NODE_ENV !== "production") {
             console.error("Order confirmation email failed", e)
+          }
+        }
+
+        if (hasShiprocketCredentials()) {
+          try {
+            const Shipment = getShipmentModel(conn)
+            const existingShipment = await (Shipment as any).findOne({ orderId: order._id }).lean()
+            if (!existingShipment) {
+              const shipData = await createShiprocketShipment(order)
+              const now = new Date()
+              await (Shipment as any).create({
+                orderId: order._id,
+                orderNumber: order.orderNumber,
+                trackingNumber: shipData.trackingNumber,
+                courier: shipData.courier,
+                status: "shipped",
+                origin: order.city || order.state,
+                destination: order.city || order.state,
+                lastUpdate: now,
+                events: [{ time: now, status: "shipped", location: order.city || order.state, note: "Auto-generated via Shiprocket" }],
+              })
+            }
+          } catch (e) {
+            console.error("Auto-shiprocket creation failed", e)
           }
         }
       }

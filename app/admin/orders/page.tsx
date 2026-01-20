@@ -116,7 +116,6 @@ export default function Page() {
       })
       if (res.ok) {
         alert("Order updated successfully")
-        // Update local state
         setSelectedOrder(prev => prev ? { ...prev, status: editStatus, tracking: trackingList } : null)
         setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: editStatus } : o))
       } else {
@@ -194,7 +193,6 @@ export default function Page() {
   useEffect(() => {
     if (!allowed) return
     loadOrders()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowed, page, selectedStatus, selectedCountry, selectedState, search, sortKey, sortOrder])
 
   const updateStatus = async (id: string, status: string) => {
@@ -393,22 +391,30 @@ export default function Page() {
                   { key: "country", label: "Country" },
                   { key: "createdAt", label: "Placed", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
                   { key: "actions", label: "Actions", render: (r) => (
-                    <button
-                      className="px-3 py-1 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
-                      onClick={async () => {
-                        try {
-                          const res = await fetch(`/api/admin/orders/${encodeURIComponent(r.id)}`, {
-                            headers: {
-                              ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
-                            },
-                          })
-                          const data = await res.json()
-                          if (res.ok) setSelectedOrder(data.order || null)
-                        } catch {}
-                      }}
-                    >
-                      View
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="px-3 py-1 rounded-lg border bg-white hover:bg-gray-50 text-gray-700"
+                        onClick={async () => {
+                          try {
+                            const res = await fetch(`/api/admin/orders/${encodeURIComponent(r.id)}`, {
+                              headers: {
+                                ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+                              },
+                            })
+                            const data = await res.json()
+                            if (res.ok) setSelectedOrder(data.order || null)
+                          } catch {}
+                        }}
+                      >
+                        View
+                      </button>
+                      <button
+                        className="px-3 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                        onClick={() => window.open(`/print/order/${r.id}`, "_blank")}
+                      >
+                        Print
+                      </button>
+                    </div>
                   ) },
                 ]}
                 data={orders}
@@ -443,12 +449,20 @@ export default function Page() {
                     Placed on {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "Unknown"}
                   </div>
                 </div>
-                <button
-                  onClick={() => setSelectedOrder(null)}
-                  className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-600" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => window.open(`/print/order/${selectedOrder.id}`, "_blank")}
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Print Documents
+                  </button>
+                  <button
+                    onClick={() => setSelectedOrder(null)}
+                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-600" />
+                  </button>
+                </div>
               </div>
 
               {/* Scrollable Content */}

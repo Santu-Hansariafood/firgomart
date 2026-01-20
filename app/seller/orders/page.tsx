@@ -133,8 +133,12 @@ export default function Page() {
               ) },
               { key: "id", label: "Actions", render: (r) => (
                 <div className="flex gap-2">
-                  <button onClick={() => download(r.id, "invoice")} className="px-2 py-1 rounded border">Invoice</button>
-                  <button onClick={() => download(r.id, "label")} className="px-2 py-1 rounded border">Label</button>
+                  <button 
+                    onClick={() => window.open(`/print/order/${r.id}`, "_blank")} 
+                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    Print Documents
+                  </button>
                 </div>
               ) },
             ]}

@@ -149,6 +149,14 @@ export default function Page() {
             { key: "amount", label: "Amount", sortable: true, render: (r) => `₹${r.amount}` },
             { key: "status", label: "Status", sortable: true },
             { key: "createdAt", label: "Placed", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+            { key: "id", label: "Actions", render: (r) => (
+              <button 
+                onClick={() => window.open(`/print/order/${r.id}`, "_blank")} 
+                className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+              >
+                Print
+              </button>
+            ) },
           ]}
           data={orders}
           sortKey={"createdAt"}

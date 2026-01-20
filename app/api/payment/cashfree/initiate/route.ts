@@ -20,16 +20,7 @@ export async function POST(request: Request) {
       try { return new URL(request.url).origin } catch { return "" }
     })()
     const appUrl = (process.env.NEXT_PUBLIC_APP_URL || origin || "").replace(/\/+$/, "")
-    if (cashfreeConfig.mode === "production") {
-      const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(appUrl)
-      const isHttp = /^http:\/\//i.test(appUrl)
-      if (isLocal || isHttp) {
-        return NextResponse.json(
-          { error: "Cashfree error", errorText: "Invalid return_url for production. Set NEXT_PUBLIC_APP_URL to a public HTTPS domain." },
-          { status: 400 }
-        )
-      }
-    }
+
     const cfOrderId = String(order.orderNumber || orderId)
     const amount = Number(order.amount || 0)
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -50,7 +41,12 @@ export async function POST(request: Request) {
       const msg = e instanceof Error ? e.message : String(e)
       const m = msg.match(/^\[(\d{3})\]\s*(.*)$/)
       const status = m ? parseInt(m[1], 10) : 500
-      const reason = m ? m[2] : msg
+      let reason = m ? m[2] : msg
+      
+      if (reason.toLowerCase().includes("ip address is not allowed")) {
+        reason += ". Please whitelist your server IP in the Cashfree Dashboard."
+      }
+
       const mapped = status >= 500 ? 502 : (status >= 400 ? 400 : 500)
       return NextResponse.json({ error: "Cashfree error", errorText: reason, statusCode: status }, { status: mapped })
     }

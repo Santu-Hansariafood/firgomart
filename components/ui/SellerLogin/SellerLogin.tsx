@@ -84,7 +84,7 @@ const SellerLogin: React.FC = () => {
           role: 'seller',
           sellerDetails: details || undefined,
         })
-        router.replace('/seller')
+        router.replace(next)
         setLoading(false)
       }
     } catch {

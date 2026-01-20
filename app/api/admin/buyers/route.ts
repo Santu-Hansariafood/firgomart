@@ -98,9 +98,24 @@ export async function GET(request: Request) {
       if (bv === undefined) return -1 * sortOrder
       return av > bv ? sortOrder : -sortOrder
     })
-    const total = counts.reduce((s, n) => s + n, 0)
+
+    const uniqueItems: any[] = []
+    const seenEmails = new Set<string>()
+    for (const item of items) {
+      const email = (item.email || "").toLowerCase().trim()
+      if (email) {
+        if (!seenEmails.has(email)) {
+          seenEmails.add(email)
+          uniqueItems.push(item)
+        }
+      } else {
+        uniqueItems.push(item)
+      }
+    }
+
+    const total = uniqueItems.length
     const start = (page - 1) * limit
-    const pageItems = items.slice(start, start + limit)
+    const pageItems = uniqueItems.slice(start, start + limit)
     const safe = pageItems.map((u: any) => ({
       id: u._id?.toString?.() || String(u._id),
       name: u.name,
