@@ -34,7 +34,9 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
 
     if (useShiprocket) {
       try {
-        const created = await createShiprocketShipment(order)
+        const createdList = await createShiprocketShipment(order, sellerEmail)
+        const created = createdList[0]
+        if (!created) throw new Error("No shipment generated for this seller")
         trackingNumber = created.trackingNumber
         courier = created.courier
       } catch (err: any) {
@@ -47,12 +49,17 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       return NextResponse.json({ error: "trackingNumber required" }, { status: 400 })
     }
 
-    let shipment = await (Shipment as any).findOne({ orderId: id }).lean()
+    let shipment = await (Shipment as any).findOne({ orderId: id, sellerEmail }).lean()
+    if (!shipment && trackingNumber) {
+       shipment = await (Shipment as any).findOne({ trackingNumber }).lean()
+    }
+
     if (!shipment) {
       const now = new Date()
       shipment = await (Shipment as any).create({
         orderId: id,
         orderNumber: order.orderNumber,
+        sellerEmail,
         trackingNumber,
         courier,
         status: "shipped",
@@ -65,6 +72,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
       const updated = await (Shipment as any).findByIdAndUpdate(
         shipment._id,
         {
+          sellerEmail,
           trackingNumber,
           courier,
           status: "shipped",

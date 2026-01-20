@@ -42,7 +42,7 @@ export default async function PrintOrderPage({ params }: { params: Promise<{ id:
   const itemProductIds = (order.items || []).map((it: any) => it.productId)
   const products = await (Product as any).find({ _id: { $in: itemProductIds } }).lean()
   
-  const productMap = new Map(products.map((p: any) => [String(p._id), p]))
+  const productMap = new Map<string, any>(products.map((p: any) => [String(p._id), p]))
   
   const sellerGroupsMap = new Map<string, any[]>()
   

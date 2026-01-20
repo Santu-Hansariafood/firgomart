@@ -157,7 +157,7 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
   const productIds = items.map((it: any) => it.productId)
   
   const products = await (Product as any).find({ _id: { $in: productIds } }).lean()
-  const productMap = new Map(products.map((p: any) => [String(p._id), p]))
+  const productMap = new Map<string, any>(products.map((p: any) => [String(p._id), p]))
   
   const sellerGroups: Record<string, any[]> = {}
   

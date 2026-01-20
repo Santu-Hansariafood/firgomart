@@ -30,7 +30,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
     const hasSellerItem = (order.items || []).some((it: any) => productIds.includes(String(it.productId)))
     if (!hasSellerItem) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-    const shipment = await (Shipment as any).findOne({ orderId: id })
+    const shipment = await (Shipment as any).findOne({ orderId: id, sellerEmail })
     if (!shipment) return NextResponse.json({ error: "Shipment not found" }, { status: 404 })
 
     shipment.events = Array.isArray(shipment.events) ? shipment.events : []

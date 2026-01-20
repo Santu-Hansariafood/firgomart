@@ -14,6 +14,7 @@ const ShipmentSchema = new Schema(
   {
     orderId: { type: Schema.Types.ObjectId, ref: "Order", index: true },
     orderNumber: { type: String, index: true },
+    sellerEmail: { type: String, index: true },
     trackingNumber: { type: String, index: true },
     courier: { type: String, index: true },
     status: { type: String, index: true },

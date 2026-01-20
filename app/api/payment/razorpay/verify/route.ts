@@ -258,6 +258,7 @@ export async function POST(request: Request) {
                 await (Shipment as any).create({
                   orderId: order._id,
                   orderNumber: order.orderNumber,
+                  sellerEmail: shipData.sellerEmail,
                   trackingNumber: shipData.trackingNumber,
                   courier: shipData.courier,
                   status: "shipped",

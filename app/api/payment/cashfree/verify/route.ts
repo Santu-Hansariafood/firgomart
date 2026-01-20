@@ -254,10 +254,11 @@ export async function POST(request: Request) {
               const existingShipment = await (Shipment as any).findOne({ trackingNumber: shipData.trackingNumber }).lean()
               if (!existingShipment) {
                 await (Shipment as any).create({
-                  orderId: order._id,
-                  orderNumber: order.orderNumber,
-                  trackingNumber: shipData.trackingNumber,
-                  courier: shipData.courier,
+                   orderId: order._id,
+                   orderNumber: order.orderNumber,
+                   sellerEmail: shipData.sellerEmail,
+                   trackingNumber: shipData.trackingNumber,
+                   courier: shipData.courier,
                   status: "shipped",
                   origin: order.city || order.state,
                   destination: order.city || order.state,
