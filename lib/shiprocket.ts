@@ -1,5 +1,7 @@
 
-import { NextResponse } from "next/server"
+import { connectDB } from "@/lib/db/db"
+import { getProductModel } from "@/lib/models/Product"
+import { getSellerModel, findSellerAcrossDBs } from "@/lib/models/Seller"
 
 function getShiprocketBaseUrl() {
   const raw = process.env.SHIPROCKET_BASE_URL || ""
@@ -45,7 +47,48 @@ async function getShiprocketToken() {
   return token
 }
 
-function buildShiprocketOrderPayload(order: any) {
+async function getOrCreatePickupLocation(token: string, seller: any) {
+  if (!seller) return process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
+  
+  const pickupCode = `Seller_${seller._id}`
+  const base = getShiprocketBaseUrl()
+
+  const payload = {
+    pickup_location: pickupCode,
+    name: seller.businessName || seller.ownerName || "Seller",
+    email: seller.email,
+    phone: seller.phone,
+    address: seller.address || "Seller Address",
+    address_2: "",
+    city: seller.city || "City",
+    state: seller.state || "State",
+    country: seller.country || "India",
+    pin_code: seller.pincode || "000000",
+  }
+
+  const res = await fetch(`${base}/v1/external/settings/company/addpickup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+  
+  if (res.ok) {
+    return pickupCode
+  }
+
+  const data = await res.json()
+  if (data?.success === false || data?.message_code === "ALL_PICKUP_LOCATIONS_EXISTS" || JSON.stringify(data).toLowerCase().includes("exists")) {
+    return pickupCode
+  }
+  
+  console.error("Failed to create Shiprocket pickup location for seller", seller.email, data)
+  return process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
+}
+
+function buildShiprocketOrderPayload(order: any, items: any[], pickupLocation: string) {
   const now = new Date()
   const yyyy = now.getFullYear()
   const mm = String(now.getMonth() + 1).padStart(2, "0")
@@ -60,12 +103,10 @@ function buildShiprocketOrderPayload(order: any) {
   const billingCity = String(order.city || "")
   const billingState = String(order.state || "")
   const billingCountry = String(order.country || "India")
-  const billingPincode = String(process.env.SHIPROCKET_DEFAULT_PINCODE || "")
-  const billingPhone = String(process.env.SHIPROCKET_DEFAULT_PHONE || "")
-  const pickupLocation = String(process.env.SHIPROCKET_PICKUP_LOCATION || "Default")
+  const billingPincode = String((order as any).pincode || process.env.SHIPROCKET_DEFAULT_PINCODE || "110001") 
+  const billingPhone = String((order as any).phone || (order as any).buyerPhone || process.env.SHIPROCKET_DEFAULT_PHONE || "9999999999")
 
-  const itemsRaw = Array.isArray(order.items) ? order.items : []
-  const orderItems = itemsRaw.map((it: any) => ({
+  const orderItems = items.map((it: any) => ({
     name: String(it.name || "Item"),
     sku: String(it.productId || it.name || "SKU"),
     units: Number(it.quantity || 1),
@@ -80,7 +121,7 @@ function buildShiprocketOrderPayload(order: any) {
   const weight = Number(process.env.SHIPROCKET_DEFAULT_WEIGHT || 0.5)
 
   const idSource = order.orderNumber || order._id
-  const orderId = String(idSource || "")
+  const orderId = String(idSource || "") + (items.length !== (order.items || []).length ? `-${pickupLocation}` : "")
 
   return {
     order_id: orderId,
@@ -106,74 +147,108 @@ function buildShiprocketOrderPayload(order: any) {
   }
 }
 
-export async function createShiprocketShipment(order: any) {
+export async function createShiprocketShipment(order: any, targetSellerEmail?: string) {
   const token = await getShiprocketToken()
   const base = getShiprocketBaseUrl()
-  const payload = buildShiprocketOrderPayload(order)
+  
+  const conn = await connectDB()
+  const Product = getProductModel(conn)
+  const items = Array.isArray(order.items) ? order.items : []
+  const productIds = items.map((it: any) => it.productId)
+  
+  const products = await (Product as any).find({ _id: { $in: productIds } }).lean()
+  const productMap = new Map(products.map((p: any) => [String(p._id), p]))
+  
+  const sellerGroups: Record<string, any[]> = {}
+  
+  for (const it of items) {
+    const p = productMap.get(String(it.productId))
+    const sellerEmail = p?.createdByEmail || "ADMIN"
+    if (targetSellerEmail && sellerEmail !== targetSellerEmail) continue
+    
+    if (!sellerGroups[sellerEmail]) sellerGroups[sellerEmail] = []
+    sellerGroups[sellerEmail].push(it)
+  }
+  
+  const shipments = []
 
-  const createRes = await fetch(`${base}/v1/external/orders/create/adhoc`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(payload),
-  })
-  if (!createRes.ok) {
-    let message = "Shiprocket order creation failed"
+  for (const [sellerEmail, groupItems] of Object.entries(sellerGroups)) {
+    let pickupLocation = process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
+    
+    if (sellerEmail !== "ADMIN") {
+      const Seller = getSellerModel(conn)
+      let seller = await (Seller as any).findOne({ email: sellerEmail }).lean()
+      if (!seller) {
+        const found = await findSellerAcrossDBs({ email: sellerEmail })
+        if (found) seller = found.seller
+      }
+      if (seller) {
+        pickupLocation = await getOrCreatePickupLocation(token, seller)
+      }
+    }
+    
+    const payload = buildShiprocketOrderPayload(order, groupItems, pickupLocation)
+    
     try {
-      const data = await createRes.json()
-      message = data?.message || data?.error || message
-    } catch {
-    }
-    throw new Error(`[${createRes.status}] ${message}`)
-  }
-  const created = await createRes.json()
-  const shipmentId = created?.shipment_id || created?.shipmentId
-  if (!shipmentId) {
-    throw new Error("Shiprocket shipment id missing")
-  }
+      const createRes = await fetch(`${base}/v1/external/orders/create/adhoc`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      })
+      
+      if (!createRes.ok) {
+        let message = "Shiprocket order creation failed"
+        try {
+           const d = await createRes.json()
+           message = d?.message || d?.error || message
+        } catch {}
+        console.error("Shiprocket create failed for seller", sellerEmail, message)
+        continue 
+      }
+      
+      const created = await createRes.json()
+      const shipmentId = created?.shipment_id || created?.shipmentId
+      if (!shipmentId) continue
 
-  const awbPayload: any = { shipment_id: shipmentId }
-  const courierIdRaw = process.env.SHIPROCKET_COURIER_ID
-  if (courierIdRaw) {
-    const n = Number(courierIdRaw)
-    if (!Number.isNaN(n) && n > 0) {
-      awbPayload.courier_id = n
+      const awbPayload: any = { shipment_id: shipmentId }
+      const courierIdRaw = process.env.SHIPROCKET_COURIER_ID
+      if (courierIdRaw) {
+        const n = Number(courierIdRaw)
+        if (!Number.isNaN(n) && n > 0) awbPayload.courier_id = n
+      }
+
+      const awbRes = await fetch(`${base}/v1/external/courier/assign/awb`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(awbPayload),
+      })
+      
+      if (awbRes.ok) {
+         const awbData = await awbRes.json()
+         const awbCode = awbData?.awb_code || awbData?.awbCode
+         const courierName = awbData?.courier_name || awbData?.courierName || ""
+         if (awbCode) {
+           shipments.push({
+             trackingNumber: String(awbCode),
+             courier: courierName ? String(courierName) : "Shiprocket",
+             shipmentId: shipmentId,
+             items: groupItems,
+             sellerEmail
+           })
+         }
+      } else {
+        console.error("AWB assignment failed", await awbRes.text())
+      }
+    } catch (e) {
+      console.error("Shipment processing error", e)
     }
   }
-
-  const awbRes = await fetch(`${base}/v1/external/courier/assign/awb`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(awbPayload),
-  })
-  if (!awbRes.ok) {
-    let message = "Shiprocket AWB assignment failed"
-    try {
-      const data = await awbRes.json()
-      message = data?.message || data?.error || message
-    } catch {
-    }
-    throw new Error(`[${awbRes.status}] ${message}`)
-  }
-  const awbData = await awbRes.json()
-  const awbCode = awbData?.awb_code || awbData?.awbCode
-  if (!awbCode) {
-    throw new Error("Shiprocket AWB code missing")
-  }
-  const courierName =
-    awbData?.courier_name ||
-    awbData?.courierName ||
-    awbData?.courier_company_name ||
-    (awbData?.courier_company_id ? String(awbData.courier_company_id) : "")
-
-  return {
-    trackingNumber: String(awbCode),
-    courier: courierName ? String(courierName) : "",
-    shipmentId: shipmentId, // Return shipmentId too
-  }
+  
+  return shipments
 }

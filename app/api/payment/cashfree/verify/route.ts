@@ -247,21 +247,24 @@ export async function POST(request: Request) {
         if (hasShiprocketCredentials()) {
           try {
             const Shipment = getShipmentModel(conn)
-            const existingShipment = await (Shipment as any).findOne({ orderId: order._id }).lean()
-            if (!existingShipment) {
-              const shipData = await createShiprocketShipment(order)
-              const now = new Date()
-              await (Shipment as any).create({
-                orderId: order._id,
-                orderNumber: order.orderNumber,
-                trackingNumber: shipData.trackingNumber,
-                courier: shipData.courier,
-                status: "shipped",
-                origin: order.city || order.state,
-                destination: order.city || order.state,
-                lastUpdate: now,
-                events: [{ time: now, status: "shipped", location: order.city || order.state, note: "Auto-generated via Shiprocket" }],
-              })
+            const shipDatas = await createShiprocketShipment(order)
+            const now = new Date()
+
+            for (const shipData of shipDatas) {
+              const existingShipment = await (Shipment as any).findOne({ trackingNumber: shipData.trackingNumber }).lean()
+              if (!existingShipment) {
+                await (Shipment as any).create({
+                  orderId: order._id,
+                  orderNumber: order.orderNumber,
+                  trackingNumber: shipData.trackingNumber,
+                  courier: shipData.courier,
+                  status: "shipped",
+                  origin: order.city || order.state,
+                  destination: order.city || order.state,
+                  lastUpdate: now,
+                  events: [{ time: now, status: "shipped", location: order.city || order.state, note: "Auto-generated via Shiprocket" }],
+                })
+              }
             }
           } catch (e) {
             console.error("Auto-shiprocket creation failed", e)
