@@ -72,8 +72,6 @@ export async function GET(request: Request) {
     }
 
     const items: any[] = []
-    // We'll collect all items first, then deduplicate by ID
-    // This handles the case where multiple connections point to the same DB (e.g. dev env)
     
     for (const conn of conns) {
       const Seller = getSellerModel(conn)

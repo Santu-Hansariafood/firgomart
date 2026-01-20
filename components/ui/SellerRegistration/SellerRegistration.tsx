@@ -95,6 +95,7 @@ const SellerRegistration: React.FC = () => {
                 src="/logo/firgomart.png"
                 alt="Firgomart"
                 fill
+                priority
                 sizes="160px"
                 className="object-contain"
               />
