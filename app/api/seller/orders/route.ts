@@ -23,7 +23,9 @@ export async function GET(request: Request) {
       const sellerProducts = await (Product as any).find({ createdByEmail: sellerEmail }).select({ _id: 1 }).lean()
       productIds = sellerProducts.map((p: any) => String(p._id))
     }
-    const q: any = {}
+    const q: any = {
+      status: { $nin: ["pending", "failed"] }
+    }
     if (productIds.length) q["items.productId"] = { $in: productIds as any }
     if (search) {
       const r = new RegExp(search, "i")

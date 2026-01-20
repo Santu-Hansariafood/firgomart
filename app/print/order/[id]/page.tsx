@@ -93,25 +93,32 @@ export default async function PrintOrderPage({ params }: { params: Promise<{ id:
         } catch {}
     }
 
-    const total = items.reduce((sum: number, it: any) => sum + (it.price * it.quantity), 0)
-    const taxable = total / 1.18
-    const taxAmt = total - taxable
+    const totalTaxable = items.reduce((sum: number, it: any) => sum + (it.price * it.quantity), 0)
+    const totalTax = items.reduce((sum: number, it: any) => sum + (it.gstAmount || ((it.price * it.quantity * (it.gstPercent || 18)) / 100)), 0)
+    const totalAmount = totalTaxable + totalTax
     
     sellerGroups.push({
       seller: sellerDetails,
       items,
       taxDetails: {
-        total,
-        taxable,
-        cgst: taxAmt / 2,
-        sgst: taxAmt / 2,
+        total: totalAmount,
+        taxable: totalTaxable,
+        cgst: totalTax / 2,
+        sgst: totalTax / 2,
         igst: 0 
       }
     })
   }
 
   if (sellerGroups.length === 0) {
-     return <div className="p-8 text-center text-red-600">Access Denied: You are not authorized to view this order's print documents.</div>
+     return (
+       <div className="p-8 text-center text-red-600">
+         <p className="font-bold">Access Denied</p>
+         <p>You are not authorized to view this order's print documents.</p>
+         <p className="text-sm mt-2 text-gray-500">User: {userEmail}</p>
+         <p className="text-sm text-gray-500">Admin: {isAdmin ? "Yes" : "No"}</p>
+       </div>
+     )
   }
 
   const shipment = await (Shipment as any).findOne({ orderId: order._id }).lean()

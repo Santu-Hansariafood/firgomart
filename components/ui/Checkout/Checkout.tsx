@@ -216,6 +216,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         address: formData.address,
         city: formData.city,
         state: formData.state,
+        pincode: formData.pincode,
         country: "IN",
         items: cartItems.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
       }

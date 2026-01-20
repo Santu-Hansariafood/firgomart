@@ -465,10 +465,8 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 
-                {/* Top Section: Customer & Address */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-gray-50 p-4 rounded-lg border">
                     <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Customer Details</h3>
@@ -493,7 +491,6 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* Items Section */}
                 <div>
                   <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Order Items</h3>
                   <div className="border rounded-lg overflow-hidden">
@@ -540,7 +537,6 @@ export default function Page() {
                   </div>
                 </div>
 
-                {/* Tracking & Status Section */}
                 <div className="bg-blue-50 border border-blue-100 p-5 rounded-xl space-y-5">
                    <div className="flex flex-col md:flex-row gap-6">
                       <div className="flex-1">
@@ -556,7 +552,6 @@ export default function Page() {
                         </select>
                       </div>
                       
-                      {/* Tracking List Display */}
                       <div className="flex-1">
                           <label className="text-sm font-bold text-gray-700 block mb-2">Current Tracking</label>
                           {trackingList.length > 0 ? (
@@ -579,7 +574,6 @@ export default function Page() {
                       </div>
                    </div>
 
-                   {/* Add Tracking Form */}
                    <div className="pt-4 border-t border-blue-200">
                       <h4 className="text-sm font-bold text-gray-700 mb-3">Add Tracking Information</h4>
                       <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
@@ -615,7 +609,6 @@ export default function Page() {
 
               </div>
 
-              {/* Footer Actions */}
               <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
                  <button
                    onClick={() => setSelectedOrder(null)}

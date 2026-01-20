@@ -25,6 +25,7 @@ export async function POST(request: Request) {
     const address = typeof body?.address === "string" ? body.address.trim() : ""
     const city = typeof body?.city === "string" ? body.city.trim() : ""
     const state = typeof body?.state === "string" ? body.state.trim() : ""
+    const pincode = typeof body?.pincode === "string" ? body.pincode.trim() : ""
     const country = typeof body?.country === "string" ? body.country.trim() : "IN"
     const itemsRaw: BodyItem[] = Array.isArray(body?.items) ? body.items : []
 
@@ -157,6 +158,7 @@ export async function POST(request: Request) {
       address,
       city,
       state,
+      pincode,
       country,
       deliveryFee,
     }])

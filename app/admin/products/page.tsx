@@ -107,7 +107,6 @@ export default function Page() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-  // Form States
   const [formName, setFormName] = useState("")
   const [formCategory, setFormCategory] = useState("")
   const [formSubcategory, setFormSubcategory] = useState("")
@@ -127,7 +126,6 @@ export default function Page() {
   const [formGSTNumber, setFormGSTNumber] = useState("")
   const [images, setImages] = useState<string[]>([])
 
-  // Dimensions & Weight
   const [formHeight, setFormHeight] = useState("")
   const [formWidth, setFormWidth] = useState("")
   const [formLength, setFormLength] = useState("")
@@ -191,7 +189,6 @@ export default function Page() {
     setFormSizes([...base, ...extras].join(", "))
   }
 
-  // Cropping
   const [croppingImageIndex, setCroppingImageIndex] = useState<number | null>(null)
 
   const dimensionUnits = [
@@ -660,7 +657,6 @@ export default function Page() {
                              <input value={formBrand} onChange={e => setFormBrand(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. Nike, Apple" />
                         </div>
                         
-                        {/* Dimensions & Weight */}
                         <div className="grid grid-cols-2 gap-4">
                              <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Length</label>

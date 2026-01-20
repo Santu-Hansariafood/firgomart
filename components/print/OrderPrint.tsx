@@ -5,6 +5,25 @@ import Barcode from "react-barcode"
 import { QRCodeSVG } from "qrcode.react"
 import { Printer } from "lucide-react"
 
+class ComponentErrorBoundary extends React.Component<{children: React.ReactNode, fallback?: React.ReactNode}, {hasError: boolean}> {
+  constructor(props: any) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true }
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error("Component Error:", error, errorInfo)
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || <div className="text-red-500 text-xs border border-red-300 p-1">Error</div>
+    }
+    return this.props.children
+  }
+}
+
 interface PrintOrderProps {
   order: any
   sellerGroups: {
@@ -24,6 +43,11 @@ interface PrintOrderProps {
 
 export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: PrintOrderProps) {
   const [isPrinting, setIsPrinting] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handlePrint = () => {
     setIsPrinting(true)
@@ -32,6 +56,10 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
       setIsPrinting(false)
     }, 100)
   }
+
+  if (!mounted) return <div className="p-8 text-center">Loading print preview...</div>
+
+  console.log("OrderPrint rendering with:", { order, sellerGroups, shipment })
 
   // Format currency
   const fmt = (n: number) =>
@@ -83,8 +111,8 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                 <div className="flex border-b-2 border-black">
                   <div className="w-2/3 p-2 border-r-2 border-black">
                     <div className="font-bold text-lg">STD</div>
-                    <div className="text-sm">{shipment?.courier || "Standard Courier"}</div>
-                    <div className="text-xs">{shipment?.trackingNumber || "No Tracking"}</div>
+                    <div className="text-sm">{shipment?.courier || "Shiprocket"}</div>
+                    <div className="text-xs">{shipment?.trackingNumber || "AWB Pending"}</div>
                   </div>
                   <div className="w-1/3 p-2 flex flex-col justify-center items-center bg-gray-100">
                     <div className="font-bold text-xl">{shipment?.courier === "E-Kart" ? "E" : "S"}</div>
@@ -106,12 +134,14 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   {/* Middle: AWB Barcode */}
                   <div className="w-1/2 p-2 border-r-2 border-black flex flex-col items-center justify-center">
                     <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                      <Barcode 
-                        value={shipment?.trackingNumber || order.orderNumber} 
-                        width={1.5} 
-                        height={60} 
-                        fontSize={12} 
-                      />
+                      <ComponentErrorBoundary fallback={<div className="text-[10px]">Barcode Error</div>}>
+                        <Barcode 
+                          value={shipment?.trackingNumber || order.orderNumber || "UNKNOWN"} 
+                          width={1.5} 
+                          height={60} 
+                          fontSize={12} 
+                        />
+                      </ComponentErrorBoundary>
                     </div>
                   </div>
 
@@ -128,7 +158,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   </div>
                 </div>
 
-                {/* Seller & Footer */}
                 <div className="border-t-2 border-black p-2 text-xs flex justify-between">
                   <div className="w-1/2 pr-2 border-r border-black">
                     <span className="font-bold">Sold By:</span> {seller.businessName}
@@ -142,7 +171,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   </div>
                 </div>
 
-                {/* SKU List */}
                 <div className="border-t-2 border-black">
                   <table className="w-full text-xs">
                     <thead>
@@ -157,7 +185,7 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                         <tr key={i} className="border-b border-gray-300 last:border-0">
                           <td className="p-1">{i + 1}</td>
                           <td className="p-1">
-                            <div className="font-semibold">{item.name.substring(0, 40)}</div>
+                            <div className="font-semibold">{(item.name || "Unknown Product").substring(0, 40)}</div>
                             <div className="text-[10px] text-gray-500">SKU: {item.productId}</div>
                           </td>
                           <td className="p-1 text-right">{item.quantity}</td>
@@ -167,10 +195,11 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   </table>
                 </div>
 
-                {/* Order Barcode Footer */}
                 <div className="border-t-2 border-black p-2 flex justify-between items-center">
                   <div className="h-12 overflow-hidden">
-                     <Barcode value={order.orderNumber} width={1} height={30} displayValue={false} />
+                     <ComponentErrorBoundary fallback={<div className="text-[10px]">Barcode Error</div>}>
+                        <Barcode value={order.orderNumber || "UNKNOWN"} width={1} height={30} displayValue={false} />
+                     </ComponentErrorBoundary>
                      <div className="text-[10px] text-center">{order.orderNumber}</div>
                   </div>
                   <div className="text-[10px] text-right">
@@ -200,7 +229,9 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                     <div><span className="font-semibold">GSTIN:</span> {seller.gstNumber || adminGst}</div>
                     <div><span className="font-semibold">PAN:</span> {seller.panNumber || "—"}</div>
                     <div className="mt-2 w-24 h-24 ml-auto">
-                      <QRCodeSVG value={`Order:${order.orderNumber}|Amt:${taxDetails.total}`} size={80} />
+                      <ComponentErrorBoundary fallback={<div className="text-[10px]">QR Error</div>}>
+                        <QRCodeSVG value={`Order:${order.orderNumber}|Amt:${taxDetails.total}`} size={80} />
+                      </ComponentErrorBoundary>
                     </div>
                   </div>
                 </div>
@@ -246,20 +277,21 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   <tbody className="divide-y divide-gray-200">
                     {items.map((item: any, i: number) => {
                       const qty = item.quantity
-                      const price = item.price
-                      const total = qty * price
-                      // Assuming price is inclusive of 18% GST for display calculation logic
-                      // Taxable = Total / 1.18
-                      const taxable = total / 1.18
-                      const taxAmt = total - taxable
-                      const cgst = taxAmt / 2
-                      const sgst = taxAmt / 2
+                      const price = item.price // Base price (Taxable Value)
+                      const taxable = qty * price
+                      
+                      const gstPercent = item.gstPercent || 18
+                      const gstAmount = item.gstAmount || ((taxable * gstPercent) / 100)
+                      
+                      const cgst = gstAmount / 2
+                      const sgst = gstAmount / 2
+                      const total = taxable + gstAmount
                       
                       return (
                         <tr key={i}>
                           <td className="py-2">
-                            <div className="font-semibold">{item.name}</div>
-                            <div className="text-[10px] text-gray-500">HSN: {item.hsnCode || "90172010"} | GST: 18%</div>
+                            <div className="font-semibold">{item.name || "Unknown Product"}</div>
+                            <div className="text-[10px] text-gray-500">HSN: {item.hsnCode || "90172010"} | GST: {gstPercent}%</div>
                           </td>
                           <td className="py-2 text-right">{qty}</td>
                           <td className="py-2 text-right">{fmt(total)}</td>

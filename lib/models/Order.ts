@@ -18,6 +18,7 @@ const OrderSchema = new Schema(
     address: { type: String },
     city: { type: String },
     state: { type: String, index: true },
+    pincode: { type: String },
     country: { type: String, index: true },
     tracking: [
       {

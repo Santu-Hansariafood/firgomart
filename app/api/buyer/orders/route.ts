@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const conn = await connectDB()
     const Order = getOrderModel(conn)
     const docs = await (Order as any)
-      .find({ buyerEmail: email })
+      .find({ buyerEmail: email, status: { $nin: ["pending", "failed"] } })
       .sort("-createdAt")
       .limit(limit)
       .select({ _id: 1, orderNumber: 1, amount: 1, status: 1, createdAt: 1 })

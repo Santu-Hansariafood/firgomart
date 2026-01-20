@@ -140,10 +140,10 @@ function buildShiprocketOrderPayload(order: any, items: any[], pickupLocation: s
     order_items: orderItems,
     payment_method: "Prepaid",
     sub_total: subTotal,
-    length,
-    breadth,
-    height,
-    weight,
+    length: (order as any).length || Number(process.env.SHIPROCKET_DEFAULT_LENGTH || 10),
+    breadth: (order as any).breadth || Number(process.env.SHIPROCKET_DEFAULT_BREADTH || 10),
+    height: (order as any).height || Number(process.env.SHIPROCKET_DEFAULT_HEIGHT || 10),
+    weight: (order as any).weight || Number(process.env.SHIPROCKET_DEFAULT_WEIGHT || 0.5),
   }
 }
 
@@ -175,6 +175,43 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
   for (const [sellerEmail, groupItems] of Object.entries(sellerGroups)) {
     let pickupLocation = process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
     
+    // Calculate weight and dimensions for this group
+    let totalWeight = 0
+    let maxL = 10, maxB = 10, maxH = 10
+
+    for (const item of groupItems) {
+      const p = productMap.get(String(item.productId))
+      if (p) {
+        // Weight conversion to KG
+        let w = Number(p.weight || 0)
+        const wUnit = String(p.weightUnit || "kg").toLowerCase().trim()
+        if (wUnit === "g") w = w / 1000
+        if (wUnit === "mg") w = w / 1000000
+        totalWeight += (w * (item.quantity || 1))
+
+        // Dims conversion to CM (simplified: take max of any item as box size)
+        const toCm = (v: number, u: string) => {
+          const unit = u.toLowerCase().trim()
+          if (unit === "m") return v * 100
+          if (unit === "mm") return v / 10
+          if (unit === "in") return v * 2.54
+          if (unit === "ft") return v * 30.48
+          return v
+        }
+        const dUnit = String(p.dimensionUnit || "cm")
+        const l = toCm(Number(p.length || p.depth || 10), dUnit) // fallback to depth/10 if length missing
+        const b = toCm(Number(p.width || 10), dUnit)
+        const h = toCm(Number(p.height || 10), dUnit)
+        
+        maxL = Math.max(maxL, l)
+        maxB = Math.max(maxB, b)
+        maxH = Math.max(maxH, h)
+      }
+    }
+    
+    // Ensure minimums
+    totalWeight = Math.max(totalWeight, 0.5)
+
     if (sellerEmail !== "ADMIN") {
       const Seller = getSellerModel(conn)
       let seller = await (Seller as any).findOne({ email: sellerEmail }).lean()
@@ -187,7 +224,12 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
       }
     }
     
-    const payload = buildShiprocketOrderPayload(order, groupItems, pickupLocation)
+    // Pass calculated metrics via order object override
+    const payload = buildShiprocketOrderPayload(
+      { ...order, weight: totalWeight, length: maxL, breadth: maxB, height: maxH }, 
+      groupItems, 
+      pickupLocation
+    )
     
     try {
       const createRes = await fetch(`${base}/v1/external/orders/create/adhoc`, {
