@@ -78,6 +78,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [validating, setValidating] = useState<boolean>(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [deliveryFee, setDeliveryFee] = useState<number>(0)
+  const [orderSummary, setOrderSummary] = useState({ subtotal: 0, tax: 0, total: 0, items: [] as any[] })
 
   async function safeJson(res: Response) {
     try {
@@ -148,8 +149,15 @@ const Checkout: React.FC<CheckoutProps> = ({
             dryRun: true 
           }),
         })
+        const data = await safeJson(res)
         if (res.ok) {
-          setDeliveryFee(0)
+          setDeliveryFee(data.deliveryFee || 0)
+          setOrderSummary({
+            subtotal: data.subtotal || 0,
+            tax: data.tax || 0,
+            total: data.total || 0,
+            items: data.items || []
+          })
         }
       } catch {}
     }
@@ -190,13 +198,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   }
 
   const validItems = cartItems.filter(item => (item.stock ?? 0) > 0)
-  const subtotal = validItems.reduce(
-    (sum, item) => sum + item.price * (item.quantity ?? 1),
-    0
-  )
-  const gstPercent = Number(process.env.NEXT_PUBLIC_GST_PERCENT || 18)
-  const tax = subtotal * (gstPercent / 100)
-  const total = subtotal + tax
+  const { subtotal, tax, total } = orderSummary
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -680,7 +682,9 @@ const Checkout: React.FC<CheckoutProps> = ({
               </h2>
 
               <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                {cartItems.map((item) => (
+                {cartItems.map((item) => {
+                  const summaryItem = orderSummary.items.find(si => String(si.productId) === String(item.id))
+                  return (
                   <div key={item.id} className="flex space-x-3">
                     <FallbackImage
                       src={item.image}
@@ -702,12 +706,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-gray-900' }`}>
                         <Rupee />{item.price * (item.quantity ?? 1)}
                       </p>
+                      {summaryItem?.gstPercent !== undefined && (
+                        <p className="text-xs text-gray-500">GST: {summaryItem.gstPercent}%</p>
+                      )}
                       {(item.stock ?? 0) <= 0 && (
                         <span className="text-xs text-red-600 font-medium">Out of Stock (Excluded)</span>
                       )}
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
 
               <div className="border-t border-gray-200 pt-4 space-y-2">
@@ -716,7 +723,13 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="font-medium"><Rupee />{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">GST ({gstPercent}%)</span>
+                  <span className="text-gray-600">
+                    GST {(() => {
+                      if (!orderSummary.items?.length) return ''
+                      const rates = new Set(orderSummary.items.map(i => i.gstPercent))
+                      return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
+                    })()}
+                  </span>
                   <span className="font-medium"><Rupee />{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-green-600">

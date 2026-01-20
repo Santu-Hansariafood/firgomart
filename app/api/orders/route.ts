@@ -2,9 +2,20 @@ import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 import { getOrderModel } from "@/lib/models/Order"
+import categories from "@/data/categories.json"
 import type { ClientSession } from "mongoose"
 
 type BodyItem = { id: string | number; quantity: number }
+
+function getGstPercent(categoryKeyOrName?: string): number {
+  if (!categoryKeyOrName) return 18
+  const normalized = categoryKeyOrName.toLowerCase().trim()
+  const cat = categories.categories.find(c => 
+    c.key.toLowerCase() === normalized || 
+    c.name.toLowerCase() === normalized
+  )
+  return cat?.gstPercent ?? 18
+}
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +42,7 @@ export async function POST(request: Request) {
     const Order = getOrderModel(conn)
 
     const ids = items.map((i) => i.id)
-    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string }
+    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string }
     const products = await (Product as unknown as { find: (q: unknown) => { lean: () => Promise<ProductLean[]> } })
       .find({ _id: { $in: ids } }).lean()
     const prodMap: Record<string, ProductLean> = {}
@@ -87,46 +98,67 @@ export async function POST(request: Request) {
     const chargeable = Math.max(totalActualWeight, totalVolumetricWeight)
     const deliveryFee = 0
 
-    // Dry Run / Fee Calculation Check
-    if (body.dryRun) {
-      const itemsAmount = items.reduce((s, it) => {
-         const p = prodMap[it.id]
-         return s + (Number(p.price || 0) * it.quantity)
-      }, 0)
-      return NextResponse.json({ 
-        deliveryFee, 
-        itemsAmount,
-        total: itemsAmount + deliveryFee 
-      })
-    }
+    // Calculate Financials
+    let subtotal = 0
+    let totalTax = 0
 
     const orderItems = items.map((it) => {
       const p = prodMap[it.id] as ProductLean
+      const price = Number(p.price ?? 0)
+      const quantity = it.quantity
+      const lineTotal = price * quantity
+      
+      const gstPercent = getGstPercent(p.category)
+      const gstAmount = (lineTotal * gstPercent) / 100
+      
+      subtotal += lineTotal
+      totalTax += gstAmount
+
       return {
         productId: p._id,
         name: p.name,
-        quantity: it.quantity,
-        price: Number(p.price ?? 0),
+        quantity,
+        price,
+        gstPercent,
+        gstAmount
       }
     })
-    const amount = orderItems.reduce((s, oi) => s + Number(oi.price) * Number(oi.quantity), 0)
-    const gstPercent = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18)
-    const gstAmount = (amount * gstPercent) / 100
-    const finalAmount = Number((amount + gstAmount).toFixed(2))
+
+    const finalAmount = Number((subtotal + totalTax + deliveryFee).toFixed(2))
+
+    // Dry Run / Fee Calculation Check
+    if (body.dryRun) {
+      return NextResponse.json({ 
+        deliveryFee, 
+        subtotal,
+        tax: totalTax,
+        total: finalAmount,
+        items: orderItems.map(i => ({ 
+          productId: i.productId, 
+          gstPercent: i.gstPercent, 
+          gstAmount: i.gstAmount 
+        }))
+      })
+    }
 
     const docs = await (Order as unknown as {
       create: (arr: unknown[]) => Promise<unknown[]>
     }).create([{
       buyerEmail: buyerEmail || undefined,
       buyerName: buyerName || undefined,
-      items: orderItems,
+      items: orderItems.map(i => ({
+        productId: i.productId,
+        name: i.name,
+        quantity: i.quantity,
+        price: i.price
+      })),
       amount: finalAmount,
       status: "pending",
       address,
       city,
       state,
       country,
-      deliveryFee: 0,
+      deliveryFee,
     }])
     const created = (docs as unknown[])[0]
 

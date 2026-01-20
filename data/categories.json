@@ -4,6 +4,7 @@
       "name": "Women's Fashion",
       "key": "womens-fashion",
       "image": "/image/woman.webp",
+      "gstPercent": 12,
       "subcategories": [
         "Kurtis & Tunics",
         "Sarees",
@@ -18,6 +19,7 @@
       "name": "Men's Casual Wear",
       "key": "mens-casual-wear",
       "image": "/image/man.webp",
+      "gstPercent": 12,
       "subcategories": [
         "T-Shirts",
         "Casual Shirts",
@@ -31,6 +33,7 @@
       "name": "Women's Footwear",
       "key": "footwear-women",
       "image": "/image/women.webp",
+      "gstPercent": 12,
       "subcategories": [
         "Flats",
         "Heels",
@@ -43,6 +46,7 @@
       "name": "Men's Footwear",
       "key": "footwear-men",
       "image": "/image/shoos.webp",
+      "gstPercent": 12,
       "subcategories": [
         "Casual Shoes",
         "Sneakers",
@@ -55,6 +59,7 @@
       "name": "Jewellery & Accessories",
       "key": "jewellery-accessories",
       "image": "/image/jueallary.webp",
+      "gstPercent": 3,
       "subcategories": [
         "Earrings",
         "Necklaces",
@@ -71,6 +76,7 @@
       "name": "Beauty & Skincare",
       "key": "beauty-skincare",
       "image": "/image/beauti.webp",
+      "gstPercent": 18,
       "subcategories": [
         "Face Wash & Cleansers",
         "Face Creams & Moisturizers",
@@ -87,6 +93,7 @@
       "name": "Home & Kitchen",
       "key": "home-kitchen",
       "image": "/image/home.webp",
+      "gstPercent": 18,
       "subcategories": [
         "Bedsheets",
         "Curtains",
