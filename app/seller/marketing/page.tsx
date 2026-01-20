@@ -4,7 +4,7 @@ import { useAuth } from "@/context/AuthContext"
 import { useEffect, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import dynamic from "next/dynamic"
-import CommonTable from "@/components/common/Table/CommonTable"
+const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"));
 const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
 const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
 

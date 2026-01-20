@@ -29,7 +29,6 @@ interface PolicyModalProps {
   policy: PolicyType | null;
 }
 
-/* ---------------- Roman Number Helper ---------------- */
 const toRoman = (num: number) => {
   const romans = [
     "i","ii","iii","iv","v","vi","vii","viii","ix","x",
@@ -61,7 +60,6 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
 
   const data = datasetMap[policy];
 
-  /* -------- Render Content with Roman List -------- */
   const renderContent = (text: string) => {
     const lines = text
       .split("\n")
@@ -103,17 +101,14 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
 
   return (
     <div className="fixed inset-0 z-50">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
 
-      {/* Modal */}
       <div className="absolute inset-0 flex items-center justify-center p-4">
         <div className="w-full max-w-3xl bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
           
-          {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--foreground)/20] shrink-0">
             <div className="flex items-center gap-3">
               <div className="relative w-8 h-8">
@@ -139,12 +134,10 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
             </button>
           </div>
 
-          {/* Body */}
           <div className="flex-1 overflow-y-auto p-6 space-y-8">
             {data.map((section, idx) => (
               <div key={idx} className="space-y-3">
                 
-                {/* Title */}
                 {section.title && (
                   <h4
                     className={`font-semibold text-[var(--foreground)] ${
@@ -155,7 +148,6 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                   </h4>
                 )}
 
-                {/* Effective / Last Updated */}
                 {(section.effectiveDate || section.lastUpdated) && (
                   <p className="text-sm text-[var(--foreground)/60]">
                     {section.effectiveDate && (
@@ -178,13 +170,10 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                   </p>
                 )}
 
-                {/* Intro */}
                 {section.intro && renderContent(section.intro)}
 
-                {/* Content */}
                 {section.content && renderContent(section.content)}
 
-                {/* Points */}
                 {section.points && section.points.length > 0 && (
                   <div className="space-y-1 text-sm text-[var(--foreground)]">
                     {section.points.map((point, pIdx) => (
@@ -198,7 +187,6 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                   </div>
                 )}
 
-                {/* Sub Sections */}
                 {section.subSections &&
                   section.subSections.map((sub, sIdx) => (
                     <div

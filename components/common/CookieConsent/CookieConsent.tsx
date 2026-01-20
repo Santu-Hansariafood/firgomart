@@ -18,7 +18,6 @@ const CookieConsent: React.FC = () => {
   const [initialized, setInitialized] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  /* ---------------- Load Stored Consent ---------------- */
   useEffect(() => {
     try {
       const stored = localStorage.getItem(COOKIE_STORAGE_KEY);
@@ -31,7 +30,6 @@ const CookieConsent: React.FC = () => {
     setInitialized(true);
   }, []);
 
-  /* ---------------- Handlers ---------------- */
   const handleAccept = () => {
     try {
       localStorage.setItem(COOKIE_STORAGE_KEY, "accepted");
@@ -52,11 +50,8 @@ const CookieConsent: React.FC = () => {
 
   return (
     <>
-      {/* Consent Bar */}
       <div className="fixed inset-x-0 bottom-0 z-40 px-4 pb-4 sm:px-6 sm:pb-6">
         <div className="mx-auto max-w-4xl rounded-2xl bg-[var(--background)] text-[var(--foreground)] shadow-xl border border-[var(--foreground)/10] p-4 sm:p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-
-          {/* Text */}
           <div className="space-y-1.5">
             <p className="text-sm sm:text-base font-semibold">
               We use cookies to improve your experience 🍪
@@ -67,11 +62,7 @@ const CookieConsent: React.FC = () => {
               non-essential ones, or review our cookie policy.
             </p>
           </div>
-
-          {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center sm:justify-end">
-
-            {/* Reject */}
             <button
               type="button"
               onClick={handleReject}
@@ -80,8 +71,6 @@ const CookieConsent: React.FC = () => {
               <X className="h-4 w-4" />
               Reject
             </button>
-
-            {/* Settings */}
             <button
               type="button"
               onClick={() => setShowSettings(true)}
@@ -90,8 +79,6 @@ const CookieConsent: React.FC = () => {
               <Settings className="h-4 w-4" />
               Settings
             </button>
-
-            {/* Accept */}
             <button
               type="button"
               onClick={handleAccept}
@@ -104,8 +91,6 @@ const CookieConsent: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Cookie Policy Modal */}
       {showSettings && (
         <PolicyModal
           open={showSettings}

@@ -7,10 +7,6 @@ export async function GET(request: Request) {
     const url = new URL(request.url)
     const sellerEmail = (url.searchParams.get("sellerEmail") || "").trim() // Expected to be passed by client for now
     
-    // In a real app with proper session management, we would get the email from the session here.
-    // For now, we trust the client to pass their email (as per existing seller API pattern).
-    // Ideally, we should verify the session here.
-    
     const page = Math.max(1, parseInt(url.searchParams.get("page") || "1", 10))
     const limit = Math.max(1, parseInt(url.searchParams.get("limit") || "100", 10))
     const minStock = url.searchParams.get("minStock")
@@ -23,13 +19,9 @@ export async function GET(request: Request) {
     const Product = getProductModel(conn)
     const q: any = {}
     
-    // Enforce seller isolation
     if (sellerEmail) {
         q.createdByEmail = sellerEmail
     } else {
-        // If no seller email provided, return nothing or error? 
-        // Existing seller APIs seem to just return empty if filtered by email but email is missing?
-        // Let's assume we want to return nothing if no email.
         return NextResponse.json({ inventory: [], total: 0 })
     }
 

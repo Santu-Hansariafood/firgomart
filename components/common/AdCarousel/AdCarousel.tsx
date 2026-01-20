@@ -64,8 +64,6 @@ const AdCarousel: React.FC = () => {
               </div>
             </motion.div>
           </AnimatePresence>
-
-          {/* Navigation buttons */}
           <button
             onClick={prev}
             aria-label="Previous Slide"

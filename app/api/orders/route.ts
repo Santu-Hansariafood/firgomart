@@ -64,19 +64,16 @@ export async function POST(request: Request) {
       }
     }
     
-    // Calculate Delivery Fee
     let totalVolumetricWeight = 0
     let totalActualWeight = 0
     
     for (const it of items) {
       const p = prodMap[it.id]
-      // Weight to KG
       let w = Number(p.weight || 0)
       const wUnit = String(p.weightUnit || "kg").toLowerCase().trim()
       if (wUnit === "g") w = w / 1000
       if (wUnit === "mg") w = w / 1000000
       
-      // Dims to CM
       const toCm = (v: number, u: string) => {
         const unit = u.toLowerCase().trim()
         if (unit === "m") return v * 100
@@ -88,7 +85,7 @@ export async function POST(request: Request) {
       const dUnit = String(p.dimensionUnit || "cm")
       const hCm = toCm(Number(p.height || 0), dUnit)
       const wCm = toCm(Number(p.width || 0), dUnit)
-      const depthCm = 10 // Assumed depth
+      const depthCm = 10
       
       const vol = (hCm * wCm * depthCm) / 5000
       
@@ -99,7 +96,6 @@ export async function POST(request: Request) {
     const chargeable = Math.max(totalActualWeight, totalVolumetricWeight)
     const deliveryFee = 0
 
-    // Calculate Financials
     let subtotal = 0
     let totalTax = 0
 
@@ -127,7 +123,6 @@ export async function POST(request: Request) {
 
     const finalAmount = Number((subtotal + totalTax + deliveryFee).toFixed(2))
 
-    // Dry Run / Fee Calculation Check
     if (body.dryRun) {
       return NextResponse.json({ 
         deliveryFee, 

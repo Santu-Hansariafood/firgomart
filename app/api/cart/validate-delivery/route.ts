@@ -2,9 +2,6 @@ import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 
-// Validate whether cart items can be delivered to a given state.
-// Request body: { deliverToState: string, items: Array<{ id: string }> }
-// Response: { results: Array<{ id: string, deliverable: boolean }> }
 export async function POST(request: Request) {
   try {
     const body = await request.json()

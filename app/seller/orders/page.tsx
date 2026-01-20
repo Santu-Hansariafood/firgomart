@@ -3,12 +3,12 @@
 import { useAuth } from "@/context/AuthContext"
 import { useEffect, useState, Suspense } from "react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
-import CommonTable from "@/components/common/Table/CommonTable"
 import dynamic from "next/dynamic"
 const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
 const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
-import CommonDropdown from "@/components/common/CommonDropdown/CommonDropdown"
+const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
+const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"));
 
 type OrderRow = { id: string; orderNumber: string; buyerEmail?: string; amount: number; status: string; createdAt?: string }
 

@@ -69,7 +69,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
       minimumFractionDigits: 2,
     }).format(n)
 
-  // Format date
   const fmtDate = (d: string | Date) => {
     if (!d) return ""
     return new Date(d).toLocaleString("en-IN", {
@@ -83,7 +82,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 print:p-0 print:bg-white">
-      {/* Controls */}
       <div className="mb-8 flex justify-between items-center max-w-[210mm] mx-auto print:hidden">
         <h1 className="text-2xl font-bold text-gray-800">Order Print Preview</h1>
         <button
@@ -95,7 +93,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
         </button>
       </div>
 
-      {/* Print Content */}
       <div className="print-content max-w-[210mm] mx-auto bg-white shadow-lg print:shadow-none">
         {sellerGroups.map((group, idx) => {
           const { seller, items, taxDetails } = group
@@ -105,9 +102,7 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
 
           return (
             <div key={idx} className="page-break-after-always min-h-[297mm] p-8 flex flex-col relative border-b-2 border-dashed border-gray-300 print:border-none">
-              {/* ================= SHIPPING LABEL (TOP) ================= */}
               <div className="border-2 border-black mb-8 relative">
-                {/* Header */}
                 <div className="flex border-b-2 border-black">
                   <div className="w-2/3 p-2 border-r-2 border-black">
                     <div className="font-bold text-lg">STD</div>
@@ -121,7 +116,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                 </div>
 
                 <div className="flex h-48">
-                  {/* Left: Routing Info */}
                   <div className="w-1/4 p-2 border-r-2 border-black flex flex-col justify-between items-center">
                     <div className="rotate-90 origin-center whitespace-nowrap text-xs mt-12">
                       {order.state?.substring(0, 15)} / {order.city?.substring(0, 15)}
@@ -131,7 +125,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                     </div>
                   </div>
 
-                  {/* Middle: AWB Barcode */}
                   <div className="w-1/2 p-2 border-r-2 border-black flex flex-col items-center justify-center">
                     <div className="w-full h-full flex items-center justify-center overflow-hidden">
                       <ComponentErrorBoundary fallback={<div className="text-[10px]">Barcode Error</div>}>
@@ -145,7 +138,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                     </div>
                   </div>
 
-                  {/* Right: Address */}
                   <div className="w-1/4 p-2 text-xs overflow-hidden">
                     <div className="font-bold mb-1">Shipping Address:</div>
                     <div className="font-semibold">{order.buyerName}</div>
@@ -209,12 +201,9 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                 </div>
               </div>
 
-              {/* Dotted Separator */}
               <div className="border-b-2 border-dashed border-gray-400 my-4"></div>
 
-              {/* ================= TAX INVOICE (BOTTOM) ================= */}
               <div className="flex-1">
-                {/* Header */}
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h2 className="text-xl font-bold uppercase tracking-wide">Tax Invoice</h2>
@@ -236,7 +225,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   </div>
                 </div>
 
-                {/* Addresses */}
                 <div className="flex justify-between text-xs mb-6 border-b pb-4">
                   <div className="w-[32%]">
                     <div className="font-bold mb-1 uppercase text-gray-600">Sold By</div>
@@ -260,7 +248,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   </div>
                 </div>
 
-                {/* Product Table */}
                 <table className="w-full text-xs mb-6">
                   <thead className="bg-gray-100 border-y border-gray-300">
                     <tr>
@@ -277,7 +264,7 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                   <tbody className="divide-y divide-gray-200">
                     {items.map((item: any, i: number) => {
                       const qty = item.quantity
-                      const price = item.price // Base price (Taxable Value)
+                      const price = item.price
                       const taxable = qty * price
                       
                       const gstPercent = item.gstPercent || 18
@@ -313,8 +300,6 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                      </tr>
                   </tfoot>
                 </table>
-
-                {/* Footer */}
                 <div className="mt-auto pt-4 border-t border-gray-300 text-xs flex justify-between items-end">
                   <div className="max-w-[60%]">
                     <div className="font-bold">Seller Registered Address:</div>

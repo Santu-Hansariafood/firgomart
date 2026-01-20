@@ -300,12 +300,12 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               <X className="w-5 h-5" />
             </button>
             <Title level={2} className="text-white">
-  Create Account
-</Title>
+              Create Account
+            </Title>
 
-<Paragraph className="text-white/80 mt-1">
-  Step {step} of 2 — {step === 1 ? 'Account Details' : 'Personal Information'}
-</Paragraph>
+            <Paragraph className="text-white/80 mt-1">
+              Step {step} of 2 — {step === 1 ? 'Account Details' : 'Personal Information'}
+            </Paragraph>
 
             <div className="flex mt-4 space-x-2">
               <div className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-white' : 'bg-brand-gray'}`} />
@@ -586,15 +586,15 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             )}
             <div className="text-center pt-4 border-t border-[var(--foreground)/20]">
               <Paragraph className="text-[var(--foreground)/70]">
-  Already have an account?{' '}
-  <button
-    type="button"
-    onClick={onSwitchToLogin}
-    className="text-brand-purple hover:text-brand-red font-medium"
-  >
-    Sign in
-  </button>
-</Paragraph>
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={onSwitchToLogin}
+                  className="text-brand-purple hover:text-brand-red font-medium"
+                >
+                  Sign in
+                </button>
+              </Paragraph>
 
             </div>
           </form>

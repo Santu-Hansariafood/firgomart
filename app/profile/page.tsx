@@ -7,7 +7,7 @@ const Profile = dynamic(() => import("@/components/ui/Profile/Profile"));
 const page = () => {
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <Profile />
+      <Profile />
     </Suspense>
   )
 }

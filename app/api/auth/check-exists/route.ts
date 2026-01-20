@@ -12,7 +12,7 @@ export async function POST(request: Request) {
 
     const query: Record<string, string> = {}
     if (field === 'email') query.email = value
-    else if (field === 'phone') query.mobile = value // Frontend sends 'phone', model uses 'mobile'
+    else if (field === 'phone') query.mobile = value 
     else if (field === 'mobile') query.mobile = value
     else {
         return NextResponse.json({ error: "Invalid field" }, { status: 400 })

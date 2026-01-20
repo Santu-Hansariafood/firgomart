@@ -7,6 +7,7 @@ import { ShoppingCart, Eye, X } from 'lucide-react'
 import ProductImageSlider from '@/components/common/ProductImageSlider/ProductImageSlider'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
+import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
 
 interface Product {
   id: string | number
@@ -402,7 +403,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
             {loading && (
               <div className="flex items-center space-x-2 text-[var(--foreground)/60]">
                 <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
-                <span>Loading more products...</span>
+                <BeautifulLoader />
               </div>
             )}
           </div>
