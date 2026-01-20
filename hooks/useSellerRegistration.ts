@@ -127,13 +127,8 @@ export const useSellerRegistration = () => {
       setEmailOtpVerified(false)
       setEmailOtpError(null)
     }
-    if (name === 'ownerName' || name === 'businessName') {
-      val = val.trim() // Just trim, don't restrict typing yet, validate on blur or change? 
-                       // The user request said "regex validiation... in the proper way". 
-                       // Real-time validation is usually done on value change but we shouldn't prevent typing spaces if it's a name.
-                       // Previous implementation used validation function to set errors, not prevent typing (except digits).
-    }
-
+    // ownerName and businessName: allow spaces while typing, we will trim on submit
+    
     // Special handling for country (enforce India)
     if (name === 'country' && val !== 'India') {
       
@@ -304,6 +299,8 @@ export const useSellerRegistration = () => {
     setServerError(null)
     const payload = {
       ...formData,
+      businessName: formData.businessName.trim(),
+      ownerName: formData.ownerName.trim(),
       businessLogoUrl: formData.businessLogoUrl,
       documentUrls: [],
       country: formData.country,
