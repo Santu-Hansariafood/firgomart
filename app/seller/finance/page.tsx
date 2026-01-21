@@ -43,7 +43,7 @@ export default function Page() {
 
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <h2 className="text-lg font-medium">Recent Transactions</h2>
-        <CommonTable<TxRow>
+        <CommonTable
           columns={[
             { key: "amount", label: "Amount", render: (r) => `₹${r.amount}` },
             { key: "method", label: "Method" },

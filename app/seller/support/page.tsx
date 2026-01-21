@@ -58,7 +58,7 @@ export default function Page() {
         <div className="flex items-center justify-between">
           <SearchBox value={search} onChange={setSearch} placeholder="Search tickets" />
         </div>
-        <CommonTable<Ticket>
+        <CommonTable
           columns={[
             { key: "subject", label: "Subject" },
             { key: "status", label: "Status" },

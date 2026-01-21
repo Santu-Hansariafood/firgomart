@@ -114,7 +114,7 @@ export default function Page() {
         {loading ? (
           <BeautifulLoader />
         ) : (
-          <CommonTable<OrderRow>
+          <CommonTable
             columns={[
               { key: "orderNumber", label: "Order", sortable: true },
               { key: "buyerEmail", label: "Buyer" },

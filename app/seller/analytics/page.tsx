@@ -53,7 +53,7 @@ export default function Page() {
       </div>
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <h2 className="text-lg font-medium">Top Products by Sales</h2>
-        <CommonTable<Insight>
+        <CommonTable
           columns={[{ key: "key", label: "Product" }, { key: "value", label: "Sales", render: (r) => `₹${r.value.toFixed(2)}` }]}
           data={salesByProduct}
           rowKey={(r) => r.key}
