@@ -106,7 +106,7 @@ export const metadata: Metadata = {
   },
 
   verification: {
-    google: "YOUR_GOOGLE_SEARCH_CONSOLE_VERIFICATION_CODE",
+    google: "JSv5Q1ZB9r7T-213M-vv4vfgsGhFV3XOeSiWeLOdi8g",
   },
 
   category: "shopping",
