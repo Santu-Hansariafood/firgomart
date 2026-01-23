@@ -86,11 +86,11 @@ const SellerRegistration: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-10">
-      <div className="max-w-3xl mx-auto px-4 space-y-6">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-28 pb-10 sm:py-14">
+      <div className="max-w-3xl mx-auto px-4 space-y-4 sm:space-y-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative w-32 h-10 sm:w-40 sm:h-12">
+            <div className="relative w-28 h-8 sm:w-40 sm:h-12">
               <Image
                 src="/logo/firgomart.png"
                 alt="Firgomart"
@@ -109,18 +109,18 @@ const SellerRegistration: React.FC = () => {
           animate="show"
           className="bg-[var(--background)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/15]"
         >
-          <div className="bg-linear-to-r from-brand-purple to-brand-red p-8 text-white">
+          <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 sm:p-8 text-white">
             <div className="flex items-center justify-between mb-2">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-lg backdrop-blur-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-lg backdrop-blur-sm shrink-0">
                   <Store className="w-6 h-6" />
                 </div>
                 <div className="space-y-1">
                   <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-white/80">
                     Seller Registration
                   </div>
-                  <h1 className="text-3xl font-heading font-bold leading-tight">Sell on Firgomart</h1>
-                  <p className="text-white/80 text-sm sm:text-base">
+                  <h1 className="text-2xl sm:text-3xl font-heading font-bold leading-tight">Sell on Firgomart</h1>
+                  <p className="text-white/80 text-xs sm:text-base">
                     Grow your business with India&apos;s smart marketplace
                   </p>
                 </div>
@@ -186,14 +186,20 @@ const SellerRegistration: React.FC = () => {
               </div>
             </div>
           )}
-          <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-6">
             {serverError && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {serverError}
               </div>
             )}
-            <div className="space-y-4">
-              <h2 className="text-xl font-heading font-bold">
+            <motion.div
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="space-y-4"
+            >
+              <h2 className="text-lg sm:text-xl font-heading font-bold">
                 Business Information
               </h2>
               <div className="grid md:grid-cols-2 gap-4">
@@ -291,7 +297,16 @@ const SellerRegistration: React.FC = () => {
                   {checking === 'phone' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </div>
               </div>
-              <h2 className="text-xl font-heading font-bold">Bank Account Details</h2>
+            </motion.div>
+
+            <motion.div
+              variants={fadeInUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              className="space-y-4"
+            >
+              <h2 className="text-lg sm:text-xl font-heading font-bold">Bank Account Details</h2>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Account Number *</label>

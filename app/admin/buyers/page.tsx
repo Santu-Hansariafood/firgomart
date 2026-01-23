@@ -178,7 +178,7 @@ export default function Page() {
                 { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
               ]}
               data={buyers}
-              sortKey={sortKey || undefined}
+                { key: "id", label: "Actions", render: (r) => (
               sortOrder={sortOrder}
               onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
               rowKey={(r, idx) => `${r.id}-${idx}`}
@@ -186,7 +186,7 @@ export default function Page() {
           </div>
         )}
 
-        <div className="flex items-center justify-between">
+                ) },
           <div className="text-sm text-gray-600">Total: {total}</div>
           <CommonPagination
             currentPage={page}

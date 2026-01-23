@@ -204,10 +204,6 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
-            <Paragraph className="text-center md:text-left text-gray-300">
-              © 2025 - {new Date().getFullYear() } Firgomart. All Rights Reserved.
-            </Paragraph>
-
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
               <button onClick={() => openPolicy("privacy")} className="hover:text-white transition-colors">Privacy Policy</button>
               <button onClick={() => openPolicy("terms")} className="hover:text-white transition-colors">Terms of Service</button>
@@ -216,6 +212,10 @@ const Footer: React.FC = () => {
               <button onClick={() => openPolicy("disclaimer")} className="hover:text-white transition-colors">Disclaimer</button>
               <button onClick={() => openPolicy("affiliate")} className="hover:text-white transition-colors">Affiliate Program</button>
             </div>
+
+            <Paragraph className="text-center md:text-right text-gray-300">
+              © 2025 - {new Date().getFullYear() } Firgomart. All Rights Reserved.
+            </Paragraph>
 
           </div>
         </div>
