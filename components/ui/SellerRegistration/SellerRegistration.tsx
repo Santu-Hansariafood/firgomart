@@ -86,23 +86,8 @@ const SellerRegistration: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-28 pb-10 sm:py-14">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-36 pb-10 sm:pt-28 sm:pb-14 md:pt-32">
       <div className="max-w-3xl mx-auto px-4 space-y-4 sm:space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative w-28 h-8 sm:w-40 sm:h-12">
-              <Image
-                src="/logo/firgomart.png"
-                alt="Firgomart"
-                fill
-                priority
-                sizes="160px"
-                className="object-contain"
-              />
-            </div>
-          </div>
-          <BackButton href="/" label="Back to Home" />
-        </div>
         <motion.div
           variants={fadeInUp}
           initial="hidden"
@@ -110,6 +95,23 @@ const SellerRegistration: React.FC = () => {
           className="bg-[var(--background)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/15]"
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 sm:p-8 text-white">
+            <div className="flex items-center justify-between mb-6">
+              <div className="relative w-28 h-8 sm:w-36 sm:h-10 bg-white rounded-lg p-1.5 shadow-sm">
+                <Image
+                  src="/logo/firgomart.png"
+                  alt="Firgomart"
+                  fill
+                  priority
+                  sizes="160px"
+                  className="object-contain"
+                />
+              </div>
+              <BackButton 
+                href="/" 
+                label="Back to Home" 
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+              />
+            </div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-lg backdrop-blur-sm shrink-0">
@@ -128,14 +130,14 @@ const SellerRegistration: React.FC = () => {
             </div>
           </div>
           {showAgreementPopup && !submitted && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20]">
-                <h3 className="text-xl font-heading font-bold mb-2">{agreementTitle}</h3>
-                <div className="text-xs text-[var(--foreground)/70] mb-3">
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
+              <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20] max-h-[90vh] flex flex-col">
+                <h3 className="text-xl font-heading font-bold mb-2 shrink-0">{agreementTitle}</h3>
+                <div className="text-xs text-[var(--foreground)/70] mb-3 shrink-0">
                   <p>By continuing, you confirm that all details provided are accurate and may be used for verification and compliance with marketplace policies.</p>
                   <p>Your access will be enabled after admin verification is complete.</p>
                 </div>
-                <div className="mb-4 border border-[var(--foreground)/15] rounded-lg bg-[var(--background)]/80 max-h-64 overflow-y-auto p-3 text-xs leading-relaxed space-y-2">
+                <div className="mb-4 border border-[var(--foreground)/15] rounded-lg bg-[var(--background)]/80 overflow-y-auto p-3 text-xs leading-relaxed space-y-2 grow">
                   {agreementIntro.map((para, idx) => (
                     <p key={`intro-${idx}`}>{para}</p>
                   ))}
@@ -415,7 +417,7 @@ const SellerRegistration: React.FC = () => {
                 />
                 {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>}
               </div>
-            </div>
+            </motion.div>
             <div className="space-y-4 pt-6 border-t border-[var(--foreground)/20]">
               <h2 className="text-xl font-heading font-bold">Tax Information</h2>
 
