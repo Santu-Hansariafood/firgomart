@@ -84,24 +84,24 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
   };
 
   return (
-    <div className="max-w-[210mm] mx-auto bg-white text-black shadow-2xl min-h-[297mm] p-8 md:p-12 my-8 relative border border-gray-200">
-      <div className="space-y-8 font-serif">
+    <div className="max-w-[210mm] mx-auto bg-white text-black shadow-2xl min-h-[297mm] p-6 md:p-10 my-8 relative border border-gray-200">
+      <div className="space-y-5 font-serif">
         {data.map((section, idx) => (
-          <div key={idx} className="space-y-3">
+          <div key={idx} className="space-y-2">
             {section.title && idx === 0 ? (
-               <div className="text-center mb-8">
-                 <h2 className="text-3xl font-bold text-gray-900 uppercase underline decoration-2 underline-offset-4">
+               <div className="text-center mb-6">
+                 <h2 className="text-2xl font-bold text-gray-900 uppercase underline decoration-2 underline-offset-4">
                     {section.title}
                  </h2>
                  {(section.effectiveDate || section.lastUpdated) && (
-                    <div className="mt-2 text-sm text-gray-500 italic">
+                    <div className="mt-1 text-sm text-gray-500 italic">
                         {section.effectiveDate && <span>Effective Date: {section.effectiveDate}</span>}
                         {section.lastUpdated && <span> · Last Updated: {section.lastUpdated}</span>}
                     </div>
                  )}
                </div>
             ) : section.title ? (
-               <h2 className="font-bold text-gray-900 text-lg mt-6 uppercase border-b border-gray-200 pb-1">
+               <h2 className="font-bold text-gray-900 text-base mt-4 uppercase border-b border-gray-200 pb-1">
                  {section.title}
                </h2>
             ) : null}
@@ -134,7 +134,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
               section.subSections.map((sub, sIdx) => (
                 <div
                   key={sIdx}
-                  className="ml-4 mt-4 space-y-2 pl-4 border-l border-gray-300"
+                  className="ml-4 mt-3 space-y-2 pl-4 border-l border-gray-300"
                 >
                   {sub.title && (
                     <h3 className="text-base font-bold text-gray-800">
