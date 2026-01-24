@@ -17,13 +17,11 @@ import dynamic from "next/dynamic";
 import Image from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-const PolicyModal = dynamic(() => import("@/components/common/PolicyModal/PolicyModal"), { ssr: false });
+
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const Footer: React.FC = () => {
-  const [policyOpen, setPolicyOpen] = useState(false);
-  const [policyType, setPolicyType] = useState<"privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate" | null>(null);
   const [showTop, setShowTop] = useState(false);
   const addressText =
     "Plot No. 678 1st Floor, Majherpara, P.O. Hatiara, P.S. Newtown, near Chota Masjid, Baguiati, Kolkata, West Bengal 700157";
@@ -35,16 +33,6 @@ const Footer: React.FC = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const openPolicy = (type: "privacy" | "terms" | "cookies" | "sitemap" | "disclaimer" | "affiliate") => {
-    setPolicyType(type);
-    setPolicyOpen(true);
-  };
-
-  const closePolicy = () => {
-    setPolicyOpen(false);
-    setPolicyType(null);
-  };
 
   return (
     <footer className="bg-brand-black text-gray-300">
@@ -205,24 +193,21 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
-              <button onClick={() => openPolicy("privacy")} className="hover:text-white transition-colors">Privacy Policy</button>
-              <button onClick={() => openPolicy("terms")} className="hover:text-white transition-colors">Terms of Service</button>
-              <button onClick={() => openPolicy("cookies")} className="hover:text-white transition-colors">Cookie Policy</button>
-              <button onClick={() => openPolicy("sitemap")} className="hover:text-white transition-colors">Sitemap</button>
-              <button onClick={() => openPolicy("disclaimer")} className="hover:text-white transition-colors">Disclaimer</button>
-              <button onClick={() => openPolicy("affiliate")} className="hover:text-white transition-colors">Affiliate Program</button>
+              <Link href="/privacy-policy" target="_blank" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link href="/terms" target="_blank" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link href="/cookie-policy" target="_blank" className="hover:text-white transition-colors">Cookie Policy</Link>
+              <Link href="/site-map" target="_blank" className="hover:text-white transition-colors">Sitemap</Link>
+              <Link href="/disclaimer" target="_blank" className="hover:text-white transition-colors">Disclaimer</Link>
+              <Link href="/affiliate-program" target="_blank" className="hover:text-white transition-colors">Affiliate Program</Link>
             </div>
 
             <Paragraph className="text-center md:text-right text-gray-300">
-              © 2025 - {new Date().getFullYear() } Firgomart. All Rights Reserved.
+              © 2025 - {new Date().getFullYear() } FirgoMart. All Rights Reserved.
             </Paragraph>
 
           </div>
         </div>
       </div>
-      {policyOpen && (
-        <PolicyModal open={policyOpen} onClose={closePolicy} policy={policyType} />
-      )}
       {showTop && (
         <button
           aria-label="Scroll to top"

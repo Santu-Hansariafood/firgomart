@@ -23,11 +23,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Admin user not found" }, { status: 404 })
     }
     const u = result.user as any
-    const fixed = (process.env.ADMIN_FIXED_OTP || "").trim()
     const valid = u.adminLoginOtp && typeof u.adminLoginOtp === "string" && u.adminLoginOtp === otp
     const notExpired = u.adminLoginOtpExpires && new Date(u.adminLoginOtpExpires).getTime() > Date.now()
-    const fixedOk = !!fixed && otp === fixed
-    if (!(fixedOk || (valid && notExpired))) {
+    
+    if (!(valid && notExpired)) {
       return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 401 })
     }
     u.adminLoginOtp = undefined
