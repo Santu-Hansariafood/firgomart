@@ -178,15 +178,12 @@ export default function Page() {
                 { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
               ]}
               data={buyers}
-                { key: "id", label: "Actions", render: (r) => (
               sortOrder={sortOrder}
               onSortChange={(key, order) => { setSortKey(key); setSortOrder(order) }}
               rowKey={(r, idx) => `${r.id}-${idx}`}
             />
           </div>
         )}
-
-                ) },
           <div className="text-sm text-gray-600">Total: {total}</div>
           <CommonPagination
             currentPage={page}
@@ -196,7 +193,6 @@ export default function Page() {
           />
         </div>
       </div>
-    </div>
     )}
     </Suspense>
   )
