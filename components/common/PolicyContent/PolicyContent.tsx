@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import policies from "@/data/policies.json";
 
 type PolicyType =
@@ -41,15 +40,6 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
     sitemap: policies.sitemap,
     disclaimer: policies.disclaimer,
     affiliate: policies.affiliateProgram,
-  };
-
-  const titleMap: Record<PolicyType, string> = {
-    privacy: "Privacy Policy",
-    terms: "Terms of Service",
-    cookies: "Cookie Policy",
-    sitemap: "Sitemap",
-    disclaimer: "Disclaimer",
-    affiliate: "Affiliate Program",
   };
 
   const data = datasetMap[policy];
@@ -95,24 +85,6 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
 
   return (
     <div className="max-w-[210mm] mx-auto bg-white text-black shadow-2xl min-h-[297mm] p-8 md:p-12 my-8 relative border border-gray-200">
-       <div className="border-b-2 border-gray-800 pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-         <div className="flex items-center gap-4">
-            <div className="relative w-20 h-20">
-                <Image src="/logo/firgomart.png" alt="FirgoMart" fill className="object-contain" />
-            </div>
-            <div>
-                <h1 className="text-2xl font-bold text-gray-900 uppercase tracking-wide">FirgoMart</h1>
-                <p className="text-xs text-gray-600 font-medium tracking-wider">24Logistics Private Limited</p>
-            </div>
-         </div>
-         <div className="text-xs text-gray-600 text-right space-y-1 font-medium font-sans">
-            <p><span className="text-gray-900 font-bold">CIN:</span> U47912WB2025PTC281316</p>
-            <p><span className="text-gray-900 font-bold">GSTIN:</span> 19AAGCF5282L1Z3</p>
-            <p><span className="text-gray-900 font-bold">Email:</span> info@firgomart.com</p>
-            <p><span className="text-gray-900 font-bold">Phone:</span> +91 8100660080</p>
-            <p className="max-w-[250px] ml-auto leading-tight mt-1">Plot No. 678 1st Floor, Majherpara, Newtown, Kolkata, WB 700157</p>
-         </div>
-      </div>
       <div className="space-y-8 font-serif">
         {data.map((section, idx) => (
           <div key={idx} className="space-y-3">
@@ -199,12 +171,6 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
           </div>
         ))}
       </div>
-      <div className="mt-20 pt-6 border-t border-gray-300 flex justify-between text-[10px] text-gray-400 font-sans uppercase tracking-widest">
-         <span>FirgoMart 24Logistics Pvt Ltd</span>
-         <span>Confidential & Proprietary</span>
-         <span>{titleMap[policy]}</span>
-      </div>
-
     </div>
   );
 };

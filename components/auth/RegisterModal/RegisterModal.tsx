@@ -292,7 +292,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-[var(--foreground)/20]"
         >
-          <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 relative shrink-0">
+          <div className="bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-6 relative shrink-0">
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
@@ -313,7 +313,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
             {step === 1 ? (
               <div className="space-y-4">
                 <div>

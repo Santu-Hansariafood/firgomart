@@ -115,7 +115,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 sm:p-6">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -123,7 +123,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           transition={{ duration: 0.2 }}
           className="w-full max-w-md bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/20]"
         >
-          <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-6">
+          <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-6">
             <button
               onClick={onClose}
               aria-label="Close modal"
@@ -139,7 +139,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               Sign in to continue shopping
             </Paragraph>
           </div>
-          <form onSubmit={handleSubmit} className="p-6 space-y-4 sm:space-y-5 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto">
             {errors.submit && (
               <div className="bg-red-500/10 border border-red-500/30 text-red-500 px-4 py-3 rounded-lg text-sm">
                 {errors.submit}

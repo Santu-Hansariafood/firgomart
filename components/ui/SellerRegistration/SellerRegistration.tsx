@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Store, Upload, CheckCircle } from 'lucide-react'
+import { Upload, CheckCircle } from 'lucide-react'
 import { fadeInUp } from '@/utils/animations/animations'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
@@ -94,9 +94,12 @@ const SellerRegistration: React.FC = () => {
           animate="show"
           className="bg-[var(--background)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/15]"
         >
-          <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 sm:p-8 text-white">
-            <div className="flex items-center justify-between mb-6">
-              <div className="relative w-28 h-8 sm:w-36 sm:h-10 bg-white rounded-lg p-1.5 shadow-sm">
+          <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-10 text-white overflow-hidden">
+            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-40 h-40 rounded-full bg-black/10 blur-2xl pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4 sm:gap-0">
+              <div className="relative w-36 h-12 sm:w-44 sm:h-14 bg-white/95 backdrop-blur-xl rounded-2xl p-3 shadow-2xl border border-white/50 flex items-center justify-center transition-transform hover:scale-105 duration-300">
                 <Image
                   src="/logo/firgomart.png"
                   alt="Firgomart"
@@ -109,29 +112,26 @@ const SellerRegistration: React.FC = () => {
               <BackButton 
                 href="/" 
                 label="Back to Home" 
-                className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-md"
               />
             </div>
-            <div className="flex items-center justify-between mb-2">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 shadow-lg backdrop-blur-sm shrink-0">
-                  <Store className="w-6 h-6" />
-                </div>
-                <div className="space-y-1">
-                  <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-white/80">
-                    Seller Registration
-                  </div>
-                  <h1 className="text-2xl sm:text-3xl font-heading font-bold leading-tight">Sell on Firgomart</h1>
-                  <p className="text-white/80 text-xs sm:text-base">
-                    Grow your business with India&apos;s smart marketplace
-                  </p>
-                </div>
+
+            <div className="relative z-10 space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white border border-white/20 shadow-sm">
+                  Seller Registration
+                </span>
+                <div className="h-px w-8 bg-white/30 hidden sm:block" />
               </div>
+              <h1 className="text-3xl sm:text-4xl font-heading font-bold leading-tight tracking-tight drop-shadow-md">
+                Start Selling on Firgomart
+              </h1>
+              
             </div>
           </div>
           {showAgreementPopup && !submitted && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-              <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20] max-h-[90vh] flex flex-col">
+              <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20] max-h-[90vh] flex flex-col">
                 <h3 className="text-xl font-heading font-bold mb-2 shrink-0">{agreementTitle}</h3>
                 <div className="text-xs text-[var(--foreground)/70] mb-3 shrink-0">
                   <p>By continuing, you confirm that all details provided are accurate and may be used for verification and compliance with marketplace policies.</p>

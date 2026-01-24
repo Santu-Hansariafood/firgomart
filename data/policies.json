@@ -6,74 +6,78 @@
     },
     {
       "title": "Introduction",
-      "content": "This Privacy Policy (\"Policy\") describes how FirgoMart, operated and owned by FirgoMart 24Logistics Private Limited, an Indian Private Limited Company incorporated under the Companies Act, 2013 and having its principal place of business in India (\"Company\", \"FirgoMart\", \"we\", \"us\", or \"our\"), collects, receives, accesses, uses, processes, stores, discloses, transfers, retains, and protects information in connection with the operation of its e-commerce services.\n\nFirgoMart 24Logistics Private Limited is a legally recognised e-commerce operator under applicable Indian laws. The Company operates the FirgoMart mobile application, website, seller interfaces, administrative dashboards, APIs, and allied digital infrastructure (collectively, the \"Platform\"). FirgoMart functions both as an e-commerce operator facilitating sales by third-party sellers and as a direct seller where the Company procures products from manufacturers, brand owners, or authorised suppliers and sells such products through the Platform within India and, where permitted, to international customers.\n\nBy accessing, browsing, registering on, or otherwise using the Platform, you acknowledge that you have read, understood, and agreed to the collection, use, processing, storage, disclosure, and transfer of information as described in this Privacy Policy."
+      "content": "This Privacy Policy (\"Policy\") explains how FirgoMart, operated and owned by FirgoMart 24Logistics Private Limited, an Indian private limited company incorporated under the Companies Act, 2013 and having its principal place of business in India (\"Company\", \"FirgoMart\", \"we\", \"us\", or \"our\"), collects, uses, processes, stores, shares, transfers, and protects information of users across India and internationally.\n\nFirgoMart operates a global e-commerce platform that enables buyers and sellers worldwide to transact, subject to applicable laws. This Policy applies to all users accessing the FirgoMart mobile application, website, seller portals, dashboards, APIs, and related digital infrastructure (collectively, the \"Platform\").\n\nBy accessing or using the Platform, you confirm that you have read, understood, and agreed to the practices described in this Privacy Policy."
     },
     {
-      "title": "1. Definitions",
-      "content": "For the purposes of this Policy, FirgoMart or Company refers to FirgoMart 24Logistics Private Limited. User includes buyers, sellers (GST-registered and non-GST), manufacturers, vendors, service providers, logistics partners, payment partners, and visitors, whether located in India or internationally. Personal Data means any information relating to an identified or identifiable natural person. Sensitive Personal Data includes financial information, government-issued identification, authentication credentials, and any data afforded enhanced protection under applicable law. Processing includes collection, recording, organisation, structuring, storage, use, disclosure, transfer, combination, restriction, erasure, or destruction of information."
+      "title": "1. Scope and Applicability",
+      "content": "This Policy applies to buyers located in India and outside India, Indian and international sellers, manufacturers and suppliers, logistics, payment and service partners, and visitors accessing the Platform globally. The Policy governs personal and business information processed when FirgoMart operates as a marketplace facilitator or as a direct seller of goods globally."
     },
     {
-      "title": "2. Scope and Applicability",
-      "content": "This Policy applies to all Users who access or use the Platform from India or any other jurisdiction. It governs information processed when FirgoMart operates as an e-commerce operator, when FirgoMart acts as a direct seller of products, and when third-party sellers sell products domestically or internationally through the Platform. Use of the Platform constitutes free, specific, informed, and unambiguous consent to the practices described in this Policy, subject to applicable law."
+      "title": "2. Information We Collect",
+      "content": "FirgoMart collects information from buyers, sellers, suppliers, and partners as necessary for operating the Platform and complying with applicable laws."
     },
     {
-      "title": "3. Categories of Information Collected",
-      "content": "FirgoMart may collect information including, without limitation, seller, manufacturer, and partner details such as legal name, business name, address, contact details, GSTIN where applicable, Aadhaar and PAN where legally required, incorporation or registration documents, KYC records, bank account and settlement details, and export or regulatory documentation. Buyer information may include name, contact details, shipping and billing addresses, order history, and communication records. FirgoMart does not store card numbers, UPI credentials, or banking passwords, and all payments are processed through authorised payment service providers. Technical and usage data may include IP address, device identifiers, operating system, browser type, cookies, log files, analytics data, and usage behaviour on the Platform."
+      "title": "2.1 Buyer Information (Global Buyers)",
+      "content": "FirgoMart may collect full name, email address, contact number, shipping and billing addresses (domestic and international), order history, transaction records, communications, and customer support interactions."
+    },
+    {
+      "title": "2.2 Seller and Supplier Information (Indian and International)",
+      "content": "FirgoMart may collect legal name, business name, registered address, government-issued identification and business registration documents, tax identifiers such as GST, VAT, EIN or equivalent where applicable, bank account and settlement details, and export, customs, and regulatory documentation."
+    },
+    {
+      "title": "2.3 Payment Information",
+      "content": "FirgoMart does not store card numbers, UPI credentials, or banking passwords. All payments are processed through authorised payment service providers in accordance with applicable regulations."
+    },
+    {
+      "title": "2.4 Technical and Usage Information",
+      "content": "FirgoMart may automatically collect IP address, device identifiers, browser type, operating system, app version, cookies, log files, analytics data, and usage behaviour on the Platform."
+    },
+    {
+      "title": "3. Purpose of Collection and Use",
+      "content": "Information is collected and processed for onboarding, verification and account management, facilitating domestic and international transactions, order processing, payments, shipping and delivery, customs and regulatory compliance, fraud prevention and security, customer support, dispute resolution and grievance handling, analytics, audits, and improvement of Platform services."
     },
     {
       "title": "4. Lawful Basis for Processing",
-      "content": "Information is processed on one or more of the following lawful bases: user consent, performance of contractual obligations, compliance with applicable legal and regulatory requirements, protection of vital interests, and legitimate business interests of FirgoMart as an e-commerce operator and direct seller."
+      "content": "Information is processed based on one or more lawful grounds including user consent, performance of contractual obligations, compliance with legal and regulatory requirements, and legitimate business interests of FirgoMart as a global e-commerce operator."
     },
     {
-      "title": "5. Purpose of Collection and Use",
-      "content": "Information may be used for onboarding and verification of users, account creation and management, order processing, payment settlement, logistics and delivery, customer support, dispute resolution, compliance with GST, customs, FEMA, RBI, income-tax and other applicable laws, fraud detection and prevention, audits, investigations, security monitoring, analytics, research, and improvement of Platform services."
+      "title": "5. Global Data Sharing and Disclosure",
+      "content": "Information may be shared with payment gateways and financial institutions, logistics and fulfilment partners, customs authorities, tax departments and regulators, banks, insurers, auditors and professional advisers, and technology and cloud service providers. All disclosures are made on a need-to-know basis and subject to confidentiality obligations."
     },
     {
-      "title": "6. Cookies and Tracking Technologies",
-      "content": "FirgoMart uses cookies, software development kits, pixels, and similar tracking technologies to enable Platform functionality, analyse usage patterns, enhance security, prevent fraud, and improve user experience. Users may control or disable cookies through browser or device settings, subject to certain Platform features being unavailable. Where required by law, cookie consent mechanisms will be displayed before placing non-essential cookies."
+      "title": "6. Cross-Border Data Transfers",
+      "content": "To support global operations, information may be transferred to or processed in countries outside India. Such transfers are undertaken with appropriate contractual and technical safeguards and in compliance with applicable data protection laws."
     },
     {
-      "title": "7. Data Sharing and Disclosure",
-      "content": "FirgoMart may share information with government and regulatory authorities, tax departments, customs authorities, the Reserve Bank of India, law enforcement agencies, banks, payment gateways, logistics and fulfilment partners, auditors, insurers, technology vendors, and compliance service providers, strictly as required for lawful purposes and in accordance with applicable law and confidentiality obligations. Independent third-party sellers are responsible for their own handling of buyer information received for order fulfilment and act as independent data controllers under applicable law."
+      "title": "7. Data Retention",
+      "content": "Information is retained only for as long as necessary to fulfil the purposes described in this Policy, comply with legal, tax, accounting, and regulatory requirements, and resolve disputes or enforce agreements, after which data is securely deleted, anonymised, or archived as permitted by law."
     },
     {
-      "title": "8. Cross-Border Data Transfers",
-      "content": "To facilitate global operations and international transactions, information may be transferred to, processed in, or stored in jurisdictions outside India. Such transfers shall be undertaken subject to reasonable contractual, technical, and organisational safeguards and in compliance with applicable data protection and privacy laws."
+      "title": "8. Data Security Measures",
+      "content": "FirgoMart implements reasonable administrative, technical, and organisational measures to protect information against unauthorised access, loss, misuse, alteration, or disclosure. However, no system can guarantee absolute security."
     },
     {
-      "title": "9. Data Retention",
-      "content": "Information is retained only for such period as is necessary to fulfil the purposes outlined in this Policy, comply with legal, regulatory, and accounting obligations, resolve disputes, enforce agreements, or meet legitimate business requirements, after which it is securely deleted, anonymised, or archived in accordance with applicable law and statutory retention requirements."
+      "title": "9. User Rights (Global Users)",
+      "content": "Subject to applicable law, users may request access to their information, correction or updating of inaccurate data, deletion or restriction of processing where legally permitted, and withdrawal of consent where applicable. Requests may be made through official support or grievance channels."
     },
     {
-      "title": "10. Data Security Measures",
-      "content": "FirgoMart implements reasonable administrative, technical, and physical safeguards designed to protect information against unauthorised access, alteration, disclosure, or destruction. Notwithstanding such measures, no method of transmission or storage is completely secure, and FirgoMart does not guarantee absolute security of information."
+      "title": "10. Third-Party Services",
+      "content": "The Platform may include links to or integrations with third-party services. FirgoMart is not responsible for the privacy practices of such third parties, and users should review their respective privacy policies."
     },
     {
-      "title": "11. User Rights",
-      "content": "Subject to applicable law, including the Digital Personal Data Protection Act, 2023, Users may have the right to access their personal data, request correction or erasure, withdraw consent, restrict or object to certain processing, and nominate another person to exercise their rights in the event of death or incapacity. Requests may be made using the contact details provided below, and shall be addressed in accordance with legal timelines."
+      "title": "11. Children’s Privacy",
+      "content": "The Platform is not intended for individuals below the age permitted under applicable law. FirgoMart does not knowingly collect information from such individuals and will delete such data upon becoming aware."
     },
     {
-      "title": "12. Consent Withdrawal and Account Deletion",
-      "content": "Users may withdraw consent or request deletion of their account by contacting FirgoMart at support@firgomart.com or through account settings where such functionality is available. Certain information may continue to be retained where required under applicable law, including tax, accounting, and regulatory obligations."
+      "title": "12. Updates to this Policy",
+      "content": "FirgoMart may update this Privacy Policy from time to time. Changes shall become effective upon publication on the Platform."
     },
     {
-      "title": "13. Third-Party Services",
-      "content": "The Platform may contain links to or integrations with third-party websites, applications, or services. FirgoMart is not responsible for the privacy practices, content, or security measures of such third parties, and Users are encouraged to review their respective privacy policies."
+      "title": "13. Grievance Redressal and Contact Information",
+      "content": "Users may raise privacy-related queries or grievances by contacting FirgoMart at support@firgomart.com. Complaints shall be addressed within timelines prescribed under applicable law."
     },
     {
-      "title": "14. Children’s Information",
-      "content": "The Platform is not intended for use by individuals below the age permitted under applicable law. FirgoMart does not knowingly collect information from such individuals and will delete any such information upon becoming aware, in accordance with legal requirements."
-    },
-    {
-      "title": "15. Amendments to the Policy",
-      "content": "FirgoMart reserves the right to modify or update this Privacy Policy at any time. Any changes shall be effective upon publication on the Platform. Continued use of the Platform following such changes constitutes acceptance of the revised Policy."
-    },
-    {
-      "title": "16. Grievance Redressal and Contact Information",
-      "content": "Users may raise privacy-related queries, requests, or grievances by contacting FirgoMart at support@firgomart.com. Grievance Officer: To be notified. Designation: Grievance Officer and Data Protection Contact. Address: Registered office of FirgoMart 24Logistics Private Limited. Complaints shall be addressed within the timelines prescribed under applicable law."
-    },
-    {
-      "title": "17. Governing Law and Jurisdiction",
+      "title": "14. Governing Law and Jurisdiction",
       "content": "This Privacy Policy shall be governed by and construed in accordance with the laws of India. Courts having jurisdiction over FirgoMart shall have exclusive jurisdiction."
     }
   ],
@@ -84,71 +88,75 @@
     },
     {
       "title": "Introduction",
-      "content": "These Terms and Conditions (\"Terms\") govern the access to and use of the FirgoMart mobile application, website, seller panels, administrative systems, APIs, and all related digital platforms (collectively, the \"Platform\"). The Platform is owned and operated by FirgoMart 24Logistics Private Limited, an Indian Private Limited Company incorporated under the Companies Act, 2013, having its principal place of business in India (\"FirgoMart\", \"Company\", \"we\", \"us\", or \"our\").\n\nFirgoMart is a legally recognised E-commerce Operator under applicable Indian laws. FirgoMart operates as a technology-enabled e-commerce operator facilitating the sale of products by third-party sellers and also acts as a direct seller where it purchases products from manufacturers, brand owners, or authorised suppliers and sells such products through the Platform within India and globally.\n\nBy accessing, registering on, or using the Platform in any manner, you acknowledge that you have read, understood, and agreed to be bound by these Terms. If you do not agree, you must not access or use the Platform."
+      "content": "These Terms and Conditions (\"Terms\") govern the access to and use of the FirgoMart mobile application, website, seller interfaces, administrative systems, APIs, and all related digital platforms and infrastructure (collectively, the \"Platform\"). The Platform is owned and operated by FirgoMart 24Logistics Private Limited, an Indian Private Limited Company incorporated under the Companies Act, 2013 and having its principal place of business in India (\"FirgoMart\", \"Company\", \"we\", \"us\", or \"our\").\n\nFirgoMart is a legally recognised e-commerce operator under applicable Indian laws. FirgoMart operates both as (a) a technology-enabled marketplace facilitating the sale of products by independent third-party sellers, and (b) a direct seller where FirgoMart purchases products from manufacturers, suppliers, or authorised vendors and sells such products in its own name through the Platform within India and internationally.\n\nBy accessing, registering on, browsing, or using the Platform in any manner, you acknowledge that you have read, understood, and agreed to be bound by these Terms. If you do not agree, you must not use the Platform."
     },
     {
       "title": "1. Definitions",
-      "content": "For the purposes of these Terms, Company or FirgoMart refers to FirgoMart 24Logistics Private Limited. User includes any individual or entity accessing the Platform, including buyers, sellers, manufacturers, vendors, service providers, and visitors. Seller includes Indian GST-registered sellers, Indian non-GST sellers onboarded using Aadhaar and PAN, international sellers, and FirgoMart acting as a direct seller. Buyer refers to any user purchasing products through the Platform. Goods means products listed or sold on the Platform. Applicable Law includes all Indian laws and, where relevant, foreign laws applicable to cross-border transactions."
+      "content": "Company or FirgoMart means FirgoMart 24Logistics Private Limited. User means any individual or legal entity accessing or using the Platform, including buyers, sellers, suppliers, manufacturers, service providers, logistics partners, payment partners, and visitors. Seller means a GST-registered Indian seller, an approved international seller, or FirgoMart acting as a direct seller. International Seller means a seller located outside India approved by FirgoMart to sell on the Platform subject to valid legal and regulatory documentation. Non-GST Indian Supplier means an Indian individual or entity not registered under GST who supplies goods exclusively to FirgoMart and does not sell directly to customers. Buyer means any User purchasing goods through the Platform. Goods means products listed, supplied, or sold through the Platform. Applicable Law means all laws, rules, regulations, notifications, and guidelines in force in India and, where relevant, foreign laws applicable to cross-border transactions."
     },
     {
       "title": "2. Nature of the Platform",
-      "content": "FirgoMart is an e-commerce operator providing digital infrastructure to facilitate buying and selling of goods. FirgoMart is not an agent, partner, or representative of third-party sellers. Where FirgoMart sells products directly, FirgoMart shall be the seller of record for such transactions. For third-party seller transactions, the respective seller shall be solely responsible for the sale."
+      "content": "FirgoMart provides digital infrastructure to enable the discovery, listing, sale, and distribution of goods. FirgoMart is not an agent, distributor, or partner of third-party sellers. For transactions involving third-party sellers, the respective seller is solely responsible for the sale of goods. Where FirgoMart sells products directly, FirgoMart shall be the seller of record and shall assume responsibility as per Applicable Law."
     },
     {
       "title": "3. Eligibility and Account Registration",
-      "content": "Users must be legally competent to contract under applicable law. Sellers must provide accurate, complete, and up-to-date registration, KYC, tax, and compliance information. FirgoMart reserves the right to approve, reject, suspend, or terminate any account at its discretion."
+      "content": "Users must be legally competent to enter into binding contracts under Applicable Law. Sellers and suppliers must provide accurate, complete, and up-to-date KYC, tax, banking, and compliance information. FirgoMart reserves the right to approve, reject, suspend, restrict, or terminate any account or listing at its sole discretion, including for non-compliance with law or these Terms."
     },
     {
-      "title": "4. Seller Categories and Scope",
-      "content": "Sellers on the Platform may include Indian GST-registered sellers, Indian non-GST sellers permitted to sell within their respective State or Union Territory only, international sellers subject to approval, and FirgoMart as a direct seller. Each seller category is governed by applicable legal and regulatory requirements."
+      "title": "4. Seller and Supplier Categories",
+      "content": "The Platform supports the following categories: (a) GST-Registered Indian Sellers permitted to sell directly to customers, (b) International Sellers permitted to sell subject to approval and compliance, (c) Non-GST Indian Suppliers operating under a supply-only model with FirgoMart, and (d) FirgoMart acting as a Direct Seller. Each category operates under a distinct legal and commercial framework."
     },
     {
-      "title": "5. Non-GST Indian Sellers",
-      "content": "Indian sellers who are not registered under GST may be permitted to sell on the Platform on the basis of valid Aadhaar Card and PAN, subject to applicable threshold exemptions. Such sellers may undertake only intra-state sales and shall not charge GST. Inter-state or international sales are strictly prohibited until GST registration is obtained and updated."
+      "title": "5. International Sellers",
+      "content": "International Sellers may sell on the Platform only after prior approval by FirgoMart and submission of valid legal, regulatory, tax, export, and business documentation. International Sellers are solely responsible for compliance with export laws, customs regulations, foreign exchange rules, duties, taxes, and documentation unless FirgoMart expressly acts as the direct seller. FirgoMart reserves the right to approve, reject, suspend, or terminate any International Seller account based on compliance, risk, or regulatory requirements."
     },
     {
-      "title": "6. GST-Registered Indian Sellers",
-      "content": "GST-registered Indian sellers may undertake intra-state, inter-state, and international sales in accordance with applicable law. Such sellers are solely responsible for GST compliance, invoicing, returns, refunds, and statutory obligations."
+      "title": "6. Non-GST Indian Suppliers – Supply-Only Model",
+      "content": "Non-GST Indian Suppliers are not permitted to sell products directly to customers on the Platform and shall not be treated as sellers under e-commerce laws. Such suppliers cannot list products in their own name, cannot issue invoices to customers, and cannot sell domestically or internationally. Under this model, products are supplied to FirgoMart, FirgoMart purchases and becomes the legal owner of such products, and FirgoMart sells the products directly to customers in its own name in India and globally."
     },
     {
-      "title": "7. International Sales and Export Compliance",
-      "content": "For cross-border transactions, sellers shall be solely responsible for compliance with the Foreign Trade Policy, Customs Act, FEMA, RBI guidelines, export documentation, duties, taxes, and foreign exchange realisation. FirgoMart shall not be deemed to be the exporter of record for third-party seller transactions."
+      "title": "6.1 Payment to Non-GST Indian Suppliers",
+      "content": "For products supplied by Non-GST Indian Suppliers and sold by FirgoMart, FirgoMart shall make payment to the supplier within 15 (fifteen) days from the date of successful sale and completion of the applicable return or refund window. Payments shall be made to the supplier’s registered bank account, subject to agreed commercial terms and lawful deductions."
     },
     {
-      "title": "8. FirgoMart as Direct Seller",
-      "content": "Where FirgoMart sells goods directly, FirgoMart shall be responsible for applicable taxes, compliance, and statutory obligations for such transactions, subject to applicable law."
+      "title": "7. GST-Registered Indian Sellers",
+      "content": "GST-registered sellers may undertake intra-state, inter-state, and international sales in accordance with Applicable Law and are solely responsible for GST compliance, invoicing, tax payments, statutory filings, refunds, replacements, and after-sales obligations."
+    },
+    {
+      "title": "8. International Sales and Export Compliance",
+      "content": "For cross-border transactions, third-party sellers and International Sellers are responsible for compliance with the Foreign Trade Policy, Customs Act, FEMA, and RBI guidelines. FirgoMart shall not be deemed the exporter of record for third-party seller transactions. Where FirgoMart sells products directly, FirgoMart shall act as exporter where applicable."
     },
     {
       "title": "9. Pricing, Payments, and Settlements",
-      "content": "Prices displayed on the Platform may include or exclude taxes as applicable. FirgoMart may facilitate payment collection and seller settlements. FirgoMart reserves the right to withhold, adjust, or recover amounts in case of disputes, non-compliance, or legal requirements."
+      "content": "Prices displayed on the Platform may be inclusive or exclusive of applicable taxes. FirgoMart may facilitate payment collection, settlements, deductions, adjustments, and recoveries. FirgoMart reserves the right to withhold or adjust payments in cases of disputes, fraud, non-compliance, or legal requirements."
     },
     {
       "title": "10. Platform Rights and Controls",
-      "content": "FirgoMart reserves the right to monitor, review, suspend, delist, restrict, or remove any product, content, or account; modify Platform features; impose fees; and take actions necessary to protect legal, regulatory, or business interests."
+      "content": "FirgoMart reserves the right to monitor Platform activity, review listings, delist products, suspend or terminate accounts, modify Platform features or fees, and take any action necessary to protect legal, regulatory, security, or business interests."
     },
     {
       "title": "11. User Obligations",
-      "content": "Users agree not to misuse the Platform, violate applicable laws, infringe intellectual property rights, or engage in fraudulent, misleading, or harmful activities."
+      "content": "Users shall not misuse the Platform, violate Applicable Law, engage in fraudulent or misleading conduct, or infringe intellectual property rights."
     },
     {
       "title": "12. Intellectual Property",
-      "content": "All intellectual property rights in the Platform, including trademarks, logos, software, and content, are owned by or licensed to FirgoMart. No rights are granted except as expressly provided."
+      "content": "All intellectual property rights related to the Platform, including trademarks, logos, software, databases, and content, are owned by or licensed to FirgoMart. No rights are granted except as expressly stated in these Terms."
     },
     {
       "title": "13. Limitation of Liability",
-      "content": "To the maximum extent permitted by law, FirgoMart shall not be liable for indirect, incidental, consequential, or punitive damages arising from use of the Platform or third-party seller transactions."
+      "content": "To the maximum extent permitted by law, FirgoMart shall not be liable for any indirect, incidental, consequential, or special damages arising from use of the Platform or third-party seller transactions."
     },
     {
       "title": "14. Indemnity",
-      "content": "Users and sellers agree to indemnify and hold harmless FirgoMart against any claims, losses, penalties, or liabilities arising from their breach of these Terms or non-compliance with law."
+      "content": "Users, sellers, and suppliers agree to indemnify and hold harmless FirgoMart against any claims, losses, penalties, or liabilities arising from breach of these Terms or violation of Applicable Law."
     },
     {
       "title": "15. Termination",
-      "content": "FirgoMart may terminate or suspend access to the Platform at any time without prior notice for violation of these Terms or applicable law."
+      "content": "FirgoMart may suspend or terminate access to the Platform at any time for non-compliance, risk management, or legal reasons. Termination does not affect accrued rights or obligations."
     },
     {
       "title": "16. Force Majeure",
-      "content": "FirgoMart shall not be liable for failure or delay caused by events beyond reasonable control, including natural disasters, government actions, system failures, or force majeure events."
+      "content": "FirgoMart shall not be liable for failure or delay caused by events beyond reasonable control, including natural disasters, government actions, system failures, or other force majeure events."
     },
     {
       "title": "17. Governing Law and Jurisdiction",

@@ -142,7 +142,7 @@ const SellerLogin: React.FC = () => {
             <p className="text-white/80 mt-1">Secure login using your mobile number</p>
           </div>
 
-          <div className="p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-5">
             {!otpSent ? (
               <div className="space-y-4">
                 <label className="block text-sm font-medium text-[var(--foreground)/80] mb-2">Seller Email</label>
