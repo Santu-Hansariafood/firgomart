@@ -139,7 +139,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               Sign in to continue shopping
             </Paragraph>
           </div>
-          <form onSubmit={handleSubmit} className="p-6 space-y-4 sm:space-y-5">
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 sm:space-y-5 overflow-y-auto">
             {errors.submit && (
               <div className="bg-red-500/10 border border-red-500/30 text-red-500 px-4 py-3 rounded-lg text-sm">
                 {errors.submit}
