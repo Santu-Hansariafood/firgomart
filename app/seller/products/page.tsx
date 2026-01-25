@@ -646,7 +646,16 @@ export default function Page() {
                             <CommonDropdown
                               options={subcategoryOptionsFor(formCategory)}
                               selected={formSubcategory ? { id: formSubcategory, label: formSubcategory } : null}
-                              onChange={(v) => { if (!Array.isArray(v)) setFormSubcategory(v.label) }}
+                              onChange={(v) => {
+                                if (!Array.isArray(v)) {
+                                  setFormSubcategory(v.label)
+                                  const catEntry = (categoriesData as any).categories.find((c: any) => c.name === formCategory)
+                                  if (catEntry && catEntry.hsnMap) {
+                                    const hsn = catEntry.hsnMap[v.label]
+                                    if (hsn) setFormHSNCode(hsn)
+                                  }
+                                }
+                              }}
                               placeholder="Select Product type"
                             />
                           </div>

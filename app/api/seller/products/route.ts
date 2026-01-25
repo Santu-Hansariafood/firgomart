@@ -157,6 +157,29 @@ export async function PATCH(request: Request) {
     if (price !== undefined && Number.isFinite(price)) update.price = price
     if (discount !== undefined && Number.isFinite(discount)) update.discount = discount
     if (status !== undefined) update.status = status
+    if (body?.hsnCode !== undefined) update.hsnCode = String(body.hsnCode).trim()
+    
+    // Also allow updating other fields since the frontend sends them
+    if (body?.name) update.name = String(body.name).trim()
+    if (body?.description) update.description = String(body.description).trim()
+    if (body?.about) update.about = String(body.about).trim()
+    if (body?.additionalInfo) update.additionalInfo = String(body.additionalInfo).trim()
+    if (body?.category) update.category = String(body.category).trim()
+    if (body?.subcategory) update.subcategory = String(body.subcategory).trim()
+    if (body?.brand) update.brand = String(body.brand).trim()
+    if (body?.image) update.image = String(body.image).trim()
+    if (Array.isArray(body?.images)) update.images = body.images
+    if (Array.isArray(body?.colors)) update.colors = body.colors
+    if (Array.isArray(body?.sizes)) update.sizes = body.sizes
+    if (body?.height !== undefined) update.height = Number(body.height)
+    if (body?.width !== undefined) update.width = Number(body.width)
+    if (body?.length !== undefined) update.length = Number(body.length)
+    if (body?.weight !== undefined) update.weight = Number(body.weight)
+    if (body?.dimensionUnit) update.dimensionUnit = String(body.dimensionUnit)
+    if (body?.lengthUnit) update.lengthUnit = String(body.lengthUnit)
+    if (body?.weightUnit) update.weightUnit = String(body.weightUnit)
+    if (body?.gstNumber) update.gstNumber = String(body.gstNumber).trim()
+    
     if (!Object.keys(update).length) return NextResponse.json({ error: "No valid fields" }, { status: 400 })
     const updated = await (Product as any).findByIdAndUpdate(id, update, { new: true }).lean()
     return NextResponse.json({ product: updated })

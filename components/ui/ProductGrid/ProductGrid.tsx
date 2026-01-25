@@ -30,6 +30,7 @@ interface Product {
   stock?: number
   unitsPerPack?: number
   isAdminProduct?: boolean
+  hsnCode?: string
 }
 
 interface ProductGridProps {
@@ -83,6 +84,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     stock?: number
     unitsPerPack?: number
     isAdminProduct?: boolean
+    hsnCode?: string
   }
 
   type DropdownItem = { id: string | number; label: string }
@@ -125,6 +127,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         stock: p.stock,
         unitsPerPack: p.unitsPerPack,
         isAdminProduct: p.isAdminProduct,
+        hsnCode: p.hsnCode,
       })) as Product[]
     } catch {
       return []

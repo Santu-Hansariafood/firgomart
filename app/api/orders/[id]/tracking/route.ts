@@ -2,49 +2,13 @@ import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
 import { getShipmentModel } from "@/lib/models/Shipment"
+import { getShiprocketToken, hasShiprocketCredentials } from "@/lib/shiprocket"
 
 function getShiprocketBaseUrl() {
   const raw = process.env.SHIPROCKET_BASE_URL || ""
   const trimmed = raw.trim()
   if (trimmed) return trimmed.replace(/\/+$/, "")
   return "https://apiv2.shiprocket.in"
-}
-
-function hasShiprocketCredentials() {
-  const email = process.env.SHIPROCKET_EMAIL || ""
-  const password = process.env.SHIPROCKET_PASSWORD || ""
-  return !!email.trim() && !!password.trim()
-}
-
-async function getShiprocketToken() {
-  const email = (process.env.SHIPROCKET_EMAIL || "").trim()
-  const password = (process.env.SHIPROCKET_PASSWORD || "").trim()
-  if (!email || !password) {
-    throw new Error("Shiprocket credentials not configured")
-  }
-  const base = getShiprocketBaseUrl()
-  const res = await fetch(`${base}/v1/external/auth/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ email, password }),
-  })
-  if (!res.ok) {
-    let message = "Shiprocket auth failed"
-    try {
-      const data = await res.json()
-      message = data?.message || data?.error || message
-    } catch {
-    }
-    throw new Error(`[${res.status}] ${message}`)
-  }
-  const data = await res.json()
-  const token = data?.token
-  if (!token || typeof token !== "string") {
-    throw new Error("Shiprocket auth token missing")
-  }
-  return token
 }
 
 async function fetchShiprocketTracking(awb: string) {

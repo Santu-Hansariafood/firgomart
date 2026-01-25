@@ -73,12 +73,94 @@
       "content": "FirgoMart may update this Privacy Policy from time to time. Changes shall become effective upon publication on the Platform."
     },
     {
-      "title": "13. Grievance Redressal and Contact Information",
-      "content": "Users may raise privacy-related queries or grievances by contacting FirgoMart at support@firgomart.com. Complaints shall be addressed within timelines prescribed under applicable law."
+      "title": "13. GDPR & GLOBAL DATA PROTECTION COMPLIANCE",
+      "content": "FirgoMart is committed to complying with the General Data Protection Regulation (EU) 2016/679 (\"GDPR\") and other applicable global data protection laws for users located in the European Union (EU), European Economic Area (EEA), the United Kingdom, and other jurisdictions with comparable privacy frameworks.\n\nFor the purposes of GDPR:\n\nData Controller: FirgoMart 24Logistics Private Limited\n\nData Subject: Any identified or identifiable natural person whose personal data is processed\n\nFirgoMart processes personal data in accordance with the principles set out under Article 5 of the GDPR, including lawfulness, fairness, transparency, purpose limitation, data minimisation, accuracy, storage limitation, integrity, and confidentiality."
     },
     {
-      "title": "14. Governing Law and Jurisdiction",
-      "content": "This Privacy Policy shall be governed by and construed in accordance with the laws of India. Courts having jurisdiction over FirgoMart shall have exclusive jurisdiction."
+      "title": "14. LAWFUL BASIS FOR PROCESSING (GDPR – ARTICLE 6)",
+      "content": "Personal data is processed by FirgoMart on one or more lawful bases as defined under Article 6(1) of the GDPR, including:",
+      "points": [
+        "Consent of the data subject",
+        "Performance of a contract, including order processing, payments, delivery, and customer support",
+        "Compliance with legal obligations under applicable Indian and international laws",
+        "Legitimate business interests of FirgoMart, including fraud prevention, platform security, analytics, audits, and service improvement"
+      ]
+    },
+    {
+      "content": "Where consent is relied upon, it is obtained and recorded in accordance with Article 7 of the GDPR."
+    },
+    {
+      "title": "15. DATA SUBJECT RIGHTS (GDPR – ARTICLES 12 TO 23)",
+      "content": "Subject to applicable law, data subjects are entitled to exercise the following rights:",
+      "points": [
+        "Right of Access – Article 15",
+        "Right to Rectification – Article 16",
+        "Right to Erasure (Right to be Forgotten) – Article 17",
+        "Right to Restriction of Processing – Article 18",
+        "Right to Data Portability – Article 20",
+        "Right to Object – Article 21",
+        "Rights relating to Automated Decision-Making and Profiling – Article 22"
+      ]
+    },
+    {
+      "content": "Requests may be submitted using the contact details provided in this Policy and will be addressed within legally prescribed timelines."
+    },
+    {
+      "title": "16. WITHDRAWAL OF CONSENT (GDPR – ARTICLE 7)",
+      "content": "Where processing is based on consent, data subjects have the right to withdraw consent at any time.\n\nWithdrawal of consent shall not affect the lawfulness of processing carried out prior to such withdrawal."
+    },
+    {
+      "title": "17. CROSS-BORDER DATA TRANSFERS (GDPR – CHAPTER V)",
+      "content": "To support global operations, personal data may be transferred to and processed in countries outside the EU, including India.\n\nSuch transfers are carried out in compliance with Chapter V of the GDPR, using appropriate safeguards such as:",
+      "points": [
+        "contractual protections;",
+        "technical and organisational security measures; and",
+        "compliance with applicable cross-border data transfer requirements."
+      ]
+    },
+    {
+      "title": "18. DATA RETENTION & STORAGE LIMITATION (GDPR – ARTICLE 5(1)(e))",
+      "content": "Personal data is retained only for as long as necessary to:",
+      "points": [
+        "fulfil contractual and business purposes;",
+        "comply with legal, tax, accounting, and regulatory requirements; and",
+        "resolve disputes or enforce agreements."
+      ]
+    },
+    {
+      "content": "Upon expiry of the retention period, data is securely deleted, anonymised, or archived in accordance with applicable law."
+    },
+    {
+      "title": "19. DATA SECURITY & BREACH MANAGEMENT (GDPR – ARTICLES 32, 33 & 34)",
+      "content": "FirgoMart implements appropriate administrative, technical, and organisational measures to protect personal data against unauthorised access, loss, alteration, or disclosure.\n\nIn the event of a personal data breach:",
+      "points": [
+        "reasonable steps shall be taken to assess and contain the breach; and",
+        "notifications shall be made to competent authorities and affected users where required under applicable law."
+      ]
+    },
+    {
+      "title": "20. AUTOMATED DECISION-MAKING & PROFILING",
+      "content": "FirgoMart does not engage in automated decision-making or profiling that produces legal or similarly significant effects on users, except where permitted under Article 22 of the GDPR and applicable law.\n\nWhere such processing occurs, appropriate safeguards shall be implemented."
+    },
+    {
+      "title": "21. OTHER GLOBAL PRIVACY LAWS",
+      "content": "FirgoMart also recognises and respects user rights under other global privacy frameworks, including but not limited to:",
+      "points": [
+        "UK GDPR;",
+        "California Consumer Privacy Act (CCPA/CPRA);",
+        "other applicable international data protection regulations."
+      ]
+    },
+    {
+      "content": "Users may exercise applicable rights in accordance with their local laws."
+    },
+    {
+      "title": "22. PRIVACY CONTACT & GRIEVANCE REDRESSAL",
+      "content": "For privacy-related queries, data subject requests, or complaints, users may contact:\n\nEmail: support@firgomart.com\n\nRequests shall be handled in accordance with applicable law and within prescribed timelines."
+    },
+    {
+      "title": "23. GOVERNING LAW & JURISDICTION",
+      "content": "This Privacy Policy and this Addendum shall be governed by and construed in accordance with the laws of India, together with applicable international data protection laws where relevant.\n\nCourts having jurisdiction over FirgoMart 24Logistics Private Limited shall have exclusive jurisdiction, subject to mandatory rights of data subjects under applicable law."
     }
   ],
   "termsOfService": [

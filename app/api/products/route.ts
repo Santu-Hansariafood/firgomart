@@ -144,6 +144,7 @@ export async function POST(request: Request) {
       sizes,
       about,
       additionalInfo,
+      hsnCode,
     } = body || {}
     const unitsPerPack = body?.unitsPerPack ? Number(body.unitsPerPack) : 1
 
@@ -171,6 +172,7 @@ export async function POST(request: Request) {
       sizes,
       about,
       additionalInfo,
+      hsnCode,
       isAdminProduct: true,
       createdByEmail: adminEmail || undefined,
       sellerHasGST: true,

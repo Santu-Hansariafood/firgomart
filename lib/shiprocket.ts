@@ -11,12 +11,20 @@ function getShiprocketBaseUrl() {
 }
 
 export function hasShiprocketCredentials() {
+  const token = process.env.SHIPROCKET_TOKEN || ""
+  if (token.trim()) return true
+  
   const email = process.env.SHIPROCKET_EMAIL || ""
   const password = process.env.SHIPROCKET_PASSWORD || ""
   return !!email.trim() && !!password.trim()
 }
 
-async function getShiprocketToken() {
+export async function getShiprocketToken() {
+  const envToken = (process.env.SHIPROCKET_TOKEN || "").trim()
+  if (envToken) {
+    return envToken
+  }
+
   const email = (process.env.SHIPROCKET_EMAIL || "").trim()
   const password = (process.env.SHIPROCKET_PASSWORD || "").trim()
   if (!email || !password) {
