@@ -318,7 +318,7 @@ export default function Page() {
       setFormDesc("")
       setFormAddInfo("")
       setFormHSNCode("")
-      setFormGSTNumber("")
+      setFormGSTNumber(process.env.NEXT_PUBLIC_ADMIN_GST_NUMBER || "")
       setImages([])
       
       setFormHeight("")

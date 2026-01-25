@@ -60,7 +60,7 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
   }
 
   return (
-    <div className={clsx("w-full relative", className)}>
+    <div className={clsx("w-full relative", className)} ref={containerRef}>
       {label && <p className="text-sm mb-1 font-medium text-[var(--foreground)/70]">{label}</p>}
       <div
         className={clsx(

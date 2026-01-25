@@ -59,14 +59,16 @@
         "Heels": "64",
         "Sandals": "64",
         "Slippers & Flip-Flops": "64",
-        "Casual Shoes": "64"
+        "Casual Shoes": "64",
+        "Women's Party Wear": "64"
       },
       "subcategories": [
         "Flats",
         "Heels",
         "Sandals",
         "Slippers & Flip-Flops",
-        "Casual Shoes"
+        "Casual Shoes",
+        "Women's Party Wear"
       ]
     },
     {

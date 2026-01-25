@@ -313,7 +313,7 @@ export default function Page() {
       setFormDesc("")
       setFormAddInfo("")
       setFormHSNCode("")
-      setFormGSTNumber("")
+      setFormGSTNumber(user?.sellerDetails?.gstNumber || "")
       setImages([])
       
       setFormHeight("")
