@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, X } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -30,6 +30,20 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   const filteredOptions = options.filter((item) =>
     item.label.toLowerCase().includes(search.toLowerCase())
@@ -97,39 +111,44 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
             <span className="text-[var(--foreground)/50]">{placeholder}</span>
           )}
         </div>
-
-        <ChevronDown
-          size={20}
-          className={clsx(
-            "transition ml-auto",
-            open && "rotate-180"
-          )}
-        />
+        <ChevronDown size={18} className={clsx("text-[var(--foreground)/50] transition-transform", open && "rotate-180")} />
       </div>
-      {open && (
-        <div className="absolute left-0 right-0 mt-2 border border-[var(--foreground)/20] rounded-xl bg-[var(--background)] text-[var(--foreground)] shadow-lg max-h-64 overflow-auto z-50 p-2">
-          <input
-            className="w-full border border-[var(--foreground)/20] bg-[var(--background)] text-[var(--foreground)] px-3 py-2 rounded-lg mb-2 outline-none"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {filteredOptions.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => handleSelect(item)}
-              className={clsx(
-                "px-3 py-2 rounded-lg cursor-pointer hover:bg-brand-purple/10",
-                isSelected(item.id) && "bg-brand-purple/20"
-              )}
-            >
-              {item.label}
-            </div>
-          ))}
 
-          {filteredOptions.length === 0 && (
-            <p className="text-center text-[var(--foreground)/50] py-2">No results found</p>
-          )}
+      {open && (
+        <div className="absolute z-50 mt-2 w-full bg-[var(--background)] border border-[var(--foreground)/20] rounded-xl shadow-lg overflow-hidden">
+          <div className="p-2 border-b border-[var(--foreground)/10]">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full px-3 py-2 bg-[var(--foreground)/5] rounded-lg text-sm outline-none focus:ring-1 focus:ring-brand-purple"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          <div className="max-h-60 overflow-y-auto">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((item) => (
+                <div
+                  key={item.id}
+                  className={clsx(
+                    "px-4 py-3 text-sm cursor-pointer hover:bg-[var(--foreground)/5] transition-colors",
+                    isSelected(item.id) && "bg-brand-purple/10 text-brand-purple font-medium"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    handleSelect(item)
+                  }}
+                >
+                  {item.label}
+                </div>
+              ))
+            ) : (
+              <div className="px-4 py-3 text-sm text-[var(--foreground)/50] text-center">
+                No results found
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
