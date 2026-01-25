@@ -273,12 +273,60 @@
       "content": "FirgoMart may update this Cookie Policy from time to time to reflect changes in technology, law, or business practices. Any changes shall be effective upon publication on the Platform. Continued use of the Platform constitutes acceptance of the updated Policy."
     },
     {
-      "title": "10. Contact Information",
-      "content": "For any questions or concerns regarding this Cookie Policy, users may contact: Company Name: FirgoMart 24Logistics Private Limited, Email: support@firgomart.com."
+      "title": "10. Legal Basis for Using Cookies (GDPR – Article 6)",
+      "content": "FirgoMart cookies and similar technologies are used and processed in accordance with Article 6 of the General Data Protection Regulation (EU) 2016/679 (“GDPR”) on one or more of the following lawful bases:",
+      "points": [
+        "User consent, where required under applicable law",
+        "Performance of a contract, including secure access, order processing, and service delivery",
+        "Compliance with legal and regulatory obligations",
+        "Legitimate interests of FirgoMart, including platform security, fraud prevention, analytics, and service improvement"
+      ]
     },
     {
-      "title": "11. Governing Law and Jurisdiction",
-      "content": "This Cookie Policy shall be governed by and construed in accordance with the laws of India. Courts having jurisdiction over FirgoMart shall have exclusive jurisdiction."
+      "title": "11. Cookie Consent and User Control (GDPR – Article 7)",
+      "content": "Where required by law, FirgoMart obtains valid and informed user consent before placing non-essential cookies. Users may:",
+      "points": [
+        "Manage or withdraw cookie consent at any time through browser or device settings",
+        "Use available cookie preference or consent tools, where provided"
+      ]
+    },
+    {
+      "content": "Withdrawal of consent shall not affect the lawfulness of processing carried out prior to such withdrawal. Disabling certain cookies may affect the functionality, performance, or security of the Platform."
+    },
+    {
+      "title": "12. Data Retention for Cookies",
+      "content": "Cookies are retained only for the period necessary to achieve their intended purpose:",
+      "points": [
+        "Session cookies are deleted automatically when the browser or application session ends",
+        "Persistent cookies remain stored on the user’s device for a defined period or until manually deleted"
+      ]
+    },
+    {
+      "content": "Retention practices are aligned with the storage limitation principle under Article 5(1)(e) of the GDPR."
+    },
+    {
+      "title": "13. International Data Transfers (GDPR – Chapter V)",
+      "content": "As FirgoMart operates globally, information collected through cookies may be transferred to, processed, or stored in jurisdictions outside India or the European Union. Such transfers are conducted in accordance with Chapter V of the GDPR, using appropriate safeguards including contractual, technical, and organisational measures, and in compliance with applicable data protection laws."
+    },
+    {
+      "title": "14. User Rights Under GDPR and Other Global Laws",
+      "content": "Users located in the European Union, European Economic Area, United Kingdom, and other jurisdictions with similar data protection laws have rights relating to their personal data, including the right to:",
+      "points": [
+        "Access personal data",
+        "Restrict or object to certain processing activities",
+        "Request deletion or erasure of data, subject to applicable law"
+      ]
+    },
+    {
+      "content": "These rights may be exercised in accordance with FirgoMart’s Privacy Policy and applicable legal requirements."
+    },
+    {
+      "title": "15. Contact Information",
+      "content": "For questions, concerns, or requests relating to this Cookie Policy or the use of cookies, users may contact:\n\nEmail: support@firgomart.com"
+    },
+    {
+      "title": "16. Governing Law and Jurisdiction",
+      "content": "This Cookie Policy shall be governed by and construed in accordance with the laws of India, together with applicable international data protection laws, including the GDPR where relevant. Courts having jurisdiction over FirgoMart 24Logistics Private Limited shall have exclusive jurisdiction, subject to mandatory rights of users under applicable law."
     }
   ],
   "disclaimer": [
