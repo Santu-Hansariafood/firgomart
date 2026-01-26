@@ -743,41 +743,43 @@ export default function Page() {
                             </div>
                           )}
                         </div>
-                        <div>
-                          <CommonDropdown
-                            label="Sizes"
-                            options={sizeOptions}
-                            selected={selectedSizeItems}
-                            onChange={(v) => {
-                              if (Array.isArray(v)) {
-                                const list = v as DropdownItem[]
-                                setSelectedSizeItems(list)
-                                if (list.some((i) => i.id === "others")) {
-                                  applySizesToForm(list, otherSizeInput)
-                                } else {
-                                  setOtherSizeInput("")
-                                  applySizesToForm(list, "")
+                        {sizeOptions.length > 0 && (
+                          <div>
+                            <CommonDropdown
+                              label="Sizes"
+                              options={sizeOptions}
+                              selected={selectedSizeItems}
+                              onChange={(v) => {
+                                if (Array.isArray(v)) {
+                                  const list = v as DropdownItem[]
+                                  setSelectedSizeItems(list)
+                                  if (list.some((i) => i.id === "others")) {
+                                    applySizesToForm(list, otherSizeInput)
+                                  } else {
+                                    setOtherSizeInput("")
+                                    applySizesToForm(list, "")
+                                  }
                                 }
-                              }
-                            }}
-                            multiple
-                            placeholder="Select sizes"
-                          />
-                          {selectedSizeItems.some((i) => i.id === "others") && (
-                            <div className="mt-2">
-                              <input
-                                value={otherSizeInput}
-                                onChange={(e) => {
-                                  const val = e.target.value
-                                  setOtherSizeInput(val)
-                                  applySizesToForm(selectedSizeItems, val)
-                                }}
-                                className="w-full px-3 py-2 border rounded-lg"
-                                placeholder="Enter custom sizes (comma separated)"
-                              />
-                            </div>
-                          )}
-                        </div>
+                              }}
+                              multiple
+                              placeholder="Select sizes"
+                            />
+                            {selectedSizeItems.some((i) => i.id === "others") && (
+                              <div className="mt-2">
+                                <input
+                                  value={otherSizeInput}
+                                  onChange={(e) => {
+                                    const val = e.target.value
+                                    setOtherSizeInput(val)
+                                    applySizesToForm(selectedSizeItems, val)
+                                  }}
+                                  className="w-full px-3 py-2 border rounded-lg"
+                                  placeholder="Enter custom sizes (comma separated)"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
                         <div>
                              <label className="block text-sm font-medium text-gray-700 mb-1">About Product (Short Summary)</label>
                              <textarea value={formAbout} onChange={e => setFormAbout(e.target.value)} className="w-full px-3 py-2 border rounded-lg" rows={2} />

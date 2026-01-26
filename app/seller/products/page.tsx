@@ -141,19 +141,58 @@ export default function Page() {
     { id: "Orange", label: "Orange" },
     { id: "Brown", label: "Brown" },
     { id: "Grey", label: "Grey" },
+    { id: "Beige", label: "Beige" },
+    { id: "Maroon", label: "Maroon" },
+    { id: "Navy", label: "Navy" },
+    { id: "Olive", label: "Olive" },
+    { id: "Teal", label: "Teal" },
+    { id: "Cyan", label: "Cyan" },
+    { id: "Gold", label: "Gold" },
+    { id: "Silver", label: "Silver" },
+    { id: "Lavender", label: "Lavender" },
+    { id: "Magenta", label: "Magenta" },
     { id: "others", label: "Others" },
   ]
-  const sizeOptions: DropdownItem[] = [
-    { id: "XS", label: "XS" },
-    { id: "S", label: "S" },
-    { id: "M", label: "M" },
-    { id: "L", label: "L" },
-    { id: "XL", label: "XL" },
-    { id: "XXL", label: "XXL" },
-    { id: "3XL", label: "3XL" },
-    { id: "Free Size", label: "Free Size" },
-    { id: "others", label: "Others" },
-  ]
+  
+  const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
+      const createNumSizes = (start: number, end: number) => {
+        const arr: DropdownItem[] = [];
+        for (let i = start; i <= end; i++) {
+          arr.push({ id: String(i), label: String(i) });
+        }
+        return arr;
+      };
+
+      let newSizes: DropdownItem[] = [];
+      if (cat === "Women's Fashion" || cat === "Men's Casual Wear" || cat === "Women's Footwear") {
+        newSizes = createNumSizes(4, 10);
+      } else if (cat === "Men's Footwear") {
+        newSizes = createNumSizes(4, 11);
+      } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen") {
+        newSizes = [];
+      } else {
+         newSizes = [
+            { id: "XS", label: "XS" },
+            { id: "S", label: "S" },
+            { id: "M", label: "M" },
+            { id: "L", label: "L" },
+            { id: "XL", label: "XL" },
+            { id: "XXL", label: "XXL" },
+            { id: "3XL", label: "3XL" },
+            { id: "Free Size", label: "Free Size" },
+         ];
+      }
+      if (newSizes.length > 0) {
+         newSizes.push({ id: "others", label: "Others" });
+      }
+      return newSizes;
+  }
+
+  const [sizeOptions, setSizeOptions] = useState<DropdownItem[]>([])
+  
+  useEffect(() => {
+    setSizeOptions(getSizeOptionsForCategory(formCategory))
+  }, [formCategory])
   const [selectedColorItems, setSelectedColorItems] = useState<DropdownItem[]>([])
   const [selectedSizeItems, setSelectedSizeItems] = useState<DropdownItem[]>([])
   const [otherColorInput, setOtherColorInput] = useState("")
