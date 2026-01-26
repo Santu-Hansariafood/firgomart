@@ -26,6 +26,7 @@ import { Connection, Schema, Model } from "mongoose"
     status: { type: String, default: "approved", index: true },
     stock: { type: Number, default: 0 },
     isAdminProduct: { type: Boolean, default: false, index: true },
+    productId: { type: String, index: true },
     createdByEmail: { type: String, index: true },
     sellerState: { type: String, index: true },
     sellerHasGST: { type: Boolean, default: undefined, index: true },

@@ -76,6 +76,7 @@ export async function GET(request: Request) {
     const pageItems = items.slice(start, start + limit)
     const safe = pageItems.map((p: any) => ({
       id: p._id?.toString?.() || String(p._id),
+      productId: p.productId,
       name: p.name,
       image: p.image,
       category: p.category,

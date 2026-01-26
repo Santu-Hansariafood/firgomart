@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from "react"
 import { useAuth } from "@/context/AuthContext"
 import categoriesData from "@/data/categories.json"
+import colorsData from "@/data/colors.json"
 import locationData  from "@/data/country.json"
 import { Package, Edit, Trash, X, Plus, Crop } from "lucide-react"
 import dynamic from "next/dynamic"
@@ -129,30 +130,7 @@ export default function Page() {
   const [formLengthUnit, setFormLengthUnit] = useState("cm")
   const [formWeightUnit, setFormWeightUnit] = useState("kg")
 
-  const colorOptions: DropdownItem[] = [
-    { id: "Red", label: "Red" },
-    { id: "Blue", label: "Blue" },
-    { id: "Green", label: "Green" },
-    { id: "Black", label: "Black" },
-    { id: "White", label: "White" },
-    { id: "Yellow", label: "Yellow" },
-    { id: "Pink", label: "Pink" },
-    { id: "Purple", label: "Purple" },
-    { id: "Orange", label: "Orange" },
-    { id: "Brown", label: "Brown" },
-    { id: "Grey", label: "Grey" },
-    { id: "Beige", label: "Beige" },
-    { id: "Maroon", label: "Maroon" },
-    { id: "Navy", label: "Navy" },
-    { id: "Olive", label: "Olive" },
-    { id: "Teal", label: "Teal" },
-    { id: "Cyan", label: "Cyan" },
-    { id: "Gold", label: "Gold" },
-    { id: "Silver", label: "Silver" },
-    { id: "Lavender", label: "Lavender" },
-    { id: "Magenta", label: "Magenta" },
-    { id: "others", label: "Others" },
-  ]
+  const colorOptions: DropdownItem[] = (colorsData as any).colors
   
   const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
       const createNumSizes = (start: number, end: number) => {

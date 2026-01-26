@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, Suspense } from "react"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import categoriesData from "@/data/categories.json"
+import colorsData from "@/data/colors.json"
 import locationData  from "@/data/country.json"
 import { Package, Edit, Trash, X, Plus, Crop } from "lucide-react"
 import dynamic from "next/dynamic"
@@ -47,6 +48,7 @@ type ProductItem = {
   weightUnit?: string
   hsnCode?: string
   gstNumber?: string
+  productId?: string
 }
 
 const gstStateMap: Record<string, string> = {
@@ -108,6 +110,7 @@ export default function Page() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   
   const [formName, setFormName] = useState("")
+  const [formProductId, setFormProductId] = useState("")
   const [formCategory, setFormCategory] = useState("")
   const [formSubcategory, setFormSubcategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
@@ -134,31 +137,47 @@ export default function Page() {
   const [formLengthUnit, setFormLengthUnit] = useState("cm")
   const [formWeightUnit, setFormWeightUnit] = useState("kg")
 
-  const colorOptions: DropdownItem[] = [
-    { id: "Red", label: "Red" },
-    { id: "Blue", label: "Blue" },
-    { id: "Green", label: "Green" },
-    { id: "Black", label: "Black" },
-    { id: "White", label: "White" },
-    { id: "Yellow", label: "Yellow" },
-    { id: "Pink", label: "Pink" },
-    { id: "Purple", label: "Purple" },
-    { id: "Orange", label: "Orange" },
-    { id: "Brown", label: "Brown" },
-    { id: "Grey", label: "Grey" },
-    { id: "others", label: "Others" },
-  ]
-  const sizeOptions: DropdownItem[] = [
-    { id: "XS", label: "XS" },
-    { id: "S", label: "S" },
-    { id: "M", label: "M" },
-    { id: "L", label: "L" },
-    { id: "XL", label: "XL" },
-    { id: "XXL", label: "XXL" },
-    { id: "3XL", label: "3XL" },
-    { id: "Free Size", label: "Free Size" },
-    { id: "others", label: "Others" },
-  ]
+  const colorOptions: DropdownItem[] = (colorsData as any).colors
+  
+  const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
+      const createNumSizes = (start: number, end: number) => {
+        const arr: DropdownItem[] = [];
+        for (let i = start; i <= end; i++) {
+          arr.push({ id: String(i), label: String(i) });
+        }
+        return arr;
+      };
+
+      let newSizes: DropdownItem[] = [];
+      if (cat === "Women's Fashion" || cat === "Men's Casual Wear" || cat === "Women's Footwear") {
+        newSizes = createNumSizes(4, 10);
+      } else if (cat === "Men's Footwear") {
+        newSizes = createNumSizes(4, 11);
+      } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen") {
+        newSizes = [];
+      } else {
+         newSizes = [
+            { id: "XS", label: "XS" },
+            { id: "S", label: "S" },
+            { id: "M", label: "M" },
+            { id: "L", label: "L" },
+            { id: "XL", label: "XL" },
+            { id: "XXL", label: "XXL" },
+            { id: "3XL", label: "3XL" },
+            { id: "Free Size", label: "Free Size" },
+         ];
+      }
+      if (newSizes.length > 0) {
+         newSizes.push({ id: "others", label: "Others" });
+      }
+      return newSizes;
+  }
+
+  const [sizeOptions, setSizeOptions] = useState<DropdownItem[]>([])
+  
+  useEffect(() => {
+    setSizeOptions(getSizeOptionsForCategory(formCategory))
+  }, [formCategory])
   const [selectedColorItems, setSelectedColorItems] = useState<DropdownItem[]>([])
   const [selectedSizeItems, setSelectedSizeItems] = useState<DropdownItem[]>([])
   const [otherColorInput, setOtherColorInput] = useState("")
@@ -265,6 +284,7 @@ export default function Page() {
     if (product) {
       setEditingId(product.id)
       setFormName(product.name)
+      setFormProductId(product.productId || "")
       setFormCategory(product.category || "")
       setFormSubcategory((product as any).subcategory || "")
       setFormPrice(String(product.price))
@@ -277,7 +297,11 @@ export default function Page() {
       setFormColors((product.colors || []).join(", "))
       setFormSizes((product.sizes || []).join(", "))
       const cInit = initSelectionsFromForm((product.colors || []).join(", "), colorOptions)
-      const sInit = initSelectionsFromForm((product.sizes || []).join(", "), sizeOptions)
+      
+      const catSizes = getSizeOptionsForCategory(product.category || "")
+      setSizeOptions(catSizes)
+      const sInit = initSelectionsFromForm((product.sizes || []).join(", "), catSizes)
+      
       setSelectedColorItems(cInit.selected)
       setOtherColorInput(cInit.othersText)
       setSelectedSizeItems(sInit.selected)
@@ -420,6 +444,7 @@ export default function Page() {
 
     const payload = {
       name: formName.trim(),
+      productId: formProductId.trim(),
       category: formCategory.trim(),
       subcategory: formSubcategory.trim(),
       price,
@@ -610,6 +635,10 @@ export default function Page() {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                             <input value={formName} onChange={e => setFormName(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Product ID</label>
+                            <input value={formProductId} onChange={e => setFormProductId(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. PID-123" />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div>

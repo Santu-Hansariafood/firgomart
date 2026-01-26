@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { findUserAcrossDBs } from "@/lib/models/User"
+import { findSellerAcrossDBs } from "@/lib/models/Seller"
 
 type MongooseUserDoc = {
   name?: string
@@ -41,7 +42,19 @@ export async function GET() {
     if (!result?.user) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
-    return NextResponse.json({ user: toSafeUser(result.user) }, { status: 200 })
+    
+    let sellerDetails = undefined
+    let role = "user"
+    try {
+        const sRes = await findSellerAcrossDBs({ email })
+        if (sRes?.seller) {
+            role = "seller"
+            sellerDetails = sRes.seller
+        }
+    } catch {}
+
+    const uData = toSafeUser(result.user)
+    return NextResponse.json({ user: { ...uData, role, sellerDetails } }, { status: 200 })
   } catch (err) {
     const reason = err instanceof Error ? err.message : "unknown"
     return NextResponse.json({ error: "Server error", reason }, { status: 500 })

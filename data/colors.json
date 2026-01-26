@@ -1,0 +1,26 @@
+{
+  "colors": [
+    { "id": "Red", "label": "Red" },
+    { "id": "Blue", "label": "Blue" },
+    { "id": "Green", "label": "Green" },
+    { "id": "Black", "label": "Black" },
+    { "id": "White", "label": "White" },
+    { "id": "Yellow", "label": "Yellow" },
+    { "id": "Pink", "label": "Pink" },
+    { "id": "Purple", "label": "Purple" },
+    { "id": "Orange", "label": "Orange" },
+    { "id": "Brown", "label": "Brown" },
+    { "id": "Grey", "label": "Grey" },
+    { "id": "Beige", "label": "Beige" },
+    { "id": "Maroon", "label": "Maroon" },
+    { "id": "Navy", "label": "Navy" },
+    { "id": "Olive", "label": "Olive" },
+    { "id": "Teal", "label": "Teal" },
+    { "id": "Cyan", "label": "Cyan" },
+    { "id": "Gold", "label": "Gold" },
+    { "id": "Silver", "label": "Silver" },
+    { "id": "Lavender", "label": "Lavender" },
+    { "id": "Magenta", "label": "Magenta" },
+    { "id": "others", "label": "Others" }
+  ]
+}
