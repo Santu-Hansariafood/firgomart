@@ -16,13 +16,16 @@ interface CartItem {
   image: string
   stock?: number
   unitsPerPack?: number
+  selectedSize?: string
+  selectedColor?: string
+  _uniqueId?: string
 }
 
 interface CartProps {
   items: CartItem[]
   onClose: () => void
-  onUpdateQuantity: (id: number, newQuantity: number) => void
-  onRemoveItem: (id: number) => void
+  onUpdateQuantity: (id: number | string, newQuantity: number) => void
+  onRemoveItem: (id: number | string) => void
 }
 
 const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveItem }) => {
@@ -141,7 +144,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() =>
-                              onUpdateQuantity(item.id, Math.max(1, (item.quantity ?? 1) - 1))
+                              onUpdateQuantity(item._uniqueId || item.id, Math.max(1, (item.quantity ?? 1) - 1))
                             }
                             disabled={(item.stock ?? 0) <= 0}
                             className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -152,7 +155,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                             {item.quantity ?? 1}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item.id, Math.min((item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
+                            onClick={() => onUpdateQuantity(item._uniqueId || item.id, Math.min((item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
                             className={`w-6 h-6 border border-gray-300 rounded flex items-center justify-center transition-colors ${((item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white'}`}
                             disabled={(item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0}
                           >
@@ -160,7 +163,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                           </button>
                         </div>
                         <button
-                          onClick={() => onRemoveItem(item.id)}
+                          onClick={() => onRemoveItem(item._uniqueId || item.id)}
                           className="text-red-500 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />

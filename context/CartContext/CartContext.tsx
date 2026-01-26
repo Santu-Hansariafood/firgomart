@@ -11,6 +11,9 @@ interface CartItem {
   quantity?: number;
   stock?: number;
   unitsPerPack?: number;
+  selectedSize?: string;
+  selectedColor?: string;
+  _uniqueId?: string;
 }
 
 interface CartContextType {
@@ -18,8 +21,8 @@ interface CartContextType {
   showCart: boolean;
   setShowCart: (v: boolean) => void;
   addToCart: (product: CartItem) => void;
-  updateQuantity: (id: number, quantity: number) => void;
-  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number | string, quantity: number) => void;
+  removeFromCart: (id: number | string) => void;
   clearCart: () => void;
 }
 
@@ -34,36 +37,41 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (product: CartItem) => {
     setCartItems((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
+      const uniqueId = product._uniqueId || `${product.id}-${product.selectedSize || ''}-${product.selectedColor || ''}`;
+      const productWithId = { ...product, _uniqueId: uniqueId };
+      
+      const exists = prev.find((item) => (item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}`) === uniqueId);
+      
       if (exists) {
         const inc = product.quantity && product.quantity > 0 ? product.quantity : 1
         return prev.map((item) => {
-          if (item.id !== product.id) return item
+          const itemId = item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}`;
+          if (itemId !== uniqueId) return item
           const current = item.quantity || 1
           const stock = item.stock ?? MAX_QTY
           const next = Math.min(stock, Math.min(MAX_QTY, current + inc))
-          return { ...item, quantity: next }
+          return { ...item, quantity: next, _uniqueId: itemId } // Ensure _uniqueId is set
         });
       }
       const startQty = product.quantity && product.quantity > 0 ? product.quantity : 1
       const stock = product.stock ?? MAX_QTY
       if (stock <= 0) return prev
-      return [...prev, { ...product, quantity: Math.min(stock, Math.min(MAX_QTY, startQty)) }];
+      return [...prev, { ...productWithId, quantity: Math.min(stock, Math.min(MAX_QTY, startQty)) }];
     });
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
+  const updateQuantity = (id: number | string, quantity: number) => {
     setCartItems((prev) => {
-       const item = prev.find(i => i.id === id)
+       const item = prev.find(i => (i._uniqueId || i.id) === id)
        if (!item) return prev
        const stock = item.stock ?? MAX_QTY
-       if (quantity <= 0) return prev.filter((item) => item.id !== id)
-       return prev.map((item) => (item.id === id ? { ...item, quantity: Math.min(stock, Math.min(MAX_QTY, Math.max(1, quantity))) } : item))
+       if (quantity <= 0) return prev.filter((item) => (item._uniqueId || item.id) !== id)
+       return prev.map((item) => ((item._uniqueId || item.id) === id ? { ...item, quantity: Math.min(stock, Math.min(MAX_QTY, Math.max(1, quantity))) } : item))
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (id: number | string) => {
+    setCartItems((prev) => prev.filter((item) => (item._uniqueId || item.id) !== id));
   };
 
   return (

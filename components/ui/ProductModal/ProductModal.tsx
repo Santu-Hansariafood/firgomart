@@ -53,6 +53,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const { data: session } = useSession()
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
+  const [selectedSize, setSelectedSize] = useState<string>('')
+  const [selectedColor, setSelectedColor] = useState<string>('')
   const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'desc' | 'info' | 'reviews'>('desc')
@@ -63,6 +65,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const [userRating, setUserRating] = useState(5)
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
+
+  const validateSelection = () => {
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+      alert('Please select a size')
+      return false
+    }
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
+      alert('Please select a color')
+      return false
+    }
+    return true
+  }
 
   const images: string[] = (product.images && product.images.length > 0)
     ? product.images
@@ -178,9 +192,17 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   }
 
   const handleBuyNow = () => {
-    onAddToCart({ ...product, quantity })
-    onClose()
-    router.push('/checkout')
+    if ((product.stock ?? 0) > 0) {
+      if (!validateSelection()) return
+      onAddToCart({ 
+        ...product, 
+        quantity,
+        selectedSize: selectedSize || undefined,
+        selectedColor: selectedColor || undefined
+      } as any)
+      onClose()
+      router.push('/checkout')
+    }
   }
 
   return (
@@ -391,7 +413,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                   <button
                     onClick={() => {
                       if ((product.stock ?? 0) > 0) {
-                        onAddToCart({ ...product, quantity })
+                        if (!validateSelection()) return
+                        onAddToCart({ 
+                          ...product, 
+                          quantity,
+                          selectedSize: selectedSize || undefined,
+                          selectedColor: selectedColor || undefined
+                        } as any)
                         onClose()
                       }
                     }}

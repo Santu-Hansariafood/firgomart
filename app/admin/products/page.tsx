@@ -330,7 +330,7 @@ export default function Page() {
       setFormStock("")
       setFormUnitsPerPack("1")
       setFormSellerState("")
-      setFormGST(false)
+      setFormGST(!!process.env.NEXT_PUBLIC_ADMIN_GST_NUMBER)
       setFormBrand("")
       setFormColors("")
       setFormSizes("")

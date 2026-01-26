@@ -5,7 +5,7 @@ import { getOrderModel } from "@/lib/models/Order"
 import categories from "@/data/categories.json"
 import type { ClientSession } from "mongoose"
 
-type BodyItem = { id: string | number; quantity: number }
+type BodyItem = { id: string | number; quantity: number; selectedSize?: string; selectedColor?: string }
 
 function getGstPercent(categoryKeyOrName?: string): number {
   if (!categoryKeyOrName) return 18
@@ -36,6 +36,8 @@ export async function POST(request: Request) {
     const items = itemsRaw.map((it) => ({
       id: String(it.id),
       quantity: Math.max(1, Number(it.quantity || 1)),
+      selectedSize: typeof it.selectedSize === "string" ? it.selectedSize.trim() : undefined,
+      selectedColor: typeof it.selectedColor === "string" ? it.selectedColor.trim() : undefined,
     }))
 
     const conn = await connectDB()
@@ -116,6 +118,8 @@ export async function POST(request: Request) {
         name: p.name,
         quantity,
         price,
+        selectedSize: it.selectedSize,
+        selectedColor: it.selectedColor,
         gstPercent,
         gstAmount
       }
@@ -146,7 +150,9 @@ export async function POST(request: Request) {
         productId: i.productId,
         name: i.name,
         quantity: i.quantity,
-        price: i.price
+        price: i.price,
+        selectedSize: i.selectedSize,
+        selectedColor: i.selectedColor,
       })),
       amount: finalAmount,
       status: "pending",

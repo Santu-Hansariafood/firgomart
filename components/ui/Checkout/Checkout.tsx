@@ -28,12 +28,15 @@ interface CartItem {
   quantity?: number
   stock?: number
   unitsPerPack?: number
+  selectedSize?: string
+  selectedColor?: string
+  _uniqueId?: string
 }
 
 interface CheckoutProps {
   cartItems: CartItem[]
-  onUpdateQuantity?: (id: number, quantity: number) => void
-  onRemoveItem?: (id: number) => void
+  onUpdateQuantity?: (id: number | string, quantity: number) => void
+  onRemoveItem?: (id: number | string) => void
 }
 
 interface FormData {
@@ -218,7 +221,12 @@ const Checkout: React.FC<CheckoutProps> = ({
         state: formData.state,
         pincode: formData.pincode,
         country: "IN",
-        items: cartItems.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+        items: cartItems.map(ci => ({ 
+          id: ci.id, 
+          quantity: ci.quantity ?? 1,
+          selectedSize: ci.selectedSize,
+          selectedColor: ci.selectedColor
+        })),
       }
       const res = await fetch('/api/orders', {
         method: 'POST',
@@ -686,7 +694,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 {cartItems.map((item) => {
                   const summaryItem = orderSummary.items.find(si => String(si.productId) === String(item.id))
                   return (
-                  <div key={item.id} className="flex space-x-3">
+                  <div key={item._uniqueId || item.id} className="flex space-x-3">
                     <FallbackImage
                       src={item.image}
                       alt={item.name}
@@ -698,6 +706,16 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
                         {item.name}
                       </h3>
+                      {(item.selectedSize || item.selectedColor) && (
+                        <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-1">
+                          {item.selectedSize && <span>Size: {item.selectedSize}</span>}
+                          {item.selectedColor && (
+                            <span className="flex items-center gap-1">
+                              Color: <span className="w-2 h-2 rounded-full border border-gray-300" style={{ background: item.selectedColor }} />
+                            </span>
+                          )}
+                        </div>
+                      )}
                       {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
                         <p className="text-xs text-gray-500">Pack of {item.unitsPerPack}</p>
                       )}

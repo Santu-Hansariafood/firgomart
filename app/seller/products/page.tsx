@@ -318,7 +318,8 @@ export default function Page() {
       setFormStock("")
       setFormUnitsPerPack("1")
       setFormSellerState("")
-      setFormGST(false)
+      const autoGst = user?.sellerDetails?.gstNumber || user?.sellerDetails?.panNumber || ""
+      setFormGST(!!autoGst)
       setFormBrand("")
       setFormColors("")
       setFormSizes("")
@@ -330,7 +331,7 @@ export default function Page() {
       setFormDesc("")
       setFormAddInfo("")
       setFormHSNCode("")
-      setFormGSTNumber(user?.sellerDetails?.gstNumber || "")
+      setFormGSTNumber(autoGst)
       setImages([])
       
       setFormHeight("")
