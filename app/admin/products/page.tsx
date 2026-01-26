@@ -452,7 +452,7 @@ export default function Page() {
       discount,
       stock: Number(formStock || 0),
       unitsPerPack: Number(formUnitsPerPack || 1),
-      sellerState: formGST ? "" : formSellerState.trim(),
+      sellerState: formSellerState.trim(),
       sellerHasGST: formGST,
       images: finalImages,
       image: finalImages[0] || "/file.svg",

@@ -468,12 +468,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         <div className="text-[var(--foreground)/80] leading-relaxed whitespace-pre-wrap mb-4">
                           {product.additionalInfo || 'No additional information available.'}
                         </div>
-                        {product.hsnCode && (
-                          <div className="pt-4 border-t border-[var(--foreground)/10]">
-                            <p className="text-sm font-medium text-[var(--foreground)/60]">HSN Code</p>
-                            <p className="text-base font-semibold">{product.hsnCode}</p>
-                          </div>
-                        )}
                       </div>
                     )}
                     {activeTab === 'reviews' && (

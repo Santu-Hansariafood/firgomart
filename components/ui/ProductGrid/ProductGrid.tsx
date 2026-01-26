@@ -335,7 +335,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                   </div>
 
                   <span className="absolute top-2 left-2 bg-black/70 text-white text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded">
-                    {product.isAdminProduct ? 'Firgomart Product' : 'Other Product'}
+                    {product.isAdminProduct ? 'FirgoMart Product' : 'Other Product'}
                   </span>
 
                   {product.discount && (
