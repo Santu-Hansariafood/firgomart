@@ -160,6 +160,7 @@ export default function Page() {
                   />
                 </div>
               ) },
+              { key: "productId", label: "Product ID" },
               { key: "name", label: "Product", sortable: true },
               { key: "category", label: "Category" },
               { key: "price", label: "Price", sortable: true, render: (r) => `₹${Number(r.price || 0).toFixed(2)}` },

@@ -86,8 +86,9 @@ export async function GET(request: Request) {
     const total = await (Product as unknown as { countDocuments: (q: unknown) => Promise<number> }).countDocuments(q)
     const start = (page - 1) * limit
     const pageItems = items.slice(start, start + limit)
-    const safe = pageItems.map((p: ProductLean) => ({
+    const safe = pageItems.map((p: ProductLean & { productId?: string }) => ({
       id: (p._id as { toString?: () => string } | undefined)?.toString?.() || String(p._id),
+      productId: p.productId || "",
       name: p.name || "",
       category: p.category,
       stock: p.stock ?? 0,

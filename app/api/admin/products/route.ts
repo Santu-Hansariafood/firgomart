@@ -67,6 +67,7 @@ export async function GET(request: Request) {
         { name: r },
         { category: r },
         { createdByEmail: r },
+        { productId: r },
       ]
     }
 
