@@ -127,7 +127,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-50 bg-[var(--background)] text-[var(--foreground)] shadow-md">
       <div className="max-w-screen-xl mx-auto px-3 sm:px-4">
-        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
+        <div className="flex items-center justify-between min-h-[3.5rem] sm:min-h-[4rem] md:min-h-[5rem] py-2">
 
           <Link href="/" className="flex items-center space-x-2">
             <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20">
@@ -147,6 +147,7 @@ const Navbar: React.FC = () => {
               onChange={setSearchQuery}
               onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
               placeholder="Search for products, brands and more..."
+              enableSuggestions={true}
             />
           </div>
           <div className="hidden md:flex items-center space-x-4 flex-none">
@@ -364,6 +365,7 @@ const Navbar: React.FC = () => {
             onChange={setSearchQuery}
             onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
             placeholder="Search products..."
+            enableSuggestions={true}
           />
         </div>
       </div>

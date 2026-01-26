@@ -582,7 +582,7 @@ export default function Page() {
                     { key: "image", label: "Image", render: (r) => (
                       <FallbackImage src={(r as { image?: string }).image} alt={r.name} width={48} height={48} className="object-cover rounded border" />
                     ) },
-                    { key: "productId", label: "Product ID" },
+                    { key: "productId", label: "Product ID", sortable: true },
                     { key: "name", label: "Name", sortable: true },
                     { key: "category", label: "Category", sortable: true },
                     { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },

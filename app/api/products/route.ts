@@ -62,7 +62,25 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      conditions.push({ $text: { $search: search } })
+      const terms = search.split(/\s+/).filter(Boolean)
+      if (terms.length > 0) {
+        const termConditions = terms.map(term => {
+          // Escape special regex characters to prevent errors
+          const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          const regex = new RegExp(escapedTerm, "i")
+          return {
+            $or: [
+              { name: { $regex: regex } },
+              { brand: { $regex: regex } },
+              { category: { $regex: regex } },
+              { subcategory: { $regex: regex } },
+              { description: { $regex: regex } },
+            ]
+          }
+        })
+        // Use $and to ensure all terms are present in the product fields
+        conditions.push({ $and: termConditions })
+      }
     }
 
     const finalQuery: FilterQuery<unknown> = conditions.length > 0 ? { $and: conditions } : {}

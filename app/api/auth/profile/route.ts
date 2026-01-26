@@ -14,6 +14,15 @@ type MongooseUserDoc = {
   city?: string
   state?: string
   pincode?: string
+  addresses?: Array<{
+    name?: string
+    mobile?: string
+    address?: string
+    city?: string
+    state?: string
+    pincode?: string
+    isDefault?: boolean
+  }>
   save: () => Promise<unknown>
 }
 
@@ -28,6 +37,7 @@ function toSafeUser(u: MongooseUserDoc) {
     city: u.city || "",
     state: u.state || "",
     pincode: u.pincode || "",
+    addresses: u.addresses || [],
   }
 }
 
@@ -82,6 +92,8 @@ export async function PUT(request: Request) {
     const pincode = typeof payload?.pincode === "string" ? payload.pincode : undefined
     const dateOfBirth = typeof payload?.dateOfBirth === "string" ? payload.dateOfBirth : undefined
     const gender = typeof payload?.gender === "string" ? payload.gender : undefined
+    const addresses = Array.isArray(payload?.addresses) ? payload.addresses : undefined
+
     if (name !== undefined) u.name = name
     if (mobile !== undefined) u.mobile = mobile
     if (address !== undefined) u.address = address
@@ -90,8 +102,11 @@ export async function PUT(request: Request) {
     if (pincode !== undefined) u.pincode = pincode
     if (dateOfBirth !== undefined) u.dateOfBirth = dateOfBirth
     if (gender !== undefined) u.gender = gender
+    if (addresses !== undefined) u.addresses = addresses
+
     await u.save()
-    return NextResponse.json({ user: toSafeUser(u) }, { status: 200 })
+    
+    return NextResponse.json({ success: true, user: toSafeUser(u) })
   } catch (err) {
     const reason = err instanceof Error ? err.message : "unknown"
     return NextResponse.json({ error: "Server error", reason }, { status: 500 })

@@ -175,6 +175,7 @@ export async function POST(request: Request) {
     const weightUnit = String(body?.weightUnit || "")
     const hsnCode = String(body?.hsnCode || "").trim()
     const gstNumber = String(body?.gstNumber || "").trim()
+    const productId = String(body?.productId || "").trim()
 
     if (!name || !price || !image) return NextResponse.json({ error: "name, price, image required" }, { status: 400 })
 
@@ -192,6 +193,7 @@ export async function POST(request: Request) {
       sellerState,
       sellerHasGST,
       isAdminProduct: true,
+      productId: productId || undefined,
       createdByEmail: adminEmail || undefined,
       brand,
       colors,

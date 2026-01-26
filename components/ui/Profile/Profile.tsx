@@ -178,15 +178,15 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-lg overflow-hidden"
         >
-          <div className="bg-gradient-to-r from-brand-purple to-purple-400 p-8 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center border-2 border-brand-purple">
-                  <span className="text-5xl font-black text-brand-purple tracking-wider leading-none">{initials}</span>
+          <div className="bg-gradient-to-r from-brand-purple to-purple-400 p-6 md:p-8 text-white">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-center space-x-4 w-full md:w-auto">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center border-2 border-brand-purple shrink-0">
+                  <span className="text-3xl md:text-5xl font-black text-brand-purple tracking-wider leading-none">{initials}</span>
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold">{user.name}</h1>
-                  <p className="text-purple-100 mt-1">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl md:text-3xl font-bold break-words line-clamp-2 leading-tight">{user.name}</h1>
+                  <p className="text-purple-100 mt-1 break-all line-clamp-2 text-sm md:text-base">
                     {user.email || user.mobile}
                   </p>
                 </div>
@@ -194,7 +194,7 @@ const Profile = () => {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors"
+                  className="w-full md:w-auto flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors shrink-0 mt-2 md:mt-0"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span>Edit Profile</span>
@@ -358,18 +358,18 @@ const Profile = () => {
             )}
 
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
                 <h2 className="text-xl font-heading font-bold text-[var(--foreground)]">Saved Addresses</h2>
                 <button
                   onClick={() => setShowAddAddress(!showAddAddress)}
-                  className="px-4 py-2 bg-purple-50 text-brand-purple hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
+                  className="w-full sm:w-auto px-4 py-2 bg-purple-50 text-brand-purple hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
                 >
                   {showAddAddress ? "Cancel" : "Add New Address"}
                 </button>
               </div>
 
               {showAddAddress && (
-                  <div className="mb-6 p-6 bg-[var(--background)] rounded-xl border border-gray-200 animate-in fade-in slide-in-from-top-4">
+                  <div className="mb-6 p-4 md:p-6 bg-[var(--background)] rounded-xl border border-gray-200 animate-in fade-in slide-in-from-top-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <SimpleInput
                       label="Name"

@@ -22,6 +22,7 @@ type InventoryRow = {
   sellerState?: string
   sellerHasGST?: boolean
   createdAt?: string
+  productId?: string
 }
 
 export default function Page() {
