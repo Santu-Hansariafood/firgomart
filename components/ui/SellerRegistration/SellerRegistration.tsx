@@ -204,7 +204,7 @@ const SellerRegistration: React.FC = () => {
               <h2 className="text-lg sm:text-xl font-heading font-bold">
                 Business Information
               </h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Business Name *</label>
                   <input
@@ -231,7 +231,7 @@ const SellerRegistration: React.FC = () => {
                   {errors.ownerName && <p className="text-red-500 text-xs mt-1">{errors.ownerName}</p>}
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Email *</label>
                   <div className="space-y-2">
@@ -309,7 +309,7 @@ const SellerRegistration: React.FC = () => {
               className="space-y-4"
             >
               <h2 className="text-lg sm:text-xl font-heading font-bold">Bank Account Details</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Account Number *</label>
                   <input type="text" name="bankAccount" value={(formData as any).bankAccount ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
@@ -320,7 +320,7 @@ const SellerRegistration: React.FC = () => {
                   {(errors as any).bankIfsc && <p className="text-red-500 text-xs mt-1">{(errors as any).bankIfsc}</p>}
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Bank Name *</label>
                   <input type="text" name="bankName" value={(formData as any).bankName ?? ''} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]" />
@@ -341,7 +341,7 @@ const SellerRegistration: React.FC = () => {
                 />
               </div>
               <h2 className="text-xl font-heading font-bold">Location</h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">Country *</label>
                   <input
@@ -371,7 +371,7 @@ const SellerRegistration: React.FC = () => {
                   </select>
                 </div>
               </div>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-1 text-[var(--foreground)/80] text-sm">District *</label>
                   <select
@@ -448,7 +448,7 @@ const SellerRegistration: React.FC = () => {
                   {checking === 'gstNumber' && <p className="text-brand-purple text-xs mt-1">Checking...</p>}
                 </>
               ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block mb-1 text-[var(--foreground)/80] text-sm">PAN Number *</label>
                     <input
@@ -484,7 +484,7 @@ const SellerRegistration: React.FC = () => {
             <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
               <h2 className="text-xl font-heading font-bold">Business Logo</h2>
 
-              <div className="group border-2 border-dashed p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
+              <div className="group border-2 border-dashed p-4 sm:p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-purple/10 text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-colors duration-200">
                   <Upload className="w-6 h-6" />
                 </div>
@@ -508,7 +508,7 @@ const SellerRegistration: React.FC = () => {
             </div>
             <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
               <h2 className="text-xl font-heading font-bold">Bank Document</h2>
-              <div className="group border-2 border-dashed p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
+              <div className="group border-2 border-dashed p-4 sm:p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-purple/10 text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-colors duration-200">
                   <Upload className="w-6 h-6" />
                 </div>

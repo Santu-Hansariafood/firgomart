@@ -63,7 +63,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
         {normalLines.map((line, i) => (
           <p
             key={i}
-            className="text-sm leading-relaxed text-gray-800 whitespace-pre-line text-justify"
+            className="text-sm leading-relaxed text-gray-800 whitespace-pre-line text-left"
           >
             {line}
           </p>
@@ -84,7 +84,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
   };
 
   return (
-    <div className="max-w-[210mm] mx-auto bg-white text-black shadow-2xl min-h-[297mm] p-6 md:p-10 my-8 relative border border-gray-200">
+    <div className="w-full max-w-[210mm] mx-auto bg-white text-black shadow-none sm:shadow-2xl min-h-screen sm:min-h-[297mm] p-4 sm:p-10 my-0 sm:my-8 relative border-0 sm:border border-gray-200">
       <div className="space-y-5 font-serif">
         {data.map((section, idx) => (
           <div key={idx} className="space-y-2">
@@ -110,7 +110,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
             {section.points && section.points.length > 0 && (
               <div className="space-y-1 text-sm text-gray-800 ml-4">
                 {section.points.map((point, pIdx) => (
-                  <p key={pIdx} className="leading-relaxed text-justify">
+                  <p key={pIdx} className="leading-relaxed text-left">
                     <span className="mr-2 font-medium">
                       {toRoman(pIdx)}.
                     </span>
@@ -147,7 +147,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
                   {sub.points && sub.points.length > 0 && (
                     <div className="space-y-1 text-sm text-gray-800 ml-2">
                       {sub.points.map((p, i) => (
-                        <p key={i} className="leading-relaxed text-justify">
+                        <p key={i} className="leading-relaxed text-left">
                           <span className="mr-2 font-medium">
                             {toRoman(i)}.
                           </span>

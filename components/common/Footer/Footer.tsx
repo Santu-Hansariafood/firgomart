@@ -192,7 +192,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-6 sm:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm">
+            <div className="flex flex-wrap justify-center gap-2 sm:gap-4 text-sm">
               <Link href="/privacy-policy" target="_blank" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link href="/terms" target="_blank" className="hover:text-white transition-colors">Terms of Service</Link>
               <Link href="/cookie-policy" target="_blank" className="hover:text-white transition-colors">Cookie Policy</Link>
