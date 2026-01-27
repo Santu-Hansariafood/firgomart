@@ -114,6 +114,20 @@ export async function POST(request: Request) {
     }
 
     const passwordHash = await hash(password, 10)
+    
+    const initialAddresses = []
+    if (address || city || state || pincode) {
+      initialAddresses.push({
+        name: name,
+        mobile: mobile,
+        address: address,
+        city: city,
+        state: state,
+        pincode: pincode,
+        isDefault: true
+      })
+    }
+
     const doc = await User.create({
       name,
       email,
@@ -127,6 +141,7 @@ export async function POST(request: Request) {
       gender,
       country: targetCountry,
       location: targetCountry === "IN" ? (targetLocation || "default") : "default",
+      addresses: initialAddresses
     })
 
     const safeUser = { id: doc._id.toString(), email: doc.email, name: doc.name }

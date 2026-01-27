@@ -261,6 +261,7 @@ export async function POST(request: Request) {
                   sellerEmail: shipData.sellerEmail,
                   trackingNumber: shipData.trackingNumber,
                   courier: shipData.courier,
+                  invoiceUrl: shipData.invoiceUrl,
                   status: "shipped",
                   origin: order.city || order.state,
                   destination: order.city || order.state,

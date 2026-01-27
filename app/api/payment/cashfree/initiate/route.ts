@@ -44,7 +44,18 @@ export async function POST(request: Request) {
       let reason = m ? m[2] : msg
       
       if (reason.toLowerCase().includes("ip address is not allowed")) {
-        reason += ". Please whitelist your server IP in the Cashfree Dashboard."
+        try {
+          // Attempt to detect public IP to help the user whitelist it
+          const ipRes = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) });
+          const ipData = await ipRes.json();
+          if (ipData?.ip) {
+             reason += ` Your current public IP is: ${ipData.ip}. Please whitelist this IP in the Cashfree Dashboard.`
+          } else {
+             reason += ". Please whitelist your server IP in the Cashfree Dashboard."
+          }
+        } catch {
+          reason += ". Please whitelist your server IP in the Cashfree Dashboard."
+        }
       }
 
       const mapped = status >= 500 ? 502 : (status >= 400 ? 400 : 500)

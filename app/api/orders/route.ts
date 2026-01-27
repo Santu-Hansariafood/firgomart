@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 import { getOrderModel } from "@/lib/models/Order"
+import { findUserAcrossDBs } from "@/lib/models/User"
 import categories from "@/data/categories.json"
 import type { ClientSession } from "mongoose"
 
@@ -22,11 +23,32 @@ export async function POST(request: Request) {
     const body = await request.json()
     const buyerEmail = typeof body?.buyerEmail === "string" ? body.buyerEmail.trim() : ""
     const buyerName = typeof body?.buyerName === "string" ? body.buyerName.trim() : ""
-    const address = typeof body?.address === "string" ? body.address.trim() : ""
-    const city = typeof body?.city === "string" ? body.city.trim() : ""
-    const state = typeof body?.state === "string" ? body.state.trim() : ""
-    const pincode = typeof body?.pincode === "string" ? body.pincode.trim() : ""
+    let address = typeof body?.address === "string" ? body.address.trim() : ""
+    let city = typeof body?.city === "string" ? body.city.trim() : ""
+    let state = typeof body?.state === "string" ? body.state.trim() : ""
+    let pincode = typeof body?.pincode === "string" ? body.pincode.trim() : ""
     const country = typeof body?.country === "string" ? body.country.trim() : "IN"
+
+    if ((!address || !city || !state || !pincode) && buyerEmail) {
+      try {
+        const userRes = await findUserAcrossDBs(buyerEmail)
+        if (userRes?.user) {
+          const u = userRes.user as any
+          const defaultAddr = (u.addresses || []).find((a: any) => a.isDefault)
+          if (defaultAddr) {
+             if (!address) address = defaultAddr.address || ""
+             if (!city) city = defaultAddr.city || ""
+             if (!state) state = defaultAddr.state || ""
+             if (!pincode) pincode = defaultAddr.pincode || ""
+          } else if (u.address) {
+             if (!address) address = u.address || ""
+             if (!city) city = u.city || ""
+             if (!state) state = u.state || ""
+             if (!pincode) pincode = u.pincode || ""
+          }
+        }
+      } catch {}
+    }
     const itemsRaw: BodyItem[] = Array.isArray(body?.items) ? body.items : []
 
     if (!itemsRaw.length) {
@@ -174,8 +196,12 @@ export async function POST(request: Request) {
         price: i.price,
         selectedSize: i.selectedSize,
         selectedColor: i.selectedColor,
+        gstPercent: i.gstPercent,
+        gstAmount: i.gstAmount,
       })),
       amount: finalAmount,
+      subtotal,
+      tax: totalTax,
       status: "pending",
       address,
       city,

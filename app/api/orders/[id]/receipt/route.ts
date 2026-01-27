@@ -19,6 +19,9 @@ type OrderLean = {
   state?: string
   country?: string
   items?: OrderItem[]
+  subtotal?: number
+  tax?: number
+  amount?: number
 }
 
 function amountInWords(amount: number): string {
@@ -150,37 +153,48 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         y += 18
       }
       pdf.moveTo(startX, y + 2).lineTo(pdf.page.width - 50, y + 2).stroke("#e5e7eb")
-      const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
-      const FEE_RATE = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2) / 100
       const buyerState = String(doc.state || "").trim().toLowerCase()
       const sellerSt = String(sellerState || "").trim().toLowerCase()
-      let igst = 0, cgst = 0, sgst = 0
-      if (buyerState && sellerSt && buyerState !== sellerSt) {
-        igst = sum * GST_RATE
-      } else {
-        cgst = sum * (GST_RATE / 2)
-        sgst = sum * (GST_RATE / 2)
+      
+      let subtotalVal = Number(doc.subtotal || 0)
+      let taxTotal = Number(doc.tax || 0)
+      let grand = Number(doc.amount || 0)
+
+      if (!doc.subtotal && !doc.tax) {
+         subtotalVal = sum
+         const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
+         if (buyerState && sellerSt && buyerState !== sellerSt) {
+             taxTotal = subtotalVal * GST_RATE
+         } else {
+             taxTotal = subtotalVal * GST_RATE
+         }
+         if (!grand) grand = subtotalVal + taxTotal
       }
-      const taxTotal = igst + cgst + sgst
-      const platformFee = (sum + taxTotal) * FEE_RATE
-      const grand = sum + taxTotal + platformFee
+
+      let igst = 0, cgst = 0, sgst = 0
+      if (taxTotal > 0) {
+        if (buyerState && sellerSt && buyerState !== sellerSt) {
+          igst = taxTotal
+        } else {
+          cgst = taxTotal / 2
+          sgst = taxTotal / 2
+        }
+      }
+
       pdf.fontSize(12).fillColor("#111827").text("Subtotal", colPrice, y + 10)
-      pdf.text(`₹${sum.toFixed(2)}`, colAmt, y + 10)
+      pdf.text(`₹${subtotalVal.toFixed(2)}`, colAmt, y + 10)
       if (igst > 0) {
-        pdf.text(`IGST (${(GST_RATE * 100).toFixed(2)}%)`, colPrice, y + 28)
+        pdf.text(`IGST`, colPrice, y + 28)
         pdf.text(`₹${igst.toFixed(2)}`, colAmt, y + 28)
       } else {
-        const half = (GST_RATE * 100) / 2
-        pdf.text(`CGST (${half.toFixed(2)}%)`, colPrice, y + 28)
+        pdf.text(`CGST`, colPrice, y + 28)
         pdf.text(`₹${cgst.toFixed(2)}`, colAmt, y + 28)
-        pdf.text(`SGST (${half.toFixed(2)}%)`, colPrice, y + 46)
+        pdf.text(`SGST`, colPrice, y + 46)
         pdf.text(`₹${sgst.toFixed(2)}`, colAmt, y + 46)
       }
       const baseY = y + (igst > 0 ? 46 : 64)
-      pdf.text(`Platform Fee (${(FEE_RATE * 100).toFixed(2)}%)`, colPrice, baseY + 18)
-      pdf.text(`₹${platformFee.toFixed(2)}`, colAmt, baseY + 18)
-      pdf.font("Helvetica-Bold").text("Total", colPrice, baseY + 36)
-      pdf.text(`₹${grand.toFixed(2)}`, colAmt, baseY + 36)
+      pdf.font("Helvetica-Bold").text("Total", colPrice, baseY + 18)
+      pdf.text(`₹${grand.toFixed(2)}`, colAmt, baseY + 18)
       pdf.moveDown(0.2)
       pdf.fontSize(11).fillColor("#111827").text(`Amount in words: ${amountInWords(grand)}`, 50, pdf.y)
       pdf.moveDown(0.2)
@@ -193,20 +207,34 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       headers["Content-Disposition"] = download ? `attachment; filename="${fname}"` : `inline; filename="${fname}"`
       return new NextResponse(buf, { status: 200, headers })
     }
-    const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
-    const FEE_RATE = Number(process.env.RAZORPAY_FEE_PERCENT || process.env.NEXT_PUBLIC_RAZORPAY_FEE_PERCENT || 2) / 100
     const buyerState = String(doc.state || "").trim().toLowerCase()
     const sellerSt = String(sellerState || "").trim().toLowerCase()
-    let igst = 0, cgst = 0, sgst = 0
-    if (buyerState && sellerSt && buyerState !== sellerSt) {
-      igst = sum * GST_RATE
-    } else {
-      cgst = sum * (GST_RATE / 2)
-      sgst = sum * (GST_RATE / 2)
+
+    let subtotalVal = Number(doc.subtotal || 0)
+    let taxTotal = Number(doc.tax || 0)
+    let grand = Number(doc.amount || 0)
+
+    if (!doc.subtotal && !doc.tax) {
+       subtotalVal = sum
+       const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
+       if (buyerState && sellerSt && buyerState !== sellerSt) {
+           taxTotal = subtotalVal * GST_RATE
+       } else {
+           taxTotal = subtotalVal * GST_RATE
+       }
+       if (!grand) grand = subtotalVal + taxTotal
     }
-    const taxTotal = igst + cgst + sgst
-    const platformFee = (sum + taxTotal) * FEE_RATE
-    const grand = sum + taxTotal + platformFee
+
+    let igst = 0, cgst = 0, sgst = 0
+    if (taxTotal > 0) {
+      if (buyerState && sellerSt && buyerState !== sellerSt) {
+        igst = taxTotal
+      } else {
+        cgst = taxTotal / 2
+        sgst = taxTotal / 2
+      }
+    }
+    
     const qrString = encodeURIComponent(`Order: ${doc.orderNumber || ""}; Status: ${doc.status || ""}; Total: ₹${grand.toFixed(2)}; Email: ${doc.buyerEmail || ""}`)
     const amountWordsText = amountInWords(grand)
     const html = `
@@ -287,12 +315,11 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   <div class="box">
     <table>
       <tbody>
-        <tr><td>Subtotal</td><td style="text-align:right;">₹${sum.toFixed(2)}</td></tr>
+        <tr><td>Subtotal</td><td style="text-align:right;">₹${subtotalVal.toFixed(2)}</td></tr>
         ${igst > 0
-          ? `<tr><td>IGST (${(GST_RATE * 100).toFixed(2)}%)</td><td style="text-align:right;">₹${igst.toFixed(2)}</td></tr>`
-          : `<tr><td>CGST (${((GST_RATE * 100) / 2).toFixed(2)}%)</td><td style="text-align:right;">₹${cgst.toFixed(2)}</td></tr>
-             <tr><td>SGST (${((GST_RATE * 100) / 2).toFixed(2)}%)</td><td style="text-align:right;">₹${sgst.toFixed(2)}</td></tr>`}
-        <tr><td>Platform Fee (${(FEE_RATE * 100).toFixed(2)}%)</td><td style="text-align:right;">₹${platformFee.toFixed(2)}</td></tr>
+          ? `<tr><td>IGST</td><td style="text-align:right;">₹${igst.toFixed(2)}</td></tr>`
+          : `<tr><td>CGST</td><td style="text-align:right;">₹${cgst.toFixed(2)}</td></tr>
+             <tr><td>SGST</td><td style="text-align:right;">₹${sgst.toFixed(2)}</td></tr>`}
         <tr><td class="total">Total</td><td class="total" style="text-align:right;">₹${grand.toFixed(2)}</td></tr>
       </tbody>
     </table>

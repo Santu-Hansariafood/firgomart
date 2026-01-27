@@ -57,7 +57,11 @@ export async function GET(request: Request) {
     const conn = await connectDB()
     const Order = getOrderModel(conn)
     const q: any = {}
-    if (status) q.status = status
+    if (status) {
+      q.status = status
+    } else {
+      q.status = { $nin: ["pending", "failed"] }
+    }
     if (country) q.country = { $regex: new RegExp(`^${country}$`, "i") }
     if (state) q.state = { $regex: new RegExp(`^${state}$`, "i") }
     if (buyerEmail) q.buyerEmail = { $regex: new RegExp(`^${buyerEmail}$`, "i") }

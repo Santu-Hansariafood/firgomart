@@ -12,6 +12,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
     const body = await request.json()
     let trackingNumber = String(body?.trackingNumber || "").trim()
     let courier = String(body?.courier || "").trim()
+    let invoiceUrl = String(body?.invoiceUrl || "").trim()
     const sellerEmail = String(body?.sellerEmail || "").trim()
     if (!sellerEmail) {
       return NextResponse.json({ error: "sellerEmail required" }, { status: 400 })
@@ -39,6 +40,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
         if (!created) throw new Error("No shipment generated for this seller")
         trackingNumber = created.trackingNumber
         courier = created.courier
+        invoiceUrl = created.invoiceUrl || ""
       } catch (err: any) {
         const msg = err?.message || "Shiprocket error"
         return NextResponse.json({ error: "Failed to create Shiprocket shipment", reason: msg }, { status: 502 })
@@ -62,6 +64,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
         sellerEmail,
         trackingNumber,
         courier,
+        invoiceUrl: invoiceUrl || undefined,
         status: "shipped",
         origin: order.city || order.state,
         destination: order.city || order.state,
@@ -75,6 +78,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ id: string
           sellerEmail,
           trackingNumber,
           courier,
+          invoiceUrl: invoiceUrl || undefined,
           status: "shipped",
           lastUpdate: new Date(),
         },

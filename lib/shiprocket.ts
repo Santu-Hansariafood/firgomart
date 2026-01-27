@@ -55,6 +55,25 @@ export async function getShiprocketToken() {
   return token
 }
 
+async function generateInvoice(token: string, orderId: string | number) {
+  const base = getShiprocketBaseUrl()
+  try {
+    const res = await fetch(`${base}/v1/external/orders/print/invoice`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ids: [orderId] }),
+    })
+    if (res.ok) {
+       const data = await res.json()
+       return data.invoice_url || null
+    }
+  } catch {}
+  return null
+}
+
 async function getOrCreatePickupLocation(token: string, seller: any) {
   if (!seller) return process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
   
@@ -261,6 +280,7 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
       
       const created = await createRes.json()
       const shipmentId = created?.shipment_id || created?.shipmentId
+      const srOrderId = created?.order_id || created?.orderId
       if (!shipmentId) continue
 
       const awbPayload: any = { shipment_id: shipmentId }
@@ -283,13 +303,20 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
          const awbData = await awbRes.json()
          const awbCode = awbData?.awb_code || awbData?.awbCode
          const courierName = awbData?.courier_name || awbData?.courierName || ""
+         
+         let invoiceUrl = null
+         if (srOrderId) {
+           invoiceUrl = await generateInvoice(token, srOrderId)
+         }
+
          if (awbCode) {
            shipments.push({
              trackingNumber: String(awbCode),
              courier: courierName ? String(courierName) : "Shiprocket",
              shipmentId: shipmentId,
              items: groupItems,
-             sellerEmail
+             sellerEmail,
+             invoiceUrl,
            })
          }
       } else {

@@ -17,6 +17,7 @@ const ShipmentSchema = new Schema(
     sellerEmail: { type: String, index: true },
     trackingNumber: { type: String, index: true },
     courier: { type: String, index: true },
+    invoiceUrl: { type: String },
     status: { type: String, index: true },
     origin: { type: String },
     destination: { type: String },

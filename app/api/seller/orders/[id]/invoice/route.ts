@@ -97,26 +97,56 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         y += 18
       }
       pdf.moveTo(startX, y + 2).lineTo(pdf.page.width - 50, y + 2).stroke("#e5e7eb")
-      const GST_RATE = 0.18
       const buyerState = String(doc.state || "").trim().toLowerCase()
       const sellerSt = String(sellerState || "").trim().toLowerCase()
+      
+      let taxTotal = 0
+      let useStoredTax = true
+      
+      for (const it of items) {
+         if (typeof it.gstAmount === 'number') {
+             taxTotal += it.gstAmount
+         } else {
+             useStoredTax = false
+             break
+         }
+      }
+
+      // Fallback: check order-level tax if this is a full order
+      if (!useStoredTax && items.length === (doc.items || []).length && typeof doc.tax === 'number') {
+          taxTotal = doc.tax
+          useStoredTax = true
+      }
+
+      // Final Fallback: calculate manually
+      if (!useStoredTax) {
+          const GST_RATE = Number(process.env.GST_PERCENT || process.env.NEXT_PUBLIC_GST_PERCENT || 18) / 100
+          taxTotal = sum * GST_RATE
+      }
+
       let igst = 0, cgst = 0, sgst = 0
       if (buyerState && sellerSt && buyerState !== sellerSt) {
-        igst = sum * GST_RATE
+        igst = taxTotal
       } else {
-        cgst = sum * (GST_RATE / 2)
-        sgst = sum * (GST_RATE / 2)
+        cgst = taxTotal / 2
+        sgst = taxTotal / 2
       }
-      const grand = sum + igst + cgst + sgst
+      
+      let grand = sum + taxTotal
+      // Use stored amount if full order to avoid rounding diffs
+      if (items.length === (doc.items || []).length && typeof doc.amount === 'number') {
+          grand = doc.amount
+      }
+
       pdf.fontSize(12).fillColor("#111827").text("Subtotal", colPrice, y + 10)
       pdf.text(`₹${sum.toFixed(2)}`, colAmt, y + 10)
       if (igst > 0) {
-        pdf.text("IGST (18%)", colPrice, y + 28)
+        pdf.text("IGST", colPrice, y + 28)
         pdf.text(`₹${igst.toFixed(2)}`, colAmt, y + 28)
       } else {
-        pdf.text("CGST (9%)", colPrice, y + 28)
+        pdf.text("CGST", colPrice, y + 28)
         pdf.text(`₹${cgst.toFixed(2)}`, colAmt, y + 28)
-        pdf.text("SGST (9%)", colPrice, y + 46)
+        pdf.text("SGST", colPrice, y + 46)
         pdf.text(`₹${sgst.toFixed(2)}`, colAmt, y + 46)
       }
       pdf.font("Helvetica-Bold").text("Total", colPrice, y + (igst > 0 ? 46 : 64))

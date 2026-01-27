@@ -121,6 +121,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       status: srStatus || shipment?.status || order.status,
       trackingNumber: shipment?.trackingNumber || null,
       courier: shipment?.courier || null,
+      invoiceUrl: shipment?.invoiceUrl || null,
       tracking,
       lastUpdate: srLastUpdate || shipment?.lastUpdate || null,
       events: srEvents || (Array.isArray(shipment?.events) ? shipment.events : []),

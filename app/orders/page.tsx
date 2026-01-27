@@ -183,7 +183,7 @@
                       </div>
                     )}
                     
-                    {(trackingData.courier || trackingData.trackingNumber) && (
+                    {(trackingData.courier || trackingData.trackingNumber || trackingData.invoiceUrl) && (
                       <div className="bg-gray-50 p-3 rounded-lg border space-y-2">
                         {trackingData.courier && (
                           <div>
@@ -196,6 +196,19 @@
                             <div className="text-xs text-gray-500 uppercase">Tracking Number</div>
                             <div className="font-medium text-gray-900 font-mono">{trackingData.trackingNumber}</div>
                           </div>
+                        )}
+                        {trackingData.invoiceUrl && (
+                           <div className="pt-2 border-t border-gray-200 mt-2">
+                              <a 
+                                href={trackingData.invoiceUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 text-brand-purple font-medium hover:underline"
+                              >
+                                <FileText className="w-4 h-4" />
+                                Download Shipping Invoice
+                              </a>
+                           </div>
                         )}
                       </div>
                     )}
