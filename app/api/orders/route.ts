@@ -141,6 +141,27 @@ export async function POST(request: Request) {
       })
     }
 
+    // Check for duplicate pending orders (created in last 5 minutes)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+    const existingOrder = await (Order as any).findOne({
+      buyerEmail: buyerEmail || undefined,
+      status: "pending",
+      amount: finalAmount,
+      createdAt: { $gte: fiveMinutesAgo },
+    }).sort({ createdAt: -1 })
+
+    if (existingOrder) {
+      // Check if items count matches to be reasonably sure it's the same cart
+      if (Array.isArray(existingOrder.items) && existingOrder.items.length === orderItems.length) {
+         return NextResponse.json({ order: {
+           id: String(existingOrder._id),
+           orderNumber: existingOrder.orderNumber,
+           status: existingOrder.status,
+           amount: existingOrder.amount,
+         }}, { status: 201 })
+      }
+    }
+
     const docs = await (Order as unknown as {
       create: (arr: unknown[]) => Promise<unknown[]>
     }).create([{

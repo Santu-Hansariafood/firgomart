@@ -80,6 +80,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [invalidItems, setInvalidItems] = useState<Array<{ id: number; name: string }>>([])
   const [validating, setValidating] = useState<boolean>(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [deliveryFee, setDeliveryFee] = useState<number>(0)
   const [orderSummary, setOrderSummary] = useState({ subtotal: 0, tax: 0, total: 0, items: [] as any[] })
 
@@ -211,7 +212,9 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   const handlePlaceOrder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (isSubmitting) return
     setCheckoutError(null)
+    setIsSubmitting(true)
     try {
       const payload = {
         buyerEmail: formData.email,
@@ -243,6 +246,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         } else {
           setCheckoutError(data?.error || "Failed to place order")
         }
+        setIsSubmitting(false)
         return
       }
 
@@ -257,6 +261,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           const initData = await safeJson(initRes)
           if (!initRes.ok) {
             setCheckoutError(initData?.errorText || initData?.error || "Failed to initiate Cashfree payment")
+            setIsSubmitting(false)
             return
           }
           const ensureScript = async () => {
@@ -276,6 +281,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           return
         } catch {
           setCheckoutError("Failed to connect to payment gateway")
+          setIsSubmitting(false)
           return
         }
       }
@@ -291,6 +297,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           const initData = await safeJson(initRes)
           if (!initRes.ok) {
             setCheckoutError(initData?.error || initData?.errorText || "Failed to initiate Razorpay payment")
+            setIsSubmitting(false)
             return
           }
           const ensureScript = async () => {
@@ -350,6 +357,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           return
         } catch {
           setCheckoutError("Failed to connect to payment gateway")
+          setIsSubmitting(false)
           return
         }
       }
@@ -359,7 +367,10 @@ const Checkout: React.FC<CheckoutProps> = ({
       if (onRemoveItem) {
         cartItems.forEach(ci => onRemoveItem(ci.id))
       }
-    } catch {}
+    } catch {
+      setIsSubmitting(false)
+      setCheckoutError("An unexpected error occurred. Please try again.")
+    }
   }
 
   if (orderPlaced) {
@@ -659,14 +670,14 @@ const Checkout: React.FC<CheckoutProps> = ({
                     </button>
                     <button
                       type="submit"
-                      disabled={validItems.length === 0}
+                      disabled={validItems.length === 0 || isSubmitting}
                       className={`flex-1 py-3 rounded-lg font-medium transition-all ${
-                        validItems.length === 0
+                        validItems.length === 0 || isSubmitting
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                           : 'bg-linear-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500'
                       }`}
                     >
-                      Place Order
+                      {isSubmitting ? 'Processing...' : 'Place Order'}
                     </button>
                   </div>
                   {checkoutError && (
