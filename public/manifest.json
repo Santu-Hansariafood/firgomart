@@ -5,7 +5,7 @@
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#7800C8",
+  "theme_color": "#ffffff",
   "description": "Global online shopping platform with international delivery from India.",
   "lang": "en",
   "categories": ["shopping", "lifestyle", "ecommerce"],
