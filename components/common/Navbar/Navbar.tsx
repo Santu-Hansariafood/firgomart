@@ -125,9 +125,9 @@ const Navbar: React.FC = () => {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-[var(--background)] text-[var(--foreground)] shadow-md">
-      <div className="max-w-screen-xl mx-auto px-3 sm:px-4">
-        <div className="flex items-center justify-between min-h-[3.5rem] sm:min-h-[4rem] md:min-h-[5rem] py-2">
+    <nav className="sticky top-0 z-50 bg-background text-foreground shadow-md">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between min-h-14 sm:min-h-16 md:min-h-20 py-2">
 
           <Link href="/" className="flex items-center space-x-2">
             <div className="relative w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20">
@@ -153,7 +153,7 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-4 flex-none">
             <Link
               href="/seller-registration"
-              className="flex items-center space-x-2 px-4 py-2 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 text-brand-purple hover:bg-foreground/10 rounded-lg transition-colors"
             >
               <Store className="w-5 h-5" />
               <span className="font-medium">Sell on Firgomart</span>
@@ -164,10 +164,10 @@ const Navbar: React.FC = () => {
                 <div className="relative flex items-center space-x-3">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 rounded-lg transition-colors"
                   >
                     {sellerInfo?.businessLogoUrl ? (
-                      <div className="relative w-8 h-8 rounded-full overflow-hidden border border-[var(--foreground)/20]">
+                      <div className="relative w-8 h-8 rounded-full overflow-hidden border border-foreground/20">
                         <Image
                           src={sellerInfo.businessLogoUrl}
                           alt={sellerInfo.businessName || "Seller"}
@@ -177,13 +177,13 @@ const Navbar: React.FC = () => {
                         />
                       </div>
                     ) : (
-                      <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
+                      <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center border border-red-600">
                         <span className="text-base font-black text-red-700 leading-none">
                           {getInitials(sellerInfo?.businessName || user?.name, user?.email)}
                         </span>
                       </div>
                     )}
-                    <span className="font-medium truncate max-w-[10rem]">
+                    <span className="font-medium truncate max-w-40">
                       {sellerInfo?.businessName || user?.name || user?.email}
                     </span>
                     <ChevronDown className="w-4 h-4" />
@@ -195,14 +195,14 @@ const Navbar: React.FC = () => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 mt-2 w-[22rem] bg-[var(--background)] text-[var(--foreground)] rounded-lg shadow-lg py-2 z-50 border border-[var(--foreground)/10]"
+                        className="absolute right-0 mt-2 w-88 bg-background text-foreground rounded-lg shadow-lg py-2 z-50 border border-[var(--foreground)/10]"
                       >
                         <div className="px-4 py-3">
                           <div className="font-semibold mb-2">Seller Details</div>
                           <div className="grid grid-cols-2 gap-3 text-sm">
                             <div>
                               <div className="text-[var(--foreground)/60]">Business Name</div>
-                              <div className="font-medium break-words">{sellerInfo?.businessName || "—"}</div>
+                              <div className="font-medium word-break-word">{sellerInfo?.businessName || "—"}</div>
                             </div>
                             <div>
                               <div className="text-[var(--foreground)/60]">Owner Name</div>
@@ -210,7 +210,7 @@ const Navbar: React.FC = () => {
                             </div>
                             <div>
                               <div className="text-[var(--foreground)/60]">Email</div>
-                              <div className="font-medium break-words">{sellerInfo?.email || user?.email || "—"}</div>
+                              <div className="font-medium word-break-word">{sellerInfo?.email || user?.email || "—"}</div>
                             </div>
                             <div>
                               <div className="text-[var(--foreground)/60]">Phone</div>
@@ -226,7 +226,7 @@ const Navbar: React.FC = () => {
                             </div>
                             <div className="col-span-2">
                               <div className="text-[var(--foreground)/60]">Address</div>
-                              <div className="font-medium break-words">
+                              <div className="font-medium word-break-word">
                                 {[
                                   sellerInfo?.address,
                                   sellerInfo?.city,
@@ -247,7 +247,7 @@ const Navbar: React.FC = () => {
                           <Link
                             href="/seller/profile"
                             onClick={() => setShowUserMenu(false)}
-                            className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors rounded-lg"
+                            className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 transition-colors rounded-lg"
                           >
                             <User className="w-4 h-4" />
                             <span>Seller Profile</span>
@@ -269,9 +269,9 @@ const Navbar: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 rounded-lg transition-colors"
                   >
-                    <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
+                    <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center border border-red-600">
                       <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                     </div>
                     <span className="font-medium">{user?.name?.split(" ")[0] || user?.email}</span>
@@ -284,12 +284,12 @@ const Navbar: React.FC = () => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 mt-2 w-48 bg-[var(--background)] text-[var(--foreground)] rounded-lg shadow-lg py-2 z-50"
+                        className="absolute right-0 mt-2 w-48 bg-background text-foreground rounded-lg shadow-lg py-2 z-50"
                       >
                         <Link
                           href="/profile"
                           onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 transition-colors"
                         >
                           <User className="w-4 h-4" />
                           <span>My Profile</span>
@@ -297,7 +297,7 @@ const Navbar: React.FC = () => {
                         <Link
                           href="/orders"
                           onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] transition-colors"
+                          className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 transition-colors"
                         >
                           <Truck className="w-4 h-4" />
                           <span>My Orders</span>
@@ -332,7 +332,7 @@ const Navbar: React.FC = () => {
             )}
             <button
               onClick={() => setShowCart(true)}
-              className="relative flex items-center space-x-2 px-4 py-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg transition-colors"
+              className="relative flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 rounded-lg transition-colors"
               suppressHydrationWarning
             >
               <ShoppingCart className="w-5 h-5" />
@@ -345,7 +345,7 @@ const Navbar: React.FC = () => {
             </button>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-[var(--foreground)/10] transition-colors"
+              className="p-2 rounded-lg hover:bg-foreground/10 transition-colors"
               aria-label="Toggle theme"
               title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
             >
@@ -354,7 +354,7 @@ const Navbar: React.FC = () => {
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
+            className="md:hidden p-2 text-foreground hover:bg-foreground/10 rounded-lg"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -375,14 +375,14 @@ const Navbar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[var(--background)] border-t border-[var(--foreground)/20]"
+            className="md:hidden bg-background border-t border-foreground/20"
           >
             <div className="px-4 py-4 space-y-3">
               {!isAuthenticated && (
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => { setShowLoginModal(true); setMobileMenuOpen(false) }}
-                    className="px-4 py-3 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg font-medium transition-colors"
+                    className="px-4 py-3 text-brand-purple hover:bg-foreground/10 rounded-lg font-medium transition-colors"
                   >
                     Login
                   </button>
@@ -396,12 +396,12 @@ const Navbar: React.FC = () => {
               )}
               {isAuthenticated && (
               <div className="space-y-3">
-                <div className="flex items-center justify-between px-4 py-3 bg-[var(--foreground)/5] rounded-lg">
+                <div className="flex items-center justify-between px-4 py-3 bg-foreground/5 rounded-lg">
                 <div className="flex items-center space-x-2">
-                    <div className="w-8 h-8 bg-[var(--background)] rounded-full flex items-center justify-center border border-red-600">
+                    <div className="w-8 h-8 bg-background rounded-full flex items-center justify-center border border-red-600">
                       <span className="text-base font-black text-red-700 leading-none">{initials}</span>
                     </div>
-                    <span className="font-medium truncate max-w-[10rem]">
+                    <span className="font-medium truncate max-w-40">
                       {user?.name?.split(" ")[0] || user?.email}
                     </span>
                   </div>
@@ -416,7 +416,7 @@ const Navbar: React.FC = () => {
                 <Link
                   href="/profile"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center space-x-2 px-4 py-3 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
+                  className="flex items-center space-x-2 px-4 py-3 text-foreground hover:bg-foreground/10 rounded-lg"
                 >
                   <User className="w-5 h-5" />
                   <span className="font-medium">My Profile</span>
@@ -426,7 +426,7 @@ const Navbar: React.FC = () => {
               <Link
                 href="/seller-registration"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center space-x-2 px-4 py-3 text-brand-purple hover:bg-[var(--foreground)/10] rounded-lg"
+                className="flex items-center space-x-2 px-4 py-3 text-brand-purple hover:bg-foreground/10 rounded-lg"
               >
                 <Store className="w-5 h-5" />
                 <span className="font-medium">Sell on Firgomart</span>
@@ -436,7 +436,7 @@ const Navbar: React.FC = () => {
                   setShowCart(true)
                   setMobileMenuOpen(false)
                 }}
-                className="w-full flex items-center justify-between px-4 py-3 text-[var(--foreground)] hover:bg-[var(--foreground)/10] rounded-lg"
+                className="w-full flex items-center justify-between px-4 py-3 text-foreground hover:bg-foreground/10 rounded-lg"
                 suppressHydrationWarning
               >
                 <div className="flex items-center space-x-2">

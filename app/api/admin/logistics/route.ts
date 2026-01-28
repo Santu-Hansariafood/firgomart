@@ -81,6 +81,11 @@ export async function GET(request: Request) {
       destination: s.destination,
       lastUpdate: s.lastUpdate || s.updatedAt || s.createdAt,
       eventsCount: Array.isArray(s.events) ? s.events.length : 0,
+      labelUrl: s.labelUrl,
+      invoiceUrl: s.invoiceUrl,
+      manifestUrl: s.manifestUrl,
+      awbCode: s.awbCode,
+      shiprocketShipmentId: s.shiprocketShipmentId,
     }))
     return NextResponse.json({ shipments: safe, total })
   } catch (err: any) {

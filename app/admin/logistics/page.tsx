@@ -22,6 +22,11 @@ type ShipmentRow = {
   destination?: string
   lastUpdate?: string
   eventsCount?: number
+  labelUrl?: string
+  invoiceUrl?: string
+  manifestUrl?: string
+  awbCode?: string
+  shiprocketShipmentId?: string
 }
 
 type DropdownItem = { id: string | number; label: string }
@@ -78,8 +83,40 @@ export default function Page() {
     { id: "Delhivery", label: "Delhivery" },
     { id: "BlueDart", label: "BlueDart" },
     { id: "DTDC", label: "DTDC" },
+    { id: "Shiprocket", label: "Shiprocket" },
   ]
   const [selectedCourier, setSelectedCourier] = useState<DropdownItem>(courierOptions[0])
+
+  const performShiprocketAction = async (action: string, params: any) => {
+    if (!confirm(`Are you sure you want to ${action.replace("_", " ")}?`)) return
+    try {
+      const res = await fetch("/api/admin/shiprocket", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, ...params })
+      })
+      const d = await res.json()
+      if (res.ok) {
+        alert("Success!")
+        // Refresh
+        const p = new URLSearchParams()
+        p.set("page", String(page))
+        p.set("limit", String(pageSize))
+        const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+        const refreshRes = await fetch(`/api/admin/logistics?${p.toString()}`, {
+           headers: { ...(adminEmail ? { "x-admin-email": adminEmail } : {}) }
+        })
+        const refreshData = await refreshRes.json()
+        if (refreshRes.ok && Array.isArray(refreshData.shipments)) {
+           setRows(refreshData.shipments)
+        }
+      } else {
+        alert(`Failed: ${d.error || d.message}`)
+      }
+    } catch (e: any) {
+      alert(`Error: ${e.message}`)
+    }
+  }
 
   useEffect(() => {
     if (!allowed) return
@@ -157,7 +194,28 @@ export default function Page() {
     ) : (
     <div className="p-4 space-y-6">
       <BackButton className="mb-2" />
-      <h1 className="text-2xl font-semibold">Logistics Management</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Logistics Management</h1>
+        <button
+          onClick={async () => {
+             try {
+               const res = await fetch("/api/admin/shiprocket", {
+                 method: "POST",
+                 headers: { "Content-Type": "application/json" },
+                 body: JSON.stringify({ action: "test_connection" })
+               })
+               const d = await res.json()
+               if (res.ok) alert(d.message)
+               else alert(`Connection Failed: ${d.error || d.message}`)
+             } catch (e: any) {
+               alert(`Error: ${e.message}`)
+             }
+          }}
+          className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+        >
+          Test API Connection
+        </button>
+      </div>
 
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
@@ -208,6 +266,29 @@ export default function Page() {
                   ))}
                 </select>
               ) },
+              { key: "docs", label: "Docs", render: (r) => (
+                <div className="flex flex-col gap-1 text-xs">
+                   {r.labelUrl && <a href={r.labelUrl} target="_blank" className="text-blue-600 hover:underline">Label</a>}
+                   {r.invoiceUrl && <a href={r.invoiceUrl} target="_blank" className="text-blue-600 hover:underline">Invoice</a>}
+                   {r.manifestUrl && <a href={r.manifestUrl} target="_blank" className="text-blue-600 hover:underline">Manifest</a>}
+                </div>
+              )},
+              { key: "sr_actions", label: "SR Actions", render: (r) => (
+                <div className="flex flex-col gap-1">
+                  {r.shiprocketShipmentId && !r.labelUrl && (
+                     <button onClick={() => performShiprocketAction("generate_label", { shipmentId: r.shiprocketShipmentId })} className="text-xs text-purple-600 hover:underline">Gen Label</button>
+                  )}
+                  {r.shiprocketShipmentId && (
+                     <button onClick={() => performShiprocketAction("generate_pickup", { shipmentId: r.shiprocketShipmentId })} className="text-xs text-purple-600 hover:underline">Req Pickup</button>
+                  )}
+                  {r.shiprocketShipmentId && !r.manifestUrl && (
+                     <button onClick={() => performShiprocketAction("generate_manifest", { shipmentId: r.shiprocketShipmentId })} className="text-xs text-purple-600 hover:underline">Gen Manifest</button>
+                  )}
+                  {r.shiprocketShipmentId && (
+                     <button onClick={() => performShiprocketAction("track", { awbCode: r.awbCode || r.trackingNumber })} className="text-xs text-purple-600 hover:underline">Track</button>
+                  )}
+                </div>
+              )},
               { key: "origin", label: "Origin" },
               { key: "destination", label: "Destination" },
               { key: "eventsCount", label: "Transit", render: (r) => String(r.eventsCount || 0) },

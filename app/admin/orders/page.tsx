@@ -450,6 +450,32 @@ export default function Page() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  {selectedOrder.status !== "shipped" && selectedOrder.status !== "delivered" && selectedOrder.status !== "cancelled" && selectedOrder.status !== "refunded" && (
+                    <button
+                      onClick={async () => {
+                         if (!confirm("Create Shiprocket shipment for this order?")) return
+                         try {
+                           const res = await fetch("/api/admin/shiprocket", {
+                             method: "POST",
+                             headers: { "Content-Type": "application/json" },
+                             body: JSON.stringify({ action: "create_order", orderId: selectedOrder.id })
+                           })
+                           const d = await res.json()
+                           if (res.ok) {
+                             alert(`Shipment created! ${d.shipments?.length} shipments generated.`)
+                             // Refresh logic could go here
+                           } else {
+                             alert(`Failed: ${d.error}`)
+                           }
+                         } catch (e: any) {
+                           alert(`Error: ${e.message}`)
+                         }
+                      }}
+                      className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                    >
+                      Ship via Shiprocket
+                    </button>
+                  )}
                   <button
                     onClick={() => window.open(`/print/order/${selectedOrder.id}`, "_blank")}
                     className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"

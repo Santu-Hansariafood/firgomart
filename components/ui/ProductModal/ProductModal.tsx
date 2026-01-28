@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -32,6 +32,8 @@ interface Product {
   dimensionUnit?: string
   weightUnit?: string
   hsnCode?: string
+  selectedSize?: string
+  selectedColor?: string
 }
 
 interface Review {
@@ -85,9 +87,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const nextImage = () => setSelectedImage((prev) => (prev + 1) % images.length)
   const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
 
-  useEffect(() => {
-    setSelectedImage(0)
-  }, [product.id])
 
   useEffect(() => {
     const prevTitle = document.title
@@ -151,13 +150,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
     }
   })()
 
-  useEffect(() => {
-    if (activeTab === 'reviews') {
-      fetchReviews()
-    }
-  }, [activeTab, product.id])
-
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     setLoadingReviews(true)
     try {
       const res = await fetch(`/api/reviews?productId=${product.id}`)
@@ -167,9 +160,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
       }
     } catch {}
     setLoadingReviews(false)
-  }
+  }, [product.id])
 
-  const handleSubmitReview = async () => {
+  const handleSubmitReview = useCallback(async () => {
     if (!session) return
     setSubmittingReview(true)
     try {
@@ -189,7 +182,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
       }
     } catch {}
     setSubmittingReview(false)
-  }
+  }, [session, product.id, userRating, userComment, fetchReviews])
+
 
   const handleBuyNow = () => {
     if ((product.stock ?? 0) > 0) {
@@ -199,7 +193,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
         quantity,
         selectedSize: selectedSize || undefined,
         selectedColor: selectedColor || undefined
-      } as any)
+      })
       onClose()
       router.push('/checkout')
     }
@@ -216,13 +210,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--background)] text-[var(--foreground)] rounded-xl sm:rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col border border-[var(--foreground)/20]"
+          className="bg-background text-foreground rounded-xl sm:rounded-2xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col border border-foreground/20"
         >
-          <div className="sticky top-0 bg-[var(--background)] border-b border-[var(--foreground)/20] px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-20">
+          <div className="sticky top-0 bg-background border-b border-foreground/20 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-20">
             <h2 className="text-xl font-heading font-bold truncate pr-4">{product.name}</h2>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--foreground)/10] transition-colors shrink-0"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -238,7 +232,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 sm:mb-8">
               <div>
               <div
-                className="relative aspect-square rounded-xl overflow-hidden bg-[var(--foreground)/10] mb-4 cursor-pointer"
+                className="relative aspect-square rounded-xl overflow-hidden bg-foreground/10 mb-4 cursor-pointer"
                 onClick={(e) => {
                   if (images.length > 1) {
                     e.stopPropagation()
@@ -257,24 +251,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                 />
                 <button
                   onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
-                  className="absolute top-2 right-2 w-8 h-8 bg-[var(--background)/80] rounded-full flex items-center justify-center shadow hover:bg-[var(--background)] transition-colors z-10"
+                  className="absolute top-2 right-2 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center shadow hover:bg-background transition-colors z-10"
                   aria-label="Open lightbox"
                 >
-                  <ZoomIn className="w-4 h-4 text-[var(--foreground)]" />
+                  <ZoomIn className="w-4 h-4 text-foreground" />
                 </button>
                   {images.length > 1 && (
                     <>
                       <button
                         onClick={(e) => { e.stopPropagation(); prevImage() }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--background)/90] rounded-full flex items-center justify-center shadow-lg hover:bg-[var(--background)] transition-colors z-10"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/90 rounded-full flex items-center justify-center shadow-lg hover:bg-background transition-colors z-10"
                       >
-                        <ChevronLeft className="w-5 h-5 text-[var(--foreground)]" />
+                        <ChevronLeft className="w-5 h-5 text-foreground" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); nextImage() }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-[var(--background)/90] rounded-full flex items-center justify-center shadow-lg hover:bg-[var(--background)] transition-colors z-10"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-background/90 rounded-full flex items-center justify-center shadow-lg hover:bg-background transition-colors z-10"
                       >
-                        <ChevronRight className="w-5 h-5 text-[var(--foreground)]" />
+                        <ChevronRight className="w-5 h-5 text-foreground" />
                       </button>
                     </>
                   )}
@@ -289,7 +283,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         className={`w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-lg overflow-hidden border-2 transition-colors ${
                           selectedImage === idx
                             ? 'border-brand-purple'
-                            : 'border-[var(--foreground)/20] hover:border-brand-purple/50'
+                            : 'border-foreground/20 hover:border-brand-purple/50'
                         }`}
                       >
                         <FallbackImage
@@ -328,7 +322,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     <span className="text-sm font-medium">{product.rating || 0}</span>
                     <Star className="w-3 h-3 fill-current" />
                   </div>
-                  <span className="text-sm text-[var(--foreground)/60] hover:text-brand-purple cursor-pointer" onClick={() => setActiveTab('reviews')}>
+                  <span className="text-sm text-foreground/60 hover:text-brand-purple cursor-pointer" onClick={() => setActiveTab('reviews')}>
                     ({product.reviews ?? 0} reviews)
                   </span>
                 </div>
@@ -354,16 +348,29 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         <h3 className="text-sm font-medium mb-2">Color:</h3>
                         <div className="flex flex-wrap gap-2">
                             {product.colors.map((c, i) => (
-                                <span key={i} className="px-3 py-1 border border-[var(--foreground)/20] rounded-full text-sm hover:border-brand-purple cursor-pointer">{c}</span>
+                                <button
+                                    key={i}
+                                    onClick={() => setSelectedColor(c)}
+                                    className={`px-3 py-1 border rounded-full text-sm transition-colors ${
+                                        selectedColor === c
+                                            ? 'border-brand-purple text-brand-purple bg-brand-purple/10'
+                                            : 'border-foreground/20 hover:border-brand-purple/50'
+                                    }`}
+                                >
+                                    {c}
+                                </button>
                             ))}
                         </div>
                         <div className="flex items-center gap-2 mt-2">
                           {product.colors.map((c, i) => (
-                            <span
+                            <button
                               key={`sw-${i}`}
                               title={c}
                               style={{ background: c }}
-                              className="w-5 h-5 rounded-full border border-[var(--foreground)/20]"
+                              onClick={() => setSelectedColor(c)}
+                              className={`w-5 h-5 rounded-full border-2 transition-colors ${
+                                selectedColor === c ? 'border-brand-purple scale-110' : 'border-foreground/20 hover:scale-105'
+                              }`}
                             />
                           ))}
                         </div>
@@ -374,15 +381,25 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         <h3 className="text-sm font-medium mb-2">Size:</h3>
                         <div className="flex flex-wrap gap-2">
                             {product.sizes.map((s, i) => (
-                                <span key={i} className="px-3 py-1 border border-[var(--foreground)/20] rounded-full text-sm hover:border-brand-purple cursor-pointer">{s}</span>
+                                <button
+                                    key={i}
+                                    onClick={() => setSelectedSize(s)}
+                                    className={`px-3 py-1 border rounded-full text-sm transition-colors ${
+                                        selectedSize === s
+                                            ? 'border-brand-purple text-brand-purple bg-brand-purple/10'
+                                            : 'border-foreground/20 hover:border-brand-purple/50'
+                                    }`}
+                                >
+                                    {s}
+                                </button>
                             ))}
                         </div>
                     </div>
                 )}
                 {product.about && (
-                    <div className="mb-6 p-4 bg-[var(--foreground)/10] rounded-lg">
+                    <div className="mb-6 p-4 bg-foreground/10 rounded-lg">
                         <h3 className="font-medium mb-2">About this item</h3>
-                        <ul className="space-y-1 text-sm text-[var(--foreground)/70] list-disc list-inside">
+                        <ul className="space-y-1 text-sm text-foreground/70 list-disc list-inside">
                             {product.about.split('\n').map((line, i) => (
                                 <li key={i}>{line.replace(/^•\s*/, '')}</li>
                             ))}
@@ -395,14 +412,14 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                   <div className="flex items-center space-x-4">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 border border-[var(--foreground)/20] rounded-lg flex items-center justify-center hover:bg-[var(--foreground)/10] transition-colors"
+                      className="w-10 h-10 border border-foreground/20 rounded-lg flex items-center justify-center hover:bg-foreground/10 transition-colors"
                     >
                       -
                     </button>
                     <span className="text-xl font-medium w-12 text-center">{quantity}</span>
                     <button
                       onClick={() => setQuantity(Math.min(3, quantity + 1))}
-                      className="w-10 h-10 border border-[var(--foreground)/20] rounded-lg flex items-center justify-center hover:bg-[var(--foreground)/10] transition-colors"
+                      className="w-10 h-10 border border-foreground/20 rounded-lg flex items-center justify-center hover:bg-foreground/10 transition-colors"
                     >
                       +
                     </button>
@@ -414,12 +431,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     onClick={() => {
                       if ((product.stock ?? 0) > 0) {
                         if (!validateSelection()) return
-                        onAddToCart({ 
-                          ...product, 
+                        onAddToCart({
+                          ...product,
                           quantity,
                           selectedSize: selectedSize || undefined,
-                          selectedColor: selectedColor || undefined
-                        } as any)
+                          selectedColor: selectedColor || undefined,
+                        })
                         onClose()
                       }
                     }}
@@ -427,7 +444,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     className={`flex-1 px-3 py-2 border rounded-md transition-colors font-medium text-sm flex items-center justify-center space-x-1 ${
                       (product.stock ?? 0) > 0
                         ? 'border-brand-purple text-brand-purple hover:bg-brand-purple/10'
-                        : 'border-[var(--foreground)/20] text-[var(--foreground)/40] cursor-not-allowed'
+                        : 'border-foreground/20 text-foreground/40 cursor-not-allowed'
                     }`}
                   >
                     <ShoppingCart className="w-4 h-4" />
@@ -439,7 +456,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     className={`flex-1 px-3 py-2 rounded-md transition-colors font-medium text-sm ${
                       (product.stock ?? 0) > 0
                         ? 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90'
-                        : 'bg-[var(--foreground)/10] text-[var(--foreground)/40] cursor-not-allowed'
+                        : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
                     }`}
                   >
                     {(product.stock ?? 0) > 0 ? 'Buy Now' : 'Out of Stock'}
@@ -448,24 +465,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
               </div>
             </div>
 
-            <div className="border-t border-[var(--foreground)/20] pt-6">
-                <div className="flex gap-6 border-b border-[var(--foreground)/20] mb-6">
-                    <button onClick={() => setActiveTab('desc')} className={`pb-2 font-medium transition-colors ${activeTab === 'desc' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-[var(--foreground)/60]'}`}>Description</button>
-                    <button onClick={() => setActiveTab('info')} className={`pb-2 font-medium transition-colors ${activeTab === 'info' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-[var(--foreground)/60]'}`}>Additional Info</button>
-                    <button onClick={() => setActiveTab('reviews')} className={`pb-2 font-medium transition-colors ${activeTab === 'reviews' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-[var(--foreground)/60]'}`}>Reviews ({product.reviews ?? 0})</button>
+            <div className="border-t border-foreground/20 pt-6">
+                <div className="flex gap-6 border-b border-foreground/20 mb-6">
+                    <button onClick={() => setActiveTab('desc')} className={`pb-2 font-medium transition-colors ${activeTab === 'desc' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Description</button>
+                    <button onClick={() => setActiveTab('info')} className={`pb-2 font-medium transition-colors ${activeTab === 'info' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Additional Info</button>
+                    <button onClick={() => setActiveTab('reviews')} className={`pb-2 font-medium transition-colors ${activeTab === 'reviews' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Reviews ({product.reviews ?? 0})</button>
                   </div>
 
                 <div className="min-h-[200px]">
                     {activeTab === 'desc' && (
-                      <div className="rounded-xl p-4 bg-gradient-to-br from-brand-purple/5 to-transparent border border-[var(--foreground)/15] shadow-sm">
-                        <div className="text-[var(--foreground)/80] leading-relaxed whitespace-pre-wrap">
+                      <div className="rounded-xl p-4 bg-linear-to-br from-brand-purple/5 to-transparent border border-foreground/15 shadow-sm">
+                        <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap">
                           {product.description || 'No description available.'}
                         </div>
                       </div>
                     )}
                     {activeTab === 'info' && (
-                      <div className="rounded-xl p-4 bg-gradient-to-br from-brand-red/5 to-transparent border border-[var(--foreground)/15] shadow-sm">
-                        <div className="text-[var(--foreground)/80] leading-relaxed whitespace-pre-wrap mb-4">
+                      <div className="rounded-xl p-4 bg-linear-to-br from-brand-red/5 to-transparent border border-foreground/15 shadow-sm">
+                        <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap mb-4">
                           {product.additionalInfo || 'No additional information available.'}
                         </div>
                       </div>
@@ -479,18 +496,18 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                                         {reviewFormOpen ? 'Cancel Review' : 'Write a Review'}
                                     </button>
                                 ) : (
-                                    <p className="text-sm text-[var(--foreground)/60]">Log in to write a review</p>
+                                    <p className="text-sm text-foreground/60">Log in to write a review</p>
                                 )}
                              </div>
 
                              {reviewFormOpen && session && (
-                                 <div className="bg-[var(--foreground)/10] p-4 rounded-lg mb-6">
+                                 <div className="bg-foreground/10 p-4 rounded-lg mb-6">
                                      <div className="mb-4">
                                          <label className="block text-sm font-medium mb-1">Rating</label>
                                          <div className="flex gap-1">
                                              {[1, 2, 3, 4, 5].map(star => (
                                                  <button key={star} onClick={() => setUserRating(star)}>
-                                                     <Star className={`w-6 h-6 ${star <= userRating ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--foreground)/30]'}`} />
+                                                     <Star className={`w-6 h-6 ${star <= userRating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/30'}`} />
                                                  </button>
                                              ))}
                                          </div>
@@ -500,7 +517,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                                          <textarea
                                             value={userComment}
                                             onChange={(e) => setUserComment(e.target.value)}
-                                            className="w-full border border-[var(--foreground)/20] bg-[var(--background)] text-[var(--foreground)] rounded-lg p-2"
+                                            className="w-full border border-foreground/20 bg-background text-foreground rounded-lg p-2"
                                             rows={3}
                                             placeholder="Share your thoughts..."
                                          />
@@ -518,26 +535,26 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                              {loadingReviews ? (
                                  <div className="text-center py-8">Loading reviews...</div>
                              ) : reviews.length === 0 ? (
-                                 <div className="text-center py-8 text-[var(--foreground)/60]">No reviews yet. Be the first to review!</div>
+                                 <div className="text-center py-8 text-foreground/60">No reviews yet. Be the first to review!</div>
                              ) : (
                                  <div className="space-y-4">
                                      {reviews.map((review) => (
-                                         <div key={review._id} className="border-b border-[var(--foreground)/20] pb-4 last:border-0">
+                                         <div key={review._id} className="border-b border-foreground/20 pb-4 last:border-0">
                                              <div className="flex items-center justify-between mb-2">
                                                  <div className="flex items-center gap-2">
-                                                     <div className="w-8 h-8 bg-[var(--foreground)/10] rounded-full flex items-center justify-center">
-                                                         <User className="w-4 h-4 text-[var(--foreground)/60]" />
+                                                     <div className="w-8 h-8 bg-foreground/10 rounded-full flex items-center justify-center">
+                                                         <User className="w-4 h-4 text-foreground/60" />
                                                      </div>
                                                      <span className="font-medium">{review.userName}</span>
                                                  </div>
-                                                 <span className="text-xs text-[var(--foreground)/60]">{new Date(review.createdAt).toLocaleDateString()}</span>
+                                                 <span className="text-xs text-foreground/60">{new Date(review.createdAt).toLocaleDateString()}</span>
                                              </div>
                                              <div className="flex gap-1 mb-2">
                                                  {[...Array(5)].map((_, i) => (
-                                                     <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-[var(--foreground)/30]'}`} />
+                                                     <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/30'}`} />
                                                  ))}
                                              </div>
-                                             <p className="text-[var(--foreground)/70] text-sm">{review.comment}</p>
+                                             <p className="text-foreground/70 text-sm">{review.comment}</p>
                                              </div>
                                          ))}
                                   </div>
@@ -551,7 +568,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
 
           {lightboxOpen && (
             <div
-              className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+              className="fixed inset-0 z-100 bg-black/90 flex items-center justify-center"
               onClick={() => setLightboxOpen(false)}
               role="dialog"
               aria-modal="true"
@@ -578,23 +595,23 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                 />
                 <button
                   onClick={(e) => { e.stopPropagation(); setLightboxOpen(false) }}
-                  className="absolute top-4 right-4 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center z-10"
+                  className="absolute top-4 right-4 w-10 h-10 bg-background/80 rounded-full flex items-center justify-center z-10"
                 >
-                  <X className="w-5 h-5 text-[var(--foreground)]" />
+                  <X className="w-5 h-5 text-foreground" />
                 </button>
                 {images.length > 1 && (
                     <>
                         <button
                         onClick={(e) => { e.stopPropagation(); prevImage() }}
-                        className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center z-10"
+                        className="absolute left-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 rounded-full flex items-center justify-center z-10"
                         >
-                        <ChevronLeft className="w-6 h-6 text-[var(--foreground)]" />
+                        <ChevronLeft className="w-6 h-6 text-foreground" />
                         </button>
                         <button
                         onClick={(e) => { e.stopPropagation(); nextImage() }}
-                        className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/80] rounded-full flex items-center justify-center z-10"
+                        className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 bg-background/80 rounded-full flex items-center justify-center z-10"
                         >
-                        <ChevronRight className="w-6 h-6 text-[var(--foreground)]" />
+                        <ChevronRight className="w-6 h-6 text-foreground" />
                         </button>
                     </>
                 )}

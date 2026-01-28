@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ShoppingCart, Eye, X } from 'lucide-react'
+import { ShoppingCart, Eye, X, ChevronDown } from 'lucide-react'
 import ProductImageSlider from '@/components/common/ProductImageSlider/ProductImageSlider'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
@@ -58,6 +58,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const observerTarget = useRef<HTMLDivElement | null>(null)
   const productsPerPage = 24
   const [geoAsked, setGeoAsked] = useState<boolean>(false)
+  const [sortBy, setSortBy] = useState<string>('relevance')
+  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false)
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
@@ -102,7 +104,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
       const categoryParam = category ? `&category=${encodeURIComponent(category)}` : ''
       const subcategoryParam = subcategory ? `&subcategory=${encodeURIComponent(subcategory)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}`)
+      const sortParam = sortBy !== 'relevance' ? `&sortBy=${encodeURIComponent(sortBy)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -132,7 +135,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory])
+  }, [deliverToState, search, category, subcategory, sortBy])
 
   useEffect(() => {
     const loadInitial = async () => {
@@ -240,13 +243,50 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   }, [category, subcategory, searchParams, router, subcategoryOptionsFor])
 
   return (
-    <section className="py-8 bg-[var(--background)]">
+    <section className="py-8 bg-background">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3">
-          <h2 className="text-xl sm:text-2xl font-heading font-bold text-[var(--foreground)]">FirgoMart Products</h2>
-          <p className="text-[var(--foreground)/60] hidden md:block whitespace-nowrap">
+          <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground">FirgoMart Products</h2>
+          <p className="text-foreground/60 hidden md:block whitespace-nowrap">
             {displayedProducts.length} products
           </p>
+          <div className="relative">
+            <button
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-colors"
+              onClick={() => setIsSortDropdownOpen((prev) => !prev)}
+            >
+              Sort By: {sortBy === 'relevance' ? 'Relevance' : sortBy === 'price-asc' ? 'Price: Low to High' : sortBy === 'price-desc' ? 'Price: High to Low' : 'Rating'}
+              <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : 'rotate-0'}`} />
+            </button>
+            {isSortDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-background border border-foreground/20 rounded-lg shadow-lg z-10">
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                  onClick={() => { setSortBy('relevance'); setIsSortDropdownOpen(false); setPage(1) }}
+                >
+                  Relevance
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                  onClick={() => { setSortBy('price-asc'); setIsSortDropdownOpen(false); setPage(1) }}
+                >
+                  Price: Low to High
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                  onClick={() => { setSortBy('price-desc'); setIsSortDropdownOpen(false); setPage(1) }}
+                >
+                  Price: High to Low
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                  onClick={() => { setSortBy('rating'); setIsSortDropdownOpen(false); setPage(1) }}
+                >
+                  Rating
+                </button>
+              </div>
+            )}
+          </div>
         </div>
         {category && subcategoryOptionsFor(category).length > 0 && (
           <div className="mb-6">
@@ -264,8 +304,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     }}
                     className={`inline-flex items-center px-3 py-1.5 rounded-full border text-xs sm:text-sm transition ${
                       active
-                        ? 'bg-brand-purple text-white border-brand-purple'
-                        : 'bg-[var(--background)] text-[var(--foreground)/70] border-[var(--foreground)/20] hover:border-brand-purple/40'
+                        ? 'bg-brand-purple text-white border-brand-purple shadow-sm'
+                        : 'bg-background text-foreground/70 border-foreground/20 hover:border-brand-purple/40 hover:text-brand-purple/80'
                     }`}
                   >
                     {opt.label}
@@ -291,18 +331,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         {displayedProducts.length === 0 && loading ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 md:gap-4 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-[var(--background)] rounded-xl overflow-hidden shadow-sm border border-[var(--foreground)/10]">
-                <div className="aspect-square bg-[var(--foreground)/10] animate-pulse" />
+              <div key={i} className="bg-background rounded-xl overflow-hidden shadow-sm border border-[var(--foreground)/10]">
+                <div className="aspect-square bg-foreground/10 animate-pulse" />
                 <div className="p-2 sm:p-4 space-y-2">
-                  <div className="h-3 sm:h-4 bg-[var(--foreground)/10] rounded w-3/4 animate-pulse" />
-                  <div className="h-2.5 sm:h-3 bg-[var(--foreground)/10] rounded w-1/2 animate-pulse" />
-                  <div className="h-6 sm:h-8 bg-[var(--foreground)/10] rounded w-full animate-pulse" />
+                  <div className="h-3 sm:h-4 bg-foreground/10 rounded w-3/4 animate-pulse" />
+                  <div className="h-2.5 sm:h-3 bg-foreground/10 rounded w-1/2 animate-pulse" />
+                  <div className="h-6 sm:h-8 bg-foreground/10 rounded w-full animate-pulse" />
                 </div>
               </div>
             ))}
           </div>
         ) : displayedProducts.length === 0 ? (
-          <div className="bg-[var(--background)] border border-[var(--foreground)/20] rounded-xl p-6 text-center text-[var(--foreground)/60]">No products available</div>
+          <div className="bg-background border border-foreground/20 rounded-xl p-6 text-center text-foreground/60">No products available</div>
         ) : (
           <motion.div
             variants={staggerContainer}
@@ -315,10 +355,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
               <motion.div
                 key={product.id}
                 variants={fadeInUp}
-                className="bg-[var(--background)] rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-[var(--foreground)/10]"
+                className="bg-background rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow border border-[var(--foreground)/10]"
               >
                 <div 
-                  className="relative aspect-square sm:aspect-[3/4] overflow-hidden bg-gray-100 group cursor-pointer"
+                  className="relative aspect-square sm:aspect-3/4 overflow-hidden bg-gray-100 group cursor-pointer"
                   onClick={() => onProductClick(product)}
                 >
                   <ProductImageSlider
@@ -346,21 +386,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                 </div>
                 <div className="p-2 sm:p-4">
                   <h3 
-                    className="text-[11px] sm:text-sm font-semibold text-[var(--foreground)] group-hover/card:text-brand-purple active:text-purple-700 transition-colors mb-1 leading-snug line-clamp-2 cursor-pointer"
+                    className="text-[11px] sm:text-sm font-semibold text-foreground group-hover/card:text-brand-purple active:text-purple-700 transition-colors mb-1 leading-snug line-clamp-2 cursor-pointer"
                     onClick={() => onProductClick(product)}
                   >
                     {product.name}
                   </h3>
-                  <p className="hidden sm:block text-xs text-[var(--foreground)/60] mb-2">
+                  <p className="hidden sm:block text-xs text-foreground/60 mb-2">
                     {product.category}
                     {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 ? ` • Pack of ${product.unitsPerPack}` : ''}
                   </p>
                   <div className="flex items-center justify-between mb-2 sm:mb-3">
                     <div>
-                      <span className="text-sm sm:text-lg font-bold text-[var(--foreground)]">₹{formatPrice(product.price)}</span>
+                      <span className="text-sm sm:text-lg font-bold text-foreground">₹{formatPrice(product.price)}</span>
                       {product.originalPrice && (
                         <>
-                          <span className="text-[11px] sm:text-sm text-[var(--foreground)/50] line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
+                          <span className="text-[11px] sm:text-sm text-foreground/50 line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
                           {product.discount && (
                             <span className="text-[10px] sm:text-xs text-green-600 font-bold ml-2">
                                 {product.discount}% OFF
@@ -372,7 +412,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     {typeof product.rating === "number" && (
                       <div className="flex items-center space-x-1">
                         <span className="text-yellow-500">★</span>
-                        <span className="text-[10px] sm:text-sm text-[var(--foreground)/60]">{product.rating}</span>
+                        <span className="text-[10px] sm:text-sm text-foreground/60">{product.rating}</span>
                       </div>
                     )}
                   </div>
@@ -394,7 +434,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                       className={`flex-1 px-2 py-2 sm:px-3 sm:py-2 rounded-lg transition-colors text-[11px] sm:text-sm font-medium flex items-center justify-center space-x-1 ${
                         (product.stock ?? 0) > 0
                           ? 'bg-brand-purple text-white hover:bg-brand-purple/90'
-                          : 'bg-[var(--foreground)/10] text-[var(--foreground)/40] cursor-not-allowed'
+                          : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
                       }`}
                     >
                       <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -409,7 +449,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         {hasMore && (
           <div ref={observerTarget} className="flex justify-center mt-8">
             {loading && (
-              <div className="flex items-center space-x-2 text-[var(--foreground)/60]">
+              <div className="flex items-center space-x-2 text-foreground/60">
                 <div className="w-6 h-6 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
                 <BeautifulLoader />
               </div>

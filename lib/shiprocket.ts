@@ -55,7 +55,7 @@ export async function getShiprocketToken() {
   return token
 }
 
-async function generateInvoice(token: string, orderId: string | number) {
+export async function generateInvoice(token: string, orderId: string | number) {
   const base = getShiprocketBaseUrl()
   try {
     const res = await fetch(`${base}/v1/external/orders/print/invoice`, {
@@ -72,6 +72,120 @@ async function generateInvoice(token: string, orderId: string | number) {
     }
   } catch {}
   return null
+}
+
+export async function checkServiceability(token: string, params: {
+  pickup_postcode: string,
+  delivery_postcode: string,
+  weight: string,
+  cod: number
+}) {
+  const base = getShiprocketBaseUrl()
+  const query = new URLSearchParams({
+    pickup_postcode: params.pickup_postcode,
+    delivery_postcode: params.delivery_postcode,
+    weight: params.weight,
+    cod: String(params.cod)
+  }).toString()
+
+  const res = await fetch(`${base}/v1/external/courier/serviceability/?${query}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  
+  if (!res.ok) {
+    throw new Error(`Serviceability check failed: ${res.statusText}`)
+  }
+  return res.json()
+}
+
+export async function requestPickup(token: string, shipmentId: string | number) {
+  const base = getShiprocketBaseUrl()
+  const res = await fetch(`${base}/v1/external/courier/generate/pickup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ shipment_id: [shipmentId] }),
+  })
+  
+  if (!res.ok) {
+     const d = await res.json().catch(() => ({}))
+     throw new Error(d.message || "Pickup generation failed")
+  }
+  return res.json()
+}
+
+export async function generateManifest(token: string, shipmentId: string | number) {
+  const base = getShiprocketBaseUrl()
+  const res = await fetch(`${base}/v1/external/manifests/generate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ shipment_id: [shipmentId] }),
+  })
+  
+  if (!res.ok) {
+     const d = await res.json().catch(() => ({}))
+     throw new Error(d.message || "Manifest generation failed")
+  }
+  return res.json()
+}
+
+export async function printManifest(token: string, orderId: string | number) {
+  const base = getShiprocketBaseUrl()
+  const res = await fetch(`${base}/v1/external/manifests/print`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ order_ids: [orderId] }),
+  })
+  
+  if (!res.ok) {
+     const d = await res.json().catch(() => ({}))
+     throw new Error(d.message || "Manifest print failed")
+  }
+  return res.json()
+}
+
+export async function generateLabel(token: string, shipmentId: string | number) {
+  const base = getShiprocketBaseUrl()
+  const res = await fetch(`${base}/v1/external/courier/generate/label`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ shipment_id: [shipmentId] }),
+  })
+  
+  if (!res.ok) {
+     const d = await res.json().catch(() => ({}))
+     throw new Error(d.message || "Label generation failed")
+  }
+  return res.json()
+}
+
+export async function trackShipment(token: string, awbCode: string) {
+  const base = getShiprocketBaseUrl()
+  const res = await fetch(`${base}/v1/external/courier/track/awb/${awbCode}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+  
+  if (!res.ok) {
+     throw new Error("Tracking failed")
+  }
+  return res.json()
 }
 
 async function getOrCreatePickupLocation(token: string, seller: any) {
@@ -309,14 +423,22 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
            invoiceUrl = await generateInvoice(token, srOrderId)
          }
 
+         let labelUrl = null
+         if (shipmentId) {
+            const l = await generateLabel(token, shipmentId).catch(() => ({}))
+            labelUrl = l?.label_url || l?.label_created_at || null // Shiprocket label response usually has label_url
+         }
+
          if (awbCode) {
            shipments.push({
              trackingNumber: String(awbCode),
              courier: courierName ? String(courierName) : "Shiprocket",
              shipmentId: shipmentId,
+             shiprocketOrderId: srOrderId,
              items: groupItems,
              sellerEmail,
              invoiceUrl,
+             labelUrl,
            })
          }
       } else {
