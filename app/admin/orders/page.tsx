@@ -453,7 +453,7 @@ export default function Page() {
                   {selectedOrder.status !== "shipped" && selectedOrder.status !== "delivered" && selectedOrder.status !== "cancelled" && selectedOrder.status !== "refunded" && (
                     <button
                       onClick={async () => {
-                         if (!confirm("Create Shiprocket shipment for this order?")) return
+                         if (!confirm("Generate Shiprocket order?")) return
                          try {
                            const res = await fetch("/api/admin/shiprocket", {
                              method: "POST",
@@ -473,7 +473,7 @@ export default function Page() {
                       }}
                       className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
                     >
-                      Ship via Shiprocket
+                      Generate Shiprocket Order
                     </button>
                   )}
                   <button
