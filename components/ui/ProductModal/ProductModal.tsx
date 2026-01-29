@@ -55,8 +55,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const { data: session } = useSession()
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
-  const [selectedSize, setSelectedSize] = useState<string>('')
-  const [selectedColor, setSelectedColor] = useState<string>('')
+  const [selectedSize, setSelectedSize] = useState<string>(product.sizes?.[0] || '')
+  const [selectedColor, setSelectedColor] = useState<string>(product.colors?.[0] || '')
   const router = useRouter()
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<'desc' | 'info' | 'reviews'>('desc')
@@ -231,7 +231,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             />
             <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 sm:mb-8">
               <div>
-              <div
+                <div
                 className="relative aspect-square rounded-xl overflow-hidden bg-foreground/10 mb-4 cursor-pointer"
                 onClick={(e) => {
                   if (images.length > 1) {
@@ -249,6 +249,16 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                   className="object-contain p-2"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
+                {product.discount && (
+                  <div className="absolute top-2 left-2 bg-linear-to-br from-brand-red/70 to-transparent backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg">
+                    {product.discount}% OFF
+                  </div>
+                )}
+                {product.rating && (
+                  <div className="absolute bottom-2 left-2 bg-linear-to-br from-yellow-500/70 to-transparent backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg flex items-center">
+                    <Star className="w-3 h-3 mr-1 fill-current" /> {product.rating} ({product.reviews ?? 0} reviews)
+                  </div>
+                )}
                 <button
                   onClick={(e) => { e.stopPropagation(); setLightboxOpen(true) }}
                   className="absolute top-2 right-2 w-8 h-8 bg-background/80 rounded-full flex items-center justify-center shadow hover:bg-background transition-colors z-10"
@@ -317,15 +327,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                   </h1>
                 </div>
                 
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="flex items-center space-x-1 bg-green-600 text-white px-2 py-1 rounded">
-                    <span className="text-sm font-medium">{product.rating || 0}</span>
-                    <Star className="w-3 h-3 fill-current" />
-                  </div>
-                  <span className="text-sm text-foreground/60 hover:text-brand-purple cursor-pointer" onClick={() => setActiveTab('reviews')}>
-                    ({product.reviews ?? 0} reviews)
-                  </span>
-                </div>
 
                 <div className="flex items-baseline space-x-3 mb-6">
                   <span className="text-2xl sm:text-3xl font-bold">₹{product.price}</span>
@@ -334,11 +335,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                       <span className="text-xl text-[var(--foreground)/50] line-through">
                         ₹{product.originalPrice}
                       </span>
-                      {product.discount && (
-                        <span className="text-green-600 font-medium">
-                          {product.discount}% off
-                        </span>
-                      )}
                     </>
                   )}
                 </div>

@@ -246,7 +246,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     <section className="py-8 bg-background">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3">
-          <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground">FirgoMart Products</h2>
+          <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground drop-shadow-md">FirgoMart Products</h2>
           <p className="text-foreground/60 hidden md:block whitespace-nowrap">
             {displayedProducts.length} products
           </p>
@@ -374,14 +374,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
 
-                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded">
-                    {product.isAdminProduct ? 'FirgoMart Product' : 'Other Product'}
+                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-brand-purple/50 glow-effect glow-sm">
+                    FirgoMart Product
                   </span>
 
                   {product.discount && (
-                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded">
-                      {product.discount}% OFF
-                    </span>
+                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-red-500/50 glow-effect">
+                    {product.discount}% OFF
+                  </span>
                   )}
                 </div>
                 <div className="p-2 sm:p-4">
@@ -401,11 +401,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                       {product.originalPrice && (
                         <>
                           <span className="text-[11px] sm:text-sm text-foreground/50 line-through ml-2">₹{formatPrice(product.originalPrice)}</span>
-                          {product.discount && (
-                            <span className="text-[10px] sm:text-xs text-green-600 font-bold ml-2">
-                                {product.discount}% OFF
-                            </span>
-                          )}
+                      {product.discount && (
+                        <span className="text-[10px] sm:text-xs text-green-600 font-bold ml-2">
+                            {product.discount}% OFF
+                        </span>
+                      )}
                         </>
                       )}
                     </div>
