@@ -63,14 +63,14 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
         {normalLines.map((line, i) => (
           <p
             key={i}
-            className="text-sm leading-relaxed text-gray-800 whitespace-pre-line text-left"
+            className="text-sm leading-relaxed text-foreground/80 whitespace-pre-line text-left"
           >
             {line}
           </p>
         ))}
 
         {listLines.length > 0 && (
-          <div className="space-y-1 text-sm text-gray-800">
+          <div className="space-y-1 text-sm text-foreground/80">
             {listLines.map((b, i) => (
               <p key={i} className="leading-relaxed">
                 <span className="mr-2 font-medium">{toRoman(i)}.</span>
@@ -84,31 +84,31 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
   };
 
   return (
-    <div className="w-full max-w-[210mm] mx-auto bg-white text-black shadow-none sm:shadow-2xl min-h-screen sm:min-h-[297mm] p-4 sm:p-10 my-0 sm:my-8 relative border-0 sm:border border-gray-200">
-      <div className="space-y-5 font-serif">
+      <div className="w-full max-w-[210mm] mx-auto bg-background text-foreground shadow-none sm:shadow-2xl min-h-screen sm:min-h-[297mm] p-4 sm:p-10 my-0 sm:my-8 relative border-0 sm:border border-foreground/20 rounded-lg">
+        <div className="space-y-5 font-serif text-foreground/80">
         {data.map((section, idx) => (
           <div key={idx} className="space-y-2">
             {section.title && idx === 0 ? (
                <div className="text-center mb-6">
-                 <h2 className="text-2xl font-bold text-gray-900 uppercase underline decoration-2 underline-offset-4">
+                 <h2 className="text-2xl font-bold text-foreground uppercase underline decoration-2 underline-offset-4 decoration-brand-purple">
                     {section.title}
                  </h2>
                  {(section.effectiveDate || section.lastUpdated) && (
-                    <div className="mt-1 text-sm text-gray-500 italic">
+                    <div className="mt-1 text-sm text-foreground/60 italic">
                         {section.effectiveDate && <span>Effective Date: {section.effectiveDate}</span>}
                         {section.lastUpdated && <span> · Last Updated: {section.lastUpdated}</span>}
                     </div>
                  )}
                </div>
             ) : section.title ? (
-               <h2 className="font-bold text-gray-900 text-base mt-4 uppercase border-b border-gray-200 pb-1">
+               <h2 className="font-bold text-foreground text-base mt-4 uppercase border-b border-foreground/20 pb-1">
                  {section.title}
                </h2>
             ) : null}
             {section.intro && renderContent(section.intro)}
             {section.content && renderContent(section.content)}
             {section.points && section.points.length > 0 && (
-              <div className="space-y-1 text-sm text-gray-800 ml-4">
+              <div className="space-y-1 text-sm text-foreground/80 ml-4">
                 {section.points.map((point, pIdx) => (
                   <p key={pIdx} className="leading-relaxed text-left">
                     <span className="mr-2 font-medium">
@@ -121,7 +121,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
             )}
 
             {section.items && section.items.length > 0 && (
-              <ul className="list-disc space-y-1 text-sm text-gray-800 ml-8">
+              <ul className="list-disc space-y-1 text-sm text-foreground/80 ml-8">
                 {section.items.map((item, iIdx) => (
                   <li key={iIdx} className="leading-relaxed pl-2">
                     {item}
@@ -134,10 +134,10 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
               section.subSections.map((sub, sIdx) => (
                 <div
                   key={sIdx}
-                  className="ml-4 mt-3 space-y-2 pl-4 border-l border-gray-300"
+                  className="ml-4 mt-3 space-y-2 pl-4 border-l border-brand-purple/50"
                 >
                   {sub.title && (
-                    <h3 className="text-base font-bold text-gray-800">
+                    <h3 className="text-base font-bold text-foreground">
                       {sub.title}
                     </h3>
                   )}
@@ -145,7 +145,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
                   {sub.content && renderContent(sub.content)}
 
                   {sub.points && sub.points.length > 0 && (
-                    <div className="space-y-1 text-sm text-gray-800 ml-2">
+                    <div className="space-y-1 text-sm text-foreground/80 ml-2">
                       {sub.points.map((p, i) => (
                         <p key={i} className="leading-relaxed text-left">
                           <span className="mr-2 font-medium">
@@ -158,7 +158,7 @@ const PolicyContent: React.FC<PolicyContentProps> = ({ policy }) => {
                   )}
 
                   {sub.items && sub.items.length > 0 && (
-                    <ul className="list-disc space-y-1 text-sm text-gray-800 ml-6">
+                    <ul className="list-disc space-y-1 text-sm text-foreground/80 ml-6">
                       {sub.items.map((item, i) => (
                         <li key={i} className="leading-relaxed pl-2">
                           {item}
