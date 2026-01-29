@@ -244,6 +244,7 @@ export const useSellerRegistration = () => {
       setCroppingBankDoc(true);
     };
     reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const requestEmailOtp = async () => {
@@ -342,18 +343,18 @@ export const useSellerRegistration = () => {
       payload.gstNumber = "";
     }
 
-    if ((formData as any).bankDocumentImage) {
+    if (formData.bankDocumentImage) {
       try {
         const up = await fetch("/api/upload/image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            images: [(formData as any).bankDocumentImage],
+            images: [formData.bankDocumentImage],
           }),
         });
         const upJson = await up.json();
         if (up.ok && Array.isArray(upJson.urls) && upJson.urls[0]) {
-          (payload as any).bankDocumentUrl = upJson.urls[0];
+          payload.bankDocumentUrl = upJson.urls[0];
         }
       } catch {}
     }

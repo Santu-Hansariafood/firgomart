@@ -508,19 +508,19 @@ const SellerRegistration: React.FC = () => {
             </div>
             <div className="pt-6 border-t border-[var(--foreground)/20] space-y-3">
               <h2 className="text-xl font-heading font-bold">Bank Document</h2>
-              <div className="group border-2 border-dashed p-4 sm:p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5">
+              <label className="group border-2 border-dashed p-4 sm:p-6 text-center rounded-xl border-[var(--foreground)/20] bg-[var(--background)]/70 transition-all duration-200 hover:border-brand-purple/60 hover:bg-brand-purple/5 hover:-translate-y-0.5 block cursor-pointer">
                 <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-purple/10 text-brand-purple group-hover:bg-brand-purple group-hover:text-white transition-colors duration-200">
                   <Upload className="w-6 h-6" />
                 </div>
-                <label className="cursor-pointer text-brand-purple font-semibold">
+                <span className="text-brand-purple font-semibold">
                   Upload Cancel Cheque or Passbook
-                  <input type="file" accept="image/*" onChange={handleBankDocSelect} className="hidden" />
-                </label>
+                </span>
+                <input type="file" accept="image/*" onChange={handleBankDocSelect} className="hidden" />
                 <p className="mt-1 text-xs text-[var(--foreground)/60]">
                   Clear photo of cheque leaf or first page of passbook
                 </p>
-              </div>
-              {(formData.businessLogoUrl || (formData as any).bankDocumentImage) && (
+              </label>
+              {(formData.businessLogoUrl || formData.bankDocumentImage) && (
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {formData.businessLogoUrl && (
                     <div className="border rounded-lg p-3 bg-[var(--background)] flex flex-col items-center">
@@ -536,11 +536,11 @@ const SellerRegistration: React.FC = () => {
                       </div>
                     </div>
                   )}
-                  {(formData as any).bankDocumentImage && (
+                  {formData.bankDocumentImage && (
                     <div className="border rounded-lg p-3 bg-[var(--background)] flex flex-col items-center">
                       <p className="text-xs text-[var(--foreground)/70] mb-2">Bank Document</p>
                       <img
-                        src={(formData as any).bankDocumentImage}
+                        src={formData.bankDocumentImage}
                         alt="Bank Document"
                         className="max-h-28 sm:max-h-32 rounded-md border border-[var(--foreground)/20] bg-white"
                       />
