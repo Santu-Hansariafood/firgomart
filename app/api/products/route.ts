@@ -17,6 +17,11 @@ export async function GET(request: Request) {
     const categoryParam = (url.searchParams.get("category") || "").trim()
     const subcategoryParam = (url.searchParams.get("subcategory") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
+    const minPrice = Number(url.searchParams.get("minPrice"))
+    const maxPrice = Number(url.searchParams.get("maxPrice"))
+    const minRating = Number(url.searchParams.get("minRating"))
+    const sizeParam = (url.searchParams.get("size") || "").trim()
+    const sortBy = (url.searchParams.get("sortBy") || "").trim()
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
@@ -25,6 +30,19 @@ export async function GET(request: Request) {
 
     if (adminOnly) conditions.push({ isAdminProduct: true })
     if (createdByEmail) conditions.push({ createdByEmail })
+
+    if (!isNaN(minPrice) && minPrice >= 0) {
+      conditions.push({ price: { $gte: minPrice } })
+    }
+    if (!isNaN(maxPrice) && maxPrice > 0) {
+      conditions.push({ price: { $lte: maxPrice } })
+    }
+    if (!isNaN(minRating) && minRating > 0) {
+      conditions.push({ rating: { $gte: minRating } })
+    }
+    if (sizeParam) {
+      conditions.push({ sizes: { $in: [new RegExp(`^${sizeParam}$`, "i")] } })
+    }
 
     if (!createdByEmail) {
       if (deliverToState) {
@@ -84,10 +102,15 @@ export async function GET(request: Request) {
     }
 
     const finalQuery: FilterQuery<unknown> = conditions.length > 0 ? { $and: conditions } : {}
+    
+    let sortQuery: string | Record<string, number> = "-createdAt"
+    if (sortBy === "price-asc") sortQuery = "price"
+    else if (sortBy === "price-desc") sortQuery = "-price"
+    else if (sortBy === "rating") sortQuery = "-rating"
 
     const ProductModel = Product as unknown as Model<Record<string, unknown>>
     const products = await ProductModel.find(finalQuery as FilterQuery<Record<string, unknown>>)
-      .sort("-createdAt")
+      .sort(sortQuery)
       .skip(skip)
       .limit(limit)
       .lean()

@@ -60,6 +60,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const [geoAsked, setGeoAsked] = useState<boolean>(false)
   const [sortBy, setSortBy] = useState<string>('relevance')
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false)
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
+  const [minPrice, setMinPrice] = useState<string>('')
+  const [maxPrice, setMaxPrice] = useState<string>('')
+  const [minRating, setMinRating] = useState<number | null>(null)
+  const [selectedSize, setSelectedSize] = useState<string>('')
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
@@ -105,7 +110,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       const categoryParam = category ? `&category=${encodeURIComponent(category)}` : ''
       const subcategoryParam = subcategory ? `&subcategory=${encodeURIComponent(subcategory)}` : ''
       const sortParam = sortBy !== 'relevance' ? `&sortBy=${encodeURIComponent(sortBy)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}`)
+      const priceParam = minPrice || maxPrice ? `&minPrice=${minPrice}&maxPrice=${maxPrice}` : ''
+      const ratingParam = minRating ? `&minRating=${minRating}` : ''
+      const sizeParam = selectedSize ? `&size=${encodeURIComponent(selectedSize)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -135,7 +143,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory, sortBy])
+  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize])
 
   useEffect(() => {
     const loadInitial = async () => {
@@ -248,46 +256,182 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3">
           <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground drop-shadow-md">FirgoMart Products</h2>
           <p className="text-foreground/60 hidden md:block whitespace-nowrap">
-            {displayedProducts.length} products
+            {displayedProducts.length} Available Products
           </p>
-          <div className="relative">
+          <div className="flex items-center gap-2 relative">
             <button
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-colors"
-              onClick={() => setIsSortDropdownOpen((prev) => !prev)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                isFilterOpen || minPrice || maxPrice || minRating || selectedSize
+                  ? 'bg-brand-purple text-white border-brand-purple'
+                  : 'border-foreground/20 hover:bg-foreground/5'
+              }`}
+              onClick={() => setIsFilterOpen((prev) => !prev)}
             >
-              Sort By: {sortBy === 'relevance' ? 'Relevance' : sortBy === 'price-asc' ? 'Price: Low to High' : sortBy === 'price-desc' ? 'Price: High to Low' : 'Rating'}
-              <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : 'rotate-0'}`} />
+              <span className="hidden sm:inline">Filters</span>
+              <span className="sm:hidden">Filters</span>
+              {(minPrice || maxPrice || minRating || selectedSize) && (
+                <span className="bg-white text-brand-purple text-[10px] font-bold px-1.5 rounded-full">!</span>
+              )}
             </button>
-            {isSortDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-background border border-foreground/20 rounded-lg shadow-lg z-10">
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                  onClick={() => { setSortBy('relevance'); setIsSortDropdownOpen(false); setPage(1) }}
-                >
-                  Relevance
-                </button>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                  onClick={() => { setSortBy('price-asc'); setIsSortDropdownOpen(false); setPage(1) }}
-                >
-                  Price: Low to High
-                </button>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                  onClick={() => { setSortBy('price-desc'); setIsSortDropdownOpen(false); setPage(1) }}
-                >
-                  Price: High to Low
-                </button>
-                <button
-                  className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                  onClick={() => { setSortBy('rating'); setIsSortDropdownOpen(false); setPage(1) }}
-                >
-                  Rating
-                </button>
-              </div>
-            )}
+            <div className="relative">
+              <button
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-colors"
+                onClick={() => setIsSortDropdownOpen((prev) => !prev)}
+              >
+                Sort: {sortBy === 'relevance' ? 'Relevance' : sortBy === 'price-asc' ? 'Price: Low to High' : sortBy === 'price-desc' ? 'Price: High to Low' : 'Rating'}
+                <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : 'rotate-0'}`} />
+              </button>
+              {isSortDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-background border border-foreground/20 rounded-lg shadow-lg z-10">
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                    onClick={() => { setSortBy('relevance'); setIsSortDropdownOpen(false); setPage(1) }}
+                  >
+                    Relevance
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                    onClick={() => { setSortBy('price-asc'); setIsSortDropdownOpen(false); setPage(1) }}
+                  >
+                    Price: Low to High
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                    onClick={() => { setSortBy('price-desc'); setIsSortDropdownOpen(false); setPage(1) }}
+                  >
+                    Price: High to Low
+                  </button>
+                  <button
+                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
+                    onClick={() => { setSortBy('rating'); setIsSortDropdownOpen(false); setPage(1) }}
+                  >
+                    Rating
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {isFilterOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mb-6 p-4 border border-foreground/10 rounded-xl bg-foreground/5 overflow-hidden"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {/* Price Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground/80">Price Range</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
+                  />
+                  <span className="text-foreground/40">-</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
+                  />
+                </div>
+              </div>
+
+              {/* Size Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground/80">Size</label>
+                <div className="flex flex-wrap gap-2">
+                  {['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'].map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(selectedSize === size ? '' : size)}
+                      className={`px-3 py-1 text-xs rounded-md border transition-colors ${
+                        selectedSize === size
+                          ? 'bg-brand-purple text-white border-brand-purple'
+                          : 'bg-background border-foreground/20 hover:border-brand-purple/50'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Rating Filter */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground/80">Rating</label>
+                <div className="space-y-1">
+                  {[4, 3, 2, 1].map((rating) => (
+                    <label key={rating} className="flex items-center gap-2 cursor-pointer group">
+                      <input
+                        type="radio"
+                        name="rating"
+                        checked={minRating === rating}
+                        onChange={() => setMinRating(minRating === rating ? null : rating)}
+                        onClick={(e) => {
+                          if (minRating === rating) {
+                            e.preventDefault()
+                            setMinRating(null)
+                          }
+                        }}
+                        className="w-4 h-4 text-brand-purple focus:ring-brand-purple"
+                      />
+                      <div className="flex items-center text-sm text-foreground/70 group-hover:text-foreground">
+                        <span className="flex text-yellow-500 mr-1">
+                          {Array.from({ length: rating }).map((_, i) => (
+                            <span key={i}>★</span>
+                          ))}
+                          {Array.from({ length: 5 - rating }).map((_, i) => (
+                            <span key={i} className="text-gray-300">★</span>
+                          ))}
+                        </span>
+                        & Up
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col justify-end gap-2">
+                <button
+                  onClick={() => {
+                    setPage(1)
+                    // Trigger refetch by updating a dependency is handled by useEffect, 
+                    // but we might want to force it if needed. 
+                    // Actually dependencies [minPrice, maxPrice...] will trigger it automatically.
+                    // But we want to apply ONLY when user is done? 
+                    // The current implementation triggers on every change. 
+                    // For better UX on inputs, maybe debounce or "Apply" button?
+                    // Given the code structure, it's auto-fetching.
+                    // Let's add a "Clear Filters" button.
+                  }}
+                  className="w-full py-2 bg-brand-purple text-white rounded-lg text-sm font-medium hover:bg-brand-purple/90 transition-colors shadow-sm"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={() => {
+                    setMinPrice('')
+                    setMaxPrice('')
+                    setMinRating(null)
+                    setSelectedSize('')
+                    setPage(1)
+                  }}
+                  className="w-full py-2 bg-background border border-foreground/20 text-foreground/70 rounded-lg text-sm font-medium hover:bg-foreground/5 transition-colors"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
         {category && subcategoryOptionsFor(category).length > 0 && (
           <div className="mb-6">
             <div className="flex flex-wrap gap-2">
