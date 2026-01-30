@@ -188,6 +188,38 @@ export async function trackShipment(token: string, awbCode: string) {
   return res.json()
 }
 
+export async function addPickupLocation(token: string, params: {
+  pickup_location: string
+  name: string
+  email: string
+  phone: string
+  address: string
+  address_2?: string
+  city: string
+  state: string
+  country: string
+  pin_code: string
+}) {
+  const base = getShiprocketBaseUrl()
+  const res = await fetch(`${base}/v1/external/settings/company/addpickup`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(params),
+  })
+
+  const data = await res.json()
+  
+  if (!res.ok) {
+     const msg = data.message || (data.errors ? JSON.stringify(data.errors) : "Failed to add pickup location")
+     throw new Error(msg)
+  }
+  
+  return data
+}
+
 async function getOrCreatePickupLocation(token: string, seller: any) {
   if (!seller) return process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
   

@@ -13,7 +13,8 @@ import {
   printManifest, 
   generateLabel, 
   generateInvoice, 
-  trackShipment 
+  trackShipment,
+  addPickupLocation
 } from "@/lib/shiprocket"
 
 function isAdminEmail(email?: string | null) {
@@ -199,6 +200,11 @@ export async function POST(request: Request) {
       const { awbCode } = params
       const data = await trackShipment(token, awbCode)
       return NextResponse.json(data)
+    }
+
+    if (action === "add_pickup_location") {
+      const res = await addPickupLocation(token, params as any)
+      return NextResponse.json(res)
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 })

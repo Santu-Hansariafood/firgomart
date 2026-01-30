@@ -65,6 +65,20 @@ export default function Page() {
     createdAt?: string
     items?: Array<{ name?: string; quantity: number; price: number }>
   } | null>(null)
+  
+  const [showPickupModal, setShowPickupModal] = useState(false)
+  const [pickupForm, setPickupForm] = useState({
+    pickup_location: "Home",
+    name: "Deadpool",
+    email: "deadpool@chimichanga.com",
+    phone: "9777777779",
+    address: "Mutant Facility, Sector 3",
+    address_2: "",
+    city: "Pune",
+    state: "Maharashtra",
+    country: "India",
+    pin_code: "110022"
+  })
 
   const statusOptions: DropdownItem[] = [
     { id: "", label: "All Status" },
@@ -196,8 +210,15 @@ export default function Page() {
       <BackButton className="mb-2" />
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Logistics Management</h1>
-        <button
-          onClick={async () => {
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowPickupModal(true)}
+            className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Add Pickup Location
+          </button>
+          <button
+            onClick={async () => {
              try {
                const res = await fetch("/api/admin/shiprocket", {
                  method: "POST",
@@ -215,6 +236,7 @@ export default function Page() {
         >
           Test API Connection
         </button>
+        </div>
       </div>
 
       <div className="bg-white border rounded-xl p-4 space-y-3">
@@ -339,6 +361,58 @@ export default function Page() {
           <div className="text-sm text-gray-600">Total: {total}</div>
           <CommonPagination currentPage={page} pageSize={pageSize} totalItems={total} onPageChange={(p) => setPage(p)} />
         </div>
+
+        {showPickupModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+             <div className="bg-white rounded-xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                <h2 className="text-xl font-bold mb-4">Add Pickup Location</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.keys(pickupForm).map((k) => (
+                    <div key={k}>
+                       <label className="block text-sm font-medium capitalize mb-1">{k.replace("_", " ")}</label>
+                       <input 
+                         type="text" 
+                         value={(pickupForm as any)[k]}
+                         onChange={(e) => setPickupForm(prev => ({ ...prev, [k]: e.target.value }))}
+                         className="w-full border rounded px-3 py-2"
+                       />
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-6 flex justify-end gap-3">
+                   <button 
+                     onClick={() => setShowPickupModal(false)}
+                     className="px-4 py-2 border rounded hover:bg-gray-50"
+                   >
+                     Cancel
+                   </button>
+                   <button 
+                     onClick={async () => {
+                       try {
+                         const res = await fetch("/api/admin/shiprocket", {
+                           method: "POST",
+                           headers: { "Content-Type": "application/json" },
+                           body: JSON.stringify({ action: "add_pickup_location", ...pickupForm })
+                         })
+                         const d = await res.json()
+                         if (res.ok) {
+                           alert("Pickup location added successfully!")
+                           setShowPickupModal(false)
+                         } else {
+                           alert(`Failed: ${d.error || d.message}`)
+                         }
+                       } catch (e: any) {
+                         alert(`Error: ${e.message}`)
+                       }
+                     }}
+                     className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                   >
+                     Add Location
+                   </button>
+                </div>
+             </div>
+          </div>
+        )}
 
         {selectedOrder && (
           <div className="border rounded-xl bg-white p-4 space-y-3">

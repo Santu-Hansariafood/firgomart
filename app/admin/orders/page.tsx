@@ -64,7 +64,7 @@ export default function Page() {
     deliveredAt?: string
     completedAt?: string
     completionVerified?: boolean
-    items?: Array<{ name?: string; quantity: number; price: number }>
+    items?: Array<{ name?: string; quantity: number; price: number; selectedSize?: string; selectedColor?: string }>
     tracking?: Array<{ number: string; url: string }>
     deliveryFee?: number
   } | null>(null)
@@ -533,7 +533,15 @@ export default function Page() {
                         {selectedOrder.items && selectedOrder.items.length > 0 ? (
                           selectedOrder.items.map((item, idx) => (
                             <tr key={idx} className="bg-white">
-                              <td className="px-4 py-3 font-medium text-gray-900">{item.name || "Unknown Item"}</td>
+                              <td className="px-4 py-3 font-medium text-gray-900">
+                                <div>{item.name || "Unknown Item"}</div>
+                                {(item.selectedSize || item.selectedColor) && (
+                                  <div className="text-xs text-gray-500 mt-1">
+                                    {item.selectedSize && <span className="mr-3">Size: <span className="font-semibold text-gray-700">{item.selectedSize}</span></span>}
+                                    {item.selectedColor && <span>Color: <span className="font-semibold text-gray-700">{item.selectedColor}</span></span>}
+                                  </div>
+                                )}
+                              </td>
                               <td className="px-4 py-3 text-center text-gray-600">{item.quantity}</td>
                               <td className="px-4 py-3 text-right text-gray-600">₹{item.price}</td>
                               <td className="px-4 py-3 text-right font-medium text-gray-900">₹{item.price * item.quantity}</td>

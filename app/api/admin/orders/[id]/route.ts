@@ -89,6 +89,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         name?: string
         quantity: number
         price: number
+        selectedSize?: string
+        selectedColor?: string
       }>
     }
     const d = doc as OrderLean
@@ -115,6 +117,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           name: it.name ?? "",
           quantity: Number(it.quantity),
           price: Number(it.price),
+          selectedSize: it.selectedSize ?? "",
+          selectedColor: it.selectedColor ?? "",
         }
       }) : [],
       tracking: Array.isArray((d as any).tracking) && (d as any).tracking.length > 0 ? (d as any).tracking : (shipmentDoc ? [{

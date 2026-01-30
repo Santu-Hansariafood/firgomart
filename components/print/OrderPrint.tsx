@@ -178,7 +178,15 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                           <td className="p-1">{i + 1}</td>
                           <td className="p-1">
                             <div className="font-semibold">{(item.name || "Unknown Product").substring(0, 40)}</div>
-                            <div className="text-[10px] text-gray-500">SKU: {item.productId}</div>
+                            <div className="text-[10px] text-gray-500">
+                              SKU: {item.productId}
+                              {(item.selectedSize || item.selectedColor) && (
+                                <span className="ml-1">
+                                  {item.selectedSize && `| Size: ${item.selectedSize} `}
+                                  {item.selectedColor && `| Color: ${item.selectedColor}`}
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="p-1 text-right">{item.quantity}</td>
                         </tr>
@@ -278,7 +286,15 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                         <tr key={i}>
                           <td className="py-2">
                             <div className="font-semibold">{item.name || "Unknown Product"}</div>
-                            <div className="text-[10px] text-gray-500">HSN: {item.hsnCode || "90172010"} | GST: {gstPercent}%</div>
+                            <div className="text-[10px] text-gray-500">
+                              HSN: {item.hsnCode || "90172010"} | GST: {gstPercent}%
+                              {(item.selectedSize || item.selectedColor) && (
+                                <span className="ml-1">
+                                  {item.selectedSize && `| Size: ${item.selectedSize} `}
+                                  {item.selectedColor && `| Color: ${item.selectedColor}`}
+                                </span>
+                              )}
+                            </div>
                           </td>
                           <td className="py-2 text-right">{qty}</td>
                           <td className="py-2 text-right">{fmt(total)}</td>
