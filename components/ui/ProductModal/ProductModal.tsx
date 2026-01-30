@@ -255,6 +255,13 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     {product.discount}% OFF
                   </div>
                 )}
+                
+                {((typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo')) && (
+                  <div className="absolute top-12 left-2 bg-purple-600 text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg z-10 animate-pulse">
+                    {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
+                  </div>
+                )}
+
                 {product.rating && (
                   <div className="absolute bottom-2 left-2 bg-linear-to-br from-yellow-500/70 to-transparent backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg flex items-center">
                     <Star className="w-3 h-3 mr-1 fill-current" /> {product.rating} ({product.reviews ?? 0} reviews)
