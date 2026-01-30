@@ -5,7 +5,7 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Clock, MessageSquare, Send } from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Globe, Send } from "lucide-react";
 import { Suspense, useState } from "react";
 
 const ContactPage = () => {
@@ -87,7 +87,7 @@ const ContactPage = () => {
               </h3>
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-brand-purple/10 flex items-center justify-center shrink-0">
                     <Mail className="w-5 h-5 text-brand-purple" />
                   </div>
                   <div>
@@ -100,7 +100,7 @@ const ContactPage = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-brand-purple/10 flex items-center justify-center shrink-0">
                     <Phone className="w-5 h-5 text-brand-purple" />
                   </div>
                   <div>
@@ -113,7 +113,7 @@ const ContactPage = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-brand-purple/10 flex items-center justify-center shrink-0">
                     <Clock className="w-5 h-5 text-brand-purple" />
                   </div>
                   <div>
@@ -127,7 +127,7 @@ const ContactPage = () => {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-purple-50 dark:bg-brand-purple/10 flex items-center justify-center shrink-0">
                     <MapPin className="w-5 h-5 text-brand-purple" />
                   </div>
                   <div>
@@ -144,15 +144,30 @@ const ContactPage = () => {
               </div>
             </div>
 
-            <div className="bg-purple-50 p-6 rounded-2xl">
-              <h4 className="font-bold text-[var(--foreground)] mb-2 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-brand-purple" />
-                Global Reach
-              </h4>
-              <p className="text-sm text-[var(--foreground)/70]">
-                FirgoMart serves customers and sellers across regions. For international queries or partnerships, please contact us via email, and our team will respond promptly.
-              </p>
-            </div>
+            <div className=" bg-purple-50 dark:bg-brand-purple/20 p-6 rounded-2xl border border-purple-100 dark:border-brand-purple/40 shadow-sm dark:shadow-brand-purple/20">
+                <h4 className="
+                  font-bold
+                  text-brand-purple
+                  mb-3
+                  flex items-center gap-2.5
+                  text-lg
+                ">
+                  <Globe className="w-5 h-5 text-brand-purple" />
+                  Global Reach
+                </h4>
+
+                <p className="
+                  text-gray-700
+                  dark:text-gray-300
+                  leading-relaxed
+                  italic
+                ">
+                  FirgoMart serves customers and sellers across regions.
+                  For international queries or partnerships, please contact us via email,
+                  and our team will respond promptly.
+                </p>
+              </div>
+
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -165,7 +180,7 @@ const ContactPage = () => {
                 Send us a Message
               </h3>
               {result && (
-                <div className={result.type === "success" ? "mb-4 rounded-lg bg-green-50 text-green-700 px-4 py-3" : "mb-4 rounded-lg bg-red-50 text-red-700 px-4 py-3"}>
+                <div className={result.type === "success" ? "mb-4 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 px-4 py-3" : "mb-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-4 py-3"}>
                   {result.text}
                 </div>
               )}

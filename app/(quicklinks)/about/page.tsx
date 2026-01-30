@@ -87,7 +87,7 @@ const AboutPage = () => {
             variants={fadeInUp}
             className="bg-[var(--background)] p-8 rounded-2xl shadow-sm border border-[var(--foreground)/10] hover:shadow-md transition-shadow"
           >
-            <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-purple-50 dark:bg-brand-purple/10 rounded-xl flex items-center justify-center mb-6">
               <Rocket className="w-6 h-6 text-brand-purple" />
             </div>
             <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4 font-heading">
@@ -104,7 +104,7 @@ const AboutPage = () => {
             variants={fadeInUp}
             className="bg-[var(--background)] p-8 rounded-2xl shadow-sm border border-[var(--foreground)/10] hover:shadow-md transition-shadow"
           >
-            <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-purple-50 dark:bg-brand-purple/10 rounded-xl flex items-center justify-center mb-6">
               <TrendingUp className="w-6 h-6 text-brand-purple" />
             </div>
             <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4 font-heading">
