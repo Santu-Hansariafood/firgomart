@@ -405,13 +405,6 @@ const Navbar: React.FC = () => {
                       {user?.name?.split(" ")[0] || user?.email}
                     </span>
                   </div>
-                  <button
-                    onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
-                    className="flex items-center space-x-2 text-red-600 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
                 </div>
                 <Link
                   href="/profile"
@@ -449,6 +442,15 @@ const Navbar: React.FC = () => {
                   </span>
                 )}
               </button>
+              {isAuthenticated && (
+                <button
+                  onClick={() => { handleLogout(); setMobileMenuOpen(false) }}
+                  className="w-full flex items-center space-x-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="font-medium">Logout</span>
+                </button>
+              )}
             </div>
           </motion.div>
         )}

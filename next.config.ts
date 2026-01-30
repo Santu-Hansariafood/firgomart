@@ -23,6 +23,44 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/',
+          has: [
+            {
+              type: 'host',
+              value: 'admin\\..*',
+            },
+          ],
+          destination: '/admin',
+        },
+        {
+          source: '/login',
+          has: [
+            {
+              type: 'host',
+              value: 'admin\\..*',
+            },
+          ],
+          destination: '/admin-login',
+        },
+        {
+          // Match any path that isn't an API route or static file
+          // The regex ensures we don't rewrite internal Next.js paths
+          source: '/:path((?!api|_next/static|_next/image|favicon.ico).*)',
+          has: [
+            {
+              type: 'host',
+              value: 'admin\\..*',
+            },
+          ],
+          destination: '/admin/:path',
+        },
+      ],
+    }
+  },
 };
 
 export default nextConfig;

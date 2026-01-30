@@ -522,6 +522,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     FirgoMart Product
                   </span>
 
+                  {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
+                    <span className="absolute top-8 left-2 bg-purple-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded-full shadow-lg z-10 animate-pulse">
+                      {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
+                    </span>
+                  ) : null}
+
                   {product.discount && (
                     <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-red-500/50 glow-effect">
                     {product.discount}% OFF

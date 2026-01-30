@@ -26,6 +26,7 @@ interface Product {
   about?: string
   additionalInfo?: string
   stock?: number
+  unitsPerPack?: number
   height?: number
   width?: number
   weight?: number
@@ -336,6 +337,11 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         ₹{product.originalPrice}
                       </span>
                     </>
+                  )}
+                  {((typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo')) && (
+                    <span className="ml-2 bg-purple-100 text-purple-700 border border-purple-200 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                      {product.name.toLowerCase().includes('combo') ? 'Combo Offer' : `Pack of ${product.unitsPerPack}`}
+                    </span>
                   )}
                 </div>
 
