@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Search, Mic, MicOff, X } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface SearchBoxProps {
@@ -46,7 +45,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({
       const t = e?.results?.[0]?.[0]?.transcript;
       if (typeof t === "string") {
         onChange(t);
-        // Automatically trigger search on voice result
         if (typeof onSearch === "function") {
           onSearch(t);
           setShowSuggestions(false);
@@ -62,7 +60,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     recognitionRef.current = rec;
   }, [onChange, onSearch]);
 
-  // Adjust textarea height
   useEffect(() => {
     const el = textareaRef.current;
     if (el) {
@@ -71,7 +68,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     }
   }, [value]);
 
-  // Debounce search for suggestions
   useEffect(() => {
     if (!enableSuggestions || !value || value.trim().length < 2) {
       setSuggestions([]);
@@ -96,7 +92,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     return () => clearTimeout(timer);
   }, [value, enableSuggestions]);
 
-  // Handle click outside to close suggestions
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -138,20 +133,27 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     onChange("");
     setSuggestions([]);
     setShowSuggestions(false);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      if (url.searchParams.has('search')) {
+        url.searchParams.delete('search');
+        router.push(url.pathname + url.search);
+      }
+    }
   };
 
   return (
-    <div ref={wrapperRef} className={clsx("relative w-full", className)}>
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[color:color-mix(in oklab,var(--foreground) 60%, transparent)] pointer-events-none" />
+    <div ref={wrapperRef} className={clsx("relative w-full transition-all duration-300", className)}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-[color:color-mix(in oklab,var(--foreground) 60%, transparent)] pointer-events-none" />
       
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-2">
         {value && (
           <button
             type="button"
             onClick={handleClear}
-            className="text-gray-400 hover:text-gray-600"
+            className="p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </button>
         )}
         {voiceSupported && (
@@ -160,11 +162,13 @@ const SearchBox: React.FC<SearchBoxProps> = ({
             aria-label="Voice search"
             onClick={toggleListen}
             className={clsx(
-              "p-1 rounded-md transition-colors",
-              isListening ? "text-brand-red animate-pulse" : "text-[color:color-mix(in oklab,var(--foreground) 70%, transparent)] hover:text-[var(--foreground)]"
+              "p-1.5 rounded-full transition-all duration-200",
+              isListening 
+                ? "bg-red-50 text-brand-red animate-pulse ring-2 ring-brand-red/20" 
+                : "text-[color:color-mix(in oklab,var(--foreground) 70%, transparent)] hover:bg-gray-100 hover:text-[var(--foreground)]"
             )}
           >
-            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+            {isListening ? <MicOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Mic className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
         )}
       </div>
@@ -175,7 +179,15 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         placeholder={placeholder}
         rows={1}
         onChange={(e) => {
-          onChange(e.target.value);
+          const newVal = e.target.value;
+          onChange(newVal);
+          if (newVal === "" && typeof window !== 'undefined') {
+            const url = new URL(window.location.href);
+            if (url.searchParams.has('search')) {
+              url.searchParams.delete('search');
+              router.push(url.pathname + url.search);
+            }
+          }
           if (enableSuggestions) setShowSuggestions(true);
         }}
         onKeyDown={(e) => {
@@ -189,10 +201,9 @@ const SearchBox: React.FC<SearchBoxProps> = ({
             setShowSuggestions(true);
           }
         }}
-        className="w-full pl-10 pr-24 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent bg-[var(--background)] text-[var(--foreground)] resize-none overflow-hidden min-h-[42px] leading-6"
+        className="w-full pl-9 sm:pl-10 pr-20 sm:pr-24 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple bg-[var(--background)] text-[var(--foreground)] resize-none overflow-hidden min-h-[40px] sm:min-h-[44px] leading-6 shadow-sm hover:shadow-md transition-shadow"
       />
 
-      {/* Suggestions Dropdown */}
       {showSuggestions && suggestions.length > 0 && (
         <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--background)] border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden max-h-80 overflow-y-auto">
           {suggestions.map((product) => (
