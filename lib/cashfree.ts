@@ -1,13 +1,10 @@
 function normalizeVersion(v?: string) {
   const s = String(v || "").trim()
-  // Allow any version that looks like YYYY-MM-DD
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s
-  // Allow DD-MM-YYYY format too, convert to YYYY-MM-DD
   if (/^\d{2}-\d{2}-\d{4}$/.test(s)) {
     const [d, m, y] = s.split("-")
     return `${y}-${m}-${d}`
   }
-  // Default fallback
   return "2023-08-01"
 }
 

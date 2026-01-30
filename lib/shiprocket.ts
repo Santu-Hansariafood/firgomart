@@ -26,7 +26,8 @@ export async function getShiprocketToken() {
   }
 
   const email = (process.env.SHIPROCKET_EMAIL || "").trim()
-  const password = (process.env.SHIPROCKET_PASSWORD || "").trim()
+  const password = (process.env.SHIPROCKET_PASSWORD || "").trim().replace(/^['"]|['"]$/g, '')
+  
   if (!email || !password) {
     throw new Error("Shiprocket credentials not configured")
   }
@@ -352,21 +353,18 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
   for (const [sellerEmail, groupItems] of Object.entries(sellerGroups)) {
     let pickupLocation = process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
     
-    // Calculate weight and dimensions for this group
     let totalWeight = 0
     let maxL = 10, maxB = 10, maxH = 10
 
     for (const item of groupItems) {
       const p = productMap.get(String(item.productId))
       if (p) {
-        // Weight conversion to KG
         let w = Number(p.weight || 0)
         const wUnit = String(p.weightUnit || "kg").toLowerCase().trim()
         if (wUnit === "g") w = w / 1000
         if (wUnit === "mg") w = w / 1000000
         totalWeight += (w * (item.quantity || 1))
 
-        // Dims conversion to CM (simplified: take max of any item as box size)
         const toCm = (v: number, u: string) => {
           const unit = u.toLowerCase().trim()
           if (unit === "m") return v * 100
@@ -386,7 +384,6 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
       }
     }
     
-    // Ensure minimums
     totalWeight = Math.max(totalWeight, 0.5)
 
     if (sellerEmail !== "ADMIN") {
@@ -401,7 +398,6 @@ export async function createShiprocketShipment(order: any, targetSellerEmail?: s
       }
     }
     
-    // Pass calculated metrics via order object override
     const payload = buildShiprocketOrderPayload(
       { ...order, weight: totalWeight, length: maxL, breadth: maxB, height: maxH }, 
       groupItems, 
