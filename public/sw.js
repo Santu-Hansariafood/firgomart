@@ -1,5 +1,5 @@
-const CORE_CACHE = "firgomart-core-v1"
-const RUNTIME_CACHE = "firgomart-runtime-v1"
+const CORE_CACHE = "firgomart-core-v2"
+const RUNTIME_CACHE = "firgomart-runtime-v2"
 
 const CORE_ASSETS = ["/", "/manifest.json", "/favicon.ico"]
 

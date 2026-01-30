@@ -1,0 +1,64 @@
+# FirgoMart Nginx Configuration
+# This configuration is optimized for Next.js 14+ (App Router) + NextAuth.js
+# It addresses caching issues and header forwarding for session management.
+
+server {
+    listen 80;
+    server_name firgomart.com www.firgomart.com;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name firgomart.com www.firgomart.com;
+
+    # SSL Certificate Config (Adjust paths as needed)
+    # ssl_certificate /etc/letsencrypt/live/firgomart.com/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/firgomart.com/privkey.pem;
+
+    # 1. Security Headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    # 2. Proxy to Next.js App
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        
+        # CRITICAL: Websockets & Keep-Alive
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        
+        # CRITICAL: Forwarding correct headers for NextAuth
+        # Without these, secure cookies will fail and users will get "browser not supported"
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+
+        # 3. Caching Behavior
+        # Don't cache dynamic Next.js routes
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # 4. Static Assets (Optional Optimization)
+    # Serve Next.js static assets directly from Nginx for performance
+    # Adjust path: /var/www/firgomart/.next/static/
+    location /_next/static {
+        alias /var/www/firgomart/.next/static;
+        expires 365d;
+        access_log off;
+    }
+
+    # 5. Public Assets
+    # Adjust path: /var/www/firgomart/public/
+    location /assets {
+        alias /var/www/firgomart/public/assets;
+        expires 365d;
+        access_log off;
+    }
+}

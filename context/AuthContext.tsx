@@ -92,6 +92,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
       fetch("/api/auth/profile")
         .then(async (res) => {
+          if (res.status === 401 || res.status === 403) {
+            signOut({ redirect: false })
+            setUser(null)
+            setIsAuthenticated(false)
+            return
+          }
           const data = await safeJson(res)
           if (res.ok && (data as any)?.user) {
             const u = (data as any).user as User

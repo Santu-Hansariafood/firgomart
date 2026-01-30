@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
 
-export function proxy(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const url = req.nextUrl
   const host = (req.headers.get("host") || "").toLowerCase()
   const isAdminHost = host.startsWith("admin.")
@@ -37,5 +37,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/(.*)"]
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 }
