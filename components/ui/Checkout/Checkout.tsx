@@ -277,7 +277,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           }
           await ensureScript()
           const cf = (window as any).Cashfree({ mode: (initData.mode === 'production' ? 'production' : 'sandbox') })
-          cf.checkout({ paymentSessionId: String(initData.paymentSessionId || ''), redirectTarget: '_self' })
+          cf.checkout({ paymentSessionId: String(initData.paymentSessionId || ''), redirectTarget: '_modal' })
           return
         } catch {
           setCheckoutError("Failed to connect to payment gateway")
