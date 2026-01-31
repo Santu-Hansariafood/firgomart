@@ -23,6 +23,7 @@ export async function POST(request: Request) {
     const body = await request.json()
     const buyerEmail = typeof body?.buyerEmail === "string" ? body.buyerEmail.trim() : ""
     const buyerName = typeof body?.buyerName === "string" ? body.buyerName.trim() : ""
+    const phone = typeof body?.phone === "string" ? body.phone.trim() : ""
     let address = typeof body?.address === "string" ? body.address.trim() : ""
     let city = typeof body?.city === "string" ? body.city.trim() : ""
     let state = typeof body?.state === "string" ? body.state.trim() : ""
@@ -189,6 +190,7 @@ export async function POST(request: Request) {
     }).create([{
       buyerEmail: buyerEmail || undefined,
       buyerName: buyerName || undefined,
+      phone: phone || undefined,
       items: orderItems.map(i => ({
         productId: i.productId,
         name: i.name,

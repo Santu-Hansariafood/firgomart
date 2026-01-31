@@ -219,6 +219,7 @@ const Checkout: React.FC<CheckoutProps> = ({
       const payload = {
         buyerEmail: formData.email,
         buyerName: formData.fullName,
+        phone: formData.phone,
         address: formData.address,
         city: formData.city,
         state: formData.state,
