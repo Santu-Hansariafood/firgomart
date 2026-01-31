@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
-import { findUserAcrossDBs } from "@/lib/models/User"
+import { findUserAcrossDBs, getUserModel } from "@/lib/models/User"
 import nodemailer from "nodemailer"
+import { connectDB } from "@/lib/db/db"
+import { hash } from "bcryptjs"
 
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
@@ -94,7 +96,29 @@ export async function POST(request: Request) {
     if (!isAdminEmail(email)) {
       return NextResponse.json({ error: "Not an admin email" }, { status: 403 })
     }
-    const result = await findUserAcrossDBs(email)
+    let result = await findUserAcrossDBs(email)
+    
+    if (!result) {
+      // Auto-create admin user if they are in the allowed list but not in DB
+      try {
+        const conn = await connectDB()
+        const User = getUserModel(conn)
+        let user = await User.findOne({ email })
+        
+        if (!user) {
+          const passwordHash = await hash("admin-auto-created", 10)
+          user = await User.create({
+            email,
+            name: "Admin",
+            passwordHash,
+          })
+        }
+        result = { conn, User, user }
+      } catch (e) {
+        console.error("Failed to auto-create admin user", e)
+      }
+    }
+
     if (!result) {
       return NextResponse.json({ error: "Admin user not found" }, { status: 404 })
     }

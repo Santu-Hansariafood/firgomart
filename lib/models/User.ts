@@ -53,6 +53,9 @@ export async function findUserAcrossDBs(identifier: string | { email?: string, m
 
   const conns: Connection[] = []
   try {
+    conns.push(await connectDB())
+  } catch {}
+  try {
     conns.push(await connectDB("US"))
   } catch {}
   try {
