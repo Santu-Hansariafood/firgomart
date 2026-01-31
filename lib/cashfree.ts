@@ -43,7 +43,7 @@ export async function createCashfreeOrder(params: {
       order_amount: Number(params.amount),
       order_currency: params.currency || "INR",
       customer_details: {
-        customer_id: params.customerId || params.customerEmail || params.orderId,
+        customer_id: (params.customerId || params.customerEmail || params.orderId).replace(/[^a-zA-Z0-9_-]/g, "_").substring(0, 50),
         customer_email: params.customerEmail || "",
         customer_phone: params.customerPhone || "",
       },
