@@ -102,6 +102,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
     return subs.map((s) => ({ id: s, label: s }))
   }, [])
 
+  const shuffleArray = (array: Product[]) => {
+    const newArray = [...array]
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    }
+    return newArray
+  }
+
   const fetchPage = useCallback(async (pageNum: number) => {
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
@@ -150,7 +159,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
       setLoading(true)
       setDisplayedProducts([]) 
       const [first, second] = await Promise.all([fetchPage(1), fetchPage(2)])
-      const initial = [...first, ...second]
+      let initial = [...first, ...second]
+      
+      // Shuffle only if "Relevance" (default) sort is active and no search query
+      if (sortBy === 'relevance' && !search) {
+        initial = shuffleArray(initial)
+      }
+      
       setDisplayedProducts(initial)
       setPage(2)
       setHasMore(second.length === productsPerPage)

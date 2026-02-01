@@ -511,7 +511,7 @@ const InputField = ({
   error,
 }: InputProps) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
     <div className="relative">
       {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2">{icon}</div>}
       <input
@@ -520,8 +520,8 @@ const InputField = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-          !disabled ? "" : "bg-gray-50"
+        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+          disabled ? "opacity-60 cursor-not-allowed" : ""
         } ${error ? "border-red-500" : "border-gray-300"}`}
       />
     </div>
@@ -538,15 +538,15 @@ const SimpleInput = ({
   error,
 }: Omit<InputProps, "icon" | "type">) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
     <input
       type="text"
       name={name}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-        disabled ? "bg-gray-50" : ""
+      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+        disabled ? "opacity-60 cursor-not-allowed" : ""
       } ${error ? "border-red-500" : "border-gray-300"}`}
     />
     {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
@@ -567,14 +567,14 @@ const SelectField = ({
   disabled?: boolean;
 }) => (
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
     <select
       name={name}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-        disabled ? "bg-gray-50" : ""
+      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+        disabled ? "opacity-60 cursor-not-allowed" : ""
       } border-gray-300`}
     >
       <option value="">Select Gender</option>
