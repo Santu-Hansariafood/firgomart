@@ -67,6 +67,19 @@ export default function Page() {
     items?: Array<{ name?: string; quantity: number; price: number; selectedSize?: string; selectedColor?: string }>
     tracking?: Array<{ number: string; url: string }>
     deliveryFee?: number
+    payment?: {
+      method: string
+      status: string
+      transactionId: string
+      gateway: string
+      settledAt?: string
+    }
+    shipment?: {
+      trackingNumber: string
+      courier: string
+      invoiceUrl?: string
+      labelUrl?: string
+    }
   } | null>(null)
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
@@ -463,7 +476,12 @@ export default function Page() {
                            const d = await res.json()
                            if (res.ok) {
                              alert(`Shipment created! ${d.shipments?.length} shipments generated.`)
-                             // Refresh logic could go here
+                             // Refresh order details
+                             const refresh = await fetch(`/api/admin/orders/${selectedOrder.id}`)
+                             if (refresh.ok) {
+                               const newData = await refresh.json()
+                               setSelectedOrder(newData.order)
+                             }
                            } else {
                              alert(`Failed: ${d.error}`)
                            }
@@ -474,6 +492,22 @@ export default function Page() {
                       className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
                     >
                       Generate Shiprocket Order
+                    </button>
+                  )}
+                  {selectedOrder.shipment?.labelUrl && (
+                    <button
+                      onClick={() => window.open(selectedOrder.shipment?.labelUrl, "_blank")}
+                      className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                    >
+                      Print Label
+                    </button>
+                  )}
+                  {selectedOrder.shipment?.invoiceUrl && (
+                    <button
+                      onClick={() => window.open(selectedOrder.shipment?.invoiceUrl, "_blank")}
+                      className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      Shiprocket Invoice
                     </button>
                   )}
                   <button
@@ -515,6 +549,30 @@ export default function Page() {
                       {[selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}
                     </div>
                   </div>
+
+                  {selectedOrder.payment && (
+                    <div className="bg-gray-50 p-4 rounded-lg border md:col-span-2">
+                      <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Payment Details</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <span className="text-gray-500 block">Status</span>
+                          <span className="font-medium uppercase">{selectedOrder.payment.status}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 block">Method</span>
+                          <span className="font-medium">{selectedOrder.payment.method}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 block">Transaction ID</span>
+                          <span className="font-medium font-mono">{selectedOrder.payment.transactionId}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500 block">Gateway</span>
+                          <span className="font-medium">{selectedOrder.payment.gateway}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>

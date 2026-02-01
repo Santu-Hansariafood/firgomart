@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
 import { getShipmentModel } from "@/lib/models/Shipment"
+import { getPaymentModel } from "@/lib/models/Payment"
 import mongoose from "mongoose"
 
 function isAdminEmail(email?: string | null) {
@@ -68,6 +69,9 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     
     const Shipment = getShipmentModel(conn)
     const shipmentDoc = await (Shipment as any).findOne({ orderId: (doc as any)._id }).lean()
+    
+    const Payment = getPaymentModel(conn)
+    const paymentDoc = await (Payment as any).findOne({ orderId: (doc as any)._id }).sort({ createdAt: -1 }).lean()
 
     type OrderLean = {
       _id?: { toString?: () => string } | string
@@ -126,7 +130,20 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         url: "", // No URL in shipment model
         courier: shipmentDoc.courier
       }] : []),
-      deliveryFee: Number((d as any).deliveryFee || 0)
+      deliveryFee: Number((d as any).deliveryFee || 0),
+      payment: paymentDoc ? {
+        method: paymentDoc.method,
+        status: paymentDoc.status,
+        transactionId: paymentDoc.transactionId,
+        gateway: paymentDoc.gateway,
+        settledAt: paymentDoc.settledAt
+      } : null,
+      shipment: shipmentDoc ? {
+        trackingNumber: shipmentDoc.trackingNumber,
+        courier: shipmentDoc.courier,
+        invoiceUrl: shipmentDoc.invoiceUrl,
+        labelUrl: shipmentDoc.labelUrl
+      } : null
     }
     return NextResponse.json({ order: safe })
   } catch (err: unknown) {
