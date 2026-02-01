@@ -112,8 +112,11 @@ export const metadata: Metadata = {
   category: "shopping",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "FirgoMart",
+  },
+  formatDetection: {
+    telephone: false,
   },
 };
 
@@ -123,8 +126,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+    { media: "(prefers-color-scheme: light)", color: "#7800C8" },
+    { media: "(prefers-color-scheme: dark)", color: "#7800C8" },
   ],
 };
 
