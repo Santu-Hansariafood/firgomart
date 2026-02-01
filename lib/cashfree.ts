@@ -27,6 +27,7 @@ export async function createCashfreeOrder(params: {
   customerId?: string
   customerEmail?: string
   customerPhone?: string
+  customerName?: string
   returnUrl: string
 }) {
   const host = getHost()
@@ -44,6 +45,7 @@ export async function createCashfreeOrder(params: {
       order_currency: params.currency || "INR",
       customer_details: {
         customer_id: (params.customerId || params.customerEmail || params.orderId).replace(/[^a-zA-Z0-9_-]/g, "_").substring(0, 50),
+        customer_name: params.customerName,
         customer_email: params.customerEmail || "",
         customer_phone: params.customerPhone || "",
       },

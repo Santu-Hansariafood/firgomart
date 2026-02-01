@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     if (!orderId) return NextResponse.json({ error: "Order ID is required" }, { status: 400 })
     const conn = await connectDB()
     const Order = getOrderModel(conn)
-    type OrderDoc = { orderNumber?: string; amount?: number; buyerEmail?: string; phone?: string }
+    type OrderDoc = { orderNumber?: string; amount?: number; buyerEmail?: string; phone?: string; buyerName?: string }
     const order = await (Order as unknown as { findById: (id: string) => Promise<OrderDoc | null> }).findById(orderId)
     if (!order) return NextResponse.json({ error: "Order not found" }, { status: 404 })
     if (!cashfreeConfig.appId || !cashfreeConfig.secretKey) {
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         orderId: cfOrderId,
         amount,
         customerId: String(order.buyerEmail || cfOrderId),
+        customerName: String(order.buyerName || "Guest"),
         customerEmail: String(order.buyerEmail || ""),
         customerPhone: String(order.phone || "9999999999"),
         returnUrl: `${appUrl}/checkout/status?id=${orderId}&order_id={order_id}`,
