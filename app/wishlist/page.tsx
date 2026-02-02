@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Heart, Trash2, ShoppingCart, ArrowLeft } from "lucide-react";
 import FallbackImage from "@/components/common/Image/FallbackImage";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import { useCart } from "@/context/CartContext/CartContext";
+import dynamic from "next/dynamic";
+
+const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
 
 interface Product {
   _id: string;
@@ -21,6 +24,8 @@ interface Product {
   category?: string;
   brand?: string;
   unitsPerPack?: number;
+  description?: string;
+  features?: string[];
 }
 
 export default function WishlistPage() {
@@ -29,10 +34,10 @@ export default function WishlistPage() {
   const { addToCart, setShowCart } = useCart();
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      // Redirect or show empty state handled by UI
       setLoading(false);
       return;
     }
@@ -54,12 +59,11 @@ export default function WishlistPage() {
 
     try {
       await fetch("/api/user/wishlist", {
-        method: "POST", // POST handles toggle/remove logic
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId }),
       });
     } catch {
-      // Revert if failed (optional, usually not needed for wishlist)
     }
   };
 
@@ -73,6 +77,10 @@ export default function WishlistPage() {
       quantity: 1,
     });
     setShowCart(true);
+  };
+
+  const handleProductClick = (product: Product) => {
+      setSelectedProduct(product);
   };
 
   if (loading) return <BeautifulLoader />;
@@ -122,7 +130,7 @@ export default function WishlistPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {wishlist.map((product) => (
               <motion.div
                 key={product._id}
@@ -130,59 +138,82 @@ export default function WishlistPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="bg-[var(--background)] border border-[var(--foreground)/10] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+                onClick={() => handleProductClick(product)}
+                className="bg-[var(--background)] border border-[var(--foreground)/10] rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group cursor-pointer relative"
               >
-                <div className="relative aspect-square bg-gray-50">
+                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[8px] sm:text-[10px] font-semibold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-brand-purple/50 glow-effect glow-sm z-20">
+                    FirgoMart Product
+                  </span>
+
+                  {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
+                    <span className="absolute top-7 sm:top-8 left-2 bg-purple-600 text-white text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg z-10 animate-pulse">
+                      {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
+                    </span>
+                  ) : null}
+
+                  {product.discount && (
+                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[8px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-red-500/50 glow-effect z-20">
+                    {product.discount}% OFF
+                  </span>
+                  )}
+
+                <div className="relative aspect-square bg-gray-50 dark:bg-gray-900">
                   <FallbackImage
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-contain p-4"
+                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
                   />
                   <button
-                    onClick={() => removeFromWishlist(product._id)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors shadow-xs"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        removeFromWishlist(product._id);
+                    }}
+                    className="absolute top-2 right-2 w-8 h-8 bg-white/80 dark:bg-black/50 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors shadow-xs z-30"
                     title="Remove from wishlist"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                   {(product.stock ?? 0) <= 0 && (
-                    <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-white/60 dark:bg-black/60 flex items-center justify-center z-10">
                       <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold">
                         Out of Stock
                       </span>
                     </div>
                   )}
                 </div>
-                <div className="p-4">
+                <div className="p-3 sm:p-4">
                   <div className="mb-2">
-                    <h3 className="font-medium text-[color:var(--foreground)] line-clamp-2 h-10 leading-tight">
+                    <h3 className="font-medium text-[color:var(--foreground)] line-clamp-2 text-sm sm:text-base h-9 sm:h-10 leading-tight">
                       {product.name}
                     </h3>
                     {product.brand && (
-                        <span className="text-xs text-gray-500">{product.brand}</span>
+                        <span className="text-xs text-[var(--foreground)/60]">{product.brand}</span>
                     )}
                   </div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
                     <div>
-                      <span className="text-lg font-bold text-[color:var(--foreground)]">₹{product.price}</span>
+                      <span className="text-base sm:text-lg font-bold text-[color:var(--foreground)]">₹{product.price}</span>
                       {product.originalPrice && (
-                        <span className="text-sm text-gray-400 line-through ml-2">
+                        <span className="text-xs sm:text-sm text-[var(--foreground)/40] line-through ml-2">
                           ₹{product.originalPrice}
                         </span>
                       )}
                     </div>
                   </div>
                   <button
-                    onClick={() => handleAddToCart(product)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddToCart(product);
+                    }}
                     disabled={(product.stock ?? 0) <= 0}
-                    className={`w-full py-2 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors ${
+                    className={`w-full py-2 rounded-lg flex items-center justify-center gap-2 font-medium transition-colors text-xs sm:text-sm ${
                       (product.stock ?? 0) > 0
                         ? "bg-brand-purple text-white hover:bg-purple-700"
                         : "bg-gray-100 text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    <ShoppingCart className="w-4 h-4" />
+                    <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     {(product.stock ?? 0) > 0 ? "Add to Cart" : "Out of Stock"}
                   </button>
                 </div>
@@ -191,6 +222,30 @@ export default function WishlistPage() {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {selectedProduct && (
+          <ProductModal
+            product={{
+              ...selectedProduct,
+              id: selectedProduct._id,
+              category: selectedProduct.category || "General",
+            }}
+            onClose={() => setSelectedProduct(null)}
+            onAddToCart={(productWithQty) => {
+              addToCart({
+                id: selectedProduct._id,
+                name: selectedProduct.name,
+                price: selectedProduct.price,
+                image: selectedProduct.image,
+                stock: selectedProduct.stock,
+                quantity: productWithQty.quantity || 1,
+              });
+              setShowCart(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

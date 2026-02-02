@@ -428,12 +428,12 @@ const Checkout: React.FC<CheckoutProps> = ({
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${
                     step >= 1
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                   }`}
                 >
                   <MapPin className="w-5 h-5" />
                 </div>
-                <div className="flex-1 h-1 bg-gray-200">
+                <div className="flex-1 h-1 bg-gray-200 dark:bg-gray-700">
                   <div
                     className={`h-full bg-blue-600 transition-all ${
                       step >= 2 ? 'w-full' : 'w-0'
@@ -444,7 +444,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   className={`w-10 h-10 rounded-full flex items-center justify-center ${
                     step >= 2
                       ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
                   }`}
                 >
                   <CreditCard className="w-5 h-5" />
@@ -470,7 +470,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       value={formData.fullName}
                       onChange={handleChange}
                       required
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                     <input
                       type="email"
@@ -479,7 +479,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                   </div>
                   <input
@@ -490,7 +490,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     onChange={handleChange}
                     required
                     pattern="[0-9]{10}"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   />
                   <textarea
                     name="address"
@@ -499,7 +499,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     onChange={handleChange}
                     required
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   />
                   <div className="grid md:grid-cols-3 gap-4">
                     <input
@@ -509,7 +509,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       value={formData.city}
                       onChange={handleChange}
                       required
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                     <input
                       type="text"
@@ -518,7 +518,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       value={formData.state}
                       onChange={handleChange}
                       required
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                   
                     <input
@@ -529,7 +529,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       onChange={handleChange}
                       required
                       pattern="[0-9]{6}"
-                      className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                   </div>
 
@@ -541,15 +541,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                   </button>
 
                   {invalidItems.length > 0 && (
-                    <div className="mt-4 p-4 rounded-lg border border-red-200 bg-red-50">
-                      <p className="text-sm text-red-700 mb-2">
+                    <div className="mt-4 p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
+                      <p className="text-sm text-red-700 dark:text-red-300 mb-2">
                         Some items cannot be delivered to <strong>{formData.state}</strong>.
                         Remove them or change the delivery state.
                       </p>
                       <ul className="space-y-2">
                         {invalidItems.map(item => (
                           <li key={String(item.id)} className="flex items-center justify-between">
-                            <span className="text-sm text-red-800">{item.name}</span>
+                            <span className="text-sm text-red-800 dark:text-red-200">{item.name}</span>
                             {onRemoveItem && (
                               <button
                                 type="button"
@@ -665,7 +665,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="flex-1 py-3 inline-flex items-center justify-center rounded-lg border bg-white text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                      className="flex-1 py-3 inline-flex items-center justify-center rounded-lg border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
                     >
                       Back
                     </button>
@@ -674,7 +674,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       disabled={validItems.length === 0 || isSubmitting}
                       className={`flex-1 py-3 rounded-lg font-medium transition-all ${
                         validItems.length === 0 || isSubmitting
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                           : 'bg-linear-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500'
                       }`}
                     >
@@ -682,7 +682,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     </button>
                   </div>
                   {checkoutError && (
-                    <div className="mt-4 p-4 rounded-lg bg-red-50 text-red-700 border border-red-200 text-center">
+                    <div className="mt-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 text-center">
                       {checkoutError}
                     </div>
                   )}
@@ -696,7 +696,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-[var(--background)] border rounded-xl p-6 sticky top-24 text-[color:var(--foreground)]"
+              className="bg-[var(--background)] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sticky top-24 text-[color:var(--foreground)]"
             >
               <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                 Order Summary

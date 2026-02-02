@@ -186,7 +186,7 @@ const Profile = () => {
                 </div>
                 <div className="min-w-0 flex-1">
                   <h1 className="text-2xl md:text-3xl font-bold break-words line-clamp-2 leading-tight">{user.name}</h1>
-                  <p className="text-purple-100 mt-1 break-all line-clamp-2 text-sm md:text-base">
+                  <p className="text-purple-100 mt-1 break-all line-clamp-2 text-sm md:text-base w-full overflow-hidden text-ellipsis">
                     {user.email || user.mobile}
                   </p>
                 </div>

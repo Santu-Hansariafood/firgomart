@@ -273,7 +273,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
           <p className="text-foreground/60 hidden md:block whitespace-nowrap">
             {displayedProducts.length} Available Products
           </p>
-          <div className="flex items-center gap-2 relative">
+          <div className="flex items-center gap-2 relative z-30">
             <button
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                 isFilterOpen || minPrice || maxPrice || minRating || selectedSize
@@ -533,18 +533,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
                     <Eye className="w-5 h-5 sm:w-8 sm:h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
 
-                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[9px] sm:text-[10px] font-semibold px-2 py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-brand-purple/50 glow-effect glow-sm">
+                  <span className="absolute top-2 left-2 bg-black/70 text-white text-[8px] sm:text-[10px] font-semibold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-brand-purple/50 glow-effect glow-sm z-20">
                     FirgoMart Product
                   </span>
 
                   {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
-                    <span className="absolute top-8 left-2 bg-purple-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded-full shadow-lg z-10 animate-pulse">
+                    <span className="absolute top-7 sm:top-8 left-2 bg-purple-600 text-white text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg z-10 animate-pulse">
                       {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
                     </span>
                   ) : null}
 
                   {product.discount && (
-                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[10px] sm:text-xs font-bold px-2 py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-red-500/50 glow-effect">
+                    <span className="absolute top-2 right-2 bg-brand-red text-white text-[8px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg transition-all duration-300 ease-in-out hover:shadow-red-500/50 glow-effect z-20">
                     {product.discount}% OFF
                   </span>
                   )}

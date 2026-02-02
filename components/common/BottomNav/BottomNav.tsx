@@ -13,7 +13,10 @@ interface BottomNavProps {
   onLoginClick: () => void
 }
 
-const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
+const BottomNav: React.FC<BottomNavProps> = ({
+  onCartClick,
+  onLoginClick,
+}) => {
   const pathname = usePathname()
   const { cartItems } = useCart()
   const { isAuthenticated } = useAuth()
@@ -24,7 +27,11 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
   )
 
   const navItems = [
-    { label: "Home", icon: Home, href: "/" },
+    {
+      label: "Home",
+      icon: Home,
+      href: "/",
+    },
     {
       label: "Wishlist",
       icon: Heart,
@@ -53,10 +60,11 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-      <div className="relative mx-auto max-w-md bg-background/80 backdrop-blur-xl border-t border-foreground/10 rounded-t-2xl shadow-[0_-12px_30px_rgba(0,0,0,0.15)]">
+      <div className="relative mx-auto max-w-md bg-white border-t border-gray-200 rounded-t-2xl shadow-[0_-12px_30px_rgba(0,0,0,0.18)]">
         <div className="flex items-center justify-between h-16 px-2">
           {navItems.map((item, idx) => {
             const Icon = item.icon
+
             const isActive =
               item.href &&
               (pathname === item.href ||
@@ -85,7 +93,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
                       "w-6 h-6 transition-all duration-300",
                       isActive
                         ? "text-brand-purple scale-110 -translate-y-0.5"
-                        : "text-foreground/60"
+                        : "text-gray-500"
                     )}
                   />
 
@@ -106,7 +114,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
                     "mt-1 text-[10px] font-medium transition-colors",
                     isActive
                       ? "text-brand-purple"
-                      : "text-foreground/60"
+                      : "text-gray-500"
                   )}
                 >
                   {item.label}
@@ -119,6 +127,12 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
                 <Link
                   key={idx}
                   href={item.href}
+                  onClick={(e) => {
+                    if (item.action) {
+                      e.preventDefault();
+                      item.action();
+                    }
+                  }}
                   className="flex items-center justify-center flex-1"
                 >
                   {content}
