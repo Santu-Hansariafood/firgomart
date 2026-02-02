@@ -43,6 +43,8 @@ type SellerInfo = {
   status?: string
 }
 
+const BottomNav = dynamic(() => import("@/components/common/BottomNav/BottomNav"))
+
 const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("")
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -470,6 +472,10 @@ const Navbar: React.FC = () => {
         isOpen={showForgotModal && !isAuthenticated}
         onClose={() => setShowForgotModal(false)}
         onSwitchToLogin={handleSwitchToLogin}
+      />
+      <BottomNav 
+        onCartClick={() => setShowCart(true)} 
+        onLoginClick={() => setShowLoginModal(true)} 
       />
     </nav>
   )

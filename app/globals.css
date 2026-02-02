@@ -20,6 +20,10 @@
   --font-heading: var(--font-poppins);
 }
 
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 html[data-theme="light"] {
   --background: #ffffff;
   --foreground: #171717;
