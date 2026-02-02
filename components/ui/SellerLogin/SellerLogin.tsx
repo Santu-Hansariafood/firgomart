@@ -127,7 +127,7 @@ const SellerLogin: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] py-12">
+    <div className="min-h-screen bg-[var(--background)] text-[color:var(--foreground)] py-12">
       <div className="max-w-md mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -153,7 +153,7 @@ const SellerLogin: React.FC = () => {
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="Enter registered seller email"
-                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)]"
+                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)]"
                   />
                 </div>
                 {error && <p className="text-red-600 text-sm">{error}</p>}
@@ -181,7 +181,7 @@ const SellerLogin: React.FC = () => {
                   value={enteredOtp}
                   onChange={e => setEnteredOtp(e.target.value)}
                   placeholder="6-digit code"
-                  className="w-full px-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)]"
+                  className="w-full px-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)]"
                 />
                 {error && <p className="text-red-600 text-sm">{error}</p>}
                 <div className="flex gap-3">
@@ -195,7 +195,7 @@ const SellerLogin: React.FC = () => {
                   <button
                     type="button"
                     onClick={resendOtp}
-                    className="flex items-center justify-center gap-2 flex-1 bg-[var(--foreground)/10] text-[var(--foreground)] py-3 rounded-lg font-medium hover:bg-[var(--foreground)/20] transition"
+                    className="flex items-center justify-center gap-2 flex-1 bg-[var(--foreground)/10] text-[color:var(--foreground)] py-3 rounded-lg font-medium hover:bg-[var(--foreground)/20] transition"
                   >
                     <RefreshCw className="w-4 h-4" /> Resend OTP
                   </button>

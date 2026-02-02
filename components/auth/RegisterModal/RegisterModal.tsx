@@ -290,7 +290,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-[var(--foreground)/20]"
+          className="bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-[var(--foreground)/20]"
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-6 relative shrink-0">
             <button
@@ -317,7 +317,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             {step === 1 ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                     First Name *
                   </label>
                   <div className="relative">
@@ -332,7 +332,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         if (errors.name) setErrors(prev => ({ ...prev, name: '' }))
                       }}
                       placeholder="Enter your first name"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                         errors.name ? 'border-red-500' : 'border-[var(--foreground)/20]'
                       }`}
                     />
@@ -341,7 +341,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                     Email Address *
                   </label>
                   <div className="space-y-2">
@@ -358,7 +358,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         }}
                         placeholder="you@example.com"
                         onBlur={() => checkExists('email', formData.email)}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                           errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
                         }`}
                       />
@@ -374,7 +374,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           onChange={e => setEmailOtp(e.target.value)}
                           maxLength={6}
                           placeholder="Enter 6-digit OTP"
-                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20]"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[color:var(--foreground)] border-[var(--foreground)/20]"
                         />
                         <button
                           type="button"
@@ -403,7 +403,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                     Mobile Number *
                   </label>
                   <div className="relative">
@@ -419,7 +419,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                       }}
                       onBlur={() => checkExists('mobile', formData.mobile)}
                       placeholder="10-digit mobile number"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                         errors.mobile ? 'border-red-500' : 'border-[var(--foreground)/20]'
                       }`}
                     />
@@ -445,7 +445,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                     placeholder: 'Re-enter password'
                   }].map(({ label, name, show, toggle, placeholder }) => (
                     <div key={name}>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                         {label}
                       </label>
                       <div className="relative">
@@ -456,14 +456,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           value={formData[name as 'password' | 'confirmPassword']}
                           onChange={handleChange}
                           placeholder={placeholder}
-                          className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                          className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                             errors[name] ? 'border-red-500' : 'border-[var(--foreground)/20]'
                           }`}
                         />
                         <button
                           type="button"
                           onClick={toggle}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[var(--foreground)]"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[color:var(--foreground)]"
                         >
                           {show ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
@@ -485,7 +485,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                     Address *
                   </label>
                   <div className="relative">
@@ -496,7 +496,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                       onChange={handleChange}
                       rows={3}
                       placeholder="Street address, apartment, suite, etc."
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                           errors.address ? 'border-red-500' : 'border-[var(--foreground)/20]'
                         }`}
                       />
@@ -506,7 +506,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {(['city', 'state', 'pincode'] as Array<keyof Pick<RegisterFormData, 'city' | 'state' | 'pincode'>>).map((field) => (
                     <div key={field}>
-                      <label className="block text-sm font-medium text-[var(--foreground)] mb-2 capitalize">
+                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2 capitalize">
                         {field} *
                       </label>
                       <input
@@ -515,7 +515,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         value={formData[field]}
                         onChange={handleChange}
                         placeholder={field === 'pincode' ? '6-digit pincode' : field}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                           errors[field] ? 'border-red-500' : 'border-[var(--foreground)/20]'
                         }`}
                       />
@@ -527,7 +527,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                       Date of Birth *
                     </label>
                     <input
@@ -535,7 +535,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
                         errors.dateOfBirth ? 'border-red-500' : 'border-[var(--foreground)/20]'
                       }`}
                     />
@@ -545,14 +545,14 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                       Gender *
                     </label>
                     <select
                       name="gender"
                       value={formData.gender}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
                         errors.gender ? 'border-red-500' : 'border-[var(--foreground)/20]'
                       }`}
                     >
@@ -570,7 +570,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="flex-1 bg-[var(--foreground)/10] text-[var(--foreground)] py-3 rounded-lg font-medium hover:bg-[var(--foreground)/15] transition-colors"
+                    className="flex-1 bg-[var(--foreground)/10] text-[color:var(--foreground)] py-3 rounded-lg font-medium hover:bg-[var(--foreground)/15] transition-colors"
                   >
                     Back
                   </button>

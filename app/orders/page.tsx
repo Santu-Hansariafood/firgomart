@@ -67,7 +67,7 @@
  
    return (
      <Suspense fallback={<BeautifulLoader />}>
-     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
+     <div className="min-h-screen bg-[var(--background)] text-[color:var(--foreground)]">
        <section className="relative py-16 bg-brand-purple/10 overflow-hidden">
          <div className="max-w-4xl mx-auto px-4 sm:px-8">
            <div className="flex items-center justify-between mb-4">

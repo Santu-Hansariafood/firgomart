@@ -31,7 +31,7 @@ export default function BeautifulLoader({ label = "Loading" }: Props) {
         </div>
         <div className="flex flex-col items-center gap-3 w-64">
           <motion.div
-            className="text-base sm:text-lg font-semibold text-[var(--foreground)]"
+            className="text-base sm:text-lg font-semibold text-[color:var(--foreground)]"
             animate={{ opacity: [0.6, 1, 0.6] }}
             transition={{ repeat: Infinity, duration: 1.8 }}
           >

@@ -57,7 +57,7 @@ const CookieConsent: React.FC = () => {
               <Cookie className="w-5 h-5" />
             </div>
             <div className="space-y-1 pt-0.5">
-              <p className="text-sm font-semibold text-[var(--foreground)]">Cookie Preferences</p>
+              <p className="text-sm font-semibold text-[color:var(--foreground)]">Cookie Preferences</p>
               <p className="text-xs text-[var(--foreground)/70] leading-relaxed">
                 We use cookies to ensure you get the best experience on our website.
               </p>
@@ -66,14 +66,14 @@ const CookieConsent: React.FC = () => {
           <div className="mt-4 grid grid-cols-3 gap-2">
             <button
               onClick={() => setShowSettings(true)}
-              className="col-span-1 px-3 py-2 text-xs font-medium text-[var(--foreground)/70] hover:bg-[var(--foreground)/5] hover:text-[var(--foreground)] rounded-lg transition-colors flex items-center justify-center gap-1.5"
+              className="col-span-1 px-3 py-2 text-xs font-medium text-[var(--foreground)/70] hover:bg-[var(--foreground)/5] hover:text-[color:var(--foreground)] rounded-lg transition-colors flex items-center justify-center gap-1.5"
             >
               <Settings className="w-3.5 h-3.5" />
               Options
             </button>
             <button
               onClick={handleReject}
-              className="col-span-1 px-3 py-2 text-xs font-medium text-[var(--foreground)] border border-[var(--foreground)/10] hover:bg-[var(--foreground)/5] rounded-lg transition-colors"
+              className="col-span-1 px-3 py-2 text-xs font-medium text-[color:var(--foreground)] border border-[var(--foreground)/10] hover:bg-[var(--foreground)/5] rounded-lg transition-colors"
             >
               Reject
             </button>

@@ -54,7 +54,7 @@ const AboutPage = () => {
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 text-center">
@@ -90,7 +90,7 @@ const AboutPage = () => {
             <div className="w-12 h-12 bg-purple-50 dark:bg-brand-purple/10 rounded-xl flex items-center justify-center mb-6">
               <Rocket className="w-6 h-6 text-brand-purple" />
             </div>
-            <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4 font-heading">
+            <h3 className="text-2xl font-bold text-[color:var(--foreground)] mb-4 font-heading">
               Our Mission
             </h3>
             <p className="text-[var(--foreground)/70] leading-relaxed">
@@ -107,7 +107,7 @@ const AboutPage = () => {
             <div className="w-12 h-12 bg-purple-50 dark:bg-brand-purple/10 rounded-xl flex items-center justify-center mb-6">
               <TrendingUp className="w-6 h-6 text-brand-purple" />
             </div>
-            <h3 className="text-2xl font-bold text-[var(--foreground)] mb-4 font-heading">
+            <h3 className="text-2xl font-bold text-[color:var(--foreground)] mb-4 font-heading">
               Our Vision
             </h3>
             <p className="text-[var(--foreground)/70] leading-relaxed">
@@ -120,7 +120,7 @@ const AboutPage = () => {
 
         <section>
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-[var(--foreground)] font-heading mb-4">
+            <h2 className="text-3xl font-bold text-[color:var(--foreground)] font-heading mb-4">
               What We Do
             </h2>
             <p className="text-[var(--foreground)/70] max-w-2xl mx-auto">
@@ -139,7 +139,7 @@ const AboutPage = () => {
                 className="bg-[var(--background)] p-6 rounded-xl border border-[var(--foreground)/10] text-center hover:border-brand-purple/30 transition-colors"
               >
                 <div className="mb-4 flex justify-center">{feature.icon}</div>
-                <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2 font-heading">
+                <h4 className="text-lg font-semibold text-[color:var(--foreground)] mb-2 font-heading">
                   {feature.title}
                 </h4>
                 <p className="text-sm text-[var(--foreground)/70]">{feature.desc}</p>
@@ -150,7 +150,7 @@ const AboutPage = () => {
 
         <section className="bg-[var(--background)] rounded-3xl p-8 sm:p-12 border border-[var(--foreground)/10]">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-[var(--foreground)] font-heading">
+            <h2 className="text-3xl font-bold text-[color:var(--foreground)] font-heading">
               Our Core Values
             </h2>
           </div>
@@ -180,7 +180,7 @@ const AboutPage = () => {
               <div key={idx} className="flex gap-4">
                 <div className="w-2 h-2 mt-2.5 rounded-full bg-brand-purple shrink-0" />
                 <div>
-                  <h4 className="font-bold text-[var(--foreground)] mb-1">{value.title}</h4>
+                  <h4 className="font-bold text-[color:var(--foreground)] mb-1">{value.title}</h4>
                   <p className="text-sm text-[var(--foreground)/70]">{value.desc}</p>
                 </div>
               </div>
@@ -195,7 +195,7 @@ const AboutPage = () => {
           className="grid md:grid-cols-2 gap-12 items-center"
         >
           <div className="order-2 md:order-1">
-            <h2 className="text-3xl font-bold text-[var(--foreground)] font-heading mb-6">
+            <h2 className="text-3xl font-bold text-[color:var(--foreground)] font-heading mb-6">
               Logistics & Technology
             </h2>
             <div className="space-y-4 text-[var(--foreground)/70] leading-relaxed">
@@ -226,7 +226,7 @@ const AboutPage = () => {
         </motion.section>
 
         <section className="text-center max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-[var(--foreground)] font-heading mb-4">
+          <h2 className="text-2xl font-bold text-[color:var(--foreground)] font-heading mb-4">
             Our Commitment
           </h2>
           <p className="text-[var(--foreground)/70]">

@@ -60,7 +60,7 @@ const TeamsPage = () => {
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -100,7 +100,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Monitor className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Technology & Product Team
               </h3>
             </div>
@@ -129,7 +129,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Package className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Logistics & Operations Team
               </h3>
             </div>
@@ -158,7 +158,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Seller Management Team
               </h3>
             </div>
@@ -187,7 +187,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Headphones className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Customer Support Team
               </h3>
             </div>
@@ -216,7 +216,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Megaphone className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Marketing & Growth Team
               </h3>
             </div>
@@ -245,7 +245,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Wallet className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Finance & Administration Team
               </h3>
             </div>
@@ -274,7 +274,7 @@ const TeamsPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Target className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Leadership & Strategy Team
               </h3>
             </div>
@@ -313,7 +313,7 @@ const TeamsPage = () => {
                 onClick={(e) => e.stopPropagation()}
                 className="
   bg-[var(--background)] 
-  text-[var(--foreground)] 
+  text-[color:var(--foreground)] 
   rounded-2xl 
   shadow-xl 
   w-full 
@@ -338,7 +338,7 @@ const TeamsPage = () => {
                         />
                       </div>
                     </motion.div>
-                    <h3 className="text-2xl font-bold text-[var(--foreground)]">{activeTitle}</h3>
+                    <h3 className="text-2xl font-bold text-[color:var(--foreground)]">{activeTitle}</h3>
                   </div>
                   <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[var(--foreground)/70] text-base sm:text-lg mb-6">
                     {activeTitle ? (tjson[activeTitle]?.description || "Team details coming soon.") : "Team details coming soon."}
@@ -382,27 +382,27 @@ const TeamsPage = () => {
 
                         </div>
                         <div className="p-4">
-                          <div className="font-semibold text-[var(--foreground)]">{m.name}</div>
+                          <div className="font-semibold text-[color:var(--foreground)]">{m.name}</div>
                           {m?.bio && <p className="mt-2 text-sm text-[var(--foreground)/70] line-clamp-3">{m.bio}</p>}
                           <div className="mt-3 flex items-center gap-3">
                             {m?.links?.linkedin && (
                               <Link href={m.links.linkedin} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Linkedin className="w-4 h-4 text-[var(--foreground)]" />
+                                <Linkedin className="w-4 h-4 text-[color:var(--foreground)]" />
                               </Link>
                             )}
                             {m?.links?.instagram && (
                               <Link href={m.links.instagram} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Instagram className="w-4 h-4 text-[var(--foreground)]" />
+                                <Instagram className="w-4 h-4 text-[color:var(--foreground)]" />
                               </Link>
                             )}
                             {m?.links?.x && (
                               <Link href={m.links.x} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Twitter className="w-4 h-4 text-[var(--foreground)]" />
+                                <Twitter className="w-4 h-4 text-[color:var(--foreground)]" />
                               </Link>
                             )}
                             {m?.links?.facebook && (
                               <Link href={m.links.facebook} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Facebook className="w-4 h-4 text-[var(--foreground)]" />
+                                <Facebook className="w-4 h-4 text-[color:var(--foreground)]" />
                               </Link>
                             )}
                           </div>
@@ -432,19 +432,19 @@ const TeamsPage = () => {
         >
           <div className="flex items-center gap-3 mb-4">
             <Sparkles className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[var(--foreground)]">Our Work Culture</h3>
+            <h3 className="text-xl font-bold text-[color:var(--foreground)]">Our Work Culture</h3>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
               Team-driven and collaborative environment
             </div>
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
               Focus on learning and growth
             </div>
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
               Respect, transparency, and accountability
             </div>
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[var(--foreground)]">
+            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
               Innovation-oriented mindset
             </div>
           </div>

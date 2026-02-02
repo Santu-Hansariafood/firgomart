@@ -28,7 +28,7 @@ const TrustSafetyPage = () => {
   }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
-      <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+      <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
         <section className="relative py-20 bg-brand-purple overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
             <motion.div
@@ -61,7 +61,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-3">
                 <CreditCard className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Secure Payments</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Secure Payments</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Transactions handled by verified gateways</li>
@@ -78,7 +78,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-3">
                 <BadgeCheck className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Verified Sellers & Reviews</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Verified Sellers & Reviews</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Seller onboarding and compliance checks</li>
@@ -95,7 +95,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-3">
                 <Shield className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Buyer Protection</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Buyer Protection</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Delivery guarantee or refund as per policy</li>
@@ -112,7 +112,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-3">
                 <Lock className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Account Security</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Account Security</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Use strong passwords and enable device security</li>
@@ -129,7 +129,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-3">
                 <Handshake className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Dispute Resolution</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Dispute Resolution</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Open a support ticket with order details</li>
@@ -146,7 +146,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-3">
                 <LifeBuoy className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Report & Support</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Report & Support</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Report fraud, counterfeit, or policy violations</li>
@@ -164,7 +164,7 @@ const TrustSafetyPage = () => {
           >
             <div className="flex items-center gap-3 mb-2">
               <Globe className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Policies & Compliance</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Policies & Compliance</h3>
             </div>
             <Paragraph className="text-[var(--foreground)/70]">
               Learn how we protect your data and govern marketplace behavior.
@@ -192,7 +192,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-4">
                 <AlertTriangle className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Safety Tips</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Safety Tips</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Shop only on FirgoMart official website or app</li>
@@ -209,7 +209,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-4">
                 <CheckCircle2 className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Authenticity & Quality</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Authenticity & Quality</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Focus on genuine products and clear descriptions</li>
@@ -226,7 +226,7 @@ const TrustSafetyPage = () => {
             >
               <div className="flex items-center gap-3 mb-4">
                 <FileWarning className="w-6 h-6 text-brand-purple" />
-                <h3 className="text-xl font-bold text-[var(--foreground)]">Report a Concern</h3>
+                <h3 className="text-xl font-bold text-[color:var(--foreground)]">Report a Concern</h3>
               </div>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li>Use Support to report fraud or violations</li>

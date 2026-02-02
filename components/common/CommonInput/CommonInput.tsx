@@ -33,7 +33,7 @@ const CommonInput: React.FC<CommonInputProps> = ({
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className={clsx(
-          "w-full rounded-xl border border-[var(--foreground)/20] px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--background)] text-[var(--foreground)]",
+          "w-full rounded-xl border border-[var(--foreground)/20] px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 bg-[var(--background)] text-[color:var(--foreground)]",
           className
         )}
       />

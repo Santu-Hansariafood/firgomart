@@ -121,7 +121,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-md bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/20]"
+          className="w-full max-w-md bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/20]"
         >
           <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-6">
             <button
@@ -146,7 +146,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
               </div>
             )}
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                 Email or Mobile Number
               </label>
               <div className="relative">
@@ -156,7 +156,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                     errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
                   }`}
                   placeholder="Email or Mobile Number"
@@ -166,7 +166,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+              <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                 Password
               </label>
               <div className="relative">
@@ -176,7 +176,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] ${
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
                     errors.password ? 'border-red-500' : 'border-[var(--foreground)/20]'
                   }`}
                   placeholder="Enter your password"
@@ -184,7 +184,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowPassword(prev => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[var(--foreground)]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[color:var(--foreground)]"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>

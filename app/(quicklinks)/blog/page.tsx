@@ -22,7 +22,7 @@ const BlogPage = () => {
   }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -58,7 +58,7 @@ const BlogPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <ShoppingCart className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Shopping Guides
               </h3>
             </div>
@@ -78,7 +78,7 @@ const BlogPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Seller Insights</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Seller Insights</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Best practices for selling online</li>
@@ -96,7 +96,7 @@ const BlogPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Logistics & Delivery
               </h3>
             </div>
@@ -116,7 +116,7 @@ const BlogPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Megaphone className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Company Updates</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Company Updates</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Announcements and platform improvements</li>
@@ -134,7 +134,7 @@ const BlogPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <TrendingUp className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Industry Trends</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Industry Trends</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Latest developments in e-commerce</li>
@@ -153,7 +153,7 @@ const BlogPage = () => {
         >
           <div className="flex items-center gap-3 mb-3">
             <Shield className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[var(--foreground)]">Our Commitment</h3>
+            <h3 className="text-xl font-bold text-[color:var(--foreground)]">Our Commitment</h3>
           </div>
           <Paragraph className="text-[var(--foreground)/70]">
             We publish well-researched, easy-to-understand, and useful content.
@@ -161,7 +161,7 @@ const BlogPage = () => {
             transparency and knowledge sharing.
           </Paragraph>
           <div className="mt-6">
-            <h4 className="text-lg font-semibold text-[var(--foreground)] mb-2">
+            <h4 className="text-lg font-semibold text-[color:var(--foreground)] mb-2">
               Stay Connected
             </h4>
             <Paragraph className="text-[var(--foreground)/70]">

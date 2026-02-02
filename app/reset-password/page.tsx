@@ -70,7 +70,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--background)] text-[color:var(--foreground)] flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
         <div className="p-6 space-y-4">
           {success ? (
             <div className="space-y-2 text-center">
-              <Title level={4} className="text-[var(--foreground)]">
+              <Title level={4} className="text-[color:var(--foreground)]">
                 Password Updated
               </Title>
               <Paragraph className="text-[var(--foreground)/70] text-sm">
@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
                 </div>
               )}
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                   New Password
                 </label>
                 <div className="relative">
@@ -114,13 +114,13 @@ export default function ResetPasswordPage() {
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] focus:outline-none focus:ring-2 focus:ring-brand-purple"
                     placeholder="Enter new password"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                   Confirm New Password
                 </label>
                 <div className="relative">
@@ -129,7 +129,7 @@ export default function ResetPasswordPage() {
                     type="password"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                    className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] rounded-lg bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] focus:outline-none focus:ring-2 focus:ring-brand-purple"
                     placeholder="Re-enter new password"
                   />
                 </div>

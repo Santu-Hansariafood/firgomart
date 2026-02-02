@@ -25,7 +25,7 @@ const FaqPage = () => {
   }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -55,7 +55,7 @@ const FaqPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <ShoppingCart className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Shopping</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Shopping</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>How to search and compare products</li>
@@ -73,7 +73,7 @@ const FaqPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <CreditCard className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Payments</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Payments</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Supported payment methods</li>
@@ -91,7 +91,7 @@ const FaqPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Shipping</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Shipping</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Delivery timelines and coverage</li>
@@ -109,7 +109,7 @@ const FaqPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <RotateCcw className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Returns & Refunds</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Returns & Refunds</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Return eligibility and conditions</li>
@@ -127,7 +127,7 @@ const FaqPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Seller Support</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Seller Support</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Seller registration and onboarding</li>
@@ -145,7 +145,7 @@ const FaqPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Shield className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Account & Security</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Account & Security</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Creating and managing your account</li>
@@ -166,7 +166,7 @@ const FaqPage = () => {
         >
           <div className="flex items-center gap-3 mb-4">
             <Store className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[var(--foreground)]">Seller FAQs</h3>
+            <h3 className="text-xl font-bold text-[color:var(--foreground)]">Seller FAQs</h3>
           </div>
           <div className="space-y-4 text-[var(--foreground)/80]">
             <div>
@@ -186,7 +186,7 @@ const FaqPage = () => {
 
           <div className="grid sm:grid-cols-2 gap-6 mt-8">
             <div className="rounded-xl border border-[var(--foreground)/10] p-6">
-              <h4 className="text-lg font-bold text-[var(--foreground)] mb-3">Still Have Questions?</h4>
+              <h4 className="text-lg font-bold text-[color:var(--foreground)] mb-3">Still Have Questions?</h4>
               <ul className="space-y-2 text-[var(--foreground)/70]">
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-brand-purple" /> Email: support@firgomart.com
@@ -199,7 +199,7 @@ const FaqPage = () => {
             <div className="rounded-xl border border-[var(--foreground)/10] p-6 bg-brand-purple/10">
               <div className="flex items-center gap-2 mb-2">
                 <Handshake className="w-5 h-5 text-brand-purple" />
-                <h4 className="text-lg font-bold text-[var(--foreground)]">Our Goal</h4>
+                <h4 className="text-lg font-bold text-[color:var(--foreground)]">Our Goal</h4>
               </div>
               <p className="text-[var(--foreground)/70]">
                 FirgoMart aims to make your shopping and selling experience simple, transparent,

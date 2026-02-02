@@ -84,7 +84,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-[var(--foreground)/20]"
+          className="bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-[var(--foreground)/20]"
         >
           <div className="bg-linear-to-r from-brand-purple to-brand-red p-6 relative">
             <button
@@ -112,7 +112,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-8 h-8 text-green-600" />
                 </div>
-                <Title level={4} className="text-[var(--foreground)] mb-2">
+                <Title level={4} className="text-[color:var(--foreground)] mb-2">
                   Check Your Email
                 </Title>
 
@@ -139,7 +139,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
                     Email Address
                   </label>
                   <div className="relative">
@@ -148,7 +148,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--foreground)/50] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                      className="w-full pl-10 pr-4 py-3 border border-[var(--foreground)/20] bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
                       placeholder="your@email.com"
                     />
                   </div>

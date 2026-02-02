@@ -21,7 +21,7 @@ const BackButton: React.FC<BackButtonProps> = ({ label = "Back", href, className
     <button
       type="button"
       className={clsx(
-        "inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[var(--foreground)]",
+        "inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[color:var(--foreground)]",
         className
       )}
       onClick={onClick}

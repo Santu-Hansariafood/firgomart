@@ -38,7 +38,7 @@ function CommonTable<T extends Record<string, any>>({
   }
 
   return (
-    <div className={clsx("w-full overflow-x-auto rounded-xl border bg-[var(--background)] text-[var(--foreground)]", className)}>
+    <div className={clsx("w-full overflow-x-auto rounded-xl border bg-[var(--background)] text-[color:var(--foreground)]", className)}>
       <table className="min-w-full text-sm">
         <thead>
           <tr className="bg-[var(--background)]">
@@ -48,7 +48,7 @@ function CommonTable<T extends Record<string, any>>({
                 <th
                   key={String(col.key)}
                   className={clsx(
-                    "text-left px-4 py-3 font-medium text-[var(--foreground)] whitespace-nowrap",
+                    "text-left px-4 py-3 font-medium text-[color:var(--foreground)] whitespace-nowrap",
                     col.sortable && "cursor-pointer select-none"
                   )}
                   style={col.width ? { width: col.width } : undefined}
@@ -87,7 +87,7 @@ function CommonTable<T extends Record<string, any>>({
             data.map((row, idx) => (
               <tr key={rowKey ? rowKey(row, idx) : idx} className={clsx("bg-[var(--background)]")}> 
                 {columns.map((col) => (
-                  <td key={String(col.key)} className="px-4 py-3 text-[var(--foreground)] whitespace-nowrap">
+                  <td key={String(col.key)} className="px-4 py-3 text-[color:var(--foreground)] whitespace-nowrap">
                     {col.render ? col.render(row) : String(row[col.key as keyof T] ?? "")}
                   </td>
                 ))}

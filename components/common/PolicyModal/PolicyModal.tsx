@@ -79,14 +79,14 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
         {normalLines.map((line, i) => (
           <p
             key={i}
-            className="text-sm leading-relaxed text-[var(--foreground)] whitespace-pre-line"
+            className="text-sm leading-relaxed text-[color:var(--foreground)] whitespace-pre-line"
           >
             {line}
           </p>
         ))}
 
         {listLines.length > 0 && (
-          <div className="space-y-1 text-sm text-[var(--foreground)]">
+          <div className="space-y-1 text-sm text-[color:var(--foreground)]">
             {listLines.map((b, i) => (
               <p key={i} className="leading-relaxed">
                 <span className="mr-2 font-medium">{toRoman(i)}.</span>
@@ -107,7 +107,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
       />
 
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="w-full max-w-3xl bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="w-full max-w-3xl bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
           
           <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--foreground)/20] shrink-0">
             <div className="flex items-center gap-3">
@@ -120,7 +120,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                   className="object-contain"
                 />
               </div>
-              <h3 className="text-lg font-semibold text-[var(--foreground)]">
+              <h3 className="text-lg font-semibold text-[color:var(--foreground)]">
                 {titleMap[policy]}
               </h3>
             </div>
@@ -130,7 +130,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
               aria-label="Close"
               className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-[var(--foreground)/20] transition-colors"
             >
-              <X className="w-4 h-4 text-[var(--foreground)]" />
+              <X className="w-4 h-4 text-[color:var(--foreground)]" />
             </button>
           </div>
 
@@ -140,7 +140,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                 
                 {section.title && (
                   <h4
-                    className={`font-semibold text-[var(--foreground)] ${
+                    className={`font-semibold text-[color:var(--foreground)] ${
                       idx === 0 ? "text-xl" : "text-lg mt-4"
                     }`}
                   >
@@ -153,7 +153,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                     {section.effectiveDate && (
                       <>
                         Effective Date:{" "}
-                        <span className="text-[var(--foreground)] font-medium">
+                        <span className="text-[color:var(--foreground)] font-medium">
                           {section.effectiveDate}
                         </span>
                       </>
@@ -162,7 +162,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                       <>
                         {section.effectiveDate ? "  ·  " : ""}
                         Last Updated:{" "}
-                        <span className="text-[var(--foreground)] font-medium">
+                        <span className="text-[color:var(--foreground)] font-medium">
                           {section.lastUpdated}
                         </span>
                       </>
@@ -175,7 +175,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                 {section.content && renderContent(section.content)}
 
                 {section.points && section.points.length > 0 && (
-                  <div className="space-y-1 text-sm text-[var(--foreground)]">
+                  <div className="space-y-1 text-sm text-[color:var(--foreground)]">
                     {section.points.map((point, pIdx) => (
                       <p key={pIdx} className="leading-relaxed">
                         <span className="mr-2 font-medium">
@@ -194,7 +194,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                       className="ml-2 mt-4 space-y-2 pl-4 border-l-2 border-[var(--foreground)/10]"
                     >
                       {sub.title && (
-                        <h5 className="text-base font-medium text-[var(--foreground)]">
+                        <h5 className="text-base font-medium text-[color:var(--foreground)]">
                           {sub.title}
                         </h5>
                       )}
@@ -202,7 +202,7 @@ const PolicyModal: React.FC<PolicyModalProps> = ({ open, onClose, policy }) => {
                       {sub.content && renderContent(sub.content)}
 
                       {sub.points && sub.points.length > 0 && (
-                        <div className="space-y-1 text-sm text-[var(--foreground)]">
+                        <div className="space-y-1 text-sm text-[color:var(--foreground)]">
                           {sub.points.map((p, i) => (
                             <p key={i} className="leading-relaxed">
                               <span className="mr-2 font-medium">

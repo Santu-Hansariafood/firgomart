@@ -59,7 +59,7 @@ const SellerRegistration: React.FC = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4 text-[var(--foreground)]">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4 text-[color:var(--foreground)]">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -68,7 +68,7 @@ const SellerRegistration: React.FC = () => {
           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 text-green-500 shadow-inner">
             <CheckCircle className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-heading font-bold mb-2 text-[var(--foreground)]">
+          <h2 className="text-2xl font-heading font-bold mb-2 text-[color:var(--foreground)]">
             Registration Successful!
           </h2>
           <p className="mb-6 text-[var(--foreground)/70]">
@@ -86,7 +86,7 @@ const SellerRegistration: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] pt-24 pb-10 sm:pt-28 sm:pb-14">
+    <div className="min-h-screen bg-[var(--background)] text-[color:var(--foreground)] pt-24 pb-10 sm:pt-28 sm:pb-14">
       <div className="max-w-3xl mx-auto px-4 space-y-4 sm:space-y-6">
         <motion.div
           variants={fadeInUp}
@@ -138,7 +138,7 @@ const SellerRegistration: React.FC = () => {
           </div>
           {showAgreementPopup && !submitted && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
-              <div className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20] max-h-[90vh] flex flex-col">
+              <div className="bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20] max-h-[90vh] flex flex-col">
                 <h3 className="text-xl font-heading font-bold mb-2 shrink-0">{agreementTitle}</h3>
                 <div className="text-xs text-[var(--foreground)/70] mb-3 shrink-0">
                   <p>By continuing, you confirm that all details provided are accurate and may be used for verification and compliance with marketplace policies.</p>
@@ -151,7 +151,7 @@ const SellerRegistration: React.FC = () => {
                   {agreementSections.map((section, sIdx) => (
                     <div key={`sec-${sIdx}`} className="mt-2">
                       {section.heading && (
-                        <p className="font-semibold text-[var(--foreground)] mb-1">
+                        <p className="font-semibold text-[color:var(--foreground)] mb-1">
                           {section.heading}
                         </p>
                       )}
@@ -213,35 +213,35 @@ const SellerRegistration: React.FC = () => {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Business Name *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Business Name *</label>
                   <input
                     type="text"
                     name="businessName"
                     value={formData.businessName}
                     onChange={handleChange}
                     required
-                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.businessName ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.businessName ? 'border-red-500' : ''}`}
                     placeholder="Enter business name"
                   />
                   {errors.businessName && <p className="text-red-500 text-xs mt-1">{errors.businessName}</p>}
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Owner Name *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Owner Name *</label>
                   <input
                     type="text"
                     name="ownerName"
                     value={formData.ownerName}
                     onChange={handleChange}
                     required
-                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.ownerName ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.ownerName ? 'border-red-500' : ''}`}
                     placeholder="Enter owner's full name"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Email *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Email *</label>
                   <div className="space-y-2">
                     <div className="flex flex-wrap gap-2 items-stretch">
                       <input
@@ -251,7 +251,7 @@ const SellerRegistration: React.FC = () => {
                         onChange={handleChange}
                         onBlur={() => checkExists('email', formData.email)}
                         required
-                        className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 text-sm flex-grow basis-[65%] sm:basis-auto ${errors.email ? 'border-red-500' : ''}"
+                        className="flex-1 min-w-0 px-3 sm:px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 text-sm flex-grow basis-[65%] sm:basis-auto ${errors.email ? 'border-red-500' : ''}"
                         placeholder="Enter email address"
                       />
                       <button
@@ -277,7 +277,7 @@ const SellerRegistration: React.FC = () => {
                           onChange={e => setEmailOtp(e.target.value)}
                           maxLength={6}
                           placeholder="Enter 6-digit OTP"
-                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[var(--foreground)] border-[var(--foreground)/20] text-sm min-w-0"
+                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[color:var(--foreground)] border-[var(--foreground)/20] text-sm min-w-0"
                         />
                         <button
                           type="button"
@@ -293,7 +293,7 @@ const SellerRegistration: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Phone *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Phone *</label>
                   <input
                     type="tel"
                     name="phone"
@@ -302,7 +302,7 @@ const SellerRegistration: React.FC = () => {
                     onBlur={() => checkExists('phone', formData.phone)}
                     required
                     pattern="[0-9]{10}"
-                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.phone ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.phone ? 'border-red-500' : ''}`}
                     placeholder="Enter phone number"
                   />
                   {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
@@ -321,57 +321,57 @@ const SellerRegistration: React.FC = () => {
               <h2 className="text-lg sm:text-xl font-heading font-bold">Bank Account Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Account Number *</label>
-                  <input type="text" name="bankAccount" value={formData.bankAccount ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter bank account number"/>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Account Number *</label>
+                  <input type="text" name="bankAccount" value={formData.bankAccount ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter bank account number"/>
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">IFSC *</label>
-                  <input type="text" name="bankIfsc" value={formData.bankIfsc ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter IFSC code"/>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">IFSC *</label>
+                  <input type="text" name="bankIfsc" value={formData.bankIfsc ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter IFSC code"/>
                   {errors.bankIfsc && <p className="text-red-500 text-xs mt-1">{errors.bankIfsc}</p>}
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Bank Name *</label>
-                  <input type="text" name="bankName" value={formData.bankName ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter bank name"/>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Bank Name *</label>
+                  <input type="text" name="bankName" value={formData.bankName ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter bank name"/>
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Branch Name *</label>
-                  <input type="text" name="bankBranch" value={formData.bankBranch ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter branch name"/>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Branch Name *</label>
+                  <input type="text" name="bankBranch" value={formData.bankBranch ?? ''} onChange={handleChange} required className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200" placeholder="Enter branch name"/>
                 </div>
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Business Address *</label>
+                <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Business Address *</label>
                 <textarea
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
                   rows={3}
-                  className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
+                  className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
                   placeholder="Enter full business address"
                 />
               </div>
               <h2 className="text-lg sm:text-xl font-heading font-bold">Location</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Country *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Country *</label>
                   <input
                     type="text"
                     name="country"
                     value="India"
                     readOnly
-                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] cursor-not-allowed opacity-70"
+                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] cursor-not-allowed opacity-70"
                   />
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">State *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">State *</label>
                   <select
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
                     required
                     disabled={!states.length}
-                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
+                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
                   >
                     <option value="">Select State</option>
                     {states.map(st => (
@@ -384,14 +384,14 @@ const SellerRegistration: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">District *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">District *</label>
                   <select
                     name="district"
                     value={formData.district}
                     onChange={handleChange}
                     required
                     disabled={!districts.length}
-                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
+                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
                   >
                     <option value="">Select District</option>
                     {districts.map(dc => (
@@ -402,20 +402,20 @@ const SellerRegistration: React.FC = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">City *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">City *</label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
+                    className="w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200"
                     placeholder="Enter city"
                   />
                 </div>
               </div>
               <div>
-                <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Pincode *</label>
+                <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Pincode *</label>
                 <input
                   type="text"
                   name="pincode"
@@ -425,7 +425,7 @@ const SellerRegistration: React.FC = () => {
                   onChange={handleChange}
                   pattern="[0-9]{6}"
                   required
-                  className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.pincode ? 'border-red-500' : ''}`}
+                  className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.pincode ? 'border-red-500' : ''}`}
                   placeholder="Enter 6-digit pincode"
                 />
                 {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>}
@@ -443,12 +443,12 @@ const SellerRegistration: React.FC = () => {
                   onChange={handleChange}
                   className="w-4 h-4 text-brand-purple rounded focus:ring-brand-purple"
                 />
-                <label htmlFor="hasGST" className="text-sm font-medium text-[var(--foreground)]">I have GST Number</label>
+                <label htmlFor="hasGST" className="text-sm font-medium text-[color:var(--foreground)]">I have GST Number</label>
               </div>
 
               {formData.hasGST ? (
                 <>
-                  <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">GST Number *</label>
+                  <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">GST Number *</label>
                   <input
                     type="text"
                     name="gstNumber"
@@ -457,7 +457,7 @@ const SellerRegistration: React.FC = () => {
                     onBlur={() => checkExists('gstNumber', formData.gstNumber)}
                     pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
                     required
-                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.gstNumber ? 'border-red-500' : ''}`}
+                    className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.gstNumber ? 'border-red-500' : ''}`}
                     placeholder="Enter 15-digit GST number"
                   />
                   {errors.gstNumber && <p className="text-red-500 text-xs mt-1">{errors.gstNumber}</p>}
@@ -466,7 +466,7 @@ const SellerRegistration: React.FC = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">PAN Number *</label>
+                    <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">PAN Number *</label>
                     <input
                       type="text"
                       name="panNumber"
@@ -475,7 +475,7 @@ const SellerRegistration: React.FC = () => {
                       onBlur={() => checkExists('panNumber', formData.panNumber)}
                       pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
                       required
-                      className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.panNumber ? 'border-red-500' : ''}`}
+                      className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.panNumber ? 'border-red-500' : ''}`}
                       placeholder="Enter 10-digit PAN number"
                     />
                     {errors.panNumber && <p className="text-red-500 text-xs mt-1">{errors.panNumber}</p>}
@@ -483,7 +483,7 @@ const SellerRegistration: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-[var(--foreground)]">Aadhaar Number *</label>
+                    <label className="block mb-2 text-sm font-medium text-[color:var(--foreground)]">Aadhaar Number *</label>
                     <input
                       type="text"
                       name="aadhaar"
@@ -492,7 +492,7 @@ const SellerRegistration: React.FC = () => {
                       pattern="[0-9]{12}"
                       maxLength={12}
                       required
-                      className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.aadhaar ? 'border-red-500' : ''}`}
+                      className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.aadhaar ? 'border-red-500' : ''}`}
                       placeholder="Enter 12-digit Aadhaar number"
                     />
                     {errors.aadhaar && <p className="text-red-500 text-xs mt-1">{errors.aadhaar}</p>}

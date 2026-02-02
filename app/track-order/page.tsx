@@ -38,7 +38,7 @@ export default function TrackOrderPage() {
     <div className="min-h-screen bg-[var(--background)] py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-[var(--foreground)] mb-4">Track Your Order</h1>
+          <h1 className="text-3xl font-bold text-[color:var(--foreground)] mb-4">Track Your Order</h1>
           <p className="text-gray-500">
             Enter your Order ID or Tracking Number (AWB) to see the status.
           </p>
@@ -51,7 +51,7 @@ export default function TrackOrderPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="e.g. ORD-123456 or 1234567890"
-              className="w-full pl-12 pr-32 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-[var(--foreground)] focus:ring-2 focus:ring-brand-purple focus:border-transparent outline-none transition-all"
+              className="w-full pl-12 pr-32 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-[color:var(--foreground)] focus:ring-2 focus:ring-brand-purple focus:border-transparent outline-none transition-all"
             />
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
             <button
@@ -87,11 +87,11 @@ export default function TrackOrderPage() {
                 <div className="flex flex-wrap gap-6">
                   <div>
                     <span className="block text-xs text-gray-400">Order ID</span>
-                    <span className="font-medium text-[var(--foreground)]">{result.order.orderId}</span>
+                    <span className="font-medium text-[color:var(--foreground)]">{result.order.orderId}</span>
                   </div>
                   <div>
                     <span className="block text-xs text-gray-400">Date</span>
-                    <span className="font-medium text-[var(--foreground)]">
+                    <span className="font-medium text-[color:var(--foreground)]">
                       {new Date(result.order.date).toLocaleDateString()}
                     </span>
                   </div>
@@ -110,7 +110,7 @@ export default function TrackOrderPage() {
                 <div className="p-6 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                      <h2 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-[color:var(--foreground)] flex items-center gap-2">
                         <Truck className="w-5 h-5 text-brand-purple" />
                         {result.tracking.status}
                       </h2>
@@ -144,7 +144,7 @@ export default function TrackOrderPage() {
                           
                           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                             <div>
-                              <p className={`font-medium ${idx === 0 ? 'text-[var(--foreground)]' : 'text-gray-600 dark:text-gray-400'}`}>
+                              <p className={`font-medium ${idx === 0 ? 'text-[color:var(--foreground)]' : 'text-gray-600 dark:text-gray-400'}`}>
                                 {event.status}
                               </p>
                               <p className="text-sm text-gray-500 mt-0.5">{event.location}</p>

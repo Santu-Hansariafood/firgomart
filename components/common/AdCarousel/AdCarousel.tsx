@@ -69,14 +69,14 @@ const AdCarousel: React.FC = () => {
             aria-label="Previous Slide"
             className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/90] hover:bg-[var(--background)] rounded-full flex items-center justify-center shadow-lg transition-colors"
           >
-            <ChevronLeft className="w-6 h-6 text-[var(--foreground)]" />
+            <ChevronLeft className="w-6 h-6 text-[color:var(--foreground)]" />
           </button>
           <button
             onClick={next}
             aria-label="Next Slide"
             className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--background)/90] hover:bg-[var(--background)] rounded-full flex items-center justify-center shadow-lg transition-colors"
           >
-            <ChevronRight className="w-6 h-6 text-[var(--foreground)]" />
+            <ChevronRight className="w-6 h-6 text-[color:var(--foreground)]" />
           </button>
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
             {advertisements.map((_, index) => (

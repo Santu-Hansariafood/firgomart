@@ -66,12 +66,12 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
           exit={{ x: '100%' }}
           transition={{ type: 'tween', duration: 0.3 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--background)] text-[var(--foreground)] w-full md:w-96 h-[90vh] md:h-full md:max-h-screen flex flex-col shadow-2xl"
+          className="bg-[var(--background)] text-[color:var(--foreground)] w-full md:w-96 h-[90vh] md:h-full md:max-h-screen flex flex-col shadow-2xl"
         >
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
               <ShoppingBag className="w-5 h-5 text-brand-purple" />
-              <h2 className="text-lg font-heading font-bold text-[var(--foreground)]">Shopping Cart</h2>
+              <h2 className="text-lg font-heading font-bold text-[color:var(--foreground)]">Shopping Cart</h2>
               <span className="text-sm text-gray-500">({items.length})</span>
             </div>
             <button
@@ -85,7 +85,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
           {items.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
               <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
-              <h3 className="text-lg font-medium text-[var(--foreground)] mb-2">Your cart is empty</h3>
+              <h3 className="text-lg font-medium text-[color:var(--foreground)] mb-2">Your cart is empty</h3>
               <p className="text-gray-500 mb-4">Add some products to get started</p>
               <button
                 onClick={onClose}
@@ -117,14 +117,14 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-[var(--foreground)] line-clamp-2 mb-1">
+                      <h3 className="text-sm font-medium text-[color:var(--foreground)] line-clamp-2 mb-1">
                         {item.name}
                       </h3>
                       {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
                         <div className="text-xs text-gray-500 mb-1">Pack of {item.unitsPerPack}</div>
                       )}
                       <div className="flex items-baseline space-x-2 mb-2">
-                        <span className="text-lg font-bold text-[var(--foreground)]">₹{item.price}</span>
+                        <span className="text-lg font-bold text-[color:var(--foreground)]">₹{item.price}</span>
                         {item.originalPrice && (
                           <span className="text-xs text-gray-400 line-through">
                             ₹{item.originalPrice}
@@ -191,8 +191,8 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                     <span className="font-medium text-green-600">FREE</span>
                   </div>
                   <div className="pt-2 border-t border-gray-200 flex justify-between">
-                    <span className="font-heading font-bold text-[var(--foreground)]">Total</span>
-                    <span className="font-sans font-bold text-[var(--foreground)] text-lg">
+                    <span className="font-heading font-bold text-[color:var(--foreground)]">Total</span>
+                    <span className="font-sans font-bold text-[color:var(--foreground)] text-lg">
                         {"\u20B9"}{total.toFixed(2)}
                     </span>
                   </div>

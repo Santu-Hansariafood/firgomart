@@ -27,7 +27,7 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
   const pages = range(start, end)
 
   return (
-    <div className={clsx("flex items-center gap-2 text-[var(--foreground)]", className)}>
+    <div className={clsx("flex items-center gap-2 text-[color:var(--foreground)]", className)}>
       <button
         className={clsx(
           "px-3 py-1 rounded border",

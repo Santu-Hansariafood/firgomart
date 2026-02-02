@@ -38,7 +38,7 @@ const ReturnsPage = () => {
   }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
-      <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+      <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
         <section className="relative py-20 bg-brand-purple">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>

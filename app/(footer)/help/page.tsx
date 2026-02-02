@@ -33,7 +33,7 @@ const HelpPage = () => {
   }, []);
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[var(--foreground)] min-h-screen">
+    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <motion.div
@@ -67,7 +67,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <ShoppingCart className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Orders & Payments</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Orders & Payments</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>How to place an order</li>
@@ -85,7 +85,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Shipping & Delivery</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Shipping & Delivery</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Delivery timelines and coverage</li>
@@ -103,7 +103,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <RotateCcw className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Returns & Refunds</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Returns & Refunds</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Return eligibility and conditions</li>
@@ -121,7 +121,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Shield className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Account & Security</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Account & Security</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Creating and managing your account</li>
@@ -139,7 +139,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Seller Support</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Seller Support</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Seller registration and onboarding</li>
@@ -157,7 +157,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <LifeBuoy className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">Still Need Help?</h3>
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Still Need Help?</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li className="flex items-center gap-2">
@@ -181,7 +181,7 @@ const HelpPage = () => {
         >
           <div className="flex items-center gap-3 mb-2">
             <Handshake className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[var(--foreground)]">Our Promise</h3>
+            <h3 className="text-xl font-bold text-[color:var(--foreground)]">Our Promise</h3>
           </div>
           <Paragraph className="text-[var(--foreground)/70]">
             At FirgoMart, customer satisfaction is our priority. We continuously improve our
@@ -190,7 +190,7 @@ const HelpPage = () => {
         </motion.div>
 
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">Track Your Order</h2>
+          <h2 className="text-2xl font-bold text-[color:var(--foreground)] mb-6">Track Your Order</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <motion.div
@@ -201,7 +201,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Search className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 How to Track Your Order
               </h3>
             </div>
@@ -224,7 +224,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <ListChecks className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Order Status Updates
               </h3>
             </div>
@@ -245,7 +245,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-4">
               <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[var(--foreground)]">
+              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
                 Real-Time Tracking
               </h3>
             </div>
@@ -267,7 +267,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Globe className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">
                 Domestic & International Tracking
               </h3>
             </div>
@@ -286,7 +286,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <LifeBuoy className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">
                 Need Help With Tracking?
               </h3>
             </div>
@@ -309,7 +309,7 @@ const HelpPage = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="mt-12 rounded-2xl border border-[var(--foreground)/10] bg-brand-purple/10 p-8"
         >
-          <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">Our Commitment</h3>
+          <h3 className="text-xl font-bold text-[color:var(--foreground)] mb-2">Our Commitment</h3>
           <Paragraph className="text-[var(--foreground)/70]">
             FirgoMart is committed to providing reliable deliveries and clear
             communication. Our order tracking system ensures you stay informed at every stage of
@@ -318,7 +318,7 @@ const HelpPage = () => {
         </motion.div>
 
         <div className="mt-16 mb-8">
-          <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">Shipping Information</h2>
+          <h2 className="text-2xl font-bold text-[color:var(--foreground)] mb-6">Shipping Information</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           <motion.div
@@ -329,7 +329,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Globe className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">Shipping Coverage</h3>
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">Shipping Coverage</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>FirgoMart delivers to multiple locations across regions</li>
@@ -345,7 +345,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <Clock className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">Delivery Timelines</h3>
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">Delivery Timelines</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Standard Delivery: 2–7 business days</li>
@@ -362,7 +362,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <DollarSign className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">Shipping Charges</h3>
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">Shipping Charges</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Calculated based on product weight, size, and destination</li>
@@ -378,7 +378,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <ClipboardCheck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">Order Processing</h3>
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">Order Processing</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Processed within 24–48 hours after confirmation</li>
@@ -394,7 +394,7 @@ const HelpPage = () => {
           >
             <div className="flex items-center gap-3 mb-3">
               <MapPin className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[var(--foreground)]">Order Tracking</h3>
+              <h3 className="text-lg font-bold text-[color:var(--foreground)]">Order Tracking</h3>
             </div>
             <ul className="space-y-2 text-[var(--foreground)/70]">
               <li>Real-time order tracking available</li>
@@ -427,7 +427,7 @@ const HelpPage = () => {
         >
           <div className="flex items-center gap-3 mb-2">
             <AlertTriangle className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-lg font-bold text-[var(--foreground)]">Delivery Exceptions</h3>
+            <h3 className="text-lg font-bold text-[color:var(--foreground)]">Delivery Exceptions</h3>
           </div>
           <Paragraph className="text-[var(--foreground)/70]">
             Delays may occur due to natural events, customs clearance, or operational issues.

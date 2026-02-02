@@ -195,7 +195,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
           border border-gray-300
           rounded-full
           bg-[var(--background)]
-          text-[var(--foreground)]
+          text-[color:var(--foreground)]
           focus:outline-none
           focus:ring-2 focus:ring-brand-purple/20
           focus:border-brand-purple

@@ -167,7 +167,7 @@ const Profile = () => {
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[var(--foreground)]"
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[color:var(--foreground)]"
           >
             <span className="text-lg">←</span>
             <span>Back to Home</span>
@@ -176,7 +176,7 @@ const Profile = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-[var(--background)] text-[var(--foreground)] rounded-2xl shadow-lg overflow-hidden"
+          className="bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-lg overflow-hidden"
         >
           <div className="bg-gradient-to-r from-brand-purple to-purple-400 p-6 md:p-8 text-white">
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -208,15 +208,15 @@ const Profile = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
                   <div className="text-xs text-gray-500">Name</div>
-                  <div className="text-lg font-medium text-[var(--foreground)]">{(formData.name || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.name || "").trim() || "—"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Email</div>
-                  <div className="text-lg font-medium text-[var(--foreground)]">{(formData.email || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.email || "").trim() || "—"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Mobile</div>
-                  <div className="text-lg font-medium text-[var(--foreground)]">{(formData.mobile || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.mobile || "").trim() || "—"}</div>
                 </div>
               </div>
             </div>
@@ -294,7 +294,7 @@ const Profile = () => {
               />
             </div>
 
-            <div className="mt-6 text-[var(--foreground)]">
+            <div className="mt-6 text-[color:var(--foreground)]">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Address
               </label>
@@ -359,7 +359,7 @@ const Profile = () => {
 
             <div className="mt-8 pt-8 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
-                <h2 className="text-xl font-heading font-bold text-[var(--foreground)]">Saved Addresses</h2>
+                <h2 className="text-xl font-heading font-bold text-[color:var(--foreground)]">Saved Addresses</h2>
                 <button
                   onClick={() => setShowAddAddress(!showAddAddress)}
                   className="w-full sm:w-auto px-4 py-2 bg-purple-50 text-brand-purple hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
@@ -436,14 +436,14 @@ const Profile = () => {
                     <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-50" : "border-gray-200 bg-[var(--background)]"} relative group`}>
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <div className="font-medium text-[var(--foreground)]">{addr.name || formData.name}</div>
+                          <div className="font-medium text-[color:var(--foreground)]">{addr.name || formData.name}</div>
                           <div className="text-sm text-gray-500">{addr.mobile || formData.mobile}</div>
                         </div>
                         {addr.isDefault && (
                           <span className="px-2 py-1 bg-purple-100 text-brand-purple text-xs font-medium rounded">Default</span>
                         )}
                       </div>
-                      <p className="text-sm text-[var(--foreground)] mb-3">
+                      <p className="text-sm text-[color:var(--foreground)] mb-3">
                         {addr.address}, {addr.city}, {addr.state} - {addr.pincode}
                       </p>
                       <div className="flex items-center gap-3 text-sm">
@@ -511,7 +511,7 @@ const InputField = ({
   error,
 }: InputProps) => (
   <div>
-    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
+    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">{label}</label>
     <div className="relative">
       {icon && <div className="absolute left-3 top-1/2 -translate-y-1/2">{icon}</div>}
       <input
@@ -520,7 +520,7 @@ const InputField = ({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
           disabled ? "opacity-60 cursor-not-allowed" : ""
         } ${error ? "border-red-500" : "border-gray-300"}`}
       />
@@ -538,14 +538,14 @@ const SimpleInput = ({
   error,
 }: Omit<InputProps, "icon" | "type">) => (
   <div>
-    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
+    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">{label}</label>
     <input
       type="text"
       name={name}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
         disabled ? "opacity-60 cursor-not-allowed" : ""
       } ${error ? "border-red-500" : "border-gray-300"}`}
     />
@@ -567,13 +567,13 @@ const SelectField = ({
   disabled?: boolean;
 }) => (
   <div>
-    <label className="block text-sm font-medium text-[var(--foreground)] mb-2">{label}</label>
+    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">{label}</label>
     <select
       name={name}
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
         disabled ? "opacity-60 cursor-not-allowed" : ""
       } border-gray-300`}
     >

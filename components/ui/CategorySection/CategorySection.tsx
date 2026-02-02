@@ -40,7 +40,7 @@ const CategorySection: React.FC = () => {
               <div className="relative rounded-full overflow-hidden mb-3 bg-[var(--foreground)/10] ring-1 ring-[var(--foreground)/20] mx-auto w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24">
                 <Image src={category.image} alt={category.name} fill sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, (max-width: 1024px) 96px, 96px" className="object-cover" />
               </div>
-              <h3 className="text-sm font-medium text-[var(--foreground)] text-center">
+              <h3 className="text-sm font-medium text-[color:var(--foreground)] text-center">
                 {category.name}
               </h3>
             </motion.div>
