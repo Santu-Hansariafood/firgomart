@@ -52,13 +52,15 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
   ]
 
   return (
-    <div className="fixed bottom-3 left-3 right-3 z-50 md:hidden">
-      <div className="relative mx-auto max-w-md rounded-2xl bg-background/80 backdrop-blur-xl border border-foreground/10 shadow-xl">
+    <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
+      <div className="relative mx-auto max-w-md bg-background/80 backdrop-blur-xl border-t border-foreground/10 rounded-t-2xl shadow-[0_-12px_30px_rgba(0,0,0,0.15)]">
         <div className="flex items-center justify-between h-16 px-2">
           {navItems.map((item, idx) => {
             const Icon = item.icon
             const isActive =
-              item.href && (pathname === item.href || pathname.startsWith(item.href + "/"))
+              item.href &&
+              (pathname === item.href ||
+                pathname.startsWith(item.href + "/"))
 
             const content = (
               <motion.div
@@ -69,7 +71,11 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
                   <motion.span
                     layoutId="bottomNavActive"
                     className="absolute inset-0 rounded-xl bg-brand-purple/15"
-                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30,
+                    }}
                   />
                 )}
 
@@ -98,7 +104,9 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
                 <span
                   className={clsx(
                     "mt-1 text-[10px] font-medium transition-colors",
-                    isActive ? "text-brand-purple" : "text-foreground/60"
+                    isActive
+                      ? "text-brand-purple"
+                      : "text-foreground/60"
                   )}
                 >
                   {item.label}
