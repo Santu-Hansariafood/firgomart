@@ -735,7 +735,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                         Qty: {item.quantity ?? 1}
                       </p>
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>
-                        <Rupee />{item.price * (item.quantity ?? 1)}
+                        <Rupee />{(item.price * (item.quantity ?? 1)).toFixed(2)}
                       </p>
                       {summaryItem?.gstPercent !== undefined && (
                         <p className="text-xs text-[var(--foreground)]/60">GST: {summaryItem.gstPercent}%</p>

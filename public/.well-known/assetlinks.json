@@ -5,6 +5,7 @@
       "namespace": "android_app",
       "package_name": "com.firgomart.app",
       "sha256_cert_fingerprints": [
+        "PLAY_STORE_APP_SIGNING_SHA_HERE",
         "8E:3F:68:DE:1F:73:53:F8:59:DB:F2:C4:52:3C:37:5C:F5:07:A0:1C:A2:95:2D:CB:26:25:CF:83:E8:9B:23:19"
       ]
     }

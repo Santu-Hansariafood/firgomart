@@ -212,7 +212,7 @@ const Profile = () => {
                 </div>
                 <div>
                   <div className="text-xs text-[var(--foreground)/60]">Email</div>
-                  <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.email || "").trim() || "—"}</div>
+                  <div className="text-lg font-medium text-[color:var(--foreground)] break-all line-clamp-2 w-full overflow-hidden text-ellipsis">{(formData.email || "").trim() || "—"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-[var(--foreground)/60]">Mobile</div>

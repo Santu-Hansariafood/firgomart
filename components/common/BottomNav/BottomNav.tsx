@@ -60,7 +60,7 @@ const BottomNav: React.FC<BottomNavProps> = ({
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden pb-safe">
-      <div className="relative mx-auto max-w-md bg-white border-t border-gray-200 rounded-t-2xl shadow-[0_-12px_30px_rgba(0,0,0,0.18)]">
+      <div className="relative mx-auto max-w-md bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 rounded-t-2xl shadow-[0_-12px_30px_rgba(0,0,0,0.18)]">
         <div className="flex items-center justify-between h-16 px-2">
           {navItems.map((item, idx) => {
             const Icon = item.icon
@@ -78,7 +78,7 @@ const BottomNav: React.FC<BottomNavProps> = ({
                 {isActive && (
                   <motion.span
                     layoutId="bottomNavActive"
-                    className="absolute inset-0 rounded-xl bg-brand-purple/15"
+                    className="absolute inset-0 rounded-xl bg-brand-purple/15 dark:bg-brand-purple/20"
                     transition={{
                       type: "spring",
                       stiffness: 500,
@@ -93,7 +93,7 @@ const BottomNav: React.FC<BottomNavProps> = ({
                       "w-6 h-6 transition-all duration-300",
                       isActive
                         ? "text-brand-purple scale-110 -translate-y-0.5"
-                        : "text-gray-500"
+                        : "text-gray-500 dark:text-gray-400"
                     )}
                   />
 
@@ -114,7 +114,7 @@ const BottomNav: React.FC<BottomNavProps> = ({
                     "mt-1 text-[10px] font-medium transition-colors",
                     isActive
                       ? "text-brand-purple"
-                      : "text-gray-500"
+                      : "text-gray-500 dark:text-gray-400"
                   )}
                 >
                   {item.label}
@@ -143,8 +143,15 @@ const BottomNav: React.FC<BottomNavProps> = ({
             return (
               <button
                 key={idx}
-                onClick={item.action}
-                className="flex items-center justify-center flex-1"
+                type="button"
+                onClick={(e) => {
+                  if (item.action) {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    item.action()
+                  }
+                }}
+                className="flex items-center justify-center flex-1 bg-transparent p-0 border-none cursor-pointer focus:outline-none active:bg-transparent hover:bg-transparent"
               >
                 {content}
               </button>
