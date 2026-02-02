@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, ShoppingCart, User, Truck } from "lucide-react"
+import { Home, ShoppingCart, User, Truck, Heart } from "lucide-react"
 import { useCart } from "@/context/CartContext/CartContext"
 import { useAuth } from "@/context/AuthContext"
 import { motion, AnimatePresence } from "framer-motion"
@@ -25,6 +25,12 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
 
   const navItems = [
     { label: "Home", icon: Home, href: "/" },
+    {
+      label: "Wishlist",
+      icon: Heart,
+      href: isAuthenticated ? "/wishlist" : null,
+      action: !isAuthenticated ? onLoginClick : undefined,
+    },
     {
       label: "Orders",
       icon: Truck,

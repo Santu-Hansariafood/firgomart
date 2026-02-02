@@ -8,7 +8,7 @@ import React from 'react'
 import { useAuth } from '@/context/AuthContext'
 
 interface CartItem {
-  id: number
+  id: number | string
   name: string
   price: number
   originalPrice?: number

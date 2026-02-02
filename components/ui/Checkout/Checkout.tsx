@@ -20,7 +20,7 @@ const Rupee: React.FC<{ className?: string }> = ({ className }) => (
 )
 
 interface CartItem {
-  id: number
+  id: number | string
   name: string
   price: number
   image: string

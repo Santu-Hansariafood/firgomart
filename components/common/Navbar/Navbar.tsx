@@ -15,6 +15,7 @@ import {
   Moon,
   Sun,
   Truck,
+  Heart,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/context/AuthContext"
@@ -304,6 +305,14 @@ const Navbar: React.FC = () => {
                           <Truck className="w-4 h-4" />
                           <span>My Orders</span>
                         </Link>
+                        <Link
+                          href="/wishlist"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-2 px-4 py-2 text-foreground hover:bg-foreground/10 transition-colors"
+                        >
+                          <Heart className="w-4 h-4" />
+                          <span>My Wishlist</span>
+                        </Link>
                         <button
                           onClick={handleLogout}
                           className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
@@ -415,6 +424,14 @@ const Navbar: React.FC = () => {
                 >
                   <User className="w-5 h-5" />
                   <span className="font-medium">My Profile</span>
+                </Link>
+                <Link
+                  href="/wishlist"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center space-x-2 px-4 py-3 text-foreground hover:bg-foreground/10 rounded-lg"
+                >
+                  <Heart className="w-5 h-5" />
+                  <span className="font-medium">My Wishlist</span>
                 </Link>
               </div>
               )}
