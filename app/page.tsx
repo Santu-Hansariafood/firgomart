@@ -8,6 +8,7 @@ const AdCarousel = dynamic(() => import("@/components/common/AdCarousel/AdCarous
 const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
 const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
 const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
+const RecentlyViewed = dynamic(() => import("@/components/ui/RecentlyViewed/RecentlyViewed"));
 
 export default function Page() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
@@ -22,6 +23,10 @@ export default function Page() {
   return (
     <Suspense fallback={<Loading/>}>
       <AdCarousel />
+      <RecentlyViewed
+        onProductClick={setSelectedProduct}
+        onAddToCart={handleAddToCart}
+      />
       <ProductGrid
         onProductClick={setSelectedProduct}
         onAddToCart={handleAddToCart}

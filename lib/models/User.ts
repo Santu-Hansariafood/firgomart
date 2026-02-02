@@ -28,6 +28,8 @@ import { connectDB } from "@/lib/db/db"
         pincode: String,
         isDefault: Boolean
       }],
+      wishlist: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+      recentlyViewed: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     },
     { timestamps: true }
   )

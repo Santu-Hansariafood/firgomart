@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn } from 'lucide-react'
+import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
@@ -68,6 +68,53 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
   const [userRating, setUserRating] = useState(5)
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
+  
+  const [isSaved, setIsSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (session?.user) {
+      // Record history
+      fetch('/api/user/history', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id })
+      }).catch(() => {})
+
+      // Check wishlist status
+      fetch('/api/user/wishlist')
+        .then(res => res.json())
+        .then(data => {
+          if (data.wishlist) {
+            const exists = data.wishlist.some((p: any) => String(p._id || p.id) === String(product.id))
+            setIsSaved(exists)
+          }
+        })
+        .catch(() => {})
+    }
+  }, [product.id, session])
+
+  const toggleSave = async () => {
+    if (!session) {
+      alert("Please login to save products")
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/user/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id })
+      })
+      const data = await res.json()
+      if (data.success) {
+        setIsSaved(!isSaved) // Toggle based on current state or data.added
+        // data.added is true if added, false if removed
+        if (typeof data.added === 'boolean') setIsSaved(data.added)
+      }
+    } catch {}
+    setSaving(false)
+  }
 
   const validateSelection = () => {
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
@@ -215,12 +262,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
         >
           <div className="sticky top-0 bg-background border-b border-foreground/20 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-20">
             <h2 className="text-xl font-heading font-bold truncate pr-4">{product.name}</h2>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleSave}
+                disabled={saving}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
+              >
+                <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-foreground'}`} />
+              </button>
+              <button
+                onClick={onClose}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           <div className="p-4 sm:p-6 overflow-y-auto">

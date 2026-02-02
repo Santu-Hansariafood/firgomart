@@ -81,7 +81,6 @@ export default function TrackOrderPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            {/* Order Summary if available */}
             {result.order && (
               <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
                 <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Order Details</h3>
@@ -106,7 +105,6 @@ export default function TrackOrderPage() {
               </div>
             )}
 
-            {/* Tracking Timeline */}
             {result.tracking ? (
               <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
                 <div className="p-6 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">

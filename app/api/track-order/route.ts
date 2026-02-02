@@ -17,7 +17,6 @@ export async function GET(request: Request) {
     const Order = getOrderModel(conn)
     const Shipment = getShipmentModel(conn)
 
-    // 1. Try to find by Order ID or Order Number
     let awb = query
     let orderDetails = null
 
@@ -26,7 +25,6 @@ export async function GET(request: Request) {
     }).lean()
 
     if (order) {
-      // If order found, look for shipment
       const shipment = await (Shipment as any).findOne({ orderId: order._id }).lean()
       if (shipment?.trackingNumber) {
         awb = shipment.trackingNumber
@@ -39,18 +37,15 @@ export async function GET(request: Request) {
       }
     }
 
-    // 2. Query Shiprocket with AWB
     try {
       const token = await getShiprocketToken()
       const data = await trackShipment(token, awb)
       
-      // Parse Shiprocket response
       const trackingData = data?.tracking_data?.shipment_track_activities 
         ? data.tracking_data 
         : (data?.[0]?.tracking_data || null)
 
       if (!trackingData) {
-         // If we found an order but no tracking data yet
          if (orderDetails) {
            return NextResponse.json({ 
              success: true, 
@@ -90,7 +85,6 @@ export async function GET(request: Request) {
       })
 
     } catch (err: any) {
-      // If Shiprocket fails but we have order details
       if (orderDetails) {
         return NextResponse.json({ 
           success: true, 
