@@ -124,8 +124,10 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      url.searchParams.delete("search");
-      router.push(url.pathname + url.search);
+      if (url.searchParams.has("search")) {
+        url.searchParams.delete("search");
+        router.push(url.pathname + url.search);
+      }
     }
   };
 

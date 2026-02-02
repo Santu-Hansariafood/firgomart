@@ -66,16 +66,57 @@ export async function GET(request: Request) {
     if (categoryParam) {
       const cats = categoryParam.split(",").map(c => c.trim()).filter(Boolean)
       if (cats.length > 0) {
-        const catRegexes = cats.map(c => new RegExp(c, "i"))
-        conditions.push({ category: { $in: catRegexes } })
+        const catConditions = cats.map(c => {
+          const lowerC = c.toLowerCase()
+          
+          if (lowerC.includes("men") && !lowerC.includes("women")) {
+             return { 
+               $and: [
+                 { category: { $regex: new RegExp(c, "i") } },
+                 { category: { $not: { $regex: /women/i } } }
+               ]
+             }
+          }
+          
+          if (lowerC === "rings" || lowerC === "ring") {
+             return {
+               $and: [
+                 { category: { $regex: new RegExp(c, "i") } },
+                 { category: { $not: { $regex: /earring|key/i } } }
+               ]
+             }
+          }
+
+          return { 
+            $or: [
+               { category: { $regex: new RegExp(`^${c}$`, "i") } },
+               { category: { $regex: new RegExp(c, "i") } }
+            ]
+          }
+        })
+        
+        conditions.push({ $or: catConditions })
       }
     }
 
     if (subcategoryParam) {
       const subs = subcategoryParam.split(",").map(s => s.trim()).filter(Boolean)
       if (subs.length > 0) {
-        const subRegexes = subs.map(s => new RegExp(s, "i"))
-        conditions.push({ subcategory: { $in: subRegexes } })
+        const subConditions = subs.map(s => {
+           const lowerS = s.toLowerCase()
+           
+           if (lowerS === "rings" || lowerS === "ring") {
+              return {
+                $and: [
+                  { subcategory: { $regex: new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") } },
+                  { subcategory: { $not: { $regex: /earring/i } } }
+                ]
+              }
+           }
+           
+           return { subcategory: { $regex: new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") } }
+        })
+        conditions.push({ $or: subConditions })
       }
     }
 
@@ -83,9 +124,30 @@ export async function GET(request: Request) {
       const terms = search.split(/\s+/).filter(Boolean)
       if (terms.length > 0) {
         const termConditions = terms.map(term => {
-          // Escape special regex characters to prevent errors
           const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
           const regex = new RegExp(escapedTerm, "i")
+          if (term.toLowerCase() === "men") {
+             return {
+               $and: [
+                 { 
+                   $or: [
+                     { name: { $regex: regex } },
+                     { brand: { $regex: regex } },
+                     { category: { $regex: regex } },
+                     { subcategory: { $regex: regex } },
+                     { description: { $regex: regex } },
+                   ]
+                 },
+                 {
+                   $nor: [
+                     { name: { $regex: /women/i } },
+                     { category: { $regex: /women/i } }
+                   ]
+                 }
+               ]
+             }
+          }
+
           return {
             $or: [
               { name: { $regex: regex } },
@@ -96,7 +158,6 @@ export async function GET(request: Request) {
             ]
           }
         })
-        // Use $and to ensure all terms are present in the product fields
         conditions.push({ $and: termConditions })
       }
     }
