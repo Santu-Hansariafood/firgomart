@@ -406,13 +406,13 @@ const HelpPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.25 }}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"
+            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
           >
             <div className="flex items-center gap-3 mb-3">
               <Shield className="w-6 h-6 text-brand-purple" />
               <h3 className="text-lg font-bold text-brand-purple">International Shipping & Customs</h3>
             </div>
-            <ul className="space-y-2 text-gray-700 italic">
+            <ul className="space-y-2 text-[var(--foreground)/70] italic">
               <li>International shipments may be subject to customs duties and taxes</li>
               <li>Customs clearance time may vary by country</li>
               <li>Customers are responsible for applicable import charges unless stated otherwise</li>

@@ -68,15 +68,15 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
           onClick={(e) => e.stopPropagation()}
           className="bg-[var(--background)] text-[color:var(--foreground)] w-full md:w-96 h-[90vh] md:h-full md:max-h-screen flex flex-col shadow-2xl"
         >
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between p-4 border-b border-[var(--foreground)/10]">
             <div className="flex items-center space-x-2">
               <ShoppingBag className="w-5 h-5 text-brand-purple" />
               <h2 className="text-lg font-heading font-bold text-[color:var(--foreground)]">Shopping Cart</h2>
-              <span className="text-sm text-gray-500">({items.length})</span>
+              <span className="text-sm text-[var(--foreground)/60]">({items.length})</span>
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--foreground)/10] transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -84,9 +84,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
           {items.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-              <ShoppingBag className="w-16 h-16 text-gray-300 mb-4" />
+              <ShoppingBag className="w-16 h-16 text-[var(--foreground)/20] mb-4" />
               <h3 className="text-lg font-medium text-[color:var(--foreground)] mb-2">Your cart is empty</h3>
-              <p className="text-gray-500 mb-4">Add some products to get started</p>
+              <p className="text-[var(--foreground)/60] mb-4">Add some products to get started</p>
               <button
                 onClick={onClose}
                 className="px-6 py-2 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-lg hover:from-brand-purple/90 hover:to-brand-red/90 transition-colors"
@@ -104,7 +104,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, x: -100 }}
-                    className="flex space-x-3 bg-[var(--background)] rounded-lg p-3"
+                    className="flex space-x-3 bg-[var(--background)] rounded-lg p-3 border border-[var(--foreground)/5]"
                   >
                     <div className="relative w-20 h-20 shrink-0">
                       <FallbackImage
@@ -121,12 +121,12 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                         {item.name}
                       </h3>
                       {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
-                        <div className="text-xs text-gray-500 mb-1">Pack of {item.unitsPerPack}</div>
+                        <div className="text-xs text-[var(--foreground)/60] mb-1">Pack of {item.unitsPerPack}</div>
                       )}
                       <div className="flex items-baseline space-x-2 mb-2">
                         <span className="text-lg font-bold text-[color:var(--foreground)]">₹{item.price}</span>
                         {item.originalPrice && (
-                          <span className="text-xs text-gray-400 line-through">
+                          <span className="text-xs text-[var(--foreground)/40] line-through">
                             ₹{item.originalPrice}
                           </span>
                         )}
@@ -134,7 +134,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
                       {(item.stock ?? 0) <= 0 && (
                         <div className="mb-2">
-                          <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded-full font-medium">
+                          <span className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 text-xs px-2 py-1 rounded-full font-medium">
                             Out of Stock
                           </span>
                         </div>
@@ -147,16 +147,16 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                               onUpdateQuantity(item._uniqueId || item.id, Math.max(1, (item.quantity ?? 1) - 1))
                             }
                             disabled={(item.stock ?? 0) <= 0}
-                            className="w-6 h-6 border border-gray-300 rounded flex items-center justify-center hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-6 h-6 border border-[var(--foreground)/20] rounded flex items-center justify-center hover:bg-[var(--foreground)/5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[var(--foreground)]"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="text-sm font-medium w-6 text-center">
+                          <span className="text-sm font-medium w-6 text-center text-[var(--foreground)]">
                             {item.quantity ?? 1}
                           </span>
                           <button
                             onClick={() => onUpdateQuantity(item._uniqueId || item.id, Math.min((item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
-                            className={`w-6 h-6 border border-gray-300 rounded flex items-center justify-center transition-colors ${((item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white'}`}
+                            className={`w-6 h-6 border border-[var(--foreground)/20] rounded flex items-center justify-center transition-colors text-[var(--foreground)] ${((item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[var(--foreground)/5]'}`}
                             disabled={(item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0}
                           >
                             <Plus className="w-3 h-3" />
@@ -169,16 +169,16 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="mt-2 text-xs text-gray-500">Max 3 per product</div>
+                      <div className="mt-2 text-xs text-[var(--foreground)/50]">Max 3 per product</div>
                     </div>
                   </motion.div>
                 ))}
               </div>
-              <div className="border-t border-gray-200 p-4 space-y-3">
+              <div className="border-t border-[var(--foreground)/10] p-4 space-y-3">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">₹{total.toFixed(2)}</span>
+                    <span className="text-[var(--foreground)/60]">Subtotal</span>
+                    <span className="font-medium text-[var(--foreground)]">₹{total.toFixed(2)}</span>
                   </div>
                   {savings > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
@@ -187,10 +187,10 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Delivery</span>
+                    <span className="text-[var(--foreground)/60]">Delivery</span>
                     <span className="font-medium text-green-600">FREE</span>
                   </div>
-                  <div className="pt-2 border-t border-gray-200 flex justify-between">
+                  <div className="pt-2 border-t border-[var(--foreground)/10] flex justify-between">
                     <span className="font-heading font-bold text-[color:var(--foreground)]">Total</span>
                     <span className="font-sans font-bold text-[color:var(--foreground)] text-lg">
                         {"\u20B9"}{total.toFixed(2)}
@@ -203,7 +203,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   disabled={items.every(item => (item.stock ?? 0) <= 0)}
                   className={`w-full py-3 rounded-lg transition-colors font-medium ${
                     items.every(item => (item.stock ?? 0) <= 0)
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       : 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90'
                   }`}
                 >

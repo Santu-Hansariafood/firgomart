@@ -204,33 +204,33 @@ const Profile = () => {
           </div>
 
           <div className="p-8">
-            <div className="mb-6 p-4 border rounded-lg bg-[var(--background)] border-gray-200">
+            <div className="mb-6 p-4 border rounded-lg bg-[var(--background)] border-[var(--foreground)/10]">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
-                  <div className="text-xs text-gray-500">Name</div>
+                  <div className="text-xs text-[var(--foreground)/60]">Name</div>
                   <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.name || "").trim() || "—"}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Email</div>
+                  <div className="text-xs text-[var(--foreground)/60]">Email</div>
                   <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.email || "").trim() || "—"}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500">Mobile</div>
+                  <div className="text-xs text-[var(--foreground)/60]">Mobile</div>
                   <div className="text-lg font-medium text-[color:var(--foreground)]">{(formData.mobile || "").trim() || "—"}</div>
                 </div>
               </div>
             </div>
-            <div className="mb-6 p-4 border rounded-lg bg-green-50 border-green-200">
-              <div className="flex items-center gap-2 text-green-800 mb-2">
+            <div className="mb-6 p-4 border rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+              <div className="flex items-center gap-2 text-green-800 dark:text-green-300 mb-2">
                 <MapPin className="w-5 h-5" />
                 <span className="font-medium">Delivery Address</span>
               </div>
-              <p className="text-sm text-green-900">
+              <p className="text-sm text-green-900 dark:text-green-200">
                 {(formData.address || "").trim()
                   ? `${formData.address}`
                   : "No address on file"}
               </p>
-              <p className="text-sm text-green-900">
+              <p className="text-sm text-green-900 dark:text-green-200">
                 {[
                   (formData.city || "").trim(),
                   (formData.state || "").trim(),
@@ -239,7 +239,7 @@ const Profile = () => {
                   .filter(Boolean)
                   .join(", ") || ""}
               </p>
-              <p className="text-xs text-green-700 mt-2">
+              <p className="text-xs text-green-700 dark:text-green-400 mt-2">
                 Using your registered address as delivery address for now.
               </p>
             </div>
@@ -247,7 +247,7 @@ const Profile = () => {
               <InputField
                 label="Full Name"
                 name="name"
-                icon={<User className="w-5 h-5 text-gray-400" />}
+                icon={<User className="w-5 h-5 text-[var(--foreground)/40]" />}
                 value={formData.name || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -257,7 +257,7 @@ const Profile = () => {
                 label="Email Address"
                 name="email"
                 type="email"
-                icon={<Mail className="w-5 h-5 text-gray-400" />}
+                icon={<Mail className="w-5 h-5 text-[var(--foreground)/40]" />}
                 value={formData.email || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -268,7 +268,7 @@ const Profile = () => {
                 label="Mobile Number"
                 name="mobile"
                 type="tel"
-                icon={<Phone className="w-5 h-5 text-gray-400" />}
+                icon={<Phone className="w-5 h-5 text-[var(--foreground)/40]" />}
                 value={formData.mobile || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -279,7 +279,7 @@ const Profile = () => {
                 label="Date of Birth"
                 name="dateOfBirth"
                 type="date"
-                icon={<Calendar className="w-5 h-5 text-gray-400" />}
+                icon={<Calendar className="w-5 h-5 text-[var(--foreground)/40]" />}
                 value={formData.dateOfBirth || ""}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -295,20 +295,20 @@ const Profile = () => {
             </div>
 
             <div className="mt-6 text-[color:var(--foreground)]">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                 Address
               </label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                <MapPin className="absolute left-3 top-3 w-5 h-5 text-[var(--foreground)/40]" />
                 <textarea
                   name="address"
                   value={formData.address || ""}
                   onChange={handleChange}
                   disabled={!isEditing}
                   rows={3}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple ${
-                    !isEditing ? "bg-gray-50" : ""
-                  } border-gray-300`}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[var(--foreground)] ${
+                    !isEditing ? "opacity-80" : ""
+                  } border-[var(--foreground)/20]`}
                 />
               </div>
             </div>

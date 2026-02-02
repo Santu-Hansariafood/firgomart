@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 
 const TermsPage = () => {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 px-4 sm:px-8 py-12">
+    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
       <PolicyContent policy="terms" />
     </div>
   );

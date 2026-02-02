@@ -568,11 +568,11 @@ const Checkout: React.FC<CheckoutProps> = ({
               )}
               {step === 2 && (
                 <form onSubmit={handlePlaceOrder} className="space-y-4">
-                  <h2 className="text-xl font-heading font-bold text-[color:var(--foreground)] mb-4">
+                  <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                     Payment Details
                   </h2>
                   <div className="mb-6">
-                    <h3 className="text-lg font-heading font-semibold text-gray-900 mb-4">
+                    <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-4">
                       Select Payment Method
                     </h3>
                     <div className="grid grid-cols-2 gap-4 mb-6">
@@ -581,8 +581,8 @@ const Checkout: React.FC<CheckoutProps> = ({
                         onClick={() => setPaymentMethod('cashfree')}
                         className={`p-4 border-2 rounded-lg transition-all ${
                           paymentMethod === 'cashfree'
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                         }`}
                       >
                         <CreditCard
@@ -596,7 +596,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                           className={`text-sm font-medium ${
                             paymentMethod === 'cashfree'
                               ? 'text-blue-600'
-                              : 'text-gray-600'
+                              : 'text-gray-600 dark:text-gray-400'
                           }`}
                         >
                           Cashfree (Cards, UPI, NetBanking, Wallets)
@@ -607,8 +607,8 @@ const Checkout: React.FC<CheckoutProps> = ({
                         onClick={() => setPaymentMethod('razorpay')}
                         className={`p-4 border-2 rounded-lg transition-all ${
                           paymentMethod === 'razorpay'
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                         }`}
                       >
                         <CreditCard
@@ -622,7 +622,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                           className={`text-sm font-medium ${
                             paymentMethod === 'razorpay'
                               ? 'text-blue-600'
-                              : 'text-gray-600'
+                              : 'text-gray-600 dark:text-gray-400'
                           }`}
                         >
                           Razorpay (Cards, UPI, NetBanking, Wallets)
@@ -633,11 +633,11 @@ const Checkout: React.FC<CheckoutProps> = ({
 
                   {(paymentMethod === 'cashfree') ? (
                     <div className="space-y-4">
-                      <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-[color:var(--foreground)] mb-2">
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center">
+                        <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
                           Pay using Cashfree
                         </h3>
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                           You will complete payment securely with Cashfree Checkout. Supports Cards, UPI, NetBanking and Wallets.
                         </p>
                         <p className="text-xl font-bold text-blue-600">
@@ -647,11 +647,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-[color:var(--foreground)] mb-2">
+                      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center">
+                        <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
                           Pay using Razorpay
                         </h3>
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                           You will complete payment securely with Razorpay Checkout. Supports Cards, UPI, NetBanking and Wallets.
                         </p>
                         <p className="text-xl font-bold text-blue-600">
@@ -698,7 +698,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               animate="show"
               className="bg-[var(--background)] border rounded-xl p-6 sticky top-24 text-[color:var(--foreground)]"
             >
-              <h2 className="text-xl font-heading font-bold text-[color:var(--foreground)] mb-4">
+              <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                 Order Summary
               </h2>
 
@@ -715,11 +715,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                       className="object-cover rounded-lg w-16 h-16"
                     />
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
+                      <h3 className="text-sm font-medium text-[var(--foreground)] line-clamp-2">
                         {item.name}
                       </h3>
                       {(item.selectedSize || item.selectedColor) && (
-                        <div className="flex flex-wrap gap-2 text-xs text-gray-500 mb-1">
+                        <div className="flex flex-wrap gap-2 text-xs text-[var(--foreground)]/60 mb-1">
                           {item.selectedSize && <span>Size: {item.selectedSize}</span>}
                           {item.selectedColor && (
                             <span className="flex items-center gap-1">
@@ -729,16 +729,16 @@ const Checkout: React.FC<CheckoutProps> = ({
                         </div>
                       )}
                       {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
-                        <p className="text-xs text-gray-500">Pack of {item.unitsPerPack}</p>
+                        <p className="text-xs text-[var(--foreground)]/60">Pack of {item.unitsPerPack}</p>
                       )}
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-[var(--foreground)]/60">
                         Qty: {item.quantity ?? 1}
                       </p>
-                      <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-gray-900' }`}>
+                      <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>
                         <Rupee />{item.price * (item.quantity ?? 1)}
                       </p>
                       {summaryItem?.gstPercent !== undefined && (
-                        <p className="text-xs text-gray-500">GST: {summaryItem.gstPercent}%</p>
+                        <p className="text-xs text-[var(--foreground)]/60">GST: {summaryItem.gstPercent}%</p>
                       )}
                       {(item.stock ?? 0) <= 0 && (
                         <span className="text-xs text-red-600 font-medium">Out of Stock (Excluded)</span>
@@ -748,30 +748,30 @@ const Checkout: React.FC<CheckoutProps> = ({
                 )})}
               </div>
 
-              <div className="border-t border-gray-200 pt-4 space-y-2">
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium"><Rupee />{subtotal.toFixed(2)}</span>
+                  <span className="text-[var(--foreground)]/70">Subtotal</span>
+                  <span className="font-medium text-[var(--foreground)]"><Rupee />{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">
+                  <span className="text-[var(--foreground)]/70">
                     GST {(() => {
                       if (!orderSummary.items?.length) return ''
                       const rates = new Set(orderSummary.items.map(i => i.gstPercent))
                       return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
                     })()}
                   </span>
-                  <span className="font-medium"><Rupee />{tax.toFixed(2)}</span>
+                  <span className="font-medium text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Delivery</span>
                   <span className="font-medium">{deliveryFee > 0 ? (<><Rupee />{deliveryFee}</>) : 'FREE'}</span>
                 </div>
-                <div className="pt-2 border-t border-gray-200 flex justify-between">
-                  <span className="font-heading font-bold text-gray-900">
+                <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between">
+                  <span className="font-heading font-bold text-[var(--foreground)]">
                     Total
                   </span>
-                  <span className="font-heading font-bold text-gray-900 text-xl">
+                  <span className="font-heading font-bold text-[var(--foreground)] text-xl">
                     <Rupee />{total.toFixed(2)}
                   </span>
                 </div>
