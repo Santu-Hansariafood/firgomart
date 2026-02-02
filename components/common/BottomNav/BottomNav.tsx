@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { Home, ShoppingCart, User, Truck, Heart } from "lucide-react"
 import { useCart } from "@/context/CartContext/CartContext"
 import { useAuth } from "@/context/AuthContext"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import clsx from "clsx"
 
 interface BottomNavProps {
@@ -52,52 +52,83 @@ const BottomNav: React.FC<BottomNavProps> = ({ onCartClick, onLoginClick }) => {
   ]
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-lg border-t border-foreground/10 pb-safe md:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
-      <div className="flex items-center justify-around h-16">
-        {navItems.map((item, idx) => {
-          const Icon = item.icon
-          const isActive = item.href ? pathname === item.href : false
+    <div className="fixed bottom-3 left-3 right-3 z-50 md:hidden">
+      <div className="relative mx-auto max-w-md rounded-2xl bg-background/80 backdrop-blur-xl border border-foreground/10 shadow-xl">
+        <div className="flex items-center justify-between h-16 px-2">
+          {navItems.map((item, idx) => {
+            const Icon = item.icon
+            const isActive =
+              item.href && (pathname === item.href || pathname.startsWith(item.href + "/"))
 
-          const iconContent = (
-            <div className={`relative flex flex-col items-center justify-center w-full h-full space-y-1 ${isActive ? "text-brand-purple" : "text-foreground/60"}`}>
-              <div className="relative">
-                <Icon
-                  className={clsx(
-                    "w-6 h-6 transition-all duration-300",
-                    isActive ? "scale-110" : ""
-                  )}
-                />
-                {item.badge && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-brand-red text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-xs">
-                    {item.badge}
-                  </span>
+            const content = (
+              <motion.div
+                whileTap={{ scale: 0.9 }}
+                className="relative flex flex-col items-center justify-center w-14 h-14"
+              >
+                {isActive && (
+                  <motion.span
+                    layoutId="bottomNavActive"
+                    className="absolute inset-0 rounded-xl bg-brand-purple/15"
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
                 )}
-              </div>
-              <span className="text-[10px] font-medium">{item.label}</span>
-              {isActive && (
-                <motion.span
-                  layoutId="bottomNavIndicator"
-                  className="absolute top-0 left-1/2 -translate-x-1/2 -mt-0.5 w-8 h-1 rounded-b-full bg-brand-purple"
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
-            </div>
-          )
 
-          if (item.href) {
-            return (
-              <Link key={idx} href={item.href} className="flex-1 h-full flex items-center justify-center relative">
-                {iconContent}
-              </Link>
+                <div className="relative z-10">
+                  <Icon
+                    className={clsx(
+                      "w-6 h-6 transition-all duration-300",
+                      isActive
+                        ? "text-brand-purple scale-110 -translate-y-0.5"
+                        : "text-foreground/60"
+                    )}
+                  />
+
+                  {item.badge && (
+                    <motion.span
+                      key={item.badge}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-2 -right-2 bg-brand-red text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-md"
+                    >
+                      {item.badge}
+                    </motion.span>
+                  )}
+                </div>
+
+                <span
+                  className={clsx(
+                    "mt-1 text-[10px] font-medium transition-colors",
+                    isActive ? "text-brand-purple" : "text-foreground/60"
+                  )}
+                >
+                  {item.label}
+                </span>
+              </motion.div>
             )
-          }
 
-          return (
-            <button key={idx} onClick={item.action} className="flex-1 h-full flex items-center justify-center relative">
-              {iconContent}
-            </button>
-          )
-        })}
+            if (item.href) {
+              return (
+                <Link
+                  key={idx}
+                  href={item.href}
+                  className="flex items-center justify-center flex-1"
+                >
+                  {content}
+                </Link>
+              )
+            }
+
+            return (
+              <button
+                key={idx}
+                onClick={item.action}
+                className="flex items-center justify-center flex-1"
+              >
+                {content}
+              </button>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
