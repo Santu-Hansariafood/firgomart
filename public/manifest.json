@@ -5,7 +5,6 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "fullscreen"],
   "background_color": "#ffffff",
   "theme_color": "#7800C8",
   "description": "Global online shopping platform with international delivery from India.",
@@ -22,7 +21,7 @@
       "src": "/favicon/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable" 
     }
   ],
   "related_applications": [

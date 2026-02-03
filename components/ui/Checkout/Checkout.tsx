@@ -131,6 +131,14 @@ const Checkout: React.FC<CheckoutProps> = ({
     } catch {}
   }, [])
   useEffect(() => {
+    try {
+      if (formData.email || formData.fullName) {
+        localStorage.setItem('deliveryAddress', JSON.stringify(formData))
+      }
+    } catch {}
+  }, [formData])
+
+  useEffect(() => {
     if (!user) return
     setFormData(prev => ({
       ...prev,
@@ -141,6 +149,7 @@ const Checkout: React.FC<CheckoutProps> = ({
       city: user.city || prev.city,
       state: user.state || prev.state,
       pincode: user.pincode || prev.pincode,
+      country: (user as any).country || prev.country,
     }))
     try {
       if (user.state) localStorage.setItem('deliverToState', user.state)
@@ -698,7 +707,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                   </div>
 
                   {(paymentMethod === 'cashfree') ? (
-                    <div className="space-y-4">
+                    <div className="space-y-4 mt-4">
                       <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center">
                         <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
                           Pay using Cashfree
@@ -712,7 +721,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       </div>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-4 mt-4">
                       <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center">
                         <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
                           Pay using Razorpay
@@ -762,7 +771,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-[var(--background)] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sticky top-24 text-[color:var(--foreground)]"
+              className="bg-[var(--background)] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sticky top-24 text-[color:var(--foreground)] mt-6 lg:mt-0"
             >
               <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                 Order Summary
