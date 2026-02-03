@@ -160,7 +160,8 @@ const Checkout: React.FC<CheckoutProps> = ({
           body: JSON.stringify({ 
             items: valid.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
             dryRun: true,
-            state: formData.state
+            state: formData.state,
+            country: formData.country
           }),
         })
         const data = await safeJson(res)
@@ -801,7 +802,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>
                         <Rupee />{(item.price * (item.quantity ?? 1)).toFixed(2)}
                       </p>
-                      {summaryItem && (
+                      {summaryItem && formData.country === 'India' && (
                         <div className="text-xs text-[var(--foreground)]/60">
                           {summaryItem.igst > 0 ? (
                              <span>IGST: {summaryItem.gstPercent}%</span>

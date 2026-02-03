@@ -157,7 +157,7 @@ export async function POST(request: Request) {
       const quantity = it.quantity
       const lineTotal = price * quantity
       
-      const isIndia = country.toLowerCase() === "india"
+      const isIndia = country.toLowerCase() === "india" || country.toLowerCase() === "in"
 
       let gstPercent = 0
       let gstAmount = 0
