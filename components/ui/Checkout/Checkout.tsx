@@ -216,6 +216,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const { subtotal, tax, total } = orderSummary
 
   const indianStates = countryData.countries.find(c => c.country === "India")?.states || []
+  const availableCountries = ["India", "United States", "United Kingdom", "Canada", "Australia", "Other"]
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
