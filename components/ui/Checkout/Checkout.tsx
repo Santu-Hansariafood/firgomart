@@ -12,6 +12,7 @@ import { fadeInUp } from '@/utils/animations/animations'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import { useAuth } from '@/context/AuthContext'
 import BackButton from '@/components/common/BackButton/BackButton'
+import countryData from '@/data/country.json'
 
 const Rupee: React.FC<{ className?: string }> = ({ className }) => (
   <span className={className} style={{ fontFamily: 'system-ui, "Segoe UI Symbol", "Noto Sans", "Arial Unicode MS", sans-serif' }}>
@@ -47,6 +48,7 @@ interface FormData {
   city: string
   state: string
   pincode: string
+  country: string
   cardNumber: string
   cardName: string
   expiryDate: string
@@ -72,6 +74,7 @@ const Checkout: React.FC<CheckoutProps> = ({
     city: '',
     state: '',
     pincode: '',
+    country: 'India',
     cardNumber: '',
     cardName: '',
     expiryDate: '',
@@ -82,7 +85,13 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [deliveryFee, setDeliveryFee] = useState<number>(0)
-  const [orderSummary, setOrderSummary] = useState({ subtotal: 0, tax: 0, total: 0, items: [] as any[] })
+  const [orderSummary, setOrderSummary] = useState({ 
+    subtotal: 0, 
+    tax: 0, 
+    total: 0, 
+    items: [] as any[],
+    taxBreakdown: { cgst: 0, sgst: 0, igst: 0 }
+  })
 
   async function safeJson(res: Response) {
     try {
@@ -150,7 +159,8 @@ const Checkout: React.FC<CheckoutProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             items: valid.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
-            dryRun: true 
+            dryRun: true,
+            state: formData.state
           }),
         })
         const data = await safeJson(res)
@@ -160,14 +170,15 @@ const Checkout: React.FC<CheckoutProps> = ({
             subtotal: data.subtotal || 0,
             tax: data.tax || 0,
             total: data.total || 0,
-            items: data.items || []
+            items: data.items || [],
+            taxBreakdown: data.taxBreakdown || { cgst: 0, sgst: 0, igst: 0 }
           })
         }
       } catch {}
     }
     const timer = setTimeout(fetchFee, 500)
     return () => clearTimeout(timer)
-  }, [cartItems])
+  }, [cartItems, formData.state])
 
   async function validateDelivery(stateVal: string) {
     if (!stateVal) {
@@ -204,8 +215,10 @@ const Checkout: React.FC<CheckoutProps> = ({
   const validItems = cartItems.filter(item => (item.stock ?? 0) > 0)
   const { subtotal, tax, total } = orderSummary
 
+  const indianStates = countryData.countries.find(c => c.country === "India")?.states || []
+
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
@@ -224,7 +237,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         city: formData.city,
         state: formData.state,
         pincode: formData.pincode,
-        country: "IN",
+        country: formData.country,
         items: cartItems.map(ci => ({ 
           id: ci.id, 
           quantity: ci.quantity ?? 1,
@@ -506,7 +519,62 @@ const Checkout: React.FC<CheckoutProps> = ({
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                   />
-                  <div className="grid md:grid-cols-3 gap-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="relative">
+                      <select
+                        name="country"
+                        value={formData.country}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 appearance-none"
+                      >
+                        {availableCountries.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {formData.country === 'India' ? (
+                      <div className="relative">
+                        <select
+                          name="state"
+                          value={formData.state}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 appearance-none"
+                        >
+                          <option value="">Select State *</option>
+                          {indianStates.map((s) => (
+                            <option key={s.state} value={s.state}>
+                              {s.state}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
+                          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                          </svg>
+                        </div>
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        name="state"
+                        placeholder="State/Province *"
+                        value={formData.state}
+                        onChange={handleChange}
+                        required
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                      />
+                    )}
+
                     <input
                       type="text"
                       name="city"
@@ -516,24 +584,14 @@ const Checkout: React.FC<CheckoutProps> = ({
                       required
                       className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
-                    <input
-                      type="text"
-                      name="state"
-                      placeholder="State *"
-                      value={formData.state}
-                      onChange={handleChange}
-                      required
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
                   
                     <input
                       type="text"
                       name="pincode"
-                      placeholder="Pincode *"
+                      placeholder="Pincode/Zip *"
                       value={formData.pincode}
                       onChange={handleChange}
                       required
-                      pattern="[0-9]{6}"
                       className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
                     />
                   </div>
@@ -742,8 +800,16 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>
                         <Rupee />{(item.price * (item.quantity ?? 1)).toFixed(2)}
                       </p>
-                      {summaryItem?.gstPercent !== undefined && (
-                        <p className="text-xs text-[var(--foreground)]/60">GST: {summaryItem.gstPercent}%</p>
+                      {summaryItem && (
+                        <div className="text-xs text-[var(--foreground)]/60">
+                          {summaryItem.igst > 0 ? (
+                             <span>IGST: {summaryItem.gstPercent}%</span>
+                          ) : (summaryItem.cgst > 0 || summaryItem.sgst > 0) ? (
+                             <span>CGST: {(summaryItem.gstPercent || 0)/2}% + SGST: {(summaryItem.gstPercent || 0)/2}%</span>
+                          ) : (
+                             <span>GST: {summaryItem.gstPercent}%</span>
+                          )}
+                        </div>
                       )}
                       {(item.stock ?? 0) <= 0 && (
                         <span className="text-xs text-red-600 font-medium">Out of Stock (Excluded)</span>
@@ -758,16 +824,55 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="text-[var(--foreground)]/70">Subtotal</span>
                   <span className="font-medium text-[var(--foreground)]"><Rupee />{subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[var(--foreground)]/70">
-                    GST {(() => {
-                      if (!orderSummary.items?.length) return ''
-                      const rates = new Set(orderSummary.items.map(i => i.gstPercent))
-                      return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
-                    })()}
-                  </span>
-                  <span className="font-medium text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
-                </div>
+                
+                {formData.country === 'India' && (
+                  orderSummary.taxBreakdown.igst > 0 ? (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--foreground)]/70">
+                        IGST {(() => {
+                          if (!orderSummary.items?.length) return ''
+                          const rates = new Set(orderSummary.items.map(i => i.gstPercent))
+                          return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
+                        })()}
+                      </span>
+                      <span className="font-medium text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
+                    </div>
+                  ) : (orderSummary.taxBreakdown.cgst > 0 || orderSummary.taxBreakdown.sgst > 0) ? (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--foreground)]/70">
+                          CGST {(() => {
+                            if (!orderSummary.items?.length) return ''
+                            const rates = new Set(orderSummary.items.map(i => (i.gstPercent || 0) / 2))
+                            return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
+                          })()}
+                        </span>
+                        <span className="font-medium text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.cgst.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--foreground)]/70">
+                          SGST {(() => {
+                            if (!orderSummary.items?.length) return ''
+                            const rates = new Set(orderSummary.items.map(i => (i.gstPercent || 0) / 2))
+                            return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
+                          })()}
+                        </span>
+                        <span className="font-medium text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.sgst.toFixed(2)}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--foreground)]/70">
+                        GST {(() => {
+                          if (!orderSummary.items?.length) return ''
+                          const rates = new Set(orderSummary.items.map(i => i.gstPercent))
+                          return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
+                        })()}
+                      </span>
+                      <span className="font-medium text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
+                    </div>
+                  )
+                )}
                 <div className="flex justify-between text-sm text-green-600">
                   <span>Delivery</span>
                   <span className="font-medium">{deliveryFee > 0 ? (<><Rupee />{deliveryFee}</>) : 'FREE'}</span>

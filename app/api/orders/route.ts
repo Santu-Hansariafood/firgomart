@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 import { getOrderModel } from "@/lib/models/Order"
 import { findUserAcrossDBs } from "@/lib/models/User"
+import { findSellerAcrossDBs } from "@/lib/models/Seller"
 import categories from "@/data/categories.json"
 import type { ClientSession } from "mongoose"
 
@@ -68,11 +69,34 @@ export async function POST(request: Request) {
     const Order = getOrderModel(conn)
 
     const ids = items.map((i) => i.id)
-    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string }
+    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string; sellerState?: string; createdByEmail?: string }
     const products = await (Product as unknown as { find: (q: unknown) => { lean: () => Promise<ProductLean[]> } })
       .find({ _id: { $in: ids } }).lean()
     const prodMap: Record<string, ProductLean> = {}
+    
+    // Helper to cache seller states to avoid repeated DB lookups
+    const sellerStateCache: Record<string, string> = {}
+    
     for (const p of products as ProductLean[]) {
+      // Ensure sellerState is available
+      if (!p.sellerState && p.createdByEmail) {
+        if (sellerStateCache[p.createdByEmail]) {
+          p.sellerState = sellerStateCache[p.createdByEmail]
+        } else {
+          try {
+            const found = await findSellerAcrossDBs({ email: p.createdByEmail })
+            if (found?.seller && typeof (found.seller as any).state === "string") {
+              const st = (found.seller as any).state
+              sellerStateCache[p.createdByEmail] = st
+              p.sellerState = st
+            }
+          } catch {}
+        }
+      }
+      // If still no sellerState, and it's an admin product (no createdByEmail or failed fetch),
+      // we could try to use a default Admin State if configured.
+      // For now, if missing, it will default to IGST (safe).
+      
       prodMap[String(p._id)] = p
     }
 
@@ -123,6 +147,9 @@ export async function POST(request: Request) {
 
     let subtotal = 0
     let totalTax = 0
+    let totalCGST = 0
+    let totalSGST = 0
+    let totalIGST = 0
 
     const orderItems = items.map((it) => {
       const p = prodMap[it.id] as ProductLean
@@ -130,11 +157,33 @@ export async function POST(request: Request) {
       const quantity = it.quantity
       const lineTotal = price * quantity
       
-      const gstPercent = getGstPercent(p.category)
-      const gstAmount = (lineTotal * gstPercent) / 100
+      const isIndia = country.toLowerCase() === "india"
+
+      let gstPercent = 0
+      let gstAmount = 0
+      let cgst = 0, sgst = 0, igst = 0
+
+      if (isIndia) {
+        gstPercent = getGstPercent(p.category)
+        gstAmount = Number(((lineTotal * gstPercent) / 100).toFixed(2))
+        
+        // GST Split Logic
+        const sellerState = (p.sellerState || "").trim().toLowerCase()
+        const buyerStateLower = state.trim().toLowerCase()
+        
+        if (buyerStateLower && sellerState && buyerStateLower === sellerState) {
+          cgst = gstAmount / 2
+          sgst = gstAmount / 2
+        } else {
+          igst = gstAmount
+        }
+      }
       
       subtotal += lineTotal
       totalTax += gstAmount
+      totalCGST += cgst
+      totalSGST += sgst
+      totalIGST += igst
 
       return {
         productId: p._id,
@@ -144,7 +193,10 @@ export async function POST(request: Request) {
         selectedSize: it.selectedSize,
         selectedColor: it.selectedColor,
         gstPercent,
-        gstAmount
+        gstAmount,
+        cgst,
+        sgst,
+        igst
       }
     })
 
@@ -156,10 +208,18 @@ export async function POST(request: Request) {
         subtotal,
         tax: totalTax,
         total: finalAmount,
+        taxBreakdown: {
+          cgst: totalCGST,
+          sgst: totalSGST,
+          igst: totalIGST
+        },
         items: orderItems.map(i => ({ 
           productId: i.productId, 
           gstPercent: i.gstPercent, 
-          gstAmount: i.gstAmount 
+          gstAmount: i.gstAmount,
+          cgst: i.cgst,
+          sgst: i.sgst,
+          igst: i.igst
         }))
       })
     }
