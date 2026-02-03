@@ -14,7 +14,6 @@ interface BottomNavProps {
 }
 
 const BottomNav: React.FC<BottomNavProps> = ({
-  onCartClick,
   onLoginClick,
 }) => {
   const pathname = usePathname()
@@ -47,7 +46,8 @@ const BottomNav: React.FC<BottomNavProps> = ({
     {
       label: "Cart",
       icon: ShoppingCart,
-      action: onCartClick,
+      href: isAuthenticated ? "/cart" : null,
+      action: !isAuthenticated ? onLoginClick : undefined,
       badge: cartCount > 0 ? cartCount : null,
     },
     {
@@ -128,6 +128,9 @@ const BottomNav: React.FC<BottomNavProps> = ({
                   key={idx}
                   href={item.href}
                   onClick={(e) => {
+                    if (item.label === "Cart") {
+                       return;
+                    }
                     if (item.action) {
                       e.preventDefault();
                       item.action();
