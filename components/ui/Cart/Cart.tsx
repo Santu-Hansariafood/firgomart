@@ -31,6 +31,45 @@ interface CartProps {
 const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveItem }) => {
   const router = useRouter()
   const { isAuthenticated } = useAuth()
+  const [orderSummary, setOrderSummary] = React.useState<any>(null)
+
+  React.useEffect(() => {
+    const fetchSummary = async () => {
+      const valid = items.filter(item => (item.stock ?? 0) > 0)
+      if (valid.length === 0) {
+        setOrderSummary(null)
+        return
+      }
+
+      let country = 'India'
+      try {
+        const raw = typeof window !== 'undefined' ? localStorage.getItem('deliveryAddress') : ''
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          if (parsed.country) country = parsed.country
+        }
+      } catch {}
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: valid.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+            dryRun: true,
+            country
+          }),
+        })
+        if (res.ok) {
+          const data = await res.json()
+          setOrderSummary(data)
+        }
+      } catch {}
+    }
+    
+    const timer = setTimeout(fetchSummary, 300)
+    return () => clearTimeout(timer)
+  }, [items])
 
   const total = items.reduce((sum, item) => {
     if ((item.stock ?? 0) <= 0) return sum
@@ -97,7 +136,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
           ) : (
             <>
               <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {items.map((item) => (
+                {items.map((item) => {
+                  const summaryItem = orderSummary?.items?.find((si: any) => String(si.productId) === String(item.id))
+                  return (
                   <motion.div
                     key={item.id}
                     layout
@@ -123,7 +164,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                       {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
                         <div className="text-xs text-[var(--foreground)/60] mb-1">Pack of {item.unitsPerPack}</div>
                       )}
-                      <div className="flex items-baseline space-x-2 mb-2">
+                      <div className="flex items-baseline space-x-2 mb-1">
                         <span className="text-lg font-bold text-[color:var(--foreground)]">₹{item.price}</span>
                         {item.originalPrice && (
                           <span className="text-xs text-[var(--foreground)/40] line-through">
@@ -131,6 +172,12 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                           </span>
                         )}
                       </div>
+                      
+                      {summaryItem && summaryItem.gstPercent > 0 && (
+                        <div className="text-xs text-[var(--foreground)/60] mb-2">
+                           GST: {summaryItem.gstPercent}%
+                        </div>
+                      )}
 
                       {(item.stock ?? 0) <= 0 && (
                         <div className="mb-2">
@@ -172,7 +219,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                       <div className="mt-2 text-xs text-[var(--foreground)/50]">Max 3 per product</div>
                     </div>
                   </motion.div>
-                ))}
+                )})}
               </div>
               <div className="border-t border-[var(--foreground)/10] p-4 space-y-3">
                 <div className="space-y-2">
@@ -180,6 +227,12 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                     <span className="text-[var(--foreground)/60]">Subtotal</span>
                     <span className="font-medium text-[var(--foreground)]">₹{total.toFixed(2)}</span>
                   </div>
+                  {orderSummary?.tax > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-[var(--foreground)/60]">Tax (GST)</span>
+                      <span className="font-medium text-[var(--foreground)]">₹{orderSummary.tax.toFixed(2)}</span>
+                    </div>
+                  )}
                   {savings > 0 && (
                     <div className="flex justify-between text-sm text-green-600">
                       <span>Savings</span>
