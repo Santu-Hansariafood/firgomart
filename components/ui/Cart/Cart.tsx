@@ -71,10 +71,21 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
     return () => clearTimeout(timer)
   }, [items])
 
-  const total = items.reduce((sum, item) => {
+  const localTotal = items.reduce((sum, item) => {
     if ((item.stock ?? 0) <= 0) return sum
     return sum + item.price * (item.quantity ?? 1)
   }, 0)
+
+  const finalSubtotal = orderSummary?.subtotal ?? localTotal
+  const finalTotal = orderSummary?.total ?? localTotal
+  const taxAmount = orderSummary?.tax ?? 0
+
+  const uniqueTaxRates = orderSummary?.items 
+    ? Array.from(new Set(orderSummary.items.map((i: any) => i.gstPercent))) 
+    : []
+  const taxLabel = uniqueTaxRates.length === 1 
+    ? `Tax (GST ${uniqueTaxRates[0]}%)` 
+    : 'Tax (GST)'
   const savings = items.reduce((sum, item) => {
     if ((item.stock ?? 0) <= 0) return sum
     const saved = item.originalPrice ? (item.originalPrice - item.price) * (item.quantity ?? 1) : 0
@@ -225,12 +236,12 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-[var(--foreground)/60]">Subtotal</span>
-                    <span className="font-medium text-[var(--foreground)]">₹{total.toFixed(2)}</span>
+                    <span className="font-medium text-[var(--foreground)]">₹{finalSubtotal.toFixed(2)}</span>
                   </div>
-                  {orderSummary?.tax > 0 && (
+                  {taxAmount > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-[var(--foreground)/60]">Tax (GST)</span>
-                      <span className="font-medium text-[var(--foreground)]">₹{orderSummary.tax.toFixed(2)}</span>
+                      <span className="text-[var(--foreground)/60]">{taxLabel}</span>
+                      <span className="font-medium text-[var(--foreground)]">₹{taxAmount.toFixed(2)}</span>
                     </div>
                   )}
                   {savings > 0 && (
@@ -246,7 +257,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   <div className="pt-2 border-t border-[var(--foreground)/10] flex justify-between">
                     <span className="font-heading font-bold text-[color:var(--foreground)]">Total</span>
                     <span className="font-sans font-bold text-[color:var(--foreground)] text-lg">
-                        {"\u20B9"}{total.toFixed(2)}
+                        {"\u20B9"}{finalTotal.toFixed(2)}
                     </span>
                   </div>
                 </div>
