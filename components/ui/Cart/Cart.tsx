@@ -35,7 +35,6 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
   React.useEffect(() => {
     const fetchSummary = async () => {
-      // Send all items to check stock, not just valid ones
       if (items.length === 0) {
         setOrderSummary(null)
         return

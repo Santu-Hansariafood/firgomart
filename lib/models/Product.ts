@@ -1,6 +1,45 @@
-import { Connection, Schema, Model } from "mongoose"
+import { Connection, Schema, Model, Document } from "mongoose"
 
-  const ProductSchema = new Schema(
+export interface IProduct extends Document {
+  name: string
+  image: string
+  images: string[]
+  category: string
+  subcategory?: string
+  price: number
+  originalPrice?: number
+  discount?: number
+  height?: number
+  width?: number
+  length?: number
+  weight?: number
+  dimensionUnit?: string
+  lengthUnit?: string
+  weightUnit?: string
+  rating: number
+  reviews: number
+  hsnCode?: string
+  gstNumber?: string
+  description?: string
+  details?: string
+  status: string
+  stock: number
+  isAdminProduct: boolean
+  productId?: string
+  createdByEmail?: string
+  sellerState?: string
+  sellerHasGST?: boolean
+  brand?: string
+  colors: string[]
+  sizes: string[]
+  about?: string
+  additionalInfo?: string
+  unitsPerPack: number
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+const ProductSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
     image: { type: String, required: true },
@@ -42,8 +81,8 @@ import { Connection, Schema, Model } from "mongoose"
 
 ProductSchema.index({ name: "text", category: "text", subcategory: "text", brand: "text", description: "text" })
 
-export function getProductModel(conn: Connection) {
-  const models = conn.models as Record<string, Model<unknown>>
-  const existing = models.Product as Model<unknown> | undefined
-  return existing ?? conn.model("Product", ProductSchema)
+export function getProductModel(conn: Connection): Model<IProduct> {
+  const models = conn.models as Record<string, Model<IProduct>>
+  const existing = models.Product
+  return existing ?? conn.model<IProduct>("Product", ProductSchema)
 }

@@ -36,9 +36,10 @@ interface Product {
 interface ProductGridProps {
   onProductClick: (product: Product) => void
   onAddToCart: (product: Product) => void
+  initialCategory?: string
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, initialCategory }) => {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
   const [page, setPage] = useState<number>(1)
   const [loading, setLoading] = useState<boolean>(false)
@@ -46,7 +47,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart }
   const searchParams = useSearchParams()
   const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
-  const category = (searchParams.get('category') || '').trim()
+  const category = initialCategory || (searchParams.get('category') || '').trim()
   const subcategory = (searchParams.get('subcategory') || '').trim()
   const [deliverToState, setDeliverToState] = useState<string>(() => {
     try {
