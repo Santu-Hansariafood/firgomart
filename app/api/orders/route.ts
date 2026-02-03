@@ -108,7 +108,7 @@ export async function POST(request: Request) {
     for (const it of items) {
       const p = prodMap[it.id]
       const available = Number(p.stock || 0)
-      if (available < it.quantity) {
+      if (available < it.quantity && !body.dryRun) {
         return NextResponse.json({ error: "Insufficient stock", productId: it.id, available }, { status: 409 })
       }
     }
@@ -196,7 +196,8 @@ export async function POST(request: Request) {
         gstAmount,
         cgst,
         sgst,
-        igst
+        igst,
+        stock: Number(p.stock || 0)
       }
     })
 
@@ -219,7 +220,8 @@ export async function POST(request: Request) {
           gstAmount: i.gstAmount,
           cgst: i.cgst,
           sgst: i.sgst,
-          igst: i.igst
+          igst: i.igst,
+          stock: i.stock
         }))
       })
     }

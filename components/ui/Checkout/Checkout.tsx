@@ -126,6 +126,7 @@ const Checkout: React.FC<CheckoutProps> = ({
         city: obj.city || prev.city,
         state: obj.state || prev.state,
         pincode: obj.pincode || prev.pincode,
+        country: obj.country || prev.country,
       }))
     } catch {}
   }, [])
@@ -293,7 +294,7 @@ const Checkout: React.FC<CheckoutProps> = ({
           }
           await ensureScript()
           const cf = (window as any).Cashfree({ mode: (initData.mode === 'production' ? 'production' : 'sandbox') })
-          cf.checkout({ paymentSessionId: String(initData.paymentSessionId || ''), redirectTarget: '_modal' })
+          cf.checkout({ paymentSessionId: String(initData.paymentSessionId || ''), redirectTarget: '_self' })
           return
         } catch {
           setCheckoutError("Failed to connect to payment gateway")

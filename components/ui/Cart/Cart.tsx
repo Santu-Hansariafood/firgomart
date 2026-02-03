@@ -35,8 +35,8 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
   React.useEffect(() => {
     const fetchSummary = async () => {
-      const valid = items.filter(item => (item.stock ?? 0) > 0)
-      if (valid.length === 0) {
+      // Send all items to check stock, not just valid ones
+      if (items.length === 0) {
         setOrderSummary(null)
         return
       }
@@ -55,7 +55,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            items: valid.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+            items: items.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
             dryRun: true,
             country
           }),
@@ -190,7 +190,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                         </div>
                       )}
 
-                      {(item.stock ?? 0) <= 0 && (
+                      {((summaryItem?.stock ?? item.stock ?? 0) <= 0 || (summaryItem?.stock ?? item.stock ?? 999) < (item.quantity ?? 1)) && (
                         <div className="mb-2">
                           <span className="bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 text-xs px-2 py-1 rounded-full font-medium">
                             Out of Stock
@@ -204,7 +204,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                             onClick={() =>
                               onUpdateQuantity(item._uniqueId || item.id, Math.max(1, (item.quantity ?? 1) - 1))
                             }
-                            disabled={(item.stock ?? 0) <= 0}
+                            disabled={(summaryItem?.stock ?? item.stock ?? 0) <= 0}
                             className="w-6 h-6 border border-[var(--foreground)/20] rounded flex items-center justify-center hover:bg-[var(--foreground)/5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[var(--foreground)]"
                           >
                             <Minus className="w-3 h-3" />
@@ -213,9 +213,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                             {item.quantity ?? 1}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item._uniqueId || item.id, Math.min((item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
-                            className={`w-6 h-6 border border-[var(--foreground)/20] rounded flex items-center justify-center transition-colors text-[var(--foreground)] ${((item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[var(--foreground)/5]'}`}
-                            disabled={(item.quantity ?? 1) >= 3 || (item.stock ?? 0) <= (item.quantity ?? 0) || (item.stock ?? 0) <= 0}
+                            onClick={() => onUpdateQuantity(item._uniqueId || item.id, Math.min((summaryItem?.stock ?? item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
+                            className={`w-6 h-6 border border-[var(--foreground)/20] rounded flex items-center justify-center transition-colors text-[var(--foreground)] ${((item.quantity ?? 1) >= 3 || (summaryItem?.stock ?? item.stock ?? 0) <= (item.quantity ?? 0) || (summaryItem?.stock ?? item.stock ?? 0) <= 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[var(--foreground)/5]'}`}
+                            disabled={(item.quantity ?? 1) >= 3 || (summaryItem?.stock ?? item.stock ?? 0) <= (item.quantity ?? 0) || (summaryItem?.stock ?? item.stock ?? 0) <= 0}
                           >
                             <Plus className="w-3 h-3" />
                           </button>
@@ -264,9 +264,17 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
 
                 <button
                   onClick={handleCheckout}
-                  disabled={items.every(item => (item.stock ?? 0) <= 0)}
+                  disabled={items.some(item => {
+                    const sItem = orderSummary?.items?.find((si: any) => String(si.productId) === String(item.id))
+                    const stock = sItem?.stock ?? item.stock ?? 0
+                    return stock < (item.quantity ?? 1)
+                  })}
                   className={`w-full py-3 rounded-lg transition-colors font-medium ${
-                    items.every(item => (item.stock ?? 0) <= 0)
+                    items.some(item => {
+                      const sItem = orderSummary?.items?.find((si: any) => String(si.productId) === String(item.id))
+                      const stock = sItem?.stock ?? item.stock ?? 0
+                      return stock < (item.quantity ?? 1)
+                    })
                       ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                       : 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90'
                   }`}
