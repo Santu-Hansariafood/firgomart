@@ -433,7 +433,7 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(formData.addresses || []).map((addr, idx) => (
-                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-50" : "border-gray-200 bg-[var(--background)]"} relative group`}>
+                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-500" : "border-gray-200 bg-[var(--background)]"} relative group`}>
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="font-medium text-[color:var(--foreground)]">{addr.name || formData.name}</div>
