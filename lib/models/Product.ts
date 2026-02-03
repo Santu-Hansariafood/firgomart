@@ -20,6 +20,7 @@ export interface IProduct extends Document {
   reviews: number
   hsnCode?: string
   gstNumber?: string
+  gstPercent?: number
   description?: string
   details?: string
   status: string
@@ -60,6 +61,7 @@ const ProductSchema = new Schema<IProduct>(
     reviews: { type: Number, default: 0 },
     hsnCode: { type: String },
     gstNumber: { type: String },
+    gstPercent: { type: Number },
     description: { type: String },
     details: { type: String },
     status: { type: String, default: "approved", index: true },

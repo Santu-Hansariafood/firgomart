@@ -140,19 +140,26 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   useEffect(() => {
     if (!user) return
+    const u = user as any
+    let defaultAddr = (u.addresses || []).find((a: any) => a.isDefault)
+    if (!defaultAddr && u.addresses && u.addresses.length > 0) {
+      defaultAddr = u.addresses[0]
+    }
+    
     setFormData(prev => ({
       ...prev,
-      fullName: user.name || prev.fullName,
-      email: user.email || prev.email,
-      phone: user.mobile || prev.phone,
-      address: user.address || prev.address,
-      city: user.city || prev.city,
-      state: user.state || prev.state,
-      pincode: user.pincode || prev.pincode,
-      country: (user as any).country || prev.country,
+      fullName: u.name || prev.fullName,
+      email: u.email || prev.email,
+      phone: u.mobile || prev.phone,
+      address: defaultAddr?.address || u.address || prev.address,
+      city: defaultAddr?.city || u.city || prev.city,
+      state: defaultAddr?.state || u.state || prev.state,
+      pincode: defaultAddr?.pincode || u.pincode || prev.pincode,
+      country: defaultAddr?.country || u.country || prev.country,
     }))
     try {
-      if (user.state) localStorage.setItem('deliverToState', user.state)
+      const st = defaultAddr?.state || u.state
+      if (st) localStorage.setItem('deliverToState', st)
     } catch {}
   }, [user])
 
@@ -406,26 +413,26 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   if (orderPlaced) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-xl"
+          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 max-w-md w-full text-center shadow-xl dark:shadow-none"
         >
-          <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-heading font-bold text-gray-900 mb-2">
+          <CheckCircle className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-heading font-bold text-gray-900 dark:text-gray-100 mb-2">
             Order Placed Successfully!
           </h2>
-          <p className="text-gray-600 mb-2">
+          <p className="text-gray-600 dark:text-gray-300 mb-2">
             Order ID: {lastOrder?.orderNumber || lastOrder?.id || ""}
           </p>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
             Your order will be delivered within 3-5 business days.
           </p>
           {lastOrder?.id && (
             <a
               href={`/api/orders/${encodeURIComponent(lastOrder.id)}/receipt?download=true`}
-              className="inline-block mb-4 px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
+              className="inline-block mb-4 px-6 py-3 border-2 border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors font-medium"
             >
               Download Receipt
             </a>

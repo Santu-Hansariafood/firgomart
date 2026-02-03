@@ -78,8 +78,8 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
       {label && <p className="text-sm mb-1 font-medium text-[var(--foreground)/70]">{label}</p>}
       <div
         className={clsx(
-          "rounded-xl border border-[var(--foreground)/20] flex flex-wrap gap-2 items-center justify-between px-4 py-3 cursor-pointer bg-[var(--background)] text-[color:var(--foreground)]",
-          open && "ring-2 ring-brand-purple"
+          "w-full rounded-lg border border-[var(--foreground)/20] flex flex-wrap gap-2 items-center justify-between px-4 py-2 cursor-pointer bg-[var(--background)] text-[color:var(--foreground)] transition-all duration-200 min-h-[42px]",
+          open && "ring-2 ring-brand-purple border-brand-purple"
         )}
         onClick={() => setOpen(!open)}
       >

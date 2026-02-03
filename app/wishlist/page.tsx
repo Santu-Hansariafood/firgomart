@@ -54,7 +54,6 @@ export default function WishlistPage() {
   }, [isAuthenticated]);
 
   const removeFromWishlist = async (productId: string) => {
-    // Optimistic update
     setWishlist((prev) => prev.filter((p) => p._id !== productId));
 
     try {

@@ -69,16 +69,14 @@ export async function POST(request: Request) {
     const Order = getOrderModel(conn)
 
     const ids = items.map((i) => i.id)
-    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string; sellerState?: string; createdByEmail?: string }
+    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string; sellerState?: string; createdByEmail?: string; gstPercent?: number }
     const products = await (Product as unknown as { find: (q: unknown) => { lean: () => Promise<ProductLean[]> } })
       .find({ _id: { $in: ids } }).lean()
     const prodMap: Record<string, ProductLean> = {}
     
-    // Helper to cache seller states to avoid repeated DB lookups
     const sellerStateCache: Record<string, string> = {}
     
     for (const p of products as ProductLean[]) {
-      // Ensure sellerState is available
       if (!p.sellerState && p.createdByEmail) {
         if (sellerStateCache[p.createdByEmail]) {
           p.sellerState = sellerStateCache[p.createdByEmail]
@@ -93,9 +91,6 @@ export async function POST(request: Request) {
           } catch {}
         }
       }
-      // If still no sellerState, and it's an admin product (no createdByEmail or failed fetch),
-      // we could try to use a default Admin State if configured.
-      // For now, if missing, it will default to IGST (safe).
       
       prodMap[String(p._id)] = p
     }
@@ -164,10 +159,13 @@ export async function POST(request: Request) {
       let cgst = 0, sgst = 0, igst = 0
 
       if (isIndia) {
-        gstPercent = getGstPercent(p.category)
+        if (typeof p.gstPercent === "number") {
+          gstPercent = p.gstPercent
+        } else {
+          gstPercent = getGstPercent(p.category)
+        }
         gstAmount = Number(((lineTotal * gstPercent) / 100).toFixed(2))
         
-        // GST Split Logic
         const sellerState = (p.sellerState || "").trim().toLowerCase()
         const buyerStateLower = state.trim().toLowerCase()
         
@@ -226,7 +224,6 @@ export async function POST(request: Request) {
       })
     }
 
-    // Check for duplicate pending orders (created in last 5 minutes)
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
     const existingOrder = await (Order as any).findOne({
       buyerEmail: buyerEmail || undefined,
@@ -236,7 +233,6 @@ export async function POST(request: Request) {
     }).sort({ createdAt: -1 })
 
     if (existingOrder) {
-      // Check if items count matches to be reasonably sure it's the same cart
       if (Array.isArray(existingOrder.items) && existingOrder.items.length === orderItems.length) {
          return NextResponse.json({ order: {
            id: String(existingOrder._id),
