@@ -43,7 +43,7 @@ type Product = {
 type EditableProduct = Product & { description?: string; details?: string }
 export default function AdminPageClient() {
   const { data: session } = useSession()
-  const { user: authUser } = useAuth()
+  const { user: authUser, loading: authLoading } = useAuth()
   const router = useRouter()
   const [sellers, setSellers] = useState<Seller[]>([])
   const [approvedSellers, setApprovedSellers] = useState<Seller[]>([])
@@ -258,6 +258,8 @@ export default function AdminPageClient() {
 
   type CategoryOption = { id: number; label: string }
   const [selectedCategoryItem, setSelectedCategoryItem] = useState<CategoryOption | null>(null)
+
+  if (authLoading) return <BeautifulLoader />
 
   if (!allowed) return <AdminLogin />
 

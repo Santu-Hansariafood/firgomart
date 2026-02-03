@@ -105,7 +105,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
     if (res?.ok) {
       onClose()
     } else {
-      const msg = typeof res?.error === 'string' && res.error.length > 0 ? res.error : 'Invalid email or password'
+      let msg = typeof res?.error === 'string' && res.error.length > 0 ? res.error : 'Invalid email or password'
+      if (msg === "CredentialsSignin") msg = "Invalid user"
       setErrors({ submit: msg })
     }
     setLoading(false)

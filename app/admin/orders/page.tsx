@@ -31,7 +31,7 @@ type DropdownItem = { id: string | number; label: string }
 
 export default function Page() {
   const { data: session } = useSession()
-  const { user: authUser } = useAuth()
+  const { user: authUser, loading: authLoading } = useAuth()
   const adminEmail = useMemo(() => (session?.user?.email || authUser?.email || "").trim(), [session, authUser])
   const allowed = useMemo(() => {
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
@@ -90,6 +90,8 @@ export default function Page() {
   const [newTrackUrl, setNewTrackUrl] = useState("")
   const [editStatus, setEditStatus] = useState("")
   const [updatingIds, setUpdatingIds] = useState<Set<string>>(new Set())
+
+  if (authLoading) return <BeautifulLoader />
 
   useEffect(() => {
     if (selectedOrder) {

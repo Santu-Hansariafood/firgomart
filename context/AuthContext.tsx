@@ -44,7 +44,7 @@ interface AuthContextType {
   loading: boolean
   login: (userData: any) => Promise<boolean>
   register: (userData: any) => Promise<boolean>
-  logout: () => void
+  logout: (redirectPath?: string) => void
   updateUser: (updatedData: Partial<User>) => void
 }
 
@@ -159,11 +159,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
-  const logout = () => {
+  const logout = (redirectPath: string = "/login") => {
     signOut({ redirect: false })
-    router.push("/login")
+    router.push(redirectPath)
     setUser(null)
     setIsAuthenticated(false)
+    if (typeof window !== "undefined") localStorage.removeItem("firgomart_user")
   }
 
   const updateUser = async (updatedData: Partial<User>) => {
