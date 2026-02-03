@@ -6,25 +6,65 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import FallbackImage from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+  const [summary, setSummary] = useState({ subtotal: 0, tax: 0, deliveryFee: 0, total: 0 });
+  const [loadingSummary, setLoadingSummary] = useState(true);
 
   useEffect(() => {
     if (!isAuthenticated) {
     }
   }, [isAuthenticated, router]);
 
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * (item.quantity || 1),
-    0
-  );
+  useEffect(() => {
+    const fetchPricing = async () => {
+      const validItems = cartItems.filter(item => (item.stock ?? 0) > 0);
+      
+      if (validItems.length === 0) {
+        setSummary({ subtotal: 0, tax: 0, deliveryFee: 0, total: 0 });
+        setLoadingSummary(false);
+        return;
+      }
 
-  const deliveryFee = subtotal > 500 ? 0 : 40;
-  const total = subtotal + deliveryFee;
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            items: validItems.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+            dryRun: true 
+          }),
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          setSummary({
+            subtotal: data.subtotal || 0,
+            tax: data.tax || 0,
+            deliveryFee: data.deliveryFee || 0,
+            total: data.total || 0
+          });
+        } else {
+          const sub = validItems.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+          setSummary({ subtotal: sub, tax: 0, deliveryFee: sub > 500 ? 0 : 40, total: sub + (sub > 500 ? 0 : 40) });
+        }
+      } catch (error) {
+        const sub = validItems.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
+        setSummary({ subtotal: sub, tax: 0, deliveryFee: sub > 500 ? 0 : 40, total: sub + (sub > 500 ? 0 : 40) });
+      } finally {
+        setLoadingSummary(false);
+      }
+    };
+
+    const timer = setTimeout(fetchPricing, 500);
+    return () => clearTimeout(timer);
+  }, [cartItems]);
+
+  const { subtotal, deliveryFee, total } = summary;
 
   if (!isAuthenticated) {
     return (
@@ -66,7 +106,6 @@ const CartPage = () => {
 
   return (
     <div className="min-h-screen bg-[var(--background)] pb-24 md:pb-8">
-      {/* Mobile Header */}
       <div className="sticky top-0 z-10 bg-[var(--background)] border-b border-[var(--foreground)/10] px-4 py-3 flex items-center gap-3 md:hidden">
         <button onClick={() => router.back()} className="p-1">
           <ArrowLeft className="w-6 h-6 text-[color:var(--foreground)]" />
@@ -137,6 +176,12 @@ const CartPage = () => {
                   <span>Subtotal</span>
                   <span>₹{subtotal.toFixed(2)}</span>
                 </div>
+                {summary.tax > 0 && (
+                  <div className="flex justify-between">
+                    <span>GST (Tax)</span>
+                    <span>₹{summary.tax.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-green-600">
                   <span>Delivery Fee</span>
                   <span>{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>

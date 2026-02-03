@@ -17,11 +17,13 @@ import dynamic from "next/dynamic";
 import Image from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const Footer: React.FC = () => {
+  const pathname = usePathname(); // Get current route
   const [showTop, setShowTop] = useState(false);
   const addressText =
     "Plot No. 678 1st Floor, Majherpara, P.O. Hatiara, P.S. Newtown, near Chota Masjid, Baguiati, Kolkata, West Bengal 700157";
@@ -33,6 +35,9 @@ const Footer: React.FC = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Hide footer on checkout page
+  if (pathname === '/checkout') return null;
 
   return (
     <footer className="bg-brand-black text-gray-300 pb-24 md:pb-0">

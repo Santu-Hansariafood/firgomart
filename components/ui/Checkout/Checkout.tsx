@@ -352,6 +352,11 @@ const Checkout: React.FC<CheckoutProps> = ({
               }
             },
             theme: { color: '#2563eb' },
+            modal: {
+              ondismiss: function() {
+                setIsSubmitting(false);
+              }
+            }
           }
           const rzp = new (window as any).Razorpay(opts)
           rzp.open()
