@@ -110,6 +110,10 @@ export const metadata: Metadata = {
   },
 
   category: "shopping",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/favicon/apple-touch-icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -139,9 +143,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+      <body
+        className={`${inter.variable} ${poppins.variable} antialiased`}
+      >
         <Script
           id="firgomart-schema"
           type="application/ld+json"
@@ -185,11 +189,6 @@ export default function RootLayout({
             `,
           }}
         />
-      </head>
-
-      <body
-        className={`${inter.variable} ${poppins.variable} antialiased`}
-      >
         <Providers>
           <Navbar />
           <Suspense fallback={null}>
