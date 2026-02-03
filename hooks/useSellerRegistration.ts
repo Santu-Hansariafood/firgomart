@@ -157,7 +157,7 @@ export const useSellerRegistration = () => {
       if (n === "pincode")
         return /^\d{6}$/.test(v) ? "" : "Pincode must be 6 digits";
       if (n === "aadhaar")
-        return /^\d{16}$/.test(v) ? "" : "Aadhaar must be 16 digits";
+        return /^\d{12}$/.test(v) ? "" : "Aadhaar must be 12 digits";
       if (n === "panNumber")
         return /^[A-Z]{5}\d{4}[A-Z]$/.test(v) ? "" : "Invalid PAN format";
       if (n === "gstNumber")

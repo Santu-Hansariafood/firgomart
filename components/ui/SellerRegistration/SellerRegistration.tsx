@@ -491,6 +491,7 @@ const SellerRegistration: React.FC = () => {
                       onChange={handleChange}
                       pattern="[0-9]{12}"
                       maxLength={12}
+                      minLength={12}
                       required
                       className={`w-full px-4 py-2 bg-[var(--background)] border border-[var(--foreground)/20] rounded-lg text-[color:var(--foreground)] placeholder-[var(--foreground)/50] focus:ring-2 focus:ring-brand-purple focus:border-brand-purple outline-none transition-all duration-200 ${errors.aadhaar ? 'border-red-500' : ''}`}
                       placeholder="Enter 12-digit Aadhaar number"
