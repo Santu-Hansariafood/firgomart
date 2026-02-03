@@ -771,7 +771,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-[var(--background)] border border-gray-200 dark:border-gray-700 rounded-xl p-6 sticky top-24 text-[color:var(--foreground)] mt-6 lg:mt-0"
+              className="bg-[var(--background)] border border-gray-200 dark:border-gray-700 rounded-xl p-6 lg:sticky lg:top-24 text-[color:var(--foreground)] mt-6 lg:mt-0 mb-24 lg:mb-0"
             >
               <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
                 Order Summary
@@ -897,6 +897,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <Rupee />{total.toFixed(2)}
                   </span>
                 </div>
+                <div className="h-4 lg:hidden"></div>
               </div>
             </motion.div>
           </div>

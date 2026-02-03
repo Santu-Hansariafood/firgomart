@@ -220,17 +220,17 @@ const Profile = () => {
                 </div>
               </div>
             </div>
-            <div className="mb-6 p-4 border rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-              <div className="flex items-center gap-2 text-green-800 dark:text-green-300 mb-2">
-                <MapPin className="w-5 h-5" />
+            <div className="mb-6 p-4 border rounded-lg bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 text-[var(--foreground)] mb-2">
+                <MapPin className="w-5 h-5 text-brand-purple" />
                 <span className="font-medium">Delivery Address</span>
               </div>
-              <p className="text-sm text-green-900 dark:text-green-200">
+              <p className="text-sm text-[var(--foreground)]">
                 {(formData.address || "").trim()
                   ? `${formData.address}`
                   : "No address on file"}
               </p>
-              <p className="text-sm text-green-900 dark:text-green-200">
+              <p className="text-sm text-[var(--foreground)]">
                 {[
                   (formData.city || "").trim(),
                   (formData.state || "").trim(),
@@ -239,7 +239,7 @@ const Profile = () => {
                   .filter(Boolean)
                   .join(", ") || ""}
               </p>
-              <p className="text-xs text-green-700 dark:text-green-400 mt-2">
+              <p className="text-xs text-[var(--foreground)]/60 mt-2">
                 Using your registered address as delivery address for now.
               </p>
             </div>
@@ -433,11 +433,11 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(formData.addresses || []).map((addr, idx) => (
-                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-500" : "border-gray-200 bg-[var(--background)]"} relative group`}>
+                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple dark:bg-purple-500" : "border-gray-200 bg-[var(--background)]"} relative group`}>
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="font-medium text-[color:var(--foreground)]">{addr.name || formData.name}</div>
-                          <div className="text-sm text-gray-500">{addr.mobile || formData.mobile}</div>
+                          <div className="text-sm text-[color:var(--foreground)]">{addr.mobile || formData.mobile}</div>
                         </div>
                         {addr.isDefault && (
                           <span className="px-2 py-1 bg-purple-100 text-brand-purple text-xs font-medium rounded">Default</span>
