@@ -164,7 +164,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     router.push(redirectPath)
     setUser(null)
     setIsAuthenticated(false)
-    if (typeof window !== "undefined") localStorage.removeItem("firgomart_user")
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("firgomart_user")
+      localStorage.removeItem("admin_last_activity")
+    }
   }
 
   const updateUser = async (updatedData: Partial<User>) => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useMemo } from "react"
+import { useEffect, useState, useMemo, useCallback, useRef } from "react"
 import { useAuth } from "@/context/AuthContext"
 import { useSession } from "next-auth/react"
 
@@ -13,34 +13,55 @@ export default function AdminIdleHandler() {
   const { data: session } = useSession()
   
   const isAdmin = useMemo(() => {
+    // 1. Check env vars
     const emails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
-    const sessionAdmin = !!(session?.user?.email && emails.includes(session.user.email.toLowerCase()))
-    const authContextAdmin = !!(authUser?.email && emails.includes(authUser.email.toLowerCase())) || ((authUser as { role?: string } | null)?.role === "admin")
+    
+    // 2. Check session (NextAuth)
+    const sessionEmail = session?.user?.email?.toLowerCase()
+    const sessionAdmin = !!(sessionEmail && emails.includes(sessionEmail))
+
+    // 3. Check AuthContext
+    const authEmail = authUser?.email?.toLowerCase()
+    const authRole = (authUser as { role?: string } | null)?.role
+    const authContextAdmin = !!(authEmail && emails.includes(authEmail)) || (authRole === "admin")
+
     return sessionAdmin || authContextAdmin
   }, [session, authUser])
 
+  // Safety ref to prevent race conditions in interval
+  const isAdminRef = useRef(isAdmin)
+  useEffect(() => { isAdminRef.current = isAdmin }, [isAdmin])
+
   const [showWarning, setShowWarning] = useState(false)
   const [countdown, setCountdown] = useState(60)
-  const lastActivity = useRef<number>(Date.now())
+
+  // Stable update function using localStorage
+  const updateActivity = useCallback(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_last_activity", Date.now().toString())
+    }
+  }, [])
 
   useEffect(() => {
     if (!isAdmin) return
 
-    const updateActivity = () => {
-      lastActivity.current = Date.now()
-      if (showWarning) {
-        setShowWarning(false)
-        setCountdown(60)
-      }
+    // Initialize timestamp if missing
+    if (typeof window !== "undefined" && !localStorage.getItem("admin_last_activity")) {
+      updateActivity()
     }
 
     const events = ["mousedown", "mousemove", "keydown", "scroll", "touchstart", "click"]
     events.forEach(event => window.addEventListener(event, updateActivity))
 
     const interval = setInterval(() => {
+      const stored = typeof window !== "undefined" ? localStorage.getItem("admin_last_activity") : null
+      const last = stored ? parseInt(stored, 10) : Date.now()
       const now = Date.now()
-      const timeSinceLastActivity = now - lastActivity.current
+      const timeSinceLastActivity = now - last
       const timeRemaining = TIMEOUT_MS - timeSinceLastActivity
+
+      // Double check admin status before taking action
+      if (!isAdminRef.current) return
 
       if (timeRemaining <= 0) {
         logout("/admin-login")
@@ -49,7 +70,8 @@ export default function AdminIdleHandler() {
         setShowWarning(true)
         setCountdown(Math.ceil(timeRemaining / 1000))
       } else {
-        if (showWarning) setShowWarning(false)
+        // If user became active (updated localStorage), hide warning
+        setShowWarning(false)
       }
     }, CHECK_INTERVAL)
 
@@ -57,7 +79,7 @@ export default function AdminIdleHandler() {
       events.forEach(event => window.removeEventListener(event, updateActivity))
       clearInterval(interval)
     }
-  }, [isAdmin, showWarning, logout])
+  }, [isAdmin, logout, updateActivity])
 
   if (!showWarning) return null
 
@@ -77,8 +99,9 @@ export default function AdminIdleHandler() {
         <p className="text-xs text-gray-400">Move your cursor or click anywhere to stay logged in.</p>
         <button
           onClick={() => {
-            lastActivity.current = Date.now()
+            updateActivity()
             setShowWarning(false)
+            setCountdown(60)
           }}
           className="w-full py-2.5 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors focus:ring-4 focus:ring-blue-200"
         >
