@@ -886,7 +886,7 @@ export default function Page() {
                 <div className="p-6 border-t flex justify-end gap-3 bg-white z-10 sticky bottom-0">
                   <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium" disabled={isSubmitting}>Cancel</button>
                   <button onClick={handleSave} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
-                    {isSubmitting ? "Saving..." : (editingId ? "Update Product" : "Create Product")}
+                    {isSubmitting ? "Saving..." : (editingId ? "Update Product" : "Submit")}
                   </button>
                 </div>
               </div>
