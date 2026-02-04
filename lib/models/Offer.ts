@@ -4,6 +4,8 @@ export interface IOffer extends Document {
   key: string
   name: string
   type: "discount-min" | "pack-min" | "search" | "category"
+  category?: string
+  subcategory?: string
   value?: number | string
   active: boolean
   order?: number
@@ -17,6 +19,8 @@ const OfferSchema = new Schema<IOffer>(
     key: { type: String, required: true, unique: true, index: true },
     name: { type: String, required: true },
     type: { type: String, required: true, enum: ["discount-min", "pack-min", "search", "category"] },
+    category: { type: String },
+    subcategory: { type: String },
     value: { type: Schema.Types.Mixed },
     active: { type: Boolean, default: true, index: true },
     order: { type: Number, default: 0, index: true },

@@ -32,6 +32,11 @@ interface Product {
   unitsPerPack?: number
   isAdminProduct?: boolean
   hsnCode?: string
+  appliedOffer?: {
+    name: string
+    type: string
+    value?: string | number
+  }
 }
 
 interface ProductGridProps {
@@ -604,7 +609,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
               >
                 <div 
                   className="relative aspect-square sm:aspect-3/4 overflow-hidden bg-gray-100 group cursor-pointer"
-                  onClick={() => onProductClick(product)}
+                  onClick={() => onProductClick({
+                    ...product,
+                    appliedOffer: selectedOfferDetails ? {
+                      name: selectedOfferDetails.name,
+                      type: selectedOfferDetails.type,
+                      value: selectedOfferDetails.value
+                    } : undefined
+                  })}
                 >
                   <ProductImageSlider
                   images={
@@ -638,7 +650,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                 <div className="p-2 sm:p-4">
                   <h3 
                     className="text-[11px] sm:text-sm font-semibold text-foreground group-hover/card:text-brand-purple active:text-purple-700 transition-colors mb-1 leading-snug line-clamp-2 cursor-pointer"
-                    onClick={() => onProductClick(product)}
+                    onClick={() => onProductClick({
+                      ...product,
+                      appliedOffer: selectedOfferDetails ? {
+                        name: selectedOfferDetails.name,
+                        type: selectedOfferDetails.type,
+                        value: selectedOfferDetails.value
+                      } : undefined
+                    })}
                   >
                     {product.name}
                   </h3>
@@ -669,7 +688,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                   </div>
                   <div className="flex gap-1 sm:gap-1.5">
                     <button
-                      onClick={() => onProductClick(product)}
+                      onClick={() => onProductClick({
+                        ...product,
+                        appliedOffer: selectedOfferDetails ? {
+                          name: selectedOfferDetails.name,
+                          type: selectedOfferDetails.type,
+                          value: selectedOfferDetails.value
+                        } : undefined
+                      })}
                       className="hidden sm:inline-flex flex-1 px-3 py-2 border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/10 transition-colors text-sm font-medium items-center justify-center"
                     >
                       View
@@ -678,7 +704,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                       onClick={(e) => {
                         e.stopPropagation()
                         if ((product.stock ?? 0) > 0) {
-                          onAddToCart(product)
+                          onAddToCart({
+                            ...product,
+                            appliedOffer: selectedOfferDetails ? {
+                              name: selectedOfferDetails.name,
+                              type: selectedOfferDetails.type,
+                              value: selectedOfferDetails.value
+                            } : undefined
+                          })
                         }
                       }}
                       disabled={(product.stock ?? 0) <= 0}

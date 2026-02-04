@@ -32,6 +32,11 @@ interface CartItem {
   selectedSize?: string
   selectedColor?: string
   _uniqueId?: string
+  appliedOffer?: {
+    name: string
+    type: string
+    value?: string | number
+  }
 }
 
 interface CheckoutProps {
@@ -800,6 +805,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                       <h3 className="text-sm font-medium text-[var(--foreground)] line-clamp-2">
                         {item.name}
                       </h3>
+                      {item.appliedOffer && (
+                        <div className="text-xs text-green-600 mb-1 flex items-center gap-1 font-medium">
+                          <div className="w-1.5 h-1.5 rounded-full bg-green-600" />
+                          <span>
+                            {item.appliedOffer.name} 
+                            {item.appliedOffer.value ? ` (${item.appliedOffer.value}${item.appliedOffer.type.includes('discount') ? '% OFF' : ''})` : ''}
+                          </span>
+                        </div>
+                      )}
                       {(item.selectedSize || item.selectedColor) && (
                         <div className="flex flex-wrap gap-2 text-xs text-[var(--foreground)]/60 mb-1">
                           {item.selectedSize && <span>Size: {item.selectedSize}</span>}

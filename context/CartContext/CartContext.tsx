@@ -14,6 +14,11 @@ interface CartItem {
   selectedSize?: string;
   selectedColor?: string;
   _uniqueId?: string;
+  appliedOffer?: {
+    name: string;
+    type: string;
+    value?: string | number;
+  };
 }
 
 interface CartContextType {

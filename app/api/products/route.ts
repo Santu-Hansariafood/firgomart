@@ -193,12 +193,26 @@ export async function GET(request: Request) {
               })
             }
           } else if (type === "category") {
-            const cat = typeof val === "string" ? val.trim() : String(val || "").trim()
+            const catField = (off as any).category
+            const subField = (off as any).subcategory
+            
+            const cat = catField ? catField.trim() : (typeof val === "string" ? val.trim() : String(val || "").trim())
+            const sub = subField ? subField.trim() : ""
+
             if (cat) {
               conditions.push({
                 $or: [
                   { category: { $regex: new RegExp(`^${cat}$`, "i") } },
                   { category: { $regex: new RegExp(cat, "i") } },
+                ]
+              })
+            }
+            
+            if (sub) {
+               conditions.push({
+                $or: [
+                  { subcategory: { $regex: new RegExp(`^${sub}$`, "i") } },
+                  { subcategory: { $regex: new RegExp(sub, "i") } },
                 ]
               })
             }

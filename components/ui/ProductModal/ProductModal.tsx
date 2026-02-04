@@ -35,6 +35,11 @@ interface Product {
   hsnCode?: string
   selectedSize?: string
   selectedColor?: string
+  appliedOffer?: {
+    name: string
+    type: string
+    value?: string | number
+  }
 }
 
 interface Review {
@@ -407,6 +412,16 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     </span>
                   )}
                 </div>
+
+                {product.appliedOffer && (
+                  <div className="mb-4 flex items-center gap-2 bg-green-50 dark:bg-green-900/20 p-2 rounded-lg border border-green-200 dark:border-green-800">
+                     <div className="w-2 h-2 rounded-full bg-green-600 animate-pulse" />
+                     <span className="text-sm text-green-700 dark:text-green-400 font-bold">
+                       Extra Offer Applied: {product.appliedOffer.name} 
+                       {product.appliedOffer.value ? ` (${product.appliedOffer.value}${product.appliedOffer.type.includes('discount') ? '% OFF' : ''})` : ''}
+                     </span>
+                  </div>
+                )}
 
                 {(product.colors && product.colors.length > 0) && (
                     <div className="mb-4">

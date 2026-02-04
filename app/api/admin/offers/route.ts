@@ -65,6 +65,8 @@ export async function POST(request: Request) {
     const key = String(body?.key || "").trim()
     const name = String(body?.name || "").trim()
     const type = String(body?.type || "").trim()
+    const category = body?.category ? String(body.category).trim() : undefined
+    const subcategory = body?.subcategory ? String(body.subcategory).trim() : undefined
     const value = body?.value
     const active = body?.active !== undefined ? !!body.active : true
     const order = typeof body?.order === "number" ? body.order : 0
@@ -76,6 +78,8 @@ export async function POST(request: Request) {
       key,
       name,
       type,
+      category,
+      subcategory,
       value,
       active,
       order,
@@ -100,6 +104,8 @@ export async function PUT(request: Request) {
     if (typeof body?.key === "string") update.key = String(body.key).trim()
     if (typeof body?.name === "string") update.name = String(body.name).trim()
     if (typeof body?.type === "string") update.type = String(body.type).trim()
+    if (typeof body?.category === "string") update.category = String(body.category).trim()
+    if (typeof body?.subcategory === "string") update.subcategory = String(body.subcategory).trim()
     if (body?.value !== undefined) update.value = body.value
     if (body?.active !== undefined) update.active = !!body.active
     if (typeof body?.order === "number") update.order = body.order
