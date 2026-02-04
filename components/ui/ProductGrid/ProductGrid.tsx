@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Eye, X, ChevronDown } from 'lucide-react'
 import ProductImageSlider from '@/components/common/ProductImageSlider/ProductImageSlider'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
 import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
+import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
 
 interface Product {
   id: string | number
@@ -66,6 +67,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
   const [maxPrice, setMaxPrice] = useState<string>('')
   const [minRating, setMinRating] = useState<number | null>(null)
   const [selectedSize, setSelectedSize] = useState<string>('')
+  const [selectedOffer, setSelectedOffer] = useState<string>('')
+  const [selectedOfferDetails, setSelectedOfferDetails] = useState<Offer | null>(null)
   type DropdownItem = { id: string | number; label: string }
   const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
     const createNumSizes = (start: number, end: number) => {
@@ -173,7 +176,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       const priceParam = minPrice || maxPrice ? `&minPrice=${minPrice}&maxPrice=${maxPrice}` : ''
       const ratingParam = minRating ? `&minRating=${minRating}` : ''
       const sizeParam = selectedSize ? `&size=${encodeURIComponent(selectedSize)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}`)
+      const offerParam = selectedOffer ? `&offer=${encodeURIComponent(selectedOffer)}` : ''
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}`)
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
@@ -203,7 +207,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize])
+  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer])
 
   useEffect(() => {
     const loadInitial = async () => {
@@ -379,6 +383,39 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
           </div>
         </div>
 
+        {/* Offer Description Banner */}
+        <AnimatePresence>
+          {selectedOfferDetails && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: 'auto' }}
+              exit={{ opacity: 0, y: -20, height: 0 }}
+              className="mb-6 rounded-2xl bg-linear-to-r from-brand-purple to-indigo-600 p-6 text-white shadow-lg overflow-hidden relative"
+            >
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded text-xs font-medium uppercase tracking-wider">
+                    Active Offer
+                  </span>
+                  <span className="text-white/60 text-sm">{selectedOfferDetails.type}</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-1">{selectedOfferDetails.name}</h3>
+                {selectedOfferDetails.value && (
+                  <p className="text-white/90 text-lg">
+                    {selectedOfferDetails.type.includes('discount') 
+                      ? `Get ${selectedOfferDetails.value}% Off` 
+                      : selectedOfferDetails.value}
+                  </p>
+                )}
+              </div>
+              
+              {/* Decorative circles */}
+              <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+              <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 bg-indigo-500/30 rounded-full blur-xl"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {isFilterOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -387,6 +424,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             className="mb-6 p-4 border border-foreground/10 rounded-xl bg-foreground/5 overflow-hidden"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground/80">Offers</label>
+                <OffersFilterChips
+                  selectedOffer={selectedOffer || undefined}
+                  onChange={(next, offer) => { 
+                    setSelectedOffer(next || '')
+                    setSelectedOfferDetails(offer || null)
+                    setPage(1) 
+                  }}
+                />
+              </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground/80">Price Range</label>
                 <div className="flex items-center gap-2">
@@ -471,6 +519,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                     setMaxPrice('')
                     setMinRating(null)
                     setSelectedSize('')
+                    setSelectedOffer('')
+                    setSelectedOfferDetails(null)
                     setPage(1)
                   }}
                   className="w-full py-2 bg-background border border-foreground/20 text-foreground/70 rounded-lg text-sm font-medium hover:bg-foreground/5 transition-colors"

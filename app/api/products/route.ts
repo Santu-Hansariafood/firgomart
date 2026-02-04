@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import type { FilterQuery, Model } from "mongoose"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
+import { getOfferModel } from "@/lib/models/Offer"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
@@ -21,10 +22,12 @@ export async function GET(request: Request) {
     const maxPrice = Number(url.searchParams.get("maxPrice"))
     const minRating = Number(url.searchParams.get("minRating"))
     const sizeParam = (url.searchParams.get("size") || "").trim()
+    const offerKey = (url.searchParams.get("offer") || "").trim()
     const sortBy = (url.searchParams.get("sortBy") || "").trim()
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
+    const Offer = getOfferModel(conn)
     
     const conditions: Record<string, unknown>[] = []
 
@@ -160,6 +163,48 @@ export async function GET(request: Request) {
         })
         conditions.push({ $and: termConditions })
       }
+    }
+
+    if (offerKey) {
+      try {
+        const off = await (Offer as any).findOne({ key: offerKey, active: true }).lean()
+        if (off) {
+          const type = String((off as any).type || "").trim()
+          const val = (off as any).value
+          if (type === "discount-min") {
+            const n = typeof val === "number" ? val : Number(val)
+            if (!isNaN(n) && n > 0) conditions.push({ discount: { $gte: n } })
+          } else if (type === "pack-min") {
+            const n = typeof val === "number" ? val : Number(val)
+            if (!isNaN(n) && n > 0) conditions.push({ unitsPerPack: { $gte: n } })
+          } else if (type === "search") {
+            const term = typeof val === "string" ? val.trim() : String(val || "").trim()
+            if (term) {
+              const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+              const regex = new RegExp(escapedTerm, "i")
+              conditions.push({
+                $or: [
+                  { name: { $regex: regex } },
+                  { brand: { $regex: regex } },
+                  { category: { $regex: regex } },
+                  { subcategory: { $regex: regex } },
+                  { description: { $regex: regex } },
+                ]
+              })
+            }
+          } else if (type === "category") {
+            const cat = typeof val === "string" ? val.trim() : String(val || "").trim()
+            if (cat) {
+              conditions.push({
+                $or: [
+                  { category: { $regex: new RegExp(`^${cat}$`, "i") } },
+                  { category: { $regex: new RegExp(cat, "i") } },
+                ]
+              })
+            }
+          }
+        }
+      } catch {}
     }
 
     const finalQuery: FilterQuery<unknown> = conditions.length > 0 ? { $and: conditions } : {}
