@@ -8,6 +8,7 @@ import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import Script from 'next/script'
 import { useCart } from '@/context/CartContext/CartContext'
+import toast from 'react-hot-toast'
 
 interface Product {
   id: string | number
@@ -94,7 +95,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
 
   const toggleSave = async () => {
     if (!session) {
-      alert("Please login to save products")
+      toast.error("Please login to save products")
       return
     }
     setSaving(true)
@@ -115,11 +116,11 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
 
   const validateSelection = () => {
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
-      alert('Please select a size')
+      toast.error('Please select a size')
       return false
     }
     if (product.colors && product.colors.length > 0 && !selectedColor) {
-      alert('Please select a color')
+      toast.error('Please select a color')
       return false
     }
     return true

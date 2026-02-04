@@ -11,6 +11,8 @@ export type Offer = {
   type: string
   value?: number | string 
   expiryDate?: string
+  category?: string
+  subcategory?: string
 }
 
 type Props = {

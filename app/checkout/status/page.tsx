@@ -141,6 +141,11 @@ function StatusContent() {
                       <td className="px-4 py-3 font-medium text-gray-900">
                         {item.name}
                         {item.selectedSize && <span className="text-gray-500 font-normal ml-1">({item.selectedSize})</span>}
+                        {item.appliedOffer && (
+                          <div className="text-xs text-green-600 mt-1 font-medium">
+                            Offer: {item.appliedOffer.name} ({item.appliedOffer.value}% Off)
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-center text-gray-600">{item.quantity}</td>
                       <td className="px-4 py-3 text-right text-gray-900">₹{(item.price * item.quantity).toFixed(2)}</td>

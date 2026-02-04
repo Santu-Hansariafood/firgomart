@@ -8,7 +8,15 @@ import PDFDocument from "pdfkit"
 import fs from "fs"
 import path from "path"
 
-type OrderItem = { name?: string; quantity?: number; price?: number }
+type OrderItem = {
+  name?: string;
+  quantity?: number;
+  price?: number;
+  appliedOffer?: { name: string; value?: number | string; type?: string };
+  selectedSize?: string;
+  selectedColor?: string;
+}
+
 type OrderLean = {
   orderNumber?: string
   status?: string
@@ -22,6 +30,7 @@ type OrderLean = {
   subtotal?: number
   tax?: number
   amount?: number
+  pincode?: string
 }
 
 function amountInWords(amount: number): string {
@@ -127,7 +136,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       pdf.roundedRect(pdf.x, pdf.y, pdf.page.width - 100, 80, 8).stroke("#e5e7eb")
       pdf.moveDown(0.2)
       pdf.text(`Buyer: ${doc.buyerName || ""}${doc.buyerEmail ? ` (${doc.buyerEmail})` : ""}`, { width: pdf.page.width - 100, continued: false })
-      pdf.text(`Ship To: ${(doc.address || "")}${doc.city ? `, ${doc.city}` : ""}${doc.state ? `, ${doc.state}` : ""}${((doc as unknown as { pincode?: string }).pincode) ? `, ${((doc as unknown as { pincode?: string }).pincode)}` : ""}${doc.country ? `, ${doc.country}` : ""}`, { width: pdf.page.width - 100 })
+      pdf.text(`Ship To: ${(doc.address || "")}${doc.city ? `, ${doc.city}` : ""}${doc.state ? `, ${doc.state}` : ""}${doc.pincode ? `, ${doc.pincode}` : ""}${doc.country ? `, ${doc.country}` : ""}`, { width: pdf.page.width - 100 })
       pdf.text(`Seller: ${sellerBusiness || "—"}${sellerGST ? ` • GSTIN: ${sellerGST}` : ""}`, { width: pdf.page.width - 100 })
       pdf.text(`Payment Method: ${paymentMethod || "—"}${paymentRef ? ` • Reference No: ${paymentRef}` : ""}`, { width: pdf.page.width - 100 })
       pdf.moveDown(0.8)
@@ -146,11 +155,35 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         const qty = Number(it.quantity || 1)
         const price = Number(it.price || 0)
         const amt = qty * price
-        pdf.text(String(it.name || ""), colItem, y, { width: 260 })
+        
+        let extraInfo = ""
+        if (it.selectedSize) extraInfo += ` | Size: ${it.selectedSize}`
+        if (it.selectedColor) extraInfo += ` | Color: ${it.selectedColor}`
+        
+        let offerText = ""
+        if (it.appliedOffer && it.appliedOffer.value) {
+            const val = Number(it.appliedOffer.value)
+            if (!isNaN(val) && val > 0 && val < 100) {
+                 offerText = `\nOffer: ${it.appliedOffer.name} (${val}% Off)`
+            }
+        }
+
+        pdf.text(String(it.name || "") + extraInfo + offerText, colItem, y, { width: 260 })
+        if (offerText) {
+             // Change color for offer text
+             // Since pdfkit text flow is continuous, we might need more control if we want color.
+             // But simpler is to just append text.
+             // If we want color we need separate text calls or rich text (not easily supported in simple pdfkit usage here).
+             // We'll stick to text append for simplicity and reliability.
+        }
+        
         pdf.text(String(qty), colQty, y)
         pdf.text(`₹${price.toFixed(2)}`, colPrice, y)
         pdf.text(`₹${amt.toFixed(2)}`, colAmt, y)
-        y += 18
+        
+        // Calculate height of item text to adjust y
+        const textHeight = pdf.heightOfString(String(it.name || "") + extraInfo + offerText, { width: 260 })
+        y += Math.max(textHeight, 18) + 4
       }
       pdf.moveTo(startX, y + 2).lineTo(pdf.page.width - 50, y + 2).stroke("#e5e7eb")
       const buyerState = String(doc.state || "").trim().toLowerCase()
@@ -288,7 +321,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   <div class="box grid">
     <div>
       <div><strong>Buyer:</strong> ${doc.buyerName || ""} ${doc.buyerEmail ? `(${doc.buyerEmail})` : ""}</div>
-      <div><strong>Ship To:</strong> ${doc.address || ""}, ${doc.city || ""}, ${doc.state || ""}, ${doc.country || ""}</div>
+      <div><strong>Ship To:</strong> ${doc.address || ""}, ${doc.city || ""}, ${doc.state || ""}, ${doc.pincode ? `${doc.pincode}, ` : ""}${doc.country || ""}</div>
     </div>
     <div>
       <div><strong>Seller:</strong> ${sellerBusiness || "—"}</div>
@@ -307,7 +340,19 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           const qty = Number(it.quantity || 1)
           const price = Number(it.price || 0)
           const amt = qty * price
-          return `<tr><td>${it.name}</td><td>${qty}</td><td>₹${price.toFixed(2)}</td><td>₹${amt.toFixed(2)}</td></tr>`
+          let extraInfo = ""
+          if (it.selectedSize) extraInfo += ` | Size: ${it.selectedSize}`
+          if (it.selectedColor) extraInfo += ` | Color: ${it.selectedColor}`
+          
+          let offerHtml = ""
+          if (it.appliedOffer && it.appliedOffer.value) {
+            const val = Number(it.appliedOffer.value)
+            if (!isNaN(val) && val > 0 && val < 100) {
+               offerHtml = `<div style="font-size:12px;color:#16a34a;margin-top:2px;">Offer: ${it.appliedOffer.name} (${val}% Off)</div>`
+            }
+          }
+          
+          return `<tr><td><div>${it.name}${extraInfo ? `<span class="muted" style="font-size:12px;">${extraInfo}</span>` : ""}</div>${offerHtml}</td><td>${qty}</td><td>₹${price.toFixed(2)}</td><td>₹${amt.toFixed(2)}</td></tr>`
         }).join("")}
       </tbody>
     </table>

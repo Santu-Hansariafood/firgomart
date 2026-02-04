@@ -10,6 +10,7 @@ import { Package, Edit, Trash, X, Plus, Crop } from "lucide-react"
 import dynamic from "next/dynamic"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
+import toast from "react-hot-toast"
 
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
@@ -360,7 +361,7 @@ export default function Page() {
   const onFiles = async (files: FileList | null) => {
     if (!files) return
     if (images.length + files.length > 6) {
-        alert("Maximum 6 images allowed")
+        toast.error("Maximum 6 images allowed")
         return
     }
     const arr: string[] = []
@@ -490,13 +491,20 @@ export default function Page() {
         setIsModalOpen(false)
         if (!editingId) setPage(1)
         loadProducts()
+        toast.success(editingId ? "Product updated successfully" : "Product created successfully")
+      } else {
+        const err = await res.json()
+        toast.error(err.error || "Failed to save product")
       }
-    } catch {} finally {
+    } catch {
+      toast.error("Error saving product")
+    } finally {
       setIsSubmitting(false)
     }
   }
 
   const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return
     try {
       const adminEmail = (session?.user?.email || authUser?.email || "").trim()
       const res = await fetch(`/api/admin/products/${encodeURIComponent(id)}`, {
@@ -507,8 +515,13 @@ export default function Page() {
       })
       if (res.ok) {
         loadProducts()
+        toast.success("Product deleted successfully")
+      } else {
+        toast.error("Failed to delete product")
       }
-    } catch {}
+    } catch {
+      toast.error("Error deleting product")
+    }
   }
 
   return (

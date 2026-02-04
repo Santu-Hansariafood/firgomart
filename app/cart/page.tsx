@@ -118,7 +118,7 @@ const CartPage = () => {
           <div className="flex-1 space-y-4">
             {cartItems.map((item) => (
               <div
-                key={item.id}
+                key={item._uniqueId || item.id}
                 className="flex gap-4 p-4 bg-[var(--background)] border border-[var(--foreground)/10] rounded-xl shadow-sm"
               >
                 <div className="relative w-20 h-20 shrink-0 bg-gray-50 rounded-lg overflow-hidden">
@@ -134,6 +134,15 @@ const CartPage = () => {
                     <h3 className="font-medium text-[color:var(--foreground)] line-clamp-2 text-sm">
                       {item.name}
                     </h3>
+                    {item.appliedOffer && (
+                      <div className="text-xs text-green-600 mt-1 flex items-center gap-1 font-medium">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-600" />
+                        <span>
+                          {item.appliedOffer.name} 
+                          {item.appliedOffer.value ? ` (${item.appliedOffer.value}${String(item.appliedOffer.type).includes('discount') ? '% OFF' : ''})` : ''}
+                        </span>
+                      </div>
+                    )}
                     <p className="text-brand-purple font-bold mt-1">₹{item.price}</p>
                   </div>
                   <div className="flex items-center justify-between mt-2">

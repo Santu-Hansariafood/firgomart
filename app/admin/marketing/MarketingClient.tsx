@@ -9,6 +9,7 @@ import categoriesData from "@/data/categories.json"
 import dynamic from "next/dynamic"
 import { Megaphone, Plus, Edit2, Trash2, X, Save, Check, AlertCircle, LayoutGrid, List } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import toast from "react-hot-toast"
 
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 
@@ -154,12 +155,13 @@ export default function MarketingClient() {
       
       if (res.ok) {
         setOffers(prev => prev.filter(o => o._id !== id))
+        toast.success("Offer deleted successfully")
       } else {
         const d = await res.json()
-        alert(d.error || "Failed to delete")
+        toast.error(d.error || "Failed to delete")
       }
     } catch (err) {
-      alert("Error deleting offer")
+      toast.error("Error deleting offer")
     }
   }
 
@@ -195,6 +197,7 @@ export default function MarketingClient() {
           setOffers(prev => [...prev, data.offer])
         }
         resetForm()
+        toast.success(editingId ? "Offer updated successfully" : "Offer created successfully")
       } else {
         const d = await res.json()
         setError(d.error || "Failed to save")
@@ -312,47 +315,45 @@ export default function MarketingClient() {
                 </div>
               </div>
 
-              {formData.type === "category" && (
-                <div className="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <div className="space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold text-gray-700">Product Category <span className="text-xs text-gray-400 font-normal">(Optional)</span></label>
+                  <CommonDropdown
+                    options={categoriesData.categories.map(c => ({ id: c.name, label: c.name }))}
+                    selected={formData.category ? { id: formData.category, label: formData.category } : null}
+                    onChange={(opt) => {
+                      if (!Array.isArray(opt)) {
+                        setFormData({
+                          ...formData, 
+                          category: String(opt.label),
+                          subcategory: "" // reset subcategory when category changes
+                        })
+                      }
+                    }}
+                    placeholder="Select Category (All)"
+                    className="w-full"
+                  />
+                </div>
+
+                {formData.category && (
                   <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-gray-700">Product Category</label>
+                    <label className="text-sm font-semibold text-gray-700">Product Type (Subcategory) <span className="text-xs text-gray-400 font-normal">(Optional)</span></label>
                     <CommonDropdown
-                      options={categoriesData.categories.map(c => ({ id: c.name, label: c.name }))}
-                      selected={formData.category ? { id: formData.category, label: formData.category } : null}
+                      options={(
+                        categoriesData.categories.find(c => c.name === formData.category)?.subcategories || []
+                      ).map(s => ({ id: s, label: s }))}
+                      selected={formData.subcategory ? { id: formData.subcategory, label: formData.subcategory } : null}
                       onChange={(opt) => {
                         if (!Array.isArray(opt)) {
-                          setFormData({
-                            ...formData, 
-                            category: String(opt.label),
-                            subcategory: "" // reset subcategory when category changes
-                          })
+                          setFormData({...formData, subcategory: String(opt.label)})
                         }
                       }}
-                      placeholder="Select Category"
+                      placeholder="Select Subcategory (All)"
                       className="w-full"
                     />
                   </div>
-
-                  {formData.category && (
-                    <div className="space-y-1.5">
-                      <label className="text-sm font-semibold text-gray-700">Subcategory</label>
-                      <CommonDropdown
-                        options={(
-                          categoriesData.categories.find(c => c.name === formData.category)?.subcategories || []
-                        ).map(s => ({ id: s, label: s }))}
-                        selected={formData.subcategory ? { id: formData.subcategory, label: formData.subcategory } : null}
-                        onChange={(opt) => {
-                          if (!Array.isArray(opt)) {
-                            setFormData({...formData, subcategory: String(opt.label)})
-                          }
-                        }}
-                        placeholder="Select Subcategory"
-                        className="w-full"
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-gray-700">Value</label>

@@ -9,6 +9,7 @@ import { Package, Edit, Trash, X, Plus, Crop } from "lucide-react"
 import dynamic from "next/dynamic"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
+import toast from "react-hot-toast"
 
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -349,7 +350,7 @@ export default function Page() {
   const onFiles = async (files: FileList | null) => {
     if (!files) return
     if (images.length + files.length > 6) {
-        alert("Maximum 6 images allowed")
+        toast.error("Maximum 6 images allowed")
         return
     }
     const arr: string[] = []
@@ -478,12 +479,13 @@ export default function Page() {
         setIsModalOpen(false)
         if (!editingId) setPage(1)
         loadProducts()
+        toast.success(editingId ? "Product updated successfully" : "Product created successfully")
       } else {
         const err = await res.json()
-        alert(err.error || "Failed to save product")
+        toast.error(err.error || "Failed to save product")
       }
     } catch {
-        alert("Error saving product")
+        toast.error("Error saving product")
     } finally {
       setIsSubmitting(false)
     }
@@ -497,8 +499,9 @@ export default function Page() {
       })
       if (res.ok) {
         loadProducts()
+        toast.success("Product deleted successfully")
       } else {
-        alert("Failed to delete product")
+        toast.error("Failed to delete product")
       }
     } catch {}
   }

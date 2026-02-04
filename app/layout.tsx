@@ -10,6 +10,7 @@ import Providers from "@/app/providers";
 import Script from "next/script";
 import { Suspense } from "react";
 import categoriesData from "@/data/categories.json";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -197,6 +198,7 @@ export default function RootLayout({
           <main className="min-h-screen">{children}</main>
           <Footer />
           <CookieConsent />
+          <Toaster position="bottom-right" />
         </Providers>
       </body>
     </html>

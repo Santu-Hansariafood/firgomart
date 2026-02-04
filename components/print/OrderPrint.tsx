@@ -273,7 +273,20 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                     {items.map((item: any, i: number) => {
                       const qty = item.quantity
                       const price = item.price
+                      
+                      let originalPrice = price
+                      let discountTotal = 0
+                      
+                      if (item.appliedOffer && item.appliedOffer.value) {
+                         const val = Number(item.appliedOffer.value)
+                         if (!isNaN(val) && val > 0 && val < 100) {
+                            originalPrice = Math.round(price / (1 - val/100))
+                            discountTotal = (originalPrice - price) * qty
+                         }
+                      }
+
                       const taxable = qty * price
+                      const grossAmount = qty * originalPrice
                       
                       const gstPercent = item.gstPercent || 18
                       const gstAmount = item.gstAmount || ((taxable * gstPercent) / 100)
@@ -294,11 +307,16 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                                   {item.selectedColor && `| Color: ${item.selectedColor}`}
                                 </span>
                               )}
+                              {item.appliedOffer && (
+                                <div className="text-green-600 font-medium mt-0.5">
+                                   Offer: {item.appliedOffer.name} ({item.appliedOffer.value}% Off)
+                                </div>
+                              )}
                             </div>
                           </td>
                           <td className="py-2 text-right">{qty}</td>
-                          <td className="py-2 text-right">{fmt(total)}</td>
-                          <td className="py-2 text-right">{fmt(0)}</td>
+                          <td className="py-2 text-right">{fmt(grossAmount)}</td>
+                          <td className="py-2 text-right">{fmt(discountTotal)}</td>
                           <td className="py-2 text-right">{fmt(taxable)}</td>
                           <td className="py-2 text-right">{fmt(cgst)}</td>
                           <td className="py-2 text-right">{fmt(sgst)}</td>

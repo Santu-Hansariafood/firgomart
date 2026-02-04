@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import Script from 'next/script'
+import toast from 'react-hot-toast'
 
 interface Product {
   id: string | number
@@ -138,20 +139,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
     } else {
       try {
         await navigator.clipboard.writeText(url)
-        alert('Product link copied to clipboard!')
+        toast.success('Product link copied to clipboard!')
       } catch (err) {
         console.error('Error copying to clipboard:', err)
+        toast.error('Failed to copy link')
       }
     }
   }
 
   const validateSelection = () => {
     if (product.sizes && product.sizes.length > 0 && !selectedSize) {
-      alert('Please select a size')
+      toast.error('Please select a size')
       return false
     }
     if (product.colors && product.colors.length > 0 && !selectedColor) {
-      alert('Please select a color')
+      toast.error('Please select a color')
       return false
     }
     return true

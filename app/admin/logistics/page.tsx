@@ -5,6 +5,7 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
+import toast from "react-hot-toast"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -111,7 +112,7 @@ export default function Page() {
       })
       const d = await res.json()
       if (res.ok) {
-        alert("Success!")
+        toast.success("Success!")
         // Refresh
         const p = new URLSearchParams()
         p.set("page", String(page))
@@ -125,10 +126,10 @@ export default function Page() {
            setRows(refreshData.shipments)
         }
       } else {
-        alert(`Failed: ${d.error || d.message}`)
+        toast.error(`Failed: ${d.error || d.message}`)
       }
     } catch (e: any) {
-      alert(`Error: ${e.message}`)
+      toast.error(`Error: ${e.message}`)
     }
   }
 
@@ -226,10 +227,10 @@ export default function Page() {
                  body: JSON.stringify({ action: "test_connection" })
                })
                const d = await res.json()
-               if (res.ok) alert(d.message)
-               else alert(`Connection Failed: ${d.error || d.message}`)
+               if (res.ok) toast.success(d.message)
+               else toast.error(`Connection Failed: ${d.error || d.message}`)
              } catch (e: any) {
-               alert(`Error: ${e.message}`)
+               toast.error(`Error: ${e.message}`)
              }
           }}
           className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
@@ -396,13 +397,13 @@ export default function Page() {
                          })
                          const d = await res.json()
                          if (res.ok) {
-                           alert("Pickup location added successfully!")
+                           toast.success("Pickup location added successfully!")
                            setShowPickupModal(false)
                          } else {
-                           alert(`Failed: ${d.error || d.message}`)
+                           toast.error(`Failed: ${d.error || d.message}`)
                          }
                        } catch (e: any) {
-                         alert(`Error: ${e.message}`)
+                         toast.error(`Error: ${e.message}`)
                        }
                      }}
                      className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"

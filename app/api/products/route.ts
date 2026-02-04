@@ -217,6 +217,32 @@ export async function GET(request: Request) {
               })
             }
           }
+
+          // Apply category/subcategory filters for non-category types if specified
+          if (type !== 'category') {
+            const catField = (off as any).category
+            const subField = (off as any).subcategory
+            
+            if (catField && catField.trim()) {
+              const cat = catField.trim()
+              conditions.push({
+                $or: [
+                  { category: { $regex: new RegExp(`^${cat}$`, "i") } },
+                  { category: { $regex: new RegExp(cat, "i") } },
+                ]
+              })
+            }
+            
+            if (subField && subField.trim()) {
+              const sub = subField.trim()
+              conditions.push({
+                $or: [
+                  { subcategory: { $regex: new RegExp(`^${sub}$`, "i") } },
+                  { subcategory: { $regex: new RegExp(sub, "i") } },
+                ]
+              })
+            }
+          }
         }
       } catch {}
     }

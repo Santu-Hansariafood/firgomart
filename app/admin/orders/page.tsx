@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
 import { X } from "lucide-react"
+import toast from "react-hot-toast"
 
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
@@ -64,7 +65,7 @@ export default function Page() {
     deliveredAt?: string
     completedAt?: string
     completionVerified?: boolean
-    items?: Array<{ name?: string; quantity: number; price: number; selectedSize?: string; selectedColor?: string }>
+    items?: Array<{ name?: string; quantity: number; price: number; selectedSize?: string; selectedColor?: string; appliedOffer?: { name: string; value: number | string } }>
     tracking?: Array<{ number: string; url: string }>
     deliveryFee?: number
     payment?: {
@@ -130,14 +131,14 @@ export default function Page() {
         }),
       })
       if (res.ok) {
-        alert("Order updated successfully")
+        toast.success("Order updated successfully")
         setSelectedOrder(prev => prev ? { ...prev, status: editStatus, tracking: trackingList } : null)
         setOrders(prev => prev.map(o => o.id === selectedOrder.id ? { ...o, status: editStatus } : o))
       } else {
-        alert("Failed to update order")
+        toast.error("Failed to update order")
       }
     } catch {
-      alert("Error updating order")
+      toast.error("Error updating order")
     }
   }
 
@@ -477,7 +478,7 @@ export default function Page() {
                            })
                            const d = await res.json()
                            if (res.ok) {
-                             alert(`Shipment created! ${d.shipments?.length} shipments generated.`)
+                             toast.success(`Shipment created! ${d.shipments?.length} shipments generated.`)
                              // Refresh order details
                              const refresh = await fetch(`/api/admin/orders/${selectedOrder.id}`)
                              if (refresh.ok) {
@@ -485,10 +486,10 @@ export default function Page() {
                                setSelectedOrder(newData.order)
                              }
                            } else {
-                             alert(`Failed: ${d.error}`)
+                             toast.error(`Failed: ${d.error}`)
                            }
                          } catch (e: any) {
-                           alert(`Error: ${e.message}`)
+                             toast.error(`Error: ${e.message}`)
                          }
                       }}
                       className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
@@ -599,6 +600,11 @@ export default function Page() {
                                   <div className="text-xs text-gray-500 mt-1">
                                     {item.selectedSize && <span className="mr-3">Size: <span className="font-semibold text-gray-700">{item.selectedSize}</span></span>}
                                     {item.selectedColor && <span>Color: <span className="font-semibold text-gray-700">{item.selectedColor}</span></span>}
+                                  </div>
+                                )}
+                                {item.appliedOffer && (
+                                  <div className="text-xs text-green-600 mt-1 font-medium">
+                                     Offer: {item.appliedOffer.name} ({item.appliedOffer.value}% Off)
                                   </div>
                                 )}
                               </td>
