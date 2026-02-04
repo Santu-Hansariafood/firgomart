@@ -266,7 +266,8 @@ const Checkout: React.FC<CheckoutProps> = ({
           id: ci.id, 
           quantity: ci.quantity ?? 1,
           selectedSize: ci.selectedSize,
-          selectedColor: ci.selectedColor
+          selectedColor: ci.selectedColor,
+          appliedOffer: ci.appliedOffer
         })),
       }
       const res = await fetch('/api/orders', {

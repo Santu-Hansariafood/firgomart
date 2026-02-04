@@ -208,11 +208,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
         unitsPerPack: p.unitsPerPack,
         isAdminProduct: p.isAdminProduct,
         hsnCode: p.hsnCode,
+        appliedOffer: selectedOfferDetails ? {
+          name: selectedOfferDetails.name,
+          type: selectedOfferDetails.type,
+          value: selectedOfferDetails.value
+        } : undefined
       })) as Product[]
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer])
+  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails])
 
   useEffect(() => {
     const loadInitial = async () => {

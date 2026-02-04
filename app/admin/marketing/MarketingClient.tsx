@@ -21,6 +21,7 @@ type Offer = {
   subcategory?: string
   value?: string | number
   active: boolean
+  expiryDate?: string
   order: number
 }
 
@@ -60,6 +61,7 @@ export default function MarketingClient() {
     subcategory: string
     value: string
     active: boolean
+    expiryDate: string
     order: number
   }>({
     key: "",
@@ -69,6 +71,7 @@ export default function MarketingClient() {
     subcategory: "",
     value: "",
     active: true,
+    expiryDate: "",
     order: 0
   })
 
@@ -109,6 +112,7 @@ export default function MarketingClient() {
       subcategory: "",
       value: "",
       active: true,
+      expiryDate: "",
       order: 0
     })
     setEditingId(null)
@@ -125,6 +129,7 @@ export default function MarketingClient() {
       subcategory: offer.subcategory || "",
       value: String(offer.value || ""),
       active: offer.active,
+      expiryDate: offer.expiryDate ? new Date(offer.expiryDate).toISOString().split('T')[0] : "",
       order: offer.order || 0
     })
     setEditingId(offer._id)
@@ -361,6 +366,16 @@ export default function MarketingClient() {
               </div>
 
               <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-gray-700">Expiry Date</label>
+                <input
+                  type="date"
+                  value={formData.expiryDate}
+                  onChange={e => setFormData({...formData, expiryDate: e.target.value})}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                />
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-gray-700">Sort Order</label>
                 <input
                   type="number"
@@ -471,6 +486,18 @@ export default function MarketingClient() {
                             <span className="flex items-center gap-1">
                               <span className="font-medium text-gray-400">Value:</span>
                               <span className="text-gray-900 font-medium">{offer.value}</span>
+                            </span>
+                          )}
+                          {offer.expiryDate && (
+                            <span className="flex items-center gap-1">
+                              <span className="font-medium text-gray-400">Expires:</span>
+                              <span className="text-red-600 font-medium">{new Date(offer.expiryDate).toLocaleDateString()}</span>
+                            </span>
+                          )}
+                          {offer.category && (
+                            <span className="flex items-center gap-1">
+                              <span className="font-medium text-gray-400">Category:</span>
+                              <span className="text-gray-900 font-medium">{offer.category} {offer.subcategory ? `> ${offer.subcategory}` : ''}</span>
                             </span>
                           )}
                         </div>

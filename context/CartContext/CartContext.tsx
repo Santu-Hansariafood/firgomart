@@ -42,15 +42,29 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (product: CartItem) => {
     setCartItems((prev) => {
-      const uniqueId = product._uniqueId || `${product.id}-${product.selectedSize || ''}-${product.selectedColor || ''}`;
-      const productWithId = { ...product, _uniqueId: uniqueId };
+      // Calculate price if offer is applied and it's a percentage value
+      let finalProduct = { ...product };
+      if (finalProduct.appliedOffer && finalProduct.appliedOffer.value) {
+        const val = Number(finalProduct.appliedOffer.value);
+        if (!isNaN(val) && val > 0 && val <= 100) {
+           if (!finalProduct.originalPrice) {
+              finalProduct.originalPrice = finalProduct.price;
+           }
+           const discountAmount = Math.round((finalProduct.originalPrice * val) / 100);
+           finalProduct.price = finalProduct.originalPrice - discountAmount;
+        }
+      }
+
+      const offerKey = finalProduct.appliedOffer ? `-${finalProduct.appliedOffer.name}` : '';
+      const uniqueId = finalProduct._uniqueId || `${finalProduct.id}-${finalProduct.selectedSize || ''}-${finalProduct.selectedColor || ''}${offerKey}`;
+      const productWithId = { ...finalProduct, _uniqueId: uniqueId };
       
-      const exists = prev.find((item) => (item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}`) === uniqueId);
+      const exists = prev.find((item) => (item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}${item.appliedOffer ? `-${item.appliedOffer.name}` : ''}`) === uniqueId);
       
       if (exists) {
         const inc = product.quantity && product.quantity > 0 ? product.quantity : 1
         return prev.map((item) => {
-          const itemId = item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}`;
+          const itemId = item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}${item.appliedOffer ? `-${item.appliedOffer.name}` : ''}`;
           if (itemId !== uniqueId) return item
           const current = item.quantity || 1
           const stock = item.stock ?? MAX_QTY

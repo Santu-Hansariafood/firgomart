@@ -15,6 +15,11 @@ const OrderSchema = new Schema(
         selectedColor: { type: String },
         gstPercent: { type: Number },
         gstAmount: { type: Number },
+        appliedOffer: {
+          name: { type: String },
+          type: { type: String },
+          value: { type: Schema.Types.Mixed },
+        },
       },
     ],
     amount: { type: Number, required: true },

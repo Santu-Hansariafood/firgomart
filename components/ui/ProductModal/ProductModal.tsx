@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart } from 'lucide-react'
+import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart, Share2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
@@ -99,26 +99,50 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
     }
   }, [product.id, session])
 
-  const toggleSave = async () => {
-    if (!session) {
-      alert("Please login to save products")
+  const toggleSave = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!session?.user) {
+      router.push('/login')
       return
     }
+
     setSaving(true)
     try {
       const res = await fetch('/api/user/wishlist', {
-        method: 'POST',
+        method: isSaved ? 'DELETE' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: product.id })
       })
-      const data = await res.json()
-      if (data.success) {
-        setIsSaved(!isSaved) // Toggle based on current state or data.added
-        // data.added is true if added, false if removed
-        if (typeof data.added === 'boolean') setIsSaved(data.added)
+      if (res.ok) {
+        setIsSaved(!isSaved)
       }
     } catch {}
     setSaving(false)
+  }
+
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const url = `${window.location.origin}/product/${product.id}`
+    const shareData = {
+      title: product.name,
+      text: `Check out ${product.name} on FirgoMart!`,
+      url
+    }
+
+    if (navigator.share && /Mobi|Android/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        console.error('Error sharing:', err)
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url)
+        alert('Product link copied to clipboard!')
+      } catch (err) {
+        console.error('Error copying to clipboard:', err)
+      }
+    }
   }
 
   const validateSelection = () => {
@@ -268,6 +292,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           <div className="sticky top-0 bg-background border-b border-foreground/20 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between z-20">
             <h2 className="text-xl font-heading font-bold truncate pr-4">{product.name}</h2>
             <div className="flex items-center gap-2">
+              <button
+                onClick={handleShare}
+                className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
+              >
+                <Share2 className="w-5 h-5 text-foreground" />
+              </button>
               <button
                 onClick={toggleSave}
                 disabled={saving}

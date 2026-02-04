@@ -69,6 +69,7 @@ export async function POST(request: Request) {
     const subcategory = body?.subcategory ? String(body.subcategory).trim() : undefined
     const value = body?.value
     const active = body?.active !== undefined ? !!body.active : true
+    const expiryDate = body?.expiryDate ? new Date(body.expiryDate) : undefined
     const order = typeof body?.order === "number" ? body.order : 0
     if (!key || !name || !type) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
 
@@ -82,6 +83,7 @@ export async function POST(request: Request) {
       subcategory,
       value,
       active,
+      expiryDate,
       order,
       createdByEmail: auth.adminEmail || undefined,
     })
@@ -108,6 +110,7 @@ export async function PUT(request: Request) {
     if (typeof body?.subcategory === "string") update.subcategory = String(body.subcategory).trim()
     if (body?.value !== undefined) update.value = body.value
     if (body?.active !== undefined) update.active = !!body.active
+    if (body?.expiryDate !== undefined) update.expiryDate = body.expiryDate ? new Date(body.expiryDate) : null
     if (typeof body?.order === "number") update.order = body.order
     if (!Object.keys(update).length) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
 

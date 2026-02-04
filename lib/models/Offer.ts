@@ -8,6 +8,7 @@ export interface IOffer extends Document {
   subcategory?: string
   value?: number | string
   active: boolean
+  expiryDate?: Date
   order?: number
   createdByEmail?: string
   createdAt?: Date
@@ -23,6 +24,7 @@ const OfferSchema = new Schema<IOffer>(
     subcategory: { type: String },
     value: { type: Schema.Types.Mixed },
     active: { type: Boolean, default: true, index: true },
+    expiryDate: { type: Date },
     order: { type: Number, default: 0, index: true },
     createdByEmail: { type: String, index: true },
   },

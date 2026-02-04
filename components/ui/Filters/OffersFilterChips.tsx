@@ -10,6 +10,7 @@ export type Offer = {
   name: string
   type: string
   value?: number | string 
+  expiryDate?: string
 }
 
 type Props = {
@@ -29,7 +30,10 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
         const res = await fetch('/api/offers', { cache: 'no-store' })
         const data = await res.json()
         const list = Array.isArray(data.offers) ? data.offers : []
-        if (mounted) setOffers(list)
+        // Filter out expired offers
+        const now = new Date()
+        const validOffers = list.filter((o: Offer) => !o.expiryDate || new Date(o.expiryDate) > now)
+        if (mounted) setOffers(validOffers)
       } catch {
         if (mounted) setOffers([])
       } finally {

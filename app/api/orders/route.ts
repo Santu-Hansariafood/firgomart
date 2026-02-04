@@ -7,7 +7,13 @@ import { findSellerAcrossDBs } from "@/lib/models/Seller"
 import categories from "@/data/categories.json"
 import type { ClientSession } from "mongoose"
 
-type BodyItem = { id: string | number; quantity: number; selectedSize?: string; selectedColor?: string }
+type BodyItem = { 
+  id: string | number; 
+  quantity: number; 
+  selectedSize?: string; 
+  selectedColor?: string;
+  appliedOffer?: { name: string; type: string; value?: string | number }
+}
 
 function getGstPercent(categoryKeyOrName?: string): number {
   if (!categoryKeyOrName) return 18
@@ -62,6 +68,7 @@ export async function POST(request: Request) {
       quantity: Math.max(1, Number(it.quantity || 1)),
       selectedSize: typeof it.selectedSize === "string" ? it.selectedSize.trim() : undefined,
       selectedColor: typeof it.selectedColor === "string" ? it.selectedColor.trim() : undefined,
+      appliedOffer: it.appliedOffer,
     }))
 
     const conn = await connectDB()
@@ -195,7 +202,8 @@ export async function POST(request: Request) {
         cgst,
         sgst,
         igst,
-        stock: Number(p.stock || 0)
+        stock: Number(p.stock || 0),
+        appliedOffer: it.appliedOffer,
       }
     })
 
@@ -258,6 +266,7 @@ export async function POST(request: Request) {
         selectedColor: i.selectedColor,
         gstPercent: i.gstPercent,
         gstAmount: i.gstAmount,
+        appliedOffer: i.appliedOffer,
       })),
       amount: finalAmount,
       subtotal,
