@@ -36,6 +36,17 @@ const Footer: React.FC = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const [target, setTarget] = useState<"_blank" | "_self">("_blank");
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setTarget(window.innerWidth < 768 ? "_self" : "_blank");
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const hideOnPaths = ['/checkout', '/wishlist', '/cart', '/orders', '/profile'];
   if (hideOnPaths.some(path => pathname === path || pathname?.startsWith(`${path}/`))) return null;
 
@@ -198,12 +209,24 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
 
             <div className="flex flex-wrap justify-center gap-2 sm:gap-4 text-sm">
-              <Link href="/privacy-policy" target="_blank" className="hover:text-white transition-colors">Privacy Policy</Link>
-              <Link href="/terms" target="_blank" className="hover:text-white transition-colors">Terms of Service</Link>
-              <Link href="/cookie-policy" target="_blank" className="hover:text-white transition-colors">Cookie Policy</Link>
-              <Link href="/site-map" target="_blank" className="hover:text-white transition-colors">Sitemap</Link>
-              <Link href="/disclaimer" target="_blank" className="hover:text-white transition-colors">Disclaimer</Link>
-              <Link href="/affiliate-program" target="_blank" className="hover:text-white transition-colors">Affiliate Program</Link>
+              {[
+                ["Privacy Policy", "/privacy-policy"],
+                ["Terms of Service", "/terms"],
+                ["Cookie Policy", "/cookie-policy"],
+                ["Sitemap", "/site-map"],
+                ["Disclaimer", "/disclaimer"],
+                ["Affiliate Program", "/affiliate-program"],
+              ].map(([label, link]) => (
+                <Link
+                  key={link}
+                  href={link}
+                  target={target}
+                  rel={target === "_blank" ? "noopener noreferrer" : undefined}
+                  className="hover:text-white transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
             </div>
 
             <Paragraph className="text-center md:text-right text-gray-300">
