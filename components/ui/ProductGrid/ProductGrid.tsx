@@ -9,6 +9,9 @@ import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
 import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
 import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
+import MarqueeBanner from '@/components/ui/MarqueeBanner/MarqueeBanner'
+import PriceCategoryBanner from '@/components/ui/PriceCategoryBanner/PriceCategoryBanner'
+import { FilterControls, FilterPanel } from './ProductFilters'
 
 interface Product {
   id: string | number
@@ -74,6 +77,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
   const [selectedSize, setSelectedSize] = useState<string>('')
   const [selectedOffer, setSelectedOffer] = useState<string>('')
   const [selectedOfferDetails, setSelectedOfferDetails] = useState<Offer | null>(null)
+  
+  const handlePriceCategorySelect = (min: number, max: number, type?: string) => {
+    setMinRating(null)
+    setSelectedSize('')
+    setSelectedOffer('')
+    setSelectedOfferDetails(null)
+    
+    if (type === 'discount') {
+      setMinPrice('')
+      setMaxPrice('')
+      setSortBy('price-asc')
+    } else if (type === 'special') {
+      setMinPrice('')
+      setMaxPrice('')
+      setSortBy('relevance')
+    } else {
+      setMinPrice(String(min))
+      setMaxPrice(String(max))
+      setSortBy('price-asc')
+    }
+    setPage(1)
+  }
+
   type DropdownItem = { id: string | number; label: string }
   const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
     const createNumSizes = (start: number, end: number) => {
@@ -84,7 +110,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
     let newSizes: DropdownItem[] = []
     if (cat === "Women's Fashion" || cat === "Men's Fashion" || cat === "Women's Footwear") {
       newSizes = createNumSizes(4, 10)
-      // For fashion, include alpha sizes too
       newSizes = [
         { id: 'XS', label: 'XS' },
         { id: 'S', label: 'S' },
@@ -229,7 +254,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       const [first, second] = await Promise.all([fetchPage(1), fetchPage(2)])
       let initial = [...first, ...second]
       
-      // Shuffle only if "Relevance" (default) sort is active and no search query
       if (sortBy === 'relevance' && !search) {
         initial = shuffleArray(initial)
       }
@@ -336,67 +360,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
   return (
     <section className="py-8 bg-background">
       <div className="max-w-7xl mx-auto px-4">
+        <MarqueeBanner />
+        <PriceCategoryBanner onSelectCategory={handlePriceCategorySelect} />
+
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-3 mb-3">
           <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground drop-shadow-md">FirgoMart Products</h2>
           <p className="text-foreground/60 hidden md:block whitespace-nowrap">
             {displayedProducts.length} Available Products
           </p>
-          <div className="flex items-center gap-2 relative z-30">
-            <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                isFilterOpen || minPrice || maxPrice || minRating || selectedSize
-                  ? 'bg-brand-purple text-white border-brand-purple'
-                  : 'border-foreground/20 hover:bg-foreground/5'
-              }`}
-              onClick={() => setIsFilterOpen((prev) => !prev)}
-            >
-              <span className="hidden sm:inline">Filters</span>
-              <span className="sm:hidden">Filters</span>
-              {(minPrice || maxPrice || minRating || selectedSize) && (
-                <span className="bg-white text-brand-purple text-[10px] font-bold px-1.5 rounded-full">!</span>
-              )}
-            </button>
-            <div className="relative">
-              <button
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-colors"
-                onClick={() => setIsSortDropdownOpen((prev) => !prev)}
-              >
-                Sort: {sortBy === 'relevance' ? 'Relevance' : sortBy === 'price-asc' ? 'Price: Low to High' : sortBy === 'price-desc' ? 'Price: High to Low' : 'Rating'}
-                <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : 'rotate-0'}`} />
-              </button>
-              {isSortDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-background border border-foreground/20 rounded-lg shadow-lg z-10">
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                    onClick={() => { setSortBy('relevance'); setIsSortDropdownOpen(false); setPage(1) }}
-                  >
-                    Relevance
-                  </button>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                    onClick={() => { setSortBy('price-asc'); setIsSortDropdownOpen(false); setPage(1) }}
-                  >
-                    Price: Low to High
-                  </button>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                    onClick={() => { setSortBy('price-desc'); setIsSortDropdownOpen(false); setPage(1) }}
-                  >
-                    Price: High to Low
-                  </button>
-                  <button
-                    className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-                    onClick={() => { setSortBy('rating'); setIsSortDropdownOpen(false); setPage(1) }}
-                  >
-                    Rating
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+          <FilterControls
+            isFilterOpen={isFilterOpen}
+            setIsFilterOpen={setIsFilterOpen}
+            isSortDropdownOpen={isSortDropdownOpen}
+            setIsSortDropdownOpen={setIsSortDropdownOpen}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            minRating={minRating}
+            selectedSize={selectedSize}
+            setPage={setPage}
+          />
         </div>
 
-        {/* Offer Description Banner */}
         <AnimatePresence>
           {selectedOfferDetails && (
             <motion.div
@@ -422,14 +408,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                 )}
               </div>
               
-              {/* Decorative circles */}
               <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
               <div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-32 h-32 bg-indigo-500/30 rounded-full blur-xl"></div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Offers Filter Bar */}
         <div className="mb-6">
           <OffersFilterChips
             selectedOffer={selectedOffer || undefined}
@@ -442,109 +426,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
         </div>
 
         {isFilterOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mb-6 p-4 border border-foreground/10 rounded-xl bg-foreground/5 overflow-hidden"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              {/* Offers filter moved */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground/80">Price Range</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="number"
-                    placeholder="Min"
-                    value={minPrice}
-                    onChange={(e) => { setMinPrice(e.target.value); setPage(1) }}
-                    className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
-                  />
-                  <span className="text-foreground/40">-</span>
-                  <input
-                    type="number"
-                    placeholder="Max"
-                    value={maxPrice}
-                    onChange={(e) => { setMaxPrice(e.target.value); setPage(1) }}
-                    className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
-                  />
-                </div>
-              </div>
-
-              {/* Size Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground/80">Size</label>
-                <div className="flex flex-wrap gap-2">
-                  {(category ? getSizeOptionsForCategory(category) : allSizes).map((opt) => (
-                    <button
-                      key={String(opt.id)}
-                      onClick={() => { const val = String(opt.label); setSelectedSize(selectedSize === val ? '' : val); setPage(1) }}
-                      className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                        selectedSize === String(opt.label)
-                          ? 'bg-brand-purple text-white border-brand-purple'
-                          : 'bg-background border-foreground/20 hover:border-brand-purple/50'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Rating Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground/80">Rating</label>
-                <div className="space-y-1">
-                  {[4, 3, 2, 1].map((rating) => (
-                    <label key={rating} className="flex items-center gap-2 cursor-pointer group">
-                      <input
-                        type="radio"
-                        name="rating"
-                        checked={minRating === rating}
-                        onChange={() => { setMinRating(minRating === rating ? null : rating); setPage(1) }}
-                        onClick={(e) => {
-                          if (minRating === rating) {
-                            e.preventDefault()
-                            setMinRating(null)
-                          }
-                        }}
-                        className="w-4 h-4 text-brand-purple focus:ring-brand-purple"
-                      />
-                      <div className="flex items-center text-sm text-foreground/70 group-hover:text-foreground">
-                        <span className="flex text-yellow-500 mr-1">
-                          {Array.from({ length: rating }).map((_, i) => (
-                            <span key={i}>★</span>
-                          ))}
-                          {Array.from({ length: 5 - rating }).map((_, i) => (
-                            <span key={i} className="text-gray-300">★</span>
-                          ))}
-                        </span>
-                        & Up
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Clear */}
-              <div className="flex flex-col justify-end gap-2">
-                <button
-                  onClick={() => {
-                    setMinPrice('')
-                    setMaxPrice('')
-                    setMinRating(null)
-                    setSelectedSize('')
-                    setSelectedOffer('')
-                    setSelectedOfferDetails(null)
-                    setPage(1)
-                  }}
-                  className="w-full py-2 bg-background border border-foreground/20 text-foreground/70 rounded-lg text-sm font-medium hover:bg-foreground/5 transition-colors"
-                >
-                  Clear Filters
-                </button>
-              </div>
-            </div>
-          </motion.div>
+          <FilterPanel
+            minPrice={minPrice}
+            setMinPrice={setMinPrice}
+            maxPrice={maxPrice}
+            setMaxPrice={setMaxPrice}
+            minRating={minRating}
+            setMinRating={setMinRating}
+            selectedSize={selectedSize}
+            setSelectedSize={setSelectedSize}
+            setPage={setPage}
+            onClearFilters={() => {
+              setMinPrice('')
+              setMaxPrice('')
+              setMinRating(null)
+              setSelectedSize('')
+              setSelectedOffer('')
+              setSelectedOfferDetails(null)
+              setPage(1)
+            }}
+            category={category}
+            getSizeOptionsForCategory={getSizeOptionsForCategory}
+            allSizes={allSizes}
+          />
         )}
         {category && subcategoryOptionsFor(category).length > 0 && (
           <div className="mb-6">
