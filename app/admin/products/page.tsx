@@ -149,11 +149,11 @@ export default function Page() {
       };
 
       let newSizes: DropdownItem[] = [];
-      if (cat === "Women's Fashion" || cat === "Men's Casual Wear" || cat === "Women's Footwear") {
+      if (cat === "Women's Fashion" || cat === "Men's Fashion" || cat === "Women's Footwear") {
         newSizes = createNumSizes(4, 10);
       } else if (cat === "Men's Footwear") {
         newSizes = createNumSizes(4, 11);
-      } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen") {
+      } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen" || cat === "Mobiles & Accessories" || cat === "Jewellery & Accessories") {
         newSizes = [];
       } else {
          newSizes = [
@@ -690,7 +690,8 @@ export default function Page() {
                                   const catEntry = (categoriesData as any).categories.find((c: any) => c.name === formCategory)
                                   if (catEntry && catEntry.hsnMap) {
                                     const hsn = catEntry.hsnMap[v.label]
-                                    if (hsn) setFormHSNCode(hsn)
+                                    if (Array.isArray(hsn) && hsn.length > 0) setFormHSNCode(String(hsn[0]))
+                                    else if (typeof hsn === "string") setFormHSNCode(hsn)
                                   }
                                 }
                               }}

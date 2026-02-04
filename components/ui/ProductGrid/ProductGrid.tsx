@@ -66,6 +66,57 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
   const [maxPrice, setMaxPrice] = useState<string>('')
   const [minRating, setMinRating] = useState<number | null>(null)
   const [selectedSize, setSelectedSize] = useState<string>('')
+  type DropdownItem = { id: string | number; label: string }
+  const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
+    const createNumSizes = (start: number, end: number) => {
+      const arr: DropdownItem[] = []
+      for (let i = start; i <= end; i++) arr.push({ id: String(i), label: String(i) })
+      return arr
+    }
+    let newSizes: DropdownItem[] = []
+    if (cat === "Women's Fashion" || cat === "Men's Fashion" || cat === "Women's Footwear") {
+      newSizes = createNumSizes(4, 10)
+      // For fashion, include alpha sizes too
+      newSizes = [
+        { id: 'XS', label: 'XS' },
+        { id: 'S', label: 'S' },
+        { id: 'M', label: 'M' },
+        { id: 'L', label: 'L' },
+        { id: 'XL', label: 'XL' },
+        { id: 'XXL', label: 'XXL' },
+        { id: '3XL', label: '3XL' },
+        { id: 'Free Size', label: 'Free Size' },
+        ...newSizes,
+      ]
+    } else if (cat === "Men's Footwear") {
+      newSizes = createNumSizes(4, 11)
+    } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen" || cat === "Mobiles & Accessories" || cat === "Jewellery & Accessories") {
+      newSizes = []
+    } else {
+      newSizes = [
+        { id: 'XS', label: 'XS' },
+        { id: 'S', label: 'S' },
+        { id: 'M', label: 'M' },
+        { id: 'L', label: 'L' },
+        { id: 'XL', label: 'XL' },
+        { id: 'XXL', label: 'XXL' },
+        { id: '3XL', label: '3XL' },
+        { id: 'Free Size', label: 'Free Size' },
+      ]
+    }
+    return newSizes
+  }
+  const allSizes: DropdownItem[] = [
+    { id: 'XS', label: 'XS' },
+    { id: 'S', label: 'S' },
+    { id: 'M', label: 'M' },
+    { id: 'L', label: 'L' },
+    { id: 'XL', label: 'XL' },
+    { id: 'XXL', label: 'XXL' },
+    { id: '3XL', label: '3XL' },
+    { id: 'Free Size', label: 'Free Size' },
+    ...Array.from({ length: 8 }, (_, i) => ({ id: String(4 + i), label: String(4 + i) })), // 4-11
+  ]
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
@@ -95,7 +146,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
     hsnCode?: string
   }
 
-  type DropdownItem = { id: string | number; label: string }
   type JsonCategory = { name: string; subcategories?: string[] }
   const subcategoryOptionsFor = useCallback((cat: string): DropdownItem[] => {
     const entry = ((categoriesData as { categories: JsonCategory[] }).categories || []).find((c) => c.name === cat)
@@ -336,8 +386,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             exit={{ opacity: 0, height: 0 }}
             className="mb-6 p-4 border border-foreground/10 rounded-xl bg-foreground/5 overflow-hidden"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {/* Price Filter */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground/80">Price Range</label>
                 <div className="flex items-center gap-2">
@@ -345,7 +394,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                     type="number"
                     placeholder="Min"
                     value={minPrice}
-                    onChange={(e) => setMinPrice(e.target.value)}
+                    onChange={(e) => { setMinPrice(e.target.value); setPage(1) }}
                     className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
                   />
                   <span className="text-foreground/40">-</span>
@@ -353,7 +402,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                     type="number"
                     placeholder="Max"
                     value={maxPrice}
-                    onChange={(e) => setMaxPrice(e.target.value)}
+                    onChange={(e) => { setMaxPrice(e.target.value); setPage(1) }}
                     className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
                   />
                 </div>
@@ -363,17 +412,17 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground/80">Size</label>
                 <div className="flex flex-wrap gap-2">
-                  {['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'].map((size) => (
+                  {(category ? getSizeOptionsForCategory(category) : allSizes).map((opt) => (
                     <button
-                      key={size}
-                      onClick={() => setSelectedSize(selectedSize === size ? '' : size)}
+                      key={String(opt.id)}
+                      onClick={() => { const val = String(opt.label); setSelectedSize(selectedSize === val ? '' : val); setPage(1) }}
                       className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                        selectedSize === size
+                        selectedSize === String(opt.label)
                           ? 'bg-brand-purple text-white border-brand-purple'
                           : 'bg-background border-foreground/20 hover:border-brand-purple/50'
                       }`}
                     >
-                      {size}
+                      {opt.label}
                     </button>
                   ))}
                 </div>
@@ -389,7 +438,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                         type="radio"
                         name="rating"
                         checked={minRating === rating}
-                        onChange={() => setMinRating(minRating === rating ? null : rating)}
+                        onChange={() => { setMinRating(minRating === rating ? null : rating); setPage(1) }}
                         onClick={(e) => {
                           if (minRating === rating) {
                             e.preventDefault()
@@ -414,24 +463,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                 </div>
               </div>
 
-              {/* Actions */}
+              {/* Clear */}
               <div className="flex flex-col justify-end gap-2">
-                <button
-                  onClick={() => {
-                    setPage(1)
-                    // Trigger refetch by updating a dependency is handled by useEffect, 
-                    // but we might want to force it if needed. 
-                    // Actually dependencies [minPrice, maxPrice...] will trigger it automatically.
-                    // But we want to apply ONLY when user is done? 
-                    // The current implementation triggers on every change. 
-                    // For better UX on inputs, maybe debounce or "Apply" button?
-                    // Given the code structure, it's auto-fetching.
-                    // Let's add a "Clear Filters" button.
-                  }}
-                  className="w-full py-2 bg-brand-purple text-white rounded-lg text-sm font-medium hover:bg-brand-purple/90 transition-colors shadow-sm"
-                >
-                  Apply Filters
-                </button>
                 <button
                   onClick={() => {
                     setMinPrice('')

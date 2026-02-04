@@ -1,54 +1,115 @@
 {
   "categories": [
     {
+      "name": "Mobiles & Accessories",
+      "key": "mobiles-accessories",
+      "image": "/image/mobile.webp",
+      "gstPercent": 18,
+      "hsnChapters": ["85"],
+      "hsnMap": {
+        "Smartphones": ["8517"],
+        "Feature Phones": ["8517"],
+        "Apple": ["8517"],
+        "Samsung": ["8517"],
+        "Xiaomi": ["8517"],
+        "Realme": ["8517"],
+        "OnePlus": ["8517"],
+        "Motorola": ["8517"],
+        "Mobile Chargers": ["8504"],
+        "Power Banks": ["8507"],
+        "Mobile Covers": ["3926"],
+        "Screen Protectors": ["7007"],
+        "Earphones & Headphones": ["8518"]
+      },
+      "subcategories": [
+        "Smartphones",
+        "Feature Phones",
+        "Apple",
+        "Samsung",
+        "Xiaomi",
+        "Realme",
+        "OnePlus",
+        "Motorola",
+        "Mobile Chargers",
+        "Power Banks",
+        "Mobile Covers",
+        "Screen Protectors",
+        "Earphones & Headphones"
+      ]
+    },
+
+    {
       "name": "Women's Fashion",
       "key": "womens-fashion",
       "image": "/image/woman.webp",
       "gstPercent": 12,
       "hsnChapters": ["61", "62"],
       "hsnMap": {
-        "Kurtis & Tunics": "62",
-        "Sarees": "62",
-        "Tops & T-Shirts": "61",
-        "Dresses": "62",
-        "Leggings & Bottom Wear": "61",
-        "Nightwear & Loungewear": "61",
-        "Dupattas & Stoles": "62",
-        "Suits": "62"
+        "Kurtis & Tunics": ["62"],
+        "Sarees": ["62"],
+        "Blouses": ["62"],
+        "Suits & Sets": ["62"],
+        "Co-ord Sets": ["62"],
+        "Tops & T-Shirts": ["61"],
+        "Dresses": ["62"],
+        "Leggings & Bottom Wear": ["61"],
+        "Palazzos & Skirts": ["61"],
+        "Shrugs & Jackets": ["61", "62"],
+        "Nightwear & Loungewear": ["61"],
+        "Winter Wear": ["61"],
+        "Dupattas & Stoles": ["62"]
       },
       "subcategories": [
         "Kurtis & Tunics",
         "Sarees",
+        "Blouses",
+        "Suits & Sets",
+        "Co-ord Sets",
         "Tops & T-Shirts",
         "Dresses",
         "Leggings & Bottom Wear",
+        "Palazzos & Skirts",
+        "Shrugs & Jackets",
         "Nightwear & Loungewear",
+        "Winter Wear",
         "Dupattas & Stoles"
       ]
     },
+
     {
-      "name": "Men's Casual Wear",
-      "key": "mens-casual-wear",
+      "name": "Men's Fashion",
+      "key": "mens-fashion",
       "image": "/image/man.webp",
       "gstPercent": 12,
       "hsnChapters": ["61", "62"],
       "hsnMap": {
-        "T-Shirts": "61",
-        "Casual Shirts": "62",
-        "Jeans": "62",
-        "Trousers & Track Pants": "61/62",
-        "Shorts": "61",
-        "Hoodies & Jackets": "61/62"
+        "T-Shirts": ["61"],
+        "Casual Shirts": ["62"],
+        "Formal Shirts": ["62"],
+        "Jeans": ["62"],
+        "Trousers & Track Pants": ["61", "62"],
+        "Shorts": ["61"],
+        "Co-ord Sets": ["62"],
+        "Ethnic Wear": ["62"],
+        "Innerwear & Sleepwear": ["61"],
+        "Winter Wear": ["61"],
+        "Hoodies & Jackets": ["61", "62"]
       },
       "subcategories": [
         "T-Shirts",
         "Casual Shirts",
+        "Formal Shirts",
         "Jeans",
         "Trousers & Track Pants",
         "Shorts",
+        "Co-ord Sets",
+        "Ethnic Wear",
+        "Innerwear & Sleepwear",
+        "Winter Wear",
         "Hoodies & Jackets"
       ]
     },
+
     {
       "name": "Women's Footwear",
       "key": "footwear-women",
@@ -56,124 +117,170 @@
       "gstPercent": 12,
       "hsnChapters": ["64"],
       "hsnMap": {
-        "Flats": "64",
-        "Heels": "64",
-        "Sandals": "64",
-        "Slippers & Flip-Flops": "64",
-        "Casual Shoes": "64",
-        "Party Wear Shoes": "64"
+        "Flats": ["64"],
+        "Heels": ["64"],
+        "Wedges": ["64"],
+        "Ethnic Footwear": ["64"],
+        "Sandals": ["64"],
+        "Sports Shoes": ["64"],
+        "Boots": ["64"],
+        "Slippers & Flip-Flops": ["64"],
+        "Bellies Shoes": ["64"] 
       },
       "subcategories": [
         "Flats",
         "Heels",
+        "Wedges",
+        "Ethnic Footwear",
         "Sandals",
+        "Sports Shoes",
+        "Boots",
         "Slippers & Flip-Flops",
-        "Casual Shoes",
-        "Party Wear Shoes"
+        "Bellies Shoes"
       ]
     },
+
     {
       "name": "Men's Footwear",
       "key": "footwear-men",
-      "image": "/image/shoos.webp",
+      "image": "/image/shoes.webp",
       "gstPercent": 12,
       "hsnChapters": ["64"],
       "hsnMap": {
-        "Casual Shoes": "64",
-        "Sneakers": "64",
-        "Formal Shoes": "64",
-        "Sandals": "64",
-        "Slippers & Flip-Flops": "64"
+        "Casual Shoes": ["64"],
+        "Sneakers": ["64"],
+        "Formal Shoes": ["64"],
+        "Sports Shoes": ["64"],
+        "Loafers": ["64"],
+        "Ethnic Footwear": ["64"],
+        "Boots": ["64"],
+        "Sandals": ["64"],
+        "Slippers & Flip-Flops": ["64"]
       },
       "subcategories": [
         "Casual Shoes",
         "Sneakers",
         "Formal Shoes",
+        "Sports Shoes",
+        "Loafers",
+        "Ethnic Footwear",
+        "Boots",
         "Sandals",
         "Slippers & Flip-Flops"
       ]
     },
+
     {
       "name": "Jewellery & Accessories",
       "key": "jewellery-accessories",
-      "image": "/image/jueallary.webp",
+      "image": "/image/jewellery.webp",
       "gstPercent": 3,
+      "hsnChapters": ["71", "90", "42", "96"],
       "hsnMap": {
-        "Earrings": "7117",
-        "Necklaces": "7117",
-        "Bangles & Bracelets": "7117",
-        "Rings": "7117",
-        "Jewellery Sets": "7117",
-        "Watches": "9102",
-        "Sunglasses": "9004",
-        "Wallets": "4202",
-        "Belts": "4203"
+        "Artificial Jewellery": ["7117"],
+        "Earrings": ["7117"],
+        "Necklaces": ["7117"],
+        "Bangles & Bracelets": ["7117"],
+        "Rings": ["7117"],
+        "Jewellery Sets": ["7117"],
+        "Anklets & Toe Rings": ["7117"],
+        "Hair Accessories": ["9615"],
+        "Watches": ["9102"],
+        "Sunglasses": ["9004"],
+        "Handbags & Purses": ["4202"],
+        "Wallets": ["4202"],
+        "Belts": ["4203"]
       },
       "subcategories": [
+        "Artificial Jewellery",
         "Earrings",
         "Necklaces",
         "Bangles & Bracelets",
         "Rings",
         "Jewellery Sets",
+        "Anklets & Toe Rings",
+        "Hair Accessories",
         "Watches",
         "Sunglasses",
+        "Handbags & Purses",
         "Wallets",
         "Belts"
       ]
     },
+
     {
       "name": "Beauty & Skincare",
       "key": "beauty-skincare",
-      "image": "/image/beauti.webp",
+      "image": "/image/beauty.webp",
       "gstPercent": 18,
-      "hsnChapters": ["33"],
+      "hsnChapters": ["33", "96"],
       "hsnMap": {
-        "Face Wash & Cleansers": "3304/3305",
-        "Face Creams & Moisturizers": "3304",
-        "Serums & Sunscreens": "3304",
-        "Lipsticks": "3304",
-        "Kajal & Eyeliner": "3304",
-        "Hair Oils": "3305",
-        "Shampoo & Conditioners": "3305",
-        "Perfumes": "3303",
-        "Deodorants": "3307"
+        "Face Wash & Cleansers": ["3304"],
+        "Face Creams & Moisturizers": ["3304"],
+        "Serums & Sunscreens": ["3304"],
+        "Face Masks & Packs": ["3304"],
+        "Lipsticks": ["3304"],
+        "Kajal & Eyeliner": ["3304"],
+        "Nail Care": ["3304"],
+        "Hair Oils": ["3305"],
+        "Shampoo & Conditioners": ["3305"],
+        "Beard Care": ["3307"],
+        "Perfumes": ["3303"],
+        "Deodorants": ["3307"],
+        "Beauty Tools": ["9615"],
+        "Makeup Kits & Combos": ["3304"]
       },
       "subcategories": [
         "Face Wash & Cleansers",
         "Face Creams & Moisturizers",
         "Serums & Sunscreens",
+        "Face Masks & Packs",
         "Lipsticks",
         "Kajal & Eyeliner",
+        "Nail Care",
         "Hair Oils",
         "Shampoo & Conditioners",
+        "Beard Care",
         "Perfumes",
-        "Deodorants"
+        "Deodorants",
+        "Beauty Tools",
+        "Makeup Kits & Combos"
       ]
     },
+
     {
       "name": "Home & Kitchen",
       "key": "home-kitchen",
       "image": "/image/home.webp",
       "gstPercent": 18,
+      "hsnChapters": ["63", "73", "69", "82", "39", "94"],
       "hsnMap": {
-        "Bedsheets": "63",
-        "Curtains": "63",
-        "Cushions & Covers": "63",
-        "Home Décor Items": "8306/9405",
-        "Cookware": "7323/7615",
-        "Kitchen Tools & Accessories": "8205",
-        "Storage Containers": "3923",
-        "Water Bottles": "3923"
+        "Bedsheets": ["63"],
+        "Curtains": ["63"],
+        "Cushions & Covers": ["63"],
+        "Wall Décor & Frames": ["8306"],
+        "Lighting & Lamps": ["9405"],
+        "Home Décor Items": ["8306"],
+        "Cookware": ["7323"],
+        "Dining & Serveware": ["6912"],
+        "Kitchen Tools & Accessories": ["8205"],
+        "Storage Containers": ["3923"],
+        "Water Bottles": ["3923"],
+        "Bathroom Accessories": ["3924"]
       },
       "subcategories": [
         "Bedsheets",
         "Curtains",
         "Cushions & Covers",
+        "Wall Décor & Frames",
+        "Lighting & Lamps",
         "Home Décor Items",
         "Cookware",
+        "Dining & Serveware",
         "Kitchen Tools & Accessories",
         "Storage Containers",
-        "Water Bottles"
+        "Water Bottles",
+        "Bathroom Accessories"
       ]
     }
   ]
