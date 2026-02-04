@@ -36,8 +36,8 @@ const Footer: React.FC = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Hide footer on checkout page
-  if (pathname === '/checkout') return null;
+  const hideOnPaths = ['/checkout', '/wishlist', '/cart', '/orders', '/profile'];
+  if (hideOnPaths.some(path => pathname === path || pathname?.startsWith(`${path}/`))) return null;
 
   return (
     <footer className="bg-brand-black text-gray-300 pb-24 md:pb-0">
