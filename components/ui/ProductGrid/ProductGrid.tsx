@@ -416,6 +416,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
           )}
         </AnimatePresence>
 
+        {/* Offers Filter Bar */}
+        <div className="mb-6">
+          <OffersFilterChips
+            selectedOffer={selectedOffer || undefined}
+            onChange={(next, offer) => { 
+              setSelectedOffer(next || '')
+              setSelectedOfferDetails(offer || null)
+              setPage(1) 
+            }}
+          />
+        </div>
+
         {isFilterOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -424,17 +436,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             className="mb-6 p-4 border border-foreground/10 rounded-xl bg-foreground/5 overflow-hidden"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-foreground/80">Offers</label>
-                <OffersFilterChips
-                  selectedOffer={selectedOffer || undefined}
-                  onChange={(next, offer) => { 
-                    setSelectedOffer(next || '')
-                    setSelectedOfferDetails(offer || null)
-                    setPage(1) 
-                  }}
-                />
-              </div>
+              {/* Offers filter moved */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-foreground/80">Price Range</label>
                 <div className="flex items-center gap-2">

@@ -43,15 +43,15 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
   if (offers.length === 0 && !loading) return null
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 mb-2">
-        <Tag className="w-4 h-4 text-brand-purple" />
-        <h3 className="text-sm font-semibold text-gray-800">Special Offers</h3>
-      </div>
-      
-      <div className="relative">
+    <div className="w-full">
+      <div className="flex items-center gap-3 overflow-x-auto py-3 px-1 scrollbar-hide">
+        <div className="flex items-center gap-2 shrink-0 pr-2 border-r border-gray-200">
+          <Tag className="w-4 h-4 text-brand-purple" />
+          <span className="text-sm font-bold text-gray-800 whitespace-nowrap">Special Offers</span>
+        </div>
+        
         <motion.div 
-          className="flex gap-2 overflow-x-auto py-2 px-1 scrollbar-hide"
+          className="flex gap-2"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
         >
@@ -59,10 +59,10 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onChange(null)}
-            className={`inline-flex items-center px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shadow-sm ${
+            className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap ${
               !selectedOffer
-                ? 'bg-linear-to-r from-brand-purple to-indigo-600 text-white shadow-brand-purple/20 ring-2 ring-brand-purple ring-offset-1'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-purple/50 hover:text-brand-purple hover:shadow-md'
+                ? 'bg-brand-purple text-white shadow-brand-purple/20'
+                : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-purple/50 hover:text-brand-purple'
             }`}
           >
             All Offers
@@ -80,10 +80,10 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => onChange(active ? null : o.key, o)}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap ${
+                  className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap ${
                     active
-                      ? 'bg-linear-to-r from-brand-purple to-indigo-600 text-white shadow-brand-purple/20 ring-2 ring-brand-purple ring-offset-1'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-purple/50 hover:text-brand-purple hover:shadow-md'
+                      ? 'bg-brand-purple text-white shadow-brand-purple/20'
+                      : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-purple/50 hover:text-brand-purple'
                   }`}
                   title={o.name}
                 >
