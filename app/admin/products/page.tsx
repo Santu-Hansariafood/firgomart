@@ -585,7 +585,14 @@ export default function Page() {
                     { key: "productId", label: "Product ID", sortable: true },
                     { key: "name", label: "Name", sortable: true },
                     { key: "category", label: "Category", sortable: true },
-                    { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },
+                    { key: "price", label: "Price", sortable: true, render: (r) => (
+                      <div className="flex flex-col">
+                        <span className="font-medium">₹{r.price}</span>
+                        {r.originalPrice && r.originalPrice > r.price && (
+                          <span className="text-xs text-gray-400 line-through">MRP: ₹{r.originalPrice}</span>
+                        )}
+                      </div>
+                    ) },
                     { key: "stock", label: "Stock", sortable: true },
                     { key: "brand", label: "Brand" },
                     { key: "sellerState", label: "State", sortable: true },

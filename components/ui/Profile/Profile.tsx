@@ -384,11 +384,11 @@ const Profile = () => {
                       onChange={(e) => setNewAddress({ ...newAddress, mobile: e.target.value })}
                     />
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">Address</label>
                       <textarea
                         value={newAddress.address}
                         onChange={(e) => setNewAddress({ ...newAddress, address: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple"
+                        className="w-full px-4 py-3 border border-[var(--foreground)/20] rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)]"
                         rows={2}
                       />
                     </div>
@@ -417,9 +417,9 @@ const Profile = () => {
                       id="isDefault"
                       checked={newAddress.isDefault}
                       onChange={(e) => setNewAddress({ ...newAddress, isDefault: e.target.checked })}
-                      className="w-4 h-4 text-brand-purple rounded border-gray-300 focus:ring-brand-purple"
+                      className="w-4 h-4 text-brand-purple rounded border-[var(--foreground)/20] focus:ring-brand-purple bg-[var(--background)]"
                     />
-                    <label htmlFor="isDefault" className="text-sm text-gray-700">Set as default address</label>
+                    <label htmlFor="isDefault" className="text-sm text-[color:var(--foreground)]">Set as default address</label>
                   </div>
                   <button
                     onClick={handleAddAddress}
@@ -433,14 +433,14 @@ const Profile = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(formData.addresses || []).map((addr, idx) => (
-                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple dark:bg-purple-500" : "border-gray-200 bg-[var(--background)]"} relative group`}>
+                    <div key={idx} className={`p-4 rounded-xl border ${addr.isDefault ? "border-brand-purple bg-purple-50 dark:bg-purple-900/20" : "border-[var(--foreground)/10] bg-[var(--background)]"} relative group`}>
                       <div className="flex justify-between items-start mb-2">
                         <div>
                           <div className="font-medium text-[color:var(--foreground)]">{addr.name || formData.name}</div>
                           <div className="text-sm text-[color:var(--foreground)]">{addr.mobile || formData.mobile}</div>
                         </div>
                         {addr.isDefault && (
-                          <span className="px-2 py-1 bg-purple-100 text-brand-purple text-xs font-medium rounded">Default</span>
+                          <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-brand-purple dark:text-purple-300 text-xs font-medium rounded">Default</span>
                         )}
                       </div>
                       <p className="text-sm text-[color:var(--foreground)] mb-3">
@@ -450,14 +450,14 @@ const Profile = () => {
                         {!addr.isDefault && (
                           <button
                           onClick={() => handleSetDefault(idx)}
-                          className="text-brand-purple hover:text-purple-800 font-medium"
+                          className="text-brand-purple hover:text-purple-800 dark:hover:text-purple-400 font-medium"
                         >
                           Set Default
                         </button>
                       )}
                       <button
                         onClick={() => handleDeleteAddress(idx)}
-                        className="text-red-600 hover:text-red-800 font-medium"
+                        className="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 font-medium"
                       >
                         Delete
                       </button>
@@ -465,7 +465,7 @@ const Profile = () => {
                   </div>
                 ))}
                 {(!formData.addresses || formData.addresses.length === 0) && (
-                  <div className="col-span-full text-center py-8 text-gray-500 border-2 border-dashed border-gray-200 rounded-xl">
+                  <div className="col-span-full text-center py-8 text-[var(--foreground)/50] border-2 border-dashed border-[var(--foreground)/10] rounded-xl">
                     No additional addresses saved.
                   </div>
                 )}

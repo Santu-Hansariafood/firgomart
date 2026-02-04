@@ -153,9 +153,12 @@ export async function POST(request: Request) {
     const category = String(body?.category || "").trim()
     const subcategory = String(body?.subcategory || "").trim()
     const price = Number(body?.price)
+    const originalPrice = body?.originalPrice ? Number(body.originalPrice) : undefined
+    const discount = body?.discount ? Number(body.discount) : 0
     const stock = Number(body?.stock ?? 0)
     const sellerState = String(body?.sellerState || "").trim()
-    const sellerHasGST = typeof body?.sellerHasGST === "boolean" ? body.sellerHasGST : undefined
+    const gstNumber = String(body?.gstNumber || process.env.ADMIN_GST_NUMBER || "").trim()
+    const sellerHasGST = typeof body?.sellerHasGST === "boolean" ? body.sellerHasGST : (!!gstNumber || undefined)
     const images = Array.isArray(body?.images) ? body.images : []
     const image = String(body?.image || images[0] || "")
     const brand = String(body?.brand || "").trim()
@@ -174,7 +177,6 @@ export async function POST(request: Request) {
     const lengthUnit = String(body?.lengthUnit || "")
     const weightUnit = String(body?.weightUnit || "")
     const hsnCode = String(body?.hsnCode || "").trim()
-    const gstNumber = String(body?.gstNumber || "").trim()
     const productId = String(body?.productId || "").trim()
 
     if (!name || !price || !image) return NextResponse.json({ error: "name, price, image required" }, { status: 400 })
@@ -188,6 +190,8 @@ export async function POST(request: Request) {
       category,
       subcategory,
       price,
+      originalPrice,
+      discount,
       stock,
       unitsPerPack,
       sellerState,

@@ -6,7 +6,7 @@ import { findSellerAcrossDBs } from "@/lib/models/Seller"
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const {
+    let {
       name,
       image,
       images,
@@ -55,6 +55,9 @@ export async function POST(request: Request) {
           const hasGst = (result.seller as any).hasGST
           sellerState = typeof st === "string" ? st.trim() : undefined
           sellerHasGST = typeof hasGst === "boolean" ? hasGst : undefined
+          if (!gstNumber && (result.seller as any).gstNumber) {
+            gstNumber = (result.seller as any).gstNumber
+          }
         }
       } catch {}
     }
