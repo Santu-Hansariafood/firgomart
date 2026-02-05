@@ -440,9 +440,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                       </span>
                     )}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight text-foreground/90 dark:text-white">
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight text-foreground/90 dark:text-white">
                       {product.name}
-                  </h1>
+                  </h2>
                 </div>
 
                 <div className="flex items-end gap-3 mb-6 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 dark:bg-white/5 dark:border-white/10">
