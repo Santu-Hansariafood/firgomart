@@ -28,7 +28,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       color: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800',
       iconBg: 'bg-white dark:bg-purple-900/20',
       iconColor: 'text-purple-600 dark:text-purple-400',
-      min: 0,
+      min: 200,
       max: 299
     },
     {
@@ -39,7 +39,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       color: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800',
       iconBg: 'bg-white dark:bg-amber-900/20',
       iconColor: 'text-amber-600 dark:text-amber-400',
-      min: 0,
+      min: 300,
       max: 399
     },
     {
@@ -50,7 +50,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       color: 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800',
       iconBg: 'bg-white dark:bg-indigo-900/20',
       iconColor: 'text-indigo-600 dark:text-indigo-400',
-      min: 0,
+      min: 400,
       max: 499
     },
     {
@@ -62,7 +62,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       iconBg: 'bg-white dark:bg-rose-900/20',
       iconColor: 'text-rose-600 dark:text-rose-400',
       type: 'special',
-      min: 0,
+      min: 500,
       max: 10000
     },
     {
