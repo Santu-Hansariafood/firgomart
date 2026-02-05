@@ -6,6 +6,7 @@ export interface IOffer extends Document {
   type: "discount-min" | "pack-min" | "search" | "category"
   category?: string
   subcategory?: string
+  products?: string[]
   value?: number | string
   active: boolean
   expiryDate?: Date
