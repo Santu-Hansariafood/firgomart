@@ -56,40 +56,27 @@ export function FilterControls({
   )
 
   return (
-    <div className="relative z-[60] flex flex-wrap items-center gap-3 sm:gap-4">
-      <button
-        onClick={() => setIsFilterOpen((p) => !p)}
-        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all
-          ${
-            isFilterOpen || hasFilters
-              ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
-              : "bg-background border border-foreground/20 hover:bg-foreground/5 dark:bg-background/80"
-          }`}
-      >
-        <SlidersHorizontal className="w-4 h-4" />
-        Filters
-        {hasFilters && (
-          <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-        )}
-      </button>
-
-      <div className="relative z-[70]">
+    <div className="relative z-[60] flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+      {/* Sort Dropdown - Mobile: Upper Layer (Order 1), Desktop: Right side (Order 2) */}
+      <div className="relative z-[70] order-1 sm:order-2 w-full sm:w-auto">
         <button
           onClick={() => setIsSortDropdownOpen((p) => !p)}
-          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-background border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-all dark:bg-background/80"
+          className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 sm:px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 text-sm font-medium hover:bg-gray-50 sm:hover:bg-foreground/5 transition-all shadow-sm sm:shadow-none dark:bg-gray-800/80 dark:border-gray-700/50 backdrop-blur-sm"
         >
-          Sort by:
-          <span className="font-semibold">
-            {sortBy === "relevance"
-              ? " Relevance"
-              : sortBy === "price-asc"
-              ? " Price ↑"
-              : sortBy === "price-desc"
-              ? " Price ↓"
-              : " Rating"}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-gray-500 dark:text-gray-400 sm:text-foreground/70 text-xs sm:text-sm uppercase sm:normal-case font-bold sm:font-normal tracking-wider sm:tracking-normal">Sort by</span>
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {sortBy === "relevance"
+                ? "Relevance"
+                : sortBy === "price-asc"
+                ? "Price: Low to High"
+                : sortBy === "price-desc"
+                ? "Price: High to Low"
+                : "Rating"}
+            </span>
+          </div>
           <ChevronDown
-            className={`w-4 h-4 transition-transform ${
+            className={`w-4 h-4 text-gray-500 transition-transform ${
               isSortDropdownOpen ? "rotate-180" : ""
             }`}
           />
@@ -99,7 +86,7 @@ export function FilterControls({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute right-0 mt-3 w-60 rounded-2xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-2xl overflow-hidden z-[80] dark:bg-background/90"
+            className="absolute right-0 left-0 sm:left-auto mt-2 sm:mt-3 w-full sm:w-60 rounded-2xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-2xl overflow-hidden z-[80] dark:bg-background/90"
           >
             {[
               ["relevance", "Relevance"],
@@ -127,6 +114,23 @@ export function FilterControls({
           </motion.div>
         )}
       </div>
+
+      {/* Filters Button - Mobile: Lower Layer (Order 2), Desktop: Left side (Order 1) */}
+      <button
+        onClick={() => setIsFilterOpen((p) => !p)}
+        className={`relative order-2 sm:order-1 flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all w-full sm:w-auto
+          ${
+            isFilterOpen || hasFilters
+              ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
+              : "bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 hover:bg-gray-50 sm:hover:bg-foreground/5 dark:bg-gray-800/80 dark:border-gray-700/50 backdrop-blur-sm"
+          }`}
+      >
+        <SlidersHorizontal className="w-4 h-4" />
+        Filters
+        {hasFilters && (
+          <span className="absolute top-3 right-4 sm:-top-1 sm:-right-1 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse border-2 border-white dark:border-gray-900 sm:border-none" />
+        )}
+      </button>
     </div>
   )
 }
@@ -188,7 +192,7 @@ export function FilterPanel({
                       setSelectedSize(active ? "" : val)
                       setPage(1)
                     }}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all
+                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all
                       ${
                         active
                           ? "bg-brand-purple text-white shadow-lg shadow-purple-500/30 scale-105"

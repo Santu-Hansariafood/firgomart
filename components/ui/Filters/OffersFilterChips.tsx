@@ -32,7 +32,6 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
         const res = await fetch('/api/offers', { cache: 'no-store' })
         const data = await res.json()
         const list = Array.isArray(data.offers) ? data.offers : []
-        // Filter out expired offers
         const now = new Date()
         const validOffers = list.filter((o: Offer) => !o.expiryDate || new Date(o.expiryDate) > now)
         if (mounted) setOffers(validOffers)
@@ -50,10 +49,18 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-3 overflow-x-auto py-3 px-1 scrollbar-hide">
-        <div className="flex items-center gap-2 shrink-0 pr-2 border-r border-gray-200">
+      <div className="md:hidden flex flex-col items-center justify-center mb-4">
+        <div className="flex items-center gap-2 px-4 py-1.5 bg-brand-purple/5 dark:bg-brand-purple/10 rounded-full border border-brand-purple/10">
+          <Tag className="w-3.5 h-3.5 text-brand-purple" />
+          <span className="text-xs font-bold text-brand-purple/90 uppercase tracking-widest">Special Offers</span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3 overflow-x-auto py-2 px-1 scrollbar-hide touch-pan-x">
+        {/* Desktop Title - Hidden on Mobile */}
+        <div className="hidden md:flex items-center gap-2 shrink-0 pr-2 border-r border-gray-200 dark:border-gray-800">
           <Tag className="w-4 h-4 text-brand-purple" />
-          <span className="text-sm font-bold text-gray-800 whitespace-nowrap">Special Offers</span>
+          <span className="text-sm font-bold text-gray-800 dark:text-gray-200 whitespace-nowrap">Special Offers</span>
         </div>
         
         <motion.div 
@@ -67,8 +74,8 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
             onClick={() => onChange(null)}
             className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap ${
               !selectedOffer
-                ? 'bg-brand-purple text-white shadow-brand-purple/20'
-                : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-purple/50 hover:text-brand-purple'
+                ? 'bg-brand-purple text-white shadow-brand-purple/20 ring-2 ring-brand-purple/20'
+                : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-brand-purple/50 hover:text-brand-purple'
             }`}
           >
             All Offers
@@ -88,8 +95,8 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
                   onClick={() => onChange(active ? null : o.key, o)}
                   className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-all shadow-sm whitespace-nowrap ${
                     active
-                      ? 'bg-brand-purple text-white shadow-brand-purple/20'
-                      : 'bg-white text-gray-600 border border-gray-200 hover:border-brand-purple/50 hover:text-brand-purple'
+                      ? 'bg-brand-purple text-white shadow-brand-purple/20 ring-2 ring-brand-purple/20'
+                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-brand-purple/50 hover:text-brand-purple'
                   }`}
                   title={o.name}
                 >
