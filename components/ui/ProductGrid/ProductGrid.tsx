@@ -376,7 +376,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
           <div className="space-y-2 relative">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
-                FirgoMart Products
+                Firgo
+              </span>
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-400 dark:via-rose-400 dark:to-red-400">
+                Mart
+              </span>
+              <span className="ml-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                Products
               </span>
             </h2>
             <div className="flex items-center gap-3 text-sm text-foreground/60 font-medium">
@@ -620,7 +626,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
 
                   {product.discount && (
                     <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg shadow-red-500/30 z-20">
-                      -{product.discount}%
+                      {product.discount}% OFF
                     </span>
                   )}
                 </div>

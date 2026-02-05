@@ -171,43 +171,123 @@
     },
 
     {
-      "name": "Jewellery & Accessories",
-      "key": "jewellery-accessories",
+      "name": "Fashion Jewellery",
+      "key": "fashion-jewellery",
       "image": "/image/jewellery.webp",
-      "gstPercent": 3,
-      "hsnChapters": ["71", "90", "42", "96"],
+      "gstRules": {
+        "default": {
+          "gstPercent": 3,
+          "applicableHsn": ["7117"],
+          "note": "Imitation / fashion jewellery under HSN 7117 attracts 3% GST (2026)"
+        }
+      },
+      "hsnChapters": ["71"],
       "hsnMap": {
         "Artificial Jewellery": ["7117"],
         "Earrings": ["7117"],
         "Necklaces": ["7117"],
-        "Bangles & Bracelets": ["7117"],
+        "Chains & Pendants": ["7117"],
+        "Bangles": ["7117"],
+        "Bracelets": ["7117"],
         "Rings": ["7117"],
         "Jewellery Sets": ["7117"],
-        "Anklets & Toe Rings": ["7117"],
-        "Hair Accessories": ["9615"],
-        "Watches": ["9102"],
-        "Sunglasses": ["9004"],
-        "Handbags & Purses": ["4202"],
-        "Wallets": ["4202"],
-        "Belts": ["4203"]
+        "Anklets": ["7117"],
+        "Toe Rings": ["7117"],
+        "Nose Pins": ["7117"],
+        "Chokers": ["7117"],
+        "Statement Jewellery": ["7117"],
+        "Oxidised Jewellery": ["7117"],
+        "Party Wear Jewellery": ["7117"],
+        "Daily Wear Jewellery": ["7117"],
+        "Bridal Jewellery (Imitation)": ["7117"],
+        "Kids Jewellery": ["7117"]
       },
       "subcategories": [
         "Artificial Jewellery",
         "Earrings",
         "Necklaces",
-        "Bangles & Bracelets",
+        "Chains & Pendants",
+        "Bangles",
+        "Bracelets",
         "Rings",
         "Jewellery Sets",
-        "Anklets & Toe Rings",
-        "Hair Accessories",
-        "Watches",
-        "Sunglasses",
-        "Handbags & Purses",
-        "Wallets",
-        "Belts"
+        "Anklets",
+        "Toe Rings",
+        "Nose Pins",
+        "Chokers",
+        "Statement Jewellery",
+        "Oxidised Jewellery",
+        "Party Wear Jewellery",
+        "Daily Wear Jewellery",
+        "Bridal Jewellery (Imitation)",
+        "Kids Jewellery"
       ]
     },
 
+    {
+      "name": "Fashion Accessories",
+      "key": "fashion-accessories",
+      "image": "/image/accessories.webp",
+      "gstRules": {
+        "default": {
+          "gstPercent": 18,
+          "note": "Standard GST rate for fashion & lifestyle accessories as per GST 2026"
+        },
+        "exceptions": {
+          "condition": "If government notifies a lower GST slab for specific items",
+          "applyGstBy": "HSN based CBIC notification"
+        }
+      },
+      "hsnChapters": ["96", "91", "90", "42", "65", "63"],
+      "hsnMap": {
+        "Hair Accessories": ["9615"],
+        "Hair Clips": ["9615"],
+        "Hair Bands": ["9615"],
+        "Scrunchies": ["9615"],
+        "Watches": ["9102"],
+        "Sunglasses": ["9004"],
+        "Eyewear Frames": ["9004"],
+        "Handbags": ["4202"],
+        "Purses": ["4202"],
+        "Wallets": ["4202"],
+        "Backpacks": ["4202"],
+        "Sling Bags": ["4202"],
+        "Clutches": ["4202"],
+        "Travel Accessories": ["4202"],
+        "Cosmetic Pouches": ["4202"],
+        "Belts": ["4203"],
+        "Scarves & Stoles": ["6214"],
+        "Caps & Hats": ["6505"],
+        "Gloves": ["6116"],
+        "Socks": ["6115"],
+        "Keychains": ["7326"],
+        "Fashion Masks": ["6307"]
+      },
+      "subcategories": [
+        "Hair Accessories",
+        "Hair Clips",
+        "Hair Bands",
+        "Scrunchies",
+        "Watches",
+        "Sunglasses",
+        "Eyewear Frames",
+        "Handbags",
+        "Purses",
+        "Wallets",
+        "Backpacks",
+        "Sling Bags",
+        "Clutches",
+        "Travel Accessories",
+        "Cosmetic Pouches",
+        "Belts",
+        "Scarves & Stoles",
+        "Caps & Hats",
+        "Gloves",
+        "Socks",
+        "Keychains",
+        "Fashion Masks"
+      ]
+    },
     {
       "name": "Beauty & Skincare",
       "key": "beauty-skincare",
@@ -247,7 +327,6 @@
         "Makeup Kits & Combos"
       ]
     },
-
     {
       "name": "Home & Kitchen",
       "key": "home-kitchen",
