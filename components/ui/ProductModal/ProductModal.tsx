@@ -301,30 +301,34 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             <div className="flex items-center gap-3">
               <button
                 onClick={handleShare}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 hover:bg-foreground/10 transition-all hover:scale-105"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 dark:bg-white/10 hover:bg-foreground/10 dark:hover:bg-white/20 transition-all hover:scale-105"
                 title="Share"
               >
-                <Share2 className="w-5 h-5 text-foreground/70" />
+                <Share2 className="w-5 h-5 text-foreground/70 dark:text-white/70" />
               </button>
               <button
                 onClick={toggleSave}
                 disabled={saving}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 hover:bg-foreground/10 transition-all hover:scale-105"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 dark:bg-white/10 hover:bg-foreground/10 dark:hover:bg-white/20 transition-all hover:scale-105"
                 title="Save to Wishlist"
               >
-                <Heart className={`w-5 h-5 transition-colors ${isSaved ? 'fill-red-500 text-red-500' : 'text-foreground/70'}`} />
+                <Heart className={`w-5 h-5 transition-colors ${isSaved ? 'fill-red-500 text-red-500' : 'text-foreground/70 dark:text-white/70'}`} />
               </button>
               <button
                 onClick={onClose}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 hover:bg-red-500/10 hover:text-red-500 transition-all hover:scale-105 hover:rotate-90"
+                className="w-10 h-10 flex items-center justify-center rounded-full bg-foreground/5 dark:bg-white/10 hover:bg-red-500/10 hover:text-red-500 transition-all hover:scale-105 hover:rotate-90"
                 title="Close"
               >
-                <X className="w-5 h-5" />
+                <X className="w-5 h-5 text-foreground dark:text-white" />
               </button>
             </div>
           </div>
 
-          <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar">
+          <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar relative">
+            {/* Grid decorative blobs matching ProductGrid */}
+            <div className="absolute top-20 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/10 rounded-full blur-[80px] -z-10" />
+            <div className="absolute bottom-40 right-10 w-[250px] h-[250px] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[80px] -z-10" />
+
             <Script
               id={`schema-product-${String(product.id)}`}
               type="application/ld+json"
@@ -438,42 +442,46 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                       </span>
                     )}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                    {product.name}
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight">
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                      {product.name}
+                    </span>
                   </h1>
                 </div>
 
-                <div className="flex items-end gap-3 mb-6 p-4 rounded-2xl bg-foreground/5 border border-foreground/5">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-foreground">₹{product.price}</span>
+                <div className="flex items-end gap-3 mb-6 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 dark:bg-white/5 dark:border-white/10">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-foreground dark:text-white">₹{product.price}</span>
                   {product.originalPrice && (
-                    <span className="text-lg text-foreground/40 line-through mb-1.5 font-medium">
+                    <span className="text-lg text-foreground/40 dark:text-white/40 line-through mb-1.5 font-medium">
                       ₹{product.originalPrice}
                     </span>
                   )}
                   {product.discount && (
-                    <span className="ml-auto text-green-600 dark:text-green-400 font-bold text-sm bg-green-500/10 px-2 py-1 rounded-lg">
+                    <span className="ml-auto text-green-600 dark:text-green-400 font-bold text-sm bg-green-500/10 px-2 py-1 rounded-lg border border-green-500/20">
                       {product.discount}% Save
                     </span>
                   )}
                 </div>
 
                 {product.appliedOffer && (
-                  <div className="mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-purple/10 to-blue-500/10 dark:from-brand-purple/20 dark:to-blue-500/20 border border-brand-purple/20 p-4">
-                     <div className="absolute top-0 right-0 w-24 h-24 bg-brand-purple/20 rounded-full blur-2xl -mr-8 -mt-8" />
-                     <div className="flex items-start gap-3 relative z-10">
-                        <div className="p-2 bg-brand-purple text-white rounded-lg shadow-lg shadow-brand-purple/30">
-                            <Gift className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <p className="text-xs font-bold text-brand-purple uppercase tracking-wider mb-0.5">Special Offer Applied</p>
-                            <p className="font-bold text-foreground">
-                                {product.appliedOffer.name}
+                  <div className="mb-6 relative overflow-hidden rounded-2xl bg-gradient-to-r from-brand-purple via-pink-500 to-indigo-600 p-[1px] shadow-xl">
+                     <div className="bg-white/95 dark:bg-black/90 backdrop-blur-xl rounded-[15px] p-4 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-purple/20 rounded-full blur-2xl -mr-10 -mt-10" />
+                        <div className="flex items-start gap-3 relative z-10">
+                            <div className="p-2 bg-brand-purple text-white rounded-lg shadow-lg shadow-brand-purple/30 shrink-0">
+                                <Gift className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="text-xs font-bold text-brand-purple dark:text-violet-300 uppercase tracking-wider mb-0.5">Special Offer Applied</p>
+                                <p className="font-bold text-foreground dark:text-white text-lg">
+                                    {product.appliedOffer.name}
+                                </p>
                                 {product.appliedOffer.value && (
-                                    <span className="ml-1 text-brand-purple">
-                                        ({product.appliedOffer.value}{product.appliedOffer.type.includes('discount') ? '% OFF' : ''})
-                                    </span>
+                                    <p className="text-sm font-medium text-foreground/70 dark:text-white/70 mt-0.5">
+                                        Get <span className="text-brand-purple dark:text-violet-300 font-bold">{product.appliedOffer.value}{product.appliedOffer.type.includes('discount') ? '% OFF' : ''}</span> instantly
+                                    </p>
                                 )}
-                            </p>
+                            </div>
                         </div>
                      </div>
                   </div>
@@ -527,21 +535,21 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                 )}
 
                 <div className="mt-auto flex flex-col sm:flex-row gap-4 pt-6 border-t border-foreground/10">
-                    <div className="flex items-center bg-foreground/5 rounded-xl p-1 w-fit">
-                        <button 
-                            onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background shadow-sm transition-all"
-                        >
-                            -
-                        </button>
-                        <span className="w-12 text-center font-bold">{quantity}</span>
-                        <button 
-                            onClick={() => setQuantity(Math.min(product.stock || 10, quantity + 1))}
-                            className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background shadow-sm transition-all"
-                        >
-                            +
-                        </button>
-                    </div>
+                    <div className="flex items-center bg-foreground/5 dark:bg-white/5 rounded-xl p-1 w-fit">
+                    <button 
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background shadow-sm transition-all text-foreground dark:text-white"
+                    >
+                        -
+                    </button>
+                    <span className="w-12 text-center font-bold text-foreground dark:text-white">{quantity}</span>
+                    <button 
+                        onClick={() => setQuantity(Math.min(product.stock || 10, quantity + 1))}
+                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background shadow-sm transition-all text-foreground dark:text-white"
+                    >
+                        +
+                    </button>
+                </div>
                     
                     <button
                         onClick={handleBuyNow}
@@ -557,7 +565,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     </button>
                 </div>
                 
-                {/* Trust Badges */}
                 <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-foreground/5">
                     <div className="flex flex-col items-center text-center gap-2">
                         <div className="p-2 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full">
@@ -602,7 +609,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
 
               <div className="min-h-[200px]">
                 {activeTab === 'desc' && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="prose dark:prose-invert max-w-none text-foreground/80 leading-relaxed">
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="prose dark:prose-invert max-w-none text-foreground/80 dark:text-gray-300 leading-relaxed">
                     <p>{product.description || product.about || 'No description available.'}</p>
                   </motion.div>
                 )}
@@ -618,8 +625,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                       ['Stock Status', (product.stock ?? 0) > 0 ? 'In Stock' : 'Out of Stock'],
                     ].map(([label, value], i) => value && (
                       <div key={i} className="flex justify-between py-3 border-b border-foreground/5">
-                        <span className="font-medium text-foreground/60">{label}</span>
-                        <span className="font-bold text-foreground">{value}</span>
+                        <span className="font-medium text-foreground/60 dark:text-gray-400">{label}</span>
+                        <span className="font-bold text-foreground dark:text-gray-100">{value}</span>
                       </div>
                     ))}
                   </motion.div>
@@ -640,12 +647,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     </div>
 
                     {reviewFormOpen && (
-                      <div className="bg-foreground/5 p-6 rounded-2xl mb-8">
-                        <h4 className="font-bold mb-4">Write your review</h4>
+                      <div className="bg-foreground/5 dark:bg-white/5 p-6 rounded-2xl mb-8">
+                        <h4 className="font-bold mb-4 text-foreground dark:text-white">Write your review</h4>
                         <div className="flex gap-2 mb-4">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button key={star} onClick={() => setUserRating(star)} className="focus:outline-none">
-                              <Star className={`w-6 h-6 ${star <= userRating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/20'}`} />
+                              <Star className={`w-6 h-6 ${star <= userRating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/20 dark:text-white/20'}`} />
                             </button>
                           ))}
                         </div>
@@ -653,7 +660,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                           value={userComment}
                           onChange={(e) => setUserComment(e.target.value)}
                           placeholder="Tell us what you think..."
-                          className="w-full bg-background border border-foreground/10 rounded-xl p-4 min-h-[100px] mb-4 focus:ring-2 focus:ring-brand-purple focus:border-transparent outline-none"
+                          className="w-full bg-background border border-foreground/10 dark:border-white/10 rounded-xl p-4 min-h-[100px] mb-4 focus:ring-2 focus:ring-brand-purple focus:border-transparent outline-none text-foreground dark:text-white placeholder:text-foreground/40 dark:placeholder:text-white/40"
                         />
                         <div className="flex gap-3">
                           <button
@@ -680,24 +687,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     ) : reviews.length > 0 ? (
                       <div className="grid gap-4">
                         {reviews.map((review) => (
-                          <div key={review._id} className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5">
+                          <div key={review._id} className="p-4 rounded-2xl bg-foreground/5 border border-foreground/5 dark:bg-white/5 dark:border-white/10">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
                                 <div className="w-8 h-8 rounded-full bg-brand-purple/10 flex items-center justify-center">
                                   <User className="w-4 h-4 text-brand-purple" />
                                 </div>
-                                <span className="font-bold">{review.userName}</span>
+                                <span className="font-bold text-foreground dark:text-white">{review.userName}</span>
                               </div>
-                              <span className="text-xs text-foreground/40">
+                              <span className="text-xs text-foreground/40 dark:text-white/40">
                                 {new Date(review.createdAt).toLocaleDateString()}
                               </span>
                             </div>
                             <div className="flex mb-2">
                               {Array.from({ length: 5 }).map((_, i) => (
-                                <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/20'}`} />
+                                <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/20 dark:text-white/20'}`} />
                               ))}
                             </div>
-                            <p className="text-foreground/80 text-sm">{review.comment}</p>
+                            <p className="text-foreground/80 dark:text-gray-300 text-sm">{review.comment}</p>
                           </div>
                         ))}
                       </div>

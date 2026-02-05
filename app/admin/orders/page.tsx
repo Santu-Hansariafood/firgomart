@@ -5,7 +5,7 @@ import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
-import { X } from "lucide-react"
+import { X, Package, CreditCard, MapPin, User, Calendar, Truck, Save, Printer, FileText, ExternalLink } from "lucide-react"
 import toast from "react-hot-toast"
 
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
@@ -454,18 +454,47 @@ export default function Page() {
         </div>
 
         {selectedOrder && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-all duration-300">
+            <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
               
               {/* Header */}
-              <div className="px-6 py-4 border-b flex items-center justify-between bg-gray-50">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">{selectedOrder.orderNumber}</h2>
-                  <div className="text-sm text-gray-500">
-                    Placed on {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "Unknown"}
+              <div className="px-6 py-5 border-b flex items-center justify-between bg-linear-to-r from-gray-50 to-white">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-brand-purple/10 rounded-xl">
+                    <Package className="w-6 h-6 text-brand-purple" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                      {selectedOrder.orderNumber}
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                        selectedOrder.status === 'delivered' ? 'bg-green-50 text-green-700 border-green-200' :
+                        selectedOrder.status === 'cancelled' ? 'bg-red-50 text-red-700 border-red-200' :
+                        selectedOrder.status === 'shipped' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                        'bg-yellow-50 text-yellow-700 border-yellow-200'
+                      }`}>
+                        {selectedOrder.status.toUpperCase()}
+                      </span>
+                    </h2>
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4" />
+                        {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString() : "Unknown"}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setSelectedOrder(null)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Toolbar */}
+              <div className="px-6 py-3 border-b bg-white flex flex-wrap gap-2 items-center">
                   {selectedOrder.status !== "shipped" && selectedOrder.status !== "delivered" && selectedOrder.status !== "cancelled" && selectedOrder.status !== "refunded" && (
                     <button
                       onClick={async () => {
@@ -479,7 +508,6 @@ export default function Page() {
                            const d = await res.json()
                            if (res.ok) {
                              toast.success(`Shipment created! ${d.shipments?.length} shipments generated.`)
-                             // Refresh order details
                              const refresh = await fetch(`/api/admin/orders/${selectedOrder.id}`)
                              if (refresh.ok) {
                                const newData = await refresh.json()
@@ -492,235 +520,268 @@ export default function Page() {
                              toast.error(`Error: ${e.message}`)
                          }
                       }}
-                      className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
                     >
-                      Generate Shiprocket Order
+                      <Truck className="w-4 h-4" />
+                      Shiprocket Order
                     </button>
                   )}
                   {selectedOrder.shipment?.labelUrl && (
                     <button
                       onClick={() => window.open(selectedOrder.shipment?.labelUrl, "_blank")}
-                      className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
                     >
+                      <Printer className="w-4 h-4" />
                       Print Label
                     </button>
                   )}
                   {selectedOrder.shipment?.invoiceUrl && (
                     <button
                       onClick={() => window.open(selectedOrder.shipment?.invoiceUrl, "_blank")}
-                      className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm"
                     >
-                      Shiprocket Invoice
+                      <FileText className="w-4 h-4" />
+                      Invoice
                     </button>
                   )}
                   <button
                     onClick={() => window.open(`/print/order/${selectedOrder.id}`, "_blank")}
-                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
                   >
-                    Print Documents
+                    <Printer className="w-4 h-4" />
+                    Print Slip
                   </button>
-                  <button
-                    onClick={() => setSelectedOrder(null)}
-                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                  >
-                    <X className="w-5 h-5 text-gray-600" />
-                  </button>
-                </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-gray-50/50">
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gray-50 p-4 rounded-lg border">
-                    <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Customer Details</h3>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Name:</span>
-                        <span className="font-medium">{selectedOrder.buyerName}</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Customer Card */}
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold">
+                      <User className="w-5 h-5 text-gray-500" />
+                      Customer Details
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide font-medium">Name</div>
+                        <div className="font-medium text-gray-900">{selectedOrder.buyerName}</div>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-500">Email:</span>
-                        <span className="font-medium">{selectedOrder.buyerEmail}</span>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide font-medium">Email</div>
+                        <div className="font-medium text-gray-900 truncate" title={selectedOrder.buyerEmail}>{selectedOrder.buyerEmail}</div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 p-4 rounded-lg border">
-                    <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Shipping Address</h3>
-                    <div className="text-sm text-gray-800 leading-relaxed">
-                      {selectedOrder.address}<br/>
-                      {[selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}
+                  {/* Shipping Card */}
+                  <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                    <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold">
+                      <MapPin className="w-5 h-5 text-gray-500" />
+                      Shipping Address
+                    </div>
+                    <div className="text-sm text-gray-700 leading-relaxed">
+                      <p className="font-medium">{selectedOrder.address}</p>
+                      <p className="text-gray-500 mt-1">
+                        {[selectedOrder.city, selectedOrder.state, selectedOrder.country].filter(Boolean).join(", ")}
+                      </p>
                     </div>
                   </div>
 
+                  {/* Payment Card */}
                   {selectedOrder.payment && (
-                    <div className="bg-gray-50 p-4 rounded-lg border md:col-span-2">
-                      <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Payment Details</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <span className="text-gray-500 block">Status</span>
-                          <span className="font-medium uppercase">{selectedOrder.payment.status}</span>
+                    <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
+                      <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold">
+                        <CreditCard className="w-5 h-5 text-gray-500" />
+                        Payment Details
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500 uppercase tracking-wide font-medium">Status</span>
+                          <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${
+                            selectedOrder.payment.status === 'success' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                          }`}>
+                            {selectedOrder.payment.status}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-xs text-gray-500 uppercase tracking-wide font-medium">Method</span>
+                          <span className="font-medium text-gray-900">{selectedOrder.payment.method}</span>
                         </div>
                         <div>
-                          <span className="text-gray-500 block">Method</span>
-                          <span className="font-medium">{selectedOrder.payment.method}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 block">Transaction ID</span>
-                          <span className="font-medium font-mono">{selectedOrder.payment.transactionId}</span>
-                        </div>
-                        <div>
-                          <span className="text-gray-500 block">Gateway</span>
-                          <span className="font-medium">{selectedOrder.payment.gateway}</span>
+                          <span className="text-xs text-gray-500 uppercase tracking-wide font-medium block mb-1">Transaction ID</span>
+                          <code className="bg-gray-100 px-2 py-1 rounded text-xs text-gray-700 block truncate font-mono">
+                            {selectedOrder.payment.transactionId}
+                          </code>
                         </div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-700 uppercase mb-3">Order Items</h3>
-                  <div className="border rounded-lg overflow-hidden">
+                {/* Items Section */}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
+                  <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+                    <h3 className="font-semibold text-gray-900">Order Items</h3>
+                    <span className="text-sm text-gray-500">{selectedOrder.items?.length || 0} items</span>
+                  </div>
+                  <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                      <thead className="bg-gray-100 text-gray-600 font-medium border-b">
+                      <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
                         <tr>
-                          <th className="px-4 py-2">Item</th>
-                          <th className="px-4 py-2 text-center">Qty</th>
-                          <th className="px-4 py-2 text-right">Price</th>
-                          <th className="px-4 py-2 text-right">Total</th>
+                          <th className="px-6 py-3 font-semibold">Item Details</th>
+                          <th className="px-6 py-3 text-center font-semibold">Qty</th>
+                          <th className="px-6 py-3 text-right font-semibold">Price</th>
+                          <th className="px-6 py-3 text-right font-semibold">Total</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y">
+                      <tbody className="divide-y divide-gray-100">
                         {selectedOrder.items && selectedOrder.items.length > 0 ? (
                           selectedOrder.items.map((item, idx) => (
-                            <tr key={idx} className="bg-white">
-                              <td className="px-4 py-3 font-medium text-gray-900">
-                                <div>{item.name || "Unknown Item"}</div>
+                            <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
+                              <td className="px-6 py-4">
+                                <div className="font-medium text-gray-900 text-base">{item.name || "Unknown Item"}</div>
                                 {(item.selectedSize || item.selectedColor) && (
-                                  <div className="text-xs text-gray-500 mt-1">
-                                    {item.selectedSize && <span className="mr-3">Size: <span className="font-semibold text-gray-700">{item.selectedSize}</span></span>}
-                                    {item.selectedColor && <span>Color: <span className="font-semibold text-gray-700">{item.selectedColor}</span></span>}
+                                  <div className="flex gap-3 text-xs text-gray-500 mt-1.5">
+                                    {item.selectedSize && <span className="px-2 py-0.5 bg-gray-100 rounded border border-gray-200">Size: {item.selectedSize}</span>}
+                                    {item.selectedColor && <span className="px-2 py-0.5 bg-gray-100 rounded border border-gray-200">Color: {item.selectedColor}</span>}
                                   </div>
                                 )}
                                 {item.appliedOffer && (
-                                  <div className="text-xs text-green-600 mt-1 font-medium">
+                                  <div className="text-xs text-green-700 bg-green-50 border border-green-100 px-2 py-1 rounded mt-2 inline-block font-medium">
                                      Offer: {item.appliedOffer.name} ({item.appliedOffer.value}% Off)
                                   </div>
                                 )}
                               </td>
-                              <td className="px-4 py-3 text-center text-gray-600">{item.quantity}</td>
-                              <td className="px-4 py-3 text-right text-gray-600">₹{item.price}</td>
-                              <td className="px-4 py-3 text-right font-medium text-gray-900">₹{item.price * item.quantity}</td>
+                              <td className="px-6 py-4 text-center text-gray-600 font-medium">{item.quantity}</td>
+                              <td className="px-6 py-4 text-right text-gray-600">₹{item.price}</td>
+                              <td className="px-6 py-4 text-right font-semibold text-gray-900">₹{item.price * item.quantity}</td>
                             </tr>
                           ))
                         ) : (
                           <tr>
-                            <td colSpan={4} className="px-4 py-3 text-center text-gray-500">No items found</td>
+                            <td colSpan={4} className="px-6 py-8 text-center text-gray-500 italic">No items found in this order</td>
                           </tr>
                         )}
                       </tbody>
-                      <tfoot className="bg-gray-50 font-medium">
+                      <tfoot className="bg-gray-50/80">
                          <tr>
-                           <td colSpan={3} className="px-4 py-2 text-right text-gray-600">Subtotal</td>
-                           <td className="px-4 py-2 text-right">₹{selectedOrder.items?.reduce((s, i) => s + (i.price * i.quantity), 0) || 0}</td>
+                           <td colSpan={3} className="px-6 py-3 text-right text-gray-600">Subtotal</td>
+                           <td className="px-6 py-3 text-right font-medium">₹{selectedOrder.items?.reduce((s, i) => s + (i.price * i.quantity), 0) || 0}</td>
                          </tr>
                          <tr>
-                           <td colSpan={3} className="px-4 py-2 text-right text-gray-600">Delivery Fee</td>
-                           <td className="px-4 py-2 text-right">₹{selectedOrder.deliveryFee || 0}</td>
+                           <td colSpan={3} className="px-6 py-3 text-right text-gray-600">Delivery Fee</td>
+                           <td className="px-6 py-3 text-right font-medium text-green-600">₹{selectedOrder.deliveryFee || 0}</td>
                          </tr>
-                         <tr className="border-t border-gray-200">
-                           <td colSpan={3} className="px-4 py-3 text-right text-gray-900 text-base font-bold">Total Amount</td>
-                           <td className="px-4 py-3 text-right text-base font-bold text-brand-purple">₹{selectedOrder.amount}</td>
+                         <tr className="border-t border-gray-200 bg-gray-100/50">
+                           <td colSpan={3} className="px-6 py-4 text-right text-gray-900 text-lg font-bold">Total Amount</td>
+                           <td className="px-6 py-4 text-right text-lg font-bold text-brand-purple">₹{selectedOrder.amount}</td>
                          </tr>
                       </tfoot>
                     </table>
                   </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-100 p-5 rounded-xl space-y-5">
-                   <div className="flex flex-col md:flex-row gap-6">
-                      <div className="flex-1">
-                        <label className="text-sm font-bold text-gray-700 block mb-2">Order Status</label>
-                        <select 
-                            value={editStatus} 
-                            onChange={(e) => setEditStatus(e.target.value)}
-                            className="w-full border border-blue-200 rounded-lg px-3 py-2 font-medium bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        >
-                            {statusOptions.filter(s => s.id !== "").map(s => (
-                                <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
-                            ))}
-                        </select>
+                {/* Status & Tracking */}
+                <div className="bg-white rounded-xl border border-gray-200 shadow-xs p-6">
+                   <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                     <Truck className="w-5 h-5 text-gray-500" />
+                     Order Fulfillment
+                   </h3>
+                   
+                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm font-semibold text-gray-700 block mb-2">Update Order Status</label>
+                          <select 
+                              value={editStatus} 
+                              onChange={(e) => setEditStatus(e.target.value)}
+                              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 bg-white focus:ring-2 focus:ring-brand-purple focus:border-transparent transition-all outline-none"
+                          >
+                              {statusOptions.filter(s => s.id !== "").map(s => (
+                                  <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
+                              ))}
+                          </select>
+                        </div>
+                        
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+                          <h4 className="text-sm font-semibold text-blue-900 mb-2">Manual Tracking Info</h4>
+                          <p className="text-xs text-blue-700 mb-4">Add tracking details if you are shipping manually without Shiprocket.</p>
+                          
+                          <div className="space-y-3">
+                            <input
+                              type="text"
+                              value={newTrackNum}
+                              onChange={(e) => setNewTrackNum(e.target.value)}
+                              placeholder="Tracking Number"
+                              className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                            />
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={newTrackUrl}
+                                onChange={(e) => setNewTrackUrl(e.target.value)}
+                                placeholder="Tracking URL"
+                                className="flex-1 border border-blue-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                              />
+                              <button
+                                onClick={addTracking}
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                              >
+                                Add
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="flex-1">
-                          <label className="text-sm font-bold text-gray-700 block mb-2">Current Tracking</label>
-                          {trackingList.length > 0 ? (
-                            <div className="space-y-2 max-h-[120px] overflow-y-auto pr-1">
-                              {trackingList.map((t, i) => (
-                                <div key={i} className="flex items-center justify-between bg-white p-2 rounded border shadow-sm">
-                                   <div className="flex-1 min-w-0">
-                                     <div className="font-medium text-sm truncate">{t.number}</div>
-                                     {t.url && <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 truncate block hover:underline">{t.url}</a>}
-                                   </div>
-                                   <button onClick={() => removeTracking(i)} className="ml-2 text-red-500 hover:text-red-700 p-1 rounded hover:bg-red-50">
-                                      <X className="w-4 h-4" />
-                                   </button>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="text-sm text-gray-500 italic">No tracking info added</div>
-                          )}
-                      </div>
-                   </div>
-
-                   <div className="pt-4 border-t border-blue-200">
-                      <h4 className="text-sm font-bold text-gray-700 mb-3">Add Tracking Information</h4>
-                      <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
-                        <div className="md:col-span-3">
-                          <input
-                            type="text"
-                            value={newTrackNum}
-                            onChange={(e) => setNewTrackNum(e.target.value)}
-                            placeholder="Tracking Number"
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          />
-                        </div>
-                        <div className="md:col-span-3">
-                          <input
-                            type="text"
-                            value={newTrackUrl}
-                            onChange={(e) => setNewTrackUrl(e.target.value)}
-                            placeholder="Tracking URL (https://...)"
-                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                          />
-                        </div>
-                        <div className="md:col-span-1">
-                           <button
-                             onClick={addTracking}
-                             className="w-full h-full min-h-[38px] bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
-                           >
-                             Add
-                           </button>
-                        </div>
+                      <div>
+                          <label className="text-sm font-semibold text-gray-700 block mb-2">Current Tracking Information</label>
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg min-h-[150px] p-1">
+                            {trackingList.length > 0 ? (
+                              <div className="space-y-1 max-h-[200px] overflow-y-auto p-1">
+                                {trackingList.map((t, i) => (
+                                  <div key={i} className="flex items-center justify-between bg-white p-3 rounded border border-gray-200 shadow-sm group">
+                                     <div className="flex-1 min-w-0">
+                                       <div className="font-medium text-sm text-gray-900">{t.number}</div>
+                                       {t.url && (
+                                         <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 truncate flex items-center gap-1 hover:underline mt-0.5">
+                                           {t.url} <ExternalLink className="w-3 h-3" />
+                                         </a>
+                                       )}
+                                     </div>
+                                     <button onClick={() => removeTracking(i)} className="ml-2 text-gray-400 hover:text-red-500 p-1.5 rounded-full hover:bg-red-50 transition-colors">
+                                        <X className="w-4 h-4" />
+                                     </button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="h-full flex flex-col items-center justify-center text-gray-400 p-6 text-center">
+                                <Truck className="w-8 h-8 mb-2 opacity-50" />
+                                <span className="text-sm">No tracking information available</span>
+                              </div>
+                            )}
+                          </div>
                       </div>
                    </div>
                 </div>
 
               </div>
 
-              <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+              <div className="p-5 border-t bg-white flex justify-end gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                  <button
                    onClick={() => setSelectedOrder(null)}
-                   className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50"
+                   className="px-5 py-2.5 border border-gray-300 bg-white text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors"
                  >
-                   Cancel
+                   Close
                  </button>
                  <button
                    onClick={saveOrderChanges}
-                   className="px-6 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 shadow-lg transform active:scale-95 transition-all"
+                   className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-black shadow-lg shadow-gray-200 transform active:scale-95 transition-all"
                  >
-                   Save All Changes
+                   <Save className="w-4 h-4" />
+                   Save Changes
                  </button>
               </div>
 
