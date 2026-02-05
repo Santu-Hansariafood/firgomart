@@ -4,13 +4,14 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Eye, X, ChevronDown } from 'lucide-react'
-import ProductImageSlider from '@/components/common/ProductImageSlider/ProductImageSlider'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
+import dynamic from 'next/dynamic'
 import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
 import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
-import MarqueeBanner from '@/components/ui/MarqueeBanner/MarqueeBanner'
-import PriceCategoryBanner from '@/components/ui/PriceCategoryBanner/PriceCategoryBanner'
+const MarqueeBanner = dynamic(() => import('@/components/ui/MarqueeBanner/MarqueeBanner'))
+const PriceCategoryBanner = dynamic(() => import('@/components/ui/PriceCategoryBanner/PriceCategoryBanner'))
+const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
 import { FilterControls, FilterPanel } from './ProductFilters'
 
 interface Product {
