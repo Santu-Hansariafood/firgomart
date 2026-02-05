@@ -42,7 +42,7 @@
       "name": "Women's Fashion",
       "key": "womens-fashion",
       "image": "/image/woman.webp",
-      "gstPercent": 12,
+      "gstPercent": 5,
       "hsnChapters": ["61", "62"],
       "hsnMap": {
         "Kurtis & Tunics": ["62"],
@@ -80,7 +80,7 @@
       "name": "Men's Fashion",
       "key": "mens-fashion",
       "image": "/image/man.webp",
-      "gstPercent": 12,
+      "gstPercent": 5,
       "hsnChapters": ["61", "62"],
       "hsnMap": {
         "T-Shirts": ["61"],
@@ -114,7 +114,7 @@
       "name": "Women's Footwear",
       "key": "footwear-women",
       "image": "/image/women.webp",
-      "gstPercent": 12,
+      "gstPercent": 5,
       "hsnChapters": ["64"],
       "hsnMap": {
         "Flats": ["64"],
@@ -125,7 +125,7 @@
         "Sports Shoes": ["64"],
         "Boots": ["64"],
         "Slippers & Flip-Flops": ["64"],
-        "Bellies Shoes": ["64"] 
+        "Bellies Shoes": ["64"]
       },
       "subcategories": [
         "Flats",
@@ -144,7 +144,7 @@
       "name": "Men's Footwear",
       "key": "footwear-men",
       "image": "/image/shoes.webp",
-      "gstPercent": 12,
+      "gstPercent": 5,
       "hsnChapters": ["64"],
       "hsnMap": {
         "Casual Shoes": ["64"],
