@@ -1,9 +1,12 @@
-'use client'
+"use client"
 
-import { motion } from 'framer-motion'
-import { ChevronDown } from 'lucide-react'
+import { motion } from "framer-motion"
+import { ChevronDown, SlidersHorizontal } from "lucide-react"
 
-type DropdownItem = { id: string | number; label: string }
+export type DropdownItem = {
+  id: string | number
+  label: string
+}
 
 interface FilterControlsProps {
   isFilterOpen: boolean
@@ -17,76 +20,6 @@ interface FilterControlsProps {
   minRating: number | null
   selectedSize: string
   setPage: (v: number) => void
-}
-
-export function FilterControls({
-  isFilterOpen,
-  setIsFilterOpen,
-  isSortDropdownOpen,
-  setIsSortDropdownOpen,
-  sortBy,
-  setSortBy,
-  minPrice,
-  maxPrice,
-  minRating,
-  selectedSize,
-  setPage
-}: FilterControlsProps) {
-  return (
-    <div className="flex items-center gap-2 relative z-30">
-      <button
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-          isFilterOpen || minPrice || maxPrice || minRating || selectedSize
-            ? 'bg-brand-purple text-white border-brand-purple'
-            : 'border-foreground/20 hover:bg-foreground/5'
-        }`}
-        onClick={() => setIsFilterOpen((prev) => !prev)}
-      >
-        <span className="hidden sm:inline">Filters</span>
-        <span className="sm:hidden">Filters</span>
-        {(minPrice || maxPrice || minRating || selectedSize) && (
-          <span className="bg-white text-brand-purple text-[10px] font-bold px-1.5 rounded-full">!</span>
-        )}
-      </button>
-      <div className="relative">
-        <button
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-colors"
-          onClick={() => setIsSortDropdownOpen((prev) => !prev)}
-        >
-          Sort: {sortBy === 'relevance' ? 'Relevance' : sortBy === 'price-asc' ? 'Price: Low to High' : sortBy === 'price-desc' ? 'Price: High to Low' : 'Rating'}
-          <ChevronDown className={`w-4 h-4 transition-transform ${isSortDropdownOpen ? 'rotate-180' : 'rotate-0'}`} />
-        </button>
-        {isSortDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-background border border-foreground/20 rounded-lg shadow-lg z-10">
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-              onClick={() => { setSortBy('relevance'); setIsSortDropdownOpen(false); setPage(1) }}
-            >
-              Relevance
-            </button>
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-              onClick={() => { setSortBy('price-asc'); setIsSortDropdownOpen(false); setPage(1) }}
-            >
-              Price: Low to High
-            </button>
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-              onClick={() => { setSortBy('price-desc'); setIsSortDropdownOpen(false); setPage(1) }}
-            >
-              Price: High to Low
-            </button>
-            <button
-              className="block w-full text-left px-4 py-2 text-sm hover:bg-foreground/10"
-              onClick={() => { setSortBy('rating'); setIsSortDropdownOpen(false); setPage(1) }}
-            >
-              Rating
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
 }
 
 interface FilterPanelProps {
@@ -105,6 +38,99 @@ interface FilterPanelProps {
   allSizes: DropdownItem[]
 }
 
+export function FilterControls({
+  isFilterOpen,
+  setIsFilterOpen,
+  isSortDropdownOpen,
+  setIsSortDropdownOpen,
+  sortBy,
+  setSortBy,
+  minPrice,
+  maxPrice,
+  minRating,
+  selectedSize,
+  setPage,
+}: FilterControlsProps) {
+  const hasFilters = Boolean(
+    minPrice || maxPrice || minRating || selectedSize
+  )
+
+  return (
+    <div className="relative z-[60] flex flex-wrap items-center gap-3 sm:gap-4">
+      <button
+        onClick={() => setIsFilterOpen((p) => !p)}
+        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all
+          ${
+            isFilterOpen || hasFilters
+              ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
+              : "bg-background border border-foreground/20 hover:bg-foreground/5 dark:bg-background/80"
+          }`}
+      >
+        <SlidersHorizontal className="w-4 h-4" />
+        Filters
+        {hasFilters && (
+          <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
+        )}
+      </button>
+
+      <div className="relative z-[70]">
+        <button
+          onClick={() => setIsSortDropdownOpen((p) => !p)}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-background border border-foreground/20 text-sm font-medium hover:bg-foreground/5 transition-all dark:bg-background/80"
+        >
+          Sort by:
+          <span className="font-semibold">
+            {sortBy === "relevance"
+              ? " Relevance"
+              : sortBy === "price-asc"
+              ? " Price ↑"
+              : sortBy === "price-desc"
+              ? " Price ↓"
+              : " Rating"}
+          </span>
+          <ChevronDown
+            className={`w-4 h-4 transition-transform ${
+              isSortDropdownOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {isSortDropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute right-0 mt-3 w-60 rounded-2xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-2xl overflow-hidden z-[80] dark:bg-background/90"
+          >
+            {[
+              ["relevance", "Relevance"],
+              ["price-asc", "Price: Low to High"],
+              ["price-desc", "Price: High to Low"],
+              ["rating", "Top Rated"],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                onClick={() => {
+                  setSortBy(value)
+                  setIsSortDropdownOpen(false)
+                  setPage(1)
+                }}
+                className={`w-full px-4 py-3 text-sm text-left transition-all
+                  ${
+                    sortBy === value
+                      ? "bg-brand-purple/10 text-brand-purple font-semibold dark:bg-brand-purple/20"
+                      : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
+                  }`}
+              >
+                {label}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function FilterPanel({
   minPrice,
   setMinPrice,
@@ -118,99 +144,141 @@ export function FilterPanel({
   onClearFilters,
   category,
   getSizeOptionsForCategory,
-  allSizes
+  allSizes,
 }: FilterPanelProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: 'auto' }}
-      exit={{ opacity: 0, height: 0 }}
-      className="mb-6 p-4 border border-foreground/10 rounded-xl bg-foreground/5 overflow-hidden"
+      initial={{ opacity: 0, y: -14 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -14 }}
+      className="relative z-[50] rounded-3xl border border-foreground/10 bg-gradient-to-br from-background via-background to-foreground/5 shadow-2xl p-6 dark:from-background dark:to-foreground/10"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/80">Price Range</label>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <FilterCard title="Price Range">
+          <div className="flex gap-3">
+            <InputBox
               placeholder="Min"
               value={minPrice}
-              onChange={(e) => { setMinPrice(e.target.value); setPage(1) }}
-              className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
+              onChange={(v) => {
+                setMinPrice(v)
+                setPage(1)
+              }}
             />
-            <span className="text-foreground/40">-</span>
-            <input
-              type="number"
+            <InputBox
               placeholder="Max"
               value={maxPrice}
-              onChange={(e) => { setMaxPrice(e.target.value); setPage(1) }}
-              className="w-full px-3 py-2 rounded-lg border border-foreground/20 text-sm bg-background"
+              onChange={(v) => {
+                setMaxPrice(v)
+                setPage(1)
+              }}
             />
           </div>
-        </div>
+        </FilterCard>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/80">Size</label>
+        <FilterCard title="Size">
           <div className="flex flex-wrap gap-2">
-            {(category ? getSizeOptionsForCategory(category) : allSizes).map((opt) => (
-              <button
-                key={String(opt.id)}
-                onClick={() => { const val = String(opt.label); setSelectedSize(selectedSize === val ? '' : val); setPage(1) }}
-                className={`px-3 py-1 text-xs rounded-md border transition-colors ${
-                  selectedSize === String(opt.label)
-                    ? 'bg-brand-purple text-white border-brand-purple'
-                    : 'bg-background border-foreground/20 hover:border-brand-purple/50'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+            {(category ? getSizeOptionsForCategory(category) : allSizes).map(
+              (opt) => {
+                const val = String(opt.label)
+                const active = selectedSize === val
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setSelectedSize(active ? "" : val)
+                      setPage(1)
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all
+                      ${
+                        active
+                          ? "bg-brand-purple text-white shadow-lg shadow-purple-500/30 scale-105"
+                          : "bg-background border border-foreground/20 hover:border-brand-purple hover:scale-105 dark:bg-background/70"
+                      }`}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              }
+            )}
           </div>
-        </div>
+        </FilterCard>
 
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-foreground/80">Rating</label>
-          <div className="space-y-1">
-            {[4, 3, 2, 1].map((rating) => (
-              <label key={rating} className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="rating"
-                  checked={minRating === rating}
-                  onChange={() => { setMinRating(minRating === rating ? null : rating); setPage(1) }}
-                  onClick={(e) => {
-                    if (minRating === rating) {
-                      e.preventDefault()
-                      setMinRating(null)
-                    }
+        <FilterCard title="Minimum Rating">
+          <div className="space-y-2">
+            {[4, 3, 2, 1].map((rating) => {
+              const active = minRating === rating
+              return (
+                <button
+                  key={rating}
+                  onClick={() => {
+                    setMinRating(active ? null : rating)
+                    setPage(1)
                   }}
-                  className="w-4 h-4 text-brand-purple focus:ring-brand-purple"
-                />
-                <div className="flex items-center text-sm text-foreground/70 group-hover:text-foreground">
-                  <span className="flex text-yellow-500 mr-1">
-                    {Array.from({ length: rating }).map((_, i) => (
-                      <span key={i}>★</span>
-                    ))}
-                    {Array.from({ length: 5 - rating }).map((_, i) => (
-                      <span key={i} className="text-gray-300">★</span>
-                    ))}
+                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all
+                    ${
+                      active
+                        ? "bg-yellow-400/20 text-yellow-700 shadow-inner dark:text-yellow-400"
+                        : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
+                    }`}
+                >
+                  <span className="text-yellow-500 text-lg">
+                    {"★".repeat(rating)}
+                    <span className="text-gray-400">
+                      {"★".repeat(5 - rating)}
+                    </span>
                   </span>
-                  & Up
-                </div>
-              </label>
-            ))}
+                  <span className="text-sm font-medium">& Up</span>
+                </button>
+              )
+            })}
           </div>
-        </div>
+        </FilterCard>
+      </div>
 
-        <div className="flex flex-col justify-end gap-2">
-          <button
-            onClick={onClearFilters}
-            className="w-full py-2 bg-background border border-foreground/20 text-foreground/70 rounded-lg text-sm font-medium hover:bg-foreground/5 transition-colors"
-          >
-            Clear Filters
-          </button>
-        </div>
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={onClearFilters}
+          className="px-7 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-gray-200 to-gray-300 hover:from-brand-purple hover:to-purple-600 hover:text-white transition-all shadow-md dark:from-foreground/20 dark:to-foreground/30"
+        >
+          Clear All Filters
+        </button>
       </div>
     </motion.div>
+  )
+}
+
+
+function FilterCard({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="rounded-2xl border border-foreground/10 bg-background/80 backdrop-blur p-5 shadow-md dark:bg-background/70">
+      <h4 className="mb-4 text-sm font-bold text-foreground/80">{title}</h4>
+      {children}
+    </div>
+  )
+}
+
+function InputBox({
+  placeholder,
+  value,
+  onChange,
+}: {
+  placeholder: string
+  value: string
+  onChange: (v: string) => void
+}) {
+  return (
+    <input
+      type="number"
+      placeholder={placeholder}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full px-4 py-2.5 rounded-xl border border-foreground/20 bg-background focus:ring-2 focus:ring-brand-purple focus:outline-none transition-all dark:bg-background/70"
+    />
   )
 }
