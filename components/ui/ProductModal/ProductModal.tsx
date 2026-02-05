@@ -295,9 +295,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             <div className="absolute top-0 right-0 w-96 h-96 bg-brand-purple/10 dark:bg-brand-purple/20 rounded-full blur-[100px] pointer-events-none -z-10" />
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-[100px] pointer-events-none -z-10" />
 
-          {/* Header */}
           <div className="sticky top-0 bg-background/80 backdrop-blur-xl border-b border-foreground/5 px-6 py-4 flex items-center justify-between z-30">
-            <h2 className="text-xl font-heading font-bold truncate pr-4 text-foreground/90">Product Details</h2>
+            <h2 className="text-xl font-heading font-bold truncate pr-4 text-foreground/90">{product.name}</h2>
             <div className="flex items-center gap-3">
               <button
                 onClick={handleShare}
@@ -325,7 +324,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           </div>
 
           <div className="p-4 sm:p-8 overflow-y-auto custom-scrollbar relative">
-            {/* Grid decorative blobs matching ProductGrid */}
             <div className="absolute top-20 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/10 rounded-full blur-[80px] -z-10" />
             <div className="absolute bottom-40 right-10 w-[250px] h-[250px] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[80px] -z-10" />
 
@@ -442,10 +440,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                       </span>
                     )}
                   </div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight">
-                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight text-foreground/90 dark:text-white">
                       {product.name}
-                    </span>
                   </h1>
                 </div>
 
