@@ -37,7 +37,6 @@
         "Earphones & Headphones"
       ]
     },
-
     {
       "name": "Women's Fashion",
       "key": "womens-fashion",
@@ -75,7 +74,6 @@
         "Dupattas & Stoles"
       ]
     },
-
     {
       "name": "Men's Fashion",
       "key": "mens-fashion",
@@ -109,7 +107,6 @@
         "Hoodies & Jackets"
       ]
     },
-
     {
       "name": "Women's Footwear",
       "key": "footwear-women",
@@ -139,7 +136,6 @@
         "Bellies Shoes"
       ]
     },
-
     {
       "name": "Men's Footwear",
       "key": "footwear-men",
@@ -169,7 +165,6 @@
         "Slippers & Flip-Flops"
       ]
     },
-
     {
       "name": "Fashion Jewellery",
       "key": "fashion-jewellery",
@@ -223,7 +218,6 @@
         "Kids Jewellery"
       ]
     },
-
     {
       "name": "Fashion Accessories",
       "key": "fashion-accessories",
