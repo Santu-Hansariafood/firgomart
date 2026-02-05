@@ -17,7 +17,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       color: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
       iconBg: 'bg-white dark:bg-blue-900/20',
       iconColor: 'text-blue-600 dark:text-blue-400',
-      min: 0,
+      min: 100,
       max: 199
     },
     {
