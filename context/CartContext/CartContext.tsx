@@ -47,11 +47,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (finalProduct.appliedOffer && finalProduct.appliedOffer.value) {
         const val = Number(finalProduct.appliedOffer.value);
         if (!isNaN(val) && val > 0 && val <= 100) {
+           const currentPrice = finalProduct.price;
            if (!finalProduct.originalPrice) {
-              finalProduct.originalPrice = finalProduct.price;
+              finalProduct.originalPrice = currentPrice;
            }
-           const discountAmount = Math.round((finalProduct.originalPrice * val) / 100);
-           finalProduct.price = finalProduct.originalPrice - discountAmount;
+           // Apply discount on the current price (extra discount)
+           const discountAmount = Math.round((currentPrice * val) / 100);
+           finalProduct.price = currentPrice - discountAmount;
         }
       }
 

@@ -20,6 +20,7 @@ type Offer = {
   type: "discount-min" | "pack-min" | "search" | "category"
   category?: string
   subcategory?: string
+  products?: string[]
   value?: string | number
   active: boolean
   expiryDate?: string
@@ -49,17 +50,16 @@ export default function MarketingClient() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
-  // Edit/Create State
   const [isEditing, setIsEditing] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   
-  // Form State
   const [formData, setFormData] = useState<{
     key: string
     name: string
     type: "discount-min" | "pack-min" | "search" | "category"
     category: string
     subcategory: string
+    products: string
     value: string
     active: boolean
     expiryDate: string
@@ -70,6 +70,7 @@ export default function MarketingClient() {
     type: "discount-min",
     category: "",
     subcategory: "",
+    products: "",
     value: "",
     active: true,
     expiryDate: "",
@@ -111,6 +112,7 @@ export default function MarketingClient() {
       type: "discount-min",
       category: "",
       subcategory: "",
+      products: "",
       value: "",
       active: true,
       expiryDate: "",
@@ -128,6 +130,7 @@ export default function MarketingClient() {
       type: offer.type,
       category: offer.category || "",
       subcategory: offer.subcategory || "",
+      products: (offer.products || []).join(", "),
       value: String(offer.value || ""),
       active: offer.active,
       expiryDate: offer.expiryDate ? new Date(offer.expiryDate).toISOString().split('T')[0] : "",
@@ -135,7 +138,6 @@ export default function MarketingClient() {
     })
     setEditingId(offer._id)
     setIsEditing(true)
-    // Scroll to form
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -176,7 +178,7 @@ export default function MarketingClient() {
       const payload = {
         ...(editingId ? { id: editingId } : {}),
         ...formData,
-        // Convert value to number if it looks like one, otherwise string
+        products: formData.products.split(",").map(s => s.trim()).filter(Boolean),
         value: !isNaN(Number(formData.value)) && formData.value !== "" ? Number(formData.value) : formData.value
       }
 
@@ -227,13 +229,11 @@ export default function MarketingClient() {
           </div>
         </div>
         
-        {/* Background decorations */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-48 h-48 bg-purple-500/20 rounded-full blur-2xl"></div>
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Form Section */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -326,7 +326,7 @@ export default function MarketingClient() {
                         setFormData({
                           ...formData, 
                           category: String(opt.label),
-                          subcategory: "" // reset subcategory when category changes
+                          subcategory: ""
                         })
                       }
                     }}
@@ -423,7 +423,6 @@ export default function MarketingClient() {
           </div>
         </motion.div>
 
-        {/* List Section */}
         <motion.div 
           className="lg:col-span-2"
           initial="hidden"

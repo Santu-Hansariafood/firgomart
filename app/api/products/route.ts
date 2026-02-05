@@ -260,6 +260,53 @@ export async function GET(request: Request) {
       .skip(skip)
       .limit(limit)
       .lean()
+
+    try {
+      const activeOffers = await (Offer as any).find({ 
+        active: true, 
+        $or: [
+          { expiryDate: { $exists: false } }, 
+          { expiryDate: { $gt: new Date() } }
+        ]
+      }).sort({ order: 1, _id: -1 }).lean();
+
+      if (activeOffers.length > 0) {
+        for (const p of products) {
+          const prod = p as any;
+          const pid = String(prod._id);
+          const pCat = String(prod.category || "").toLowerCase();
+          const pSub = String(prod.subcategory || "").toLowerCase();
+
+          const matched = activeOffers.find((off: any) => {
+            if (off.products && Array.isArray(off.products) && off.products.includes(pid)) return true;
+            
+            const hasSpecificProducts = off.products && Array.isArray(off.products) && off.products.length > 0;
+            if (hasSpecificProducts) return false;
+            
+            if (off.type === 'category') {
+               const offCat = String(off.category || "").toLowerCase();
+               const offSub = String(off.subcategory || "").toLowerCase();
+               if (offCat && offCat === pCat) {
+                 if (offSub) return offSub === pSub;
+                 return true;
+               }
+            }
+            return false;
+          });
+
+          if (matched) {
+             prod.appliedOffer = {
+               name: matched.name,
+               type: matched.type,
+               value: matched.value
+             };
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error applying offers:", e);
+    }
+
     return NextResponse.json(
       { products },
       {

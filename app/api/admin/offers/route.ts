@@ -67,6 +67,7 @@ export async function POST(request: Request) {
     const type = String(body?.type || "").trim()
     const category = body?.category ? String(body.category).trim() : undefined
     const subcategory = body?.subcategory ? String(body.subcategory).trim() : undefined
+    const products = Array.isArray(body?.products) ? body.products.map(String) : []
     const value = body?.value
     const active = body?.active !== undefined ? !!body.active : true
     const expiryDate = body?.expiryDate ? new Date(body.expiryDate) : undefined
@@ -81,6 +82,7 @@ export async function POST(request: Request) {
       type,
       category,
       subcategory,
+      products,
       value,
       active,
       expiryDate,
@@ -108,6 +110,7 @@ export async function PUT(request: Request) {
     if (typeof body?.type === "string") update.type = String(body.type).trim()
     if (typeof body?.category === "string") update.category = String(body.category).trim()
     if (typeof body?.subcategory === "string") update.subcategory = String(body.subcategory).trim()
+    if (Array.isArray(body?.products)) update.products = body.products.map(String)
     if (body?.value !== undefined) update.value = body.value
     if (body?.active !== undefined) update.active = !!body.active
     if (body?.expiryDate !== undefined) update.expiryDate = body.expiryDate ? new Date(body.expiryDate) : null

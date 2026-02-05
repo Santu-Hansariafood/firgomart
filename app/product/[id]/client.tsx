@@ -37,6 +37,11 @@ interface Product {
   hsnCode?: string
   selectedSize?: string
   selectedColor?: string
+  appliedOffer?: {
+    name: string
+    type: string
+    value?: string | number
+  }
 }
 
 interface Review {
@@ -132,6 +137,23 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
 
   const nextImage = () => setSelectedImage((prev) => (prev + 1) % images.length)
   const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
+
+  const calculatePrice = () => {
+    let price = product.price
+    if (product.appliedOffer && product.appliedOffer.value) {
+      const val = Number(product.appliedOffer.value)
+      if (!isNaN(val) && val > 0 && val <= 100) {
+         if (String(product.appliedOffer.type).includes('discount')) {
+            const discountAmount = Math.round((price * val) / 100)
+            price = price - discountAmount
+         }
+      }
+    }
+    return price
+  }
+
+  const currentPrice = calculatePrice()
+  const hasOffer = product.appliedOffer && product.appliedOffer.value
 
   const productSchema = (() => {
     const imageUrls = images.map((src) => String(src))
@@ -347,12 +369,12 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                 </div>
                 
 
-                <div className="flex items-baseline space-x-3 mb-6">
-                  <span className="text-2xl sm:text-3xl font-bold">₹{product.price}</span>
-                  {product.originalPrice && (
+                <div className="flex items-baseline space-x-3 mb-2">
+                  <span className="text-2xl sm:text-3xl font-bold">₹{currentPrice}</span>
+                  {(product.originalPrice || hasOffer) && (
                     <>
                       <span className="text-xl text-[var(--foreground)/50] line-through">
-                        ₹{product.originalPrice}
+                        ₹{product.originalPrice || product.price}
                       </span>
                     </>
                   )}
@@ -362,6 +384,17 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                     </span>
                   )}
                 </div>
+
+                {hasOffer && (
+                   <div className="mb-6 inline-block">
+                     <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg px-3 py-2 flex items-center gap-2">
+                       <span className="bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">OFFER</span>
+                       <span className="text-sm font-medium text-green-700 dark:text-green-300">
+                         {product.appliedOffer?.name}: Get {product.appliedOffer?.value}% Extra Discount
+                       </span>
+                     </div>
+                   </div>
+                )}
 
                 {(product.colors && product.colors.length > 0) && (
                     <div className="mb-4">

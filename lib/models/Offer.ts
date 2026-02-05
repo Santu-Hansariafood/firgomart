@@ -22,6 +22,7 @@ const OfferSchema = new Schema<IOffer>(
     type: { type: String, required: true, enum: ["discount-min", "pack-min", "search", "category"] },
     category: { type: String },
     subcategory: { type: String },
+    products: { type: [String], index: true },
     value: { type: Schema.Types.Mixed },
     active: { type: Boolean, default: true, index: true },
     expiryDate: { type: Date },

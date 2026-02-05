@@ -155,7 +155,18 @@ export async function POST(request: Request) {
 
     const orderItems = items.map((it) => {
       const p = prodMap[it.id] as ProductLean
-      const price = Number(p.price ?? 0)
+      let price = Number(p.price ?? 0)
+
+      if (it.appliedOffer && it.appliedOffer.value) {
+         const val = Number(it.appliedOffer.value)
+         if (!isNaN(val) && val > 0 && val <= 100) {
+            if (String(it.appliedOffer.type || "").toLowerCase().includes('discount')) {
+               const discountAmount = Math.round((price * val) / 100)
+               price = price - discountAmount
+            }
+         }
+      }
+
       const quantity = it.quantity
       const lineTotal = price * quantity
       

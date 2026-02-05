@@ -180,7 +180,11 @@ const Checkout: React.FC<CheckoutProps> = ({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
-            items: valid.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
+            items: valid.map(ci => ({ 
+              id: ci.id, 
+              quantity: ci.quantity ?? 1,
+              appliedOffer: ci.appliedOffer 
+            })),
             dryRun: true,
             state: formData.state,
             country: formData.country
