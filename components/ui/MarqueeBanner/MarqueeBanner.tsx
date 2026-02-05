@@ -7,25 +7,25 @@ const items = [
   {
     icon: ShieldCheck,
     text: "Secure Payment",
-    color: "text-brand-purple",
+    color: "text-brand-purple dark:text-violet-400",
     glow: "shadow-[0_0_20px_rgba(120,0,200,0.35)]",
   },
   {
     icon: Percent,
     text: "Up to 50% Off",
-    color: "text-green-500",
+    color: "text-green-500 dark:text-green-400",
     glow: "shadow-[0_0_20px_rgba(34,197,94,0.35)]",
   },
   {
     icon: RotateCcw,
     text: "Easy Returns",
-    color: "text-blue-500",
+    color: "text-blue-500 dark:text-blue-400",
     glow: "shadow-[0_0_20px_rgba(59,130,246,0.35)]",
   },
   {
     icon: Truck,
     text: "Quick Delivery",
-    color: "text-orange-500",
+    color: "text-orange-500 dark:text-orange-400",
     glow: "shadow-[0_0_20px_rgba(249,115,22,0.35)]",
   },
 ]

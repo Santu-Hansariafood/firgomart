@@ -51,14 +51,14 @@ const CookieConsent: React.FC = () => {
   return (
     <>
       <div className="fixed bottom-4 left-4 right-4 sm:right-auto sm:left-6 sm:bottom-6 sm:w-[360px] z-50 pointer-events-none">
-        <div className="pointer-events-auto bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border border-black/5 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl p-4 transform transition-all duration-500 ease-out translate-y-0 opacity-100 ring-1 ring-black/5">
+        <div className="pointer-events-auto bg-white/95 dark:bg-violet-950/90 backdrop-blur-md border border-black/5 dark:border-white/10 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl p-4 transform transition-all duration-500 ease-out translate-y-0 opacity-100 ring-1 ring-black/5 dark:ring-white/5">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 bg-brand-purple/10 rounded-xl shrink-0 text-brand-purple animate-pulse">
+            <div className="p-2.5 bg-brand-purple/10 dark:bg-violet-400/20 rounded-xl shrink-0 text-brand-purple dark:text-violet-300 animate-pulse">
               <Cookie className="w-5 h-5" />
             </div>
             <div className="space-y-1 pt-0.5">
-              <p className="text-sm font-semibold text-[color:var(--foreground)]">Cookie Preferences</p>
-              <p className="text-xs text-[var(--foreground)/70] leading-relaxed">
+              <p className="text-sm font-semibold text-gray-900 dark:text-white">Cookie Preferences</p>
+              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
                 We use cookies to ensure you get the best experience on our website.
               </p>
             </div>
@@ -66,14 +66,14 @@ const CookieConsent: React.FC = () => {
           <div className="mt-4 grid grid-cols-3 gap-2">
             <button
               onClick={() => setShowSettings(true)}
-              className="col-span-1 px-3 py-2 text-xs font-medium text-[var(--foreground)/70] hover:bg-[var(--foreground)/5] hover:text-[color:var(--foreground)] rounded-lg transition-colors flex items-center justify-center gap-1.5"
+              className="col-span-1 px-3 py-2 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-900 dark:hover:text-white rounded-lg transition-colors flex items-center justify-center gap-1.5"
             >
               <Settings className="w-3.5 h-3.5" />
               Options
             </button>
             <button
               onClick={handleReject}
-              className="col-span-1 px-3 py-2 text-xs font-medium text-[color:var(--foreground)] border border-[var(--foreground)/10] hover:bg-[var(--foreground)/5] rounded-lg transition-colors"
+              className="col-span-1 px-3 py-2 text-xs font-medium text-gray-900 dark:text-white border border-gray-200 dark:border-white/10 hover:bg-gray-50 dark:hover:bg-white/5 rounded-lg transition-colors"
             >
               Reject
             </button>

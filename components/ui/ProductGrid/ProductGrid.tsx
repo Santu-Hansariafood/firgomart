@@ -7,7 +7,6 @@ import { ShoppingCart, Eye, X, ChevronDown, Gift, ShoppingBag } from 'lucide-rea
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 import categoriesData from '@/data/categories.json'
 import dynamic from 'next/dynamic'
-import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
 import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
 const MarqueeBanner = dynamic(() => import('@/components/ui/MarqueeBanner/MarqueeBanner'))
 const PriceCategoryBanner = dynamic(() => import('@/components/ui/PriceCategoryBanner/PriceCategoryBanner'))
@@ -360,10 +359,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
 
   return (
     <section className="min-h-screen py-12 bg-background relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-[600px] bg-brand-purple/5 -skew-y-3 transform origin-top-left -z-10" />
-      <div className="absolute top-[20%] right-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10" />
-      <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 rounded-full blur-[80px] -z-10" />
+      <div className="absolute top-0 left-0 w-full h-[600px] bg-brand-purple/5 dark:bg-brand-purple/20 -skew-y-3 transform origin-top-left -z-10" />
+      <div className="absolute top-[20%] right-0 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-500/20 rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/20 rounded-full blur-[80px] -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
@@ -377,7 +375,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
         <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-6 mb-10">
           <div className="space-y-2 relative">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple bg-[length:200%_auto] animate-gradient">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
                 FirgoMart Products
               </span>
             </h2>
@@ -615,7 +613,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                   </span>
 
                   {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
-                    <span className="absolute bottom-3 left-3 right-3 text-center bg-white/90 dark:bg-black/90 backdrop-blur-md text-foreground text-[10px] font-bold px-2 py-1.5 rounded-xl shadow-lg z-10 border border-foreground/5">
+                    <span className="absolute bottom-3 left-3 right-3 text-center bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-xl shadow-lg z-10 border border-violet-200/50 dark:border-violet-500/50 shadow-violet-500/10">
                       {product.name.toLowerCase().includes('combo') ? '✨ COMBO OFFER' : `📦 PACK OF ${product.unitsPerPack}`}
                     </span>
                   ) : null}
