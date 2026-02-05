@@ -54,6 +54,28 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       max: 499
     },
     {
+    id: 'under-599',
+    title: 'Under ₹599',
+    subtitle: 'Smart Choice',
+    icon: Zap,
+    color: 'bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800',
+    iconBg: 'bg-white dark:bg-teal-900/20',
+    iconColor: 'text-teal-600 dark:text-teal-400',
+    min: 500,
+    max: 599
+  },
+  {
+    id: 'under-699',
+    title: 'Under ₹699',
+    subtitle: 'Premium Picks',
+    icon: Star,
+    color: 'bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+    iconBg: 'bg-white dark:bg-slate-800/40',
+    iconColor: 'text-slate-700 dark:text-slate-300',
+    min: 600,
+    max: 699
+  },
+    {
       id: 'special-price',
       title: 'Special Price',
       subtitle: 'Limited Time',
