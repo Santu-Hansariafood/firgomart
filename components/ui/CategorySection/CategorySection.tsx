@@ -3,21 +3,13 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
+import { categories } from '@/data/mockData'
 
 interface Category {
   id: number
   name: string
   image: string
 }
-
-const categories: Category[] = [
-  { id: 1, name: 'Fruits', image: '/images/categories/fruits.jpg' },
-  { id: 2, name: 'Vegetables', image: '/images/categories/vegetables.jpg' },
-  { id: 3, name: 'Snacks', image: '/images/categories/snacks.jpg' },
-  { id: 4, name: 'Beverages', image: '/images/categories/beverages.jpg' },
-  { id: 5, name: 'Dairy', image: '/images/categories/dairy.jpg' },
-  { id: 6, name: 'Bakery', image: '/images/categories/bakery.jpg' },
-]
 
 const CategorySection: React.FC = () => {
   return (
