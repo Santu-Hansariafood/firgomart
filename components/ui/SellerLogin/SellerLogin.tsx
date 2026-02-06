@@ -275,7 +275,7 @@ const SellerLogin: React.FC = () => {
                     {otpValues.map((digit, index) => (
                       <input
                         key={index}
-                        ref={el => otpRefs.current[index] = el}
+                        ref={(el) => { otpRefs.current[index] = el }}
                         type="text"
                         maxLength={1}
                         value={digit}
