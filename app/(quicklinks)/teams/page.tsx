@@ -3,454 +3,168 @@ import React, { Suspense, useState, useEffect } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import Title from "@/components/common/Title/Title";
 import Paragraph from "@/components/common/Paragraph/Paragraph";
-import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
-import {
-  Users,
-  Monitor,
-  Package,
-  Store,
-  Headphones,
-  Megaphone,
-  Wallet,
-  Target,
-  Sparkles,
-  Eye,
-  Linkedin,
-  Instagram,
-  Twitter,
-  Facebook,
-} from "lucide-react";
-import FallbackImage from "@/components/common/Image/FallbackImage";
-import teamsJson from "@/data/teams.json";
+import { motion } from "framer-motion";
+import { Users } from "lucide-react";
+import DepartmentCard from "@/components/ui/Teams/DepartmentCard";
+import DepartmentModal from "@/components/ui/Teams/DepartmentModal";
 
-type TeamData = Record<string, {
-  logo?: string
-  description?: string
-  members?: Array<{
-    name: string
-    image: string
-    bio?: string
-    links?: {
-      linkedin?: string
-      instagram?: string
-      x?: string
-      facebook?: string
-    }
-  }>
-}>
+interface Department {
+  _id: string;
+  name: string;
+  description: string;
+  icon: string;
+  order: number;
+}
+
+interface TeamMember {
+  _id: string;
+  name: string;
+  role: string;
+  department: string;
+  image: string;
+  bio?: string;
+  socialLinks?: {
+    linkedin?: string;
+    twitter?: string;
+    github?: string;
+    instagram?: string;
+    facebook?: string;
+  };
+}
+
+type TeamData = Record<
+  string,
+  {
+    logo?: string;
+    description?: string;
+    members?: Array<{
+      name: string;
+      image: string;
+      bio?: string;
+      links?: any;
+    }>;
+  }
+>;
 
 const TeamsPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-  
-  const [activeTitle, setActiveTitle] = useState<string | null>(null)
-  const tjson = teamsJson as TeamData
+
+  const [activeTitle, setActiveTitle] = useState<string | null>(null);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-  if (activeTitle) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
-  return () => {
-    document.body.style.overflow = "";
-  };
-}, [activeTitle]);
+    const fetchData = async () => {
+      try {
+        const [deptRes, teamRes] = await Promise.all([
+          fetch("/api/departments"),
+          fetch("/api/teams"),
+        ]);
+        const deptData = await deptRes.json();
+        const teamData = await teamRes.json();
+
+        if (deptData.departments) setDepartments(deptData.departments);
+        if (teamData.teams) setMembers(teamData.teams);
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const teamData: TeamData = {};
+  departments.forEach((dept) => {
+    teamData[dept.name] = {
+      logo: dept.icon,
+      description: dept.description,
+      members: members
+        .filter((m) => m.department === dept.name)
+        .map((m) => ({
+          name: m.name,
+          image: m.image,
+          bio: m.bio,
+          links: {
+             linkedin: m.socialLinks?.linkedin,
+             twitter: m.socialLinks?.twitter,
+             x: m.socialLinks?.twitter,
+             instagram: m.socialLinks?.instagram,
+             facebook: m.socialLinks?.facebook
+          },
+        })),
+    };
+  });
+
+  useEffect(() => {
+    if (activeTitle) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeTitle]);
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
-      <section className="relative py-20 bg-brand-purple overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Users className="w-7 h-7 text-white" />
-              <Title level={1}>Our Teams – FirgoMart</Title>
-            </div>
-            <Paragraph className="max-w-3xl mx-auto text-purple-100 text-lg sm:text-xl">
-              At FirgoMart, our strength lies in our people. Our teams work
-              together across technology, logistics, operations, and customer
-              service to deliver a reliable and seamless e-commerce experience
-              worldwide.
-            </Paragraph>
-          </motion.div>
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-        <div className="text-center mb-12">
-          <Paragraph className="text-[var(--foreground)/70]">
-            We believe in collaboration, innovation, accountability, and
-            continuous improvement. Every team at FirgoMart plays a vital role
-            in ensuring quality service and customer satisfaction.
-          </Paragraph>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Monitor className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Technology & Product Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Develops and maintains the FirgoMart website and platforms</li>
-              <li>Ensures smooth performance, security, and scalability</li>
-              <li>Implements new features to improve user experience</li>
-              <li>Manages data, integrations, and platform reliability</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Technology & Product Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Package className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Logistics & Operations Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Manages order fulfillment and delivery processes</li>
-              <li>Coordinates warehouses and shipping partners</li>
-              <li>Ensures safe handling and timely delivery</li>
-              <li>Oversees domestic and cross-border operations</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Logistics & Operations Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Seller Management Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Supports seller onboarding and verification</li>
-              <li>Assists with listings and order management</li>
-              <li>Ensures compliance with quality standards</li>
-              <li>Builds strong relationships with partners</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Seller Management Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Headphones className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Customer Support Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Handles customer queries and feedback</li>
-              <li>Assists with orders, payments, and returns</li>
-              <li>Provides clear and timely communication</li>
-              <li>Ensures high customer satisfaction</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Customer Support Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Megaphone className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Marketing & Growth Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Drives brand awareness and global growth</li>
-              <li>Manages digital marketing and campaigns</li>
-              <li>Analyzes customer behavior and trends</li>
-              <li>Builds long-term engagement</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Marketing & Growth Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Wallet className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Finance & Administration Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Manages secure payments and settlements</li>
-              <li>Handles compliance and financial reporting</li>
-              <li>Oversees vendor payments and expenses</li>
-              <li>Ensures transparency and integrity</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Finance & Administration Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Target className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Leadership & Strategy Team
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Defines vision, mission, and long-term goals</li>
-              <li>Oversees business growth and expansion</li>
-              <li>Ensures ethical practices and governance</li>
-              <li>Guides teams toward innovation and excellence</li>
-            </ul>
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => setActiveTitle("Leadership & Strategy Team")}
-                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors flex items-center gap-2"
-              >
-                <Eye className="w-4 h-4" />
-                Click to View
-              </button>
-            </div>
-          </motion.div>
-        </div>
-
-        <AnimatePresence>
-          {activeTitle && (
+      <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
+        <section className="relative py-20 bg-brand-purple overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-              onClick={() => setActiveTitle(null)}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
             >
-              <motion.div
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.95, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                onClick={(e) => e.stopPropagation()}
-                className="
-  bg-[var(--background)] 
-  text-[color:var(--foreground)] 
-  rounded-2xl 
-  shadow-xl 
-  w-full 
-  max-w-3xl
-  max-h-[90vh]
-  overflow-y-auto
-  overscroll-contain
-"
-              >
-                <div className="p-6 touch-pan-y">
-                  <div className="flex items-center gap-3 mb-4">
-                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
-                      <div className="relative w-10 h-10">
-                        <FallbackImage
-                          src={activeTitle ? (tjson[activeTitle]?.logo || "/globe.svg") : "/globe.svg"}
-                          alt="logo"
-                          fill
-                          sizes="40px"
-                          unoptimized={false}
-                          priority
-                          className="object-contain"
-                        />
-                      </div>
-                    </motion.div>
-                    <h3 className="text-2xl font-bold text-[color:var(--foreground)]">{activeTitle}</h3>
-                  </div>
-                  <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-[var(--foreground)/70] text-base sm:text-lg mb-6">
-                    {activeTitle ? (tjson[activeTitle]?.description || "Team details coming soon.") : "Team details coming soon."}
-                  </motion.p>
-                  <div
-  className="
-    flex
-    gap-4
-    overflow-x-auto
-    overflow-y-hidden
-    snap-x snap-mandatory
-    scrollbar-hide
-    -mx-6 px-6 pb-4
-
-    sm:grid
-    sm:grid-cols-2
-    lg:grid-cols-3
-    sm:overflow-visible
-    sm:snap-none
-    sm:mx-0 sm:px-0 sm:pb-0
-  "
->
-                    {(activeTitle ? (tjson[activeTitle]?.members || []) : []).map((m, idx) => (
-                      <motion.div 
-                        key={`${activeTitle}-${m.name}-${idx}`} 
-                        initial={{ opacity: 0, y: 12 }} 
-                        animate={{ opacity: 1, y: 0 }} 
-                        transition={{ duration: 0.3, delay: idx * 0.05 }} 
-                        className="border border-[var(--foreground)/10] rounded-xl overflow-hidden min-w-[260px] w-[260px] sm:w-auto sm:min-w-0 snap-center shrink-0"
-                      >
-                        <div className="relative w-full h-48 overflow-hidden bg-[var(--foreground)/5]">
-                          <FallbackImage
-                            src={m.image}
-                            alt={m.name}
-                            fill
-                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                            className="object-cover"
-                            priority={activeTitle !== null}
-                            unoptimized={false}
-                            />
-
-                        </div>
-                        <div className="p-4">
-                          <div className="font-semibold text-[color:var(--foreground)]">{m.name}</div>
-                          {m?.bio && <p className="mt-2 text-sm text-[var(--foreground)/70] line-clamp-3">{m.bio}</p>}
-                          <div className="mt-3 flex items-center gap-3">
-                            {m?.links?.linkedin && (
-                              <Link href={m.links.linkedin} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Linkedin className="w-4 h-4 text-[color:var(--foreground)]" />
-                              </Link>
-                            )}
-                            {m?.links?.instagram && (
-                              <Link href={m.links.instagram} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Instagram className="w-4 h-4 text-[color:var(--foreground)]" />
-                              </Link>
-                            )}
-                            {m?.links?.x && (
-                              <Link href={m.links.x} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Twitter className="w-4 h-4 text-[color:var(--foreground)]" />
-                              </Link>
-                            )}
-                            {m?.links?.facebook && (
-                              <Link href={m.links.facebook} target="_blank" className="w-8 h-8 rounded-full bg-[var(--foreground)/10] hover:bg-brand-purple/20 flex items-center justify-center">
-                                <Facebook className="w-4 h-4 text-[color:var(--foreground)]" />
-                              </Link>
-                            )}
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                  <div className="mt-6 flex justify-end">
-                    <button
-                      onClick={() => setActiveTitle(null)}
-                      className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-purple-700 transition-colors"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Users className="w-7 h-7 text-white" />
+                <Title level={1}>Our Teams – FirgoMart</Title>
+              </div>
+              <Paragraph className="max-w-3xl mx-auto text-purple-100 text-lg sm:text-xl">
+                At FirgoMart, our strength lies in our people. Our teams work
+                together across technology, logistics, operations, and customer
+                service to deliver a reliable and seamless e-commerce experience
+                worldwide.
+              </Paragraph>
             </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        </section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.35 }}
-          className="mt-16 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <Sparkles className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[color:var(--foreground)]">Our Work Culture</h3>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+          <div className="text-center mb-12">
+            <Paragraph className="text-[var(--foreground)/70]">
+              We believe in collaboration, innovation, accountability, and
+              continuous improvement. Every team at FirgoMart plays a vital role
+              in ensuring quality service and customer satisfaction.
+            </Paragraph>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
-              Team-driven and collaborative environment
+
+          {loading ? (
+             <div className="flex justify-center py-20"><BeautifulLoader /></div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {departments.map((dept, index) => (
+                <DepartmentCard 
+                  key={dept._id} 
+                  dept={dept} 
+                  index={index} 
+                  onViewClick={setActiveTitle} 
+                />
+              ))}
             </div>
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
-              Focus on learning and growth
-            </div>
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
-              Respect, transparency, and accountability
-            </div>
-            <div className="p-4 rounded-xl bg-brand-purple/10 text-[color:var(--foreground)]">
-              Innovation-oriented mindset
-            </div>
-          </div>
-        </motion.div>
+          )}
+
+          <DepartmentModal 
+            activeTitle={activeTitle} 
+            teamData={teamData} 
+            onClose={() => setActiveTitle(null)} 
+          />
+        </div>
       </div>
-    </div>
     </Suspense>
   );
 };

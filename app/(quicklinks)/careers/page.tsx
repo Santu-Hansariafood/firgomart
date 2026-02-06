@@ -1,172 +1,175 @@
 "use client";
-import { useEffect } from "react";
-import dynamic from "next/dynamic";
+import React, { Suspense, useState, useEffect } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
-const Title = dynamic(() => import("@/components/common/Title/Title"));
-const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
-import { motion } from "framer-motion";
-import {
-  Briefcase,
-  Sparkles,
-  Monitor,
-  Package,
-  Truck,
-  Headphones,
-  Megaphone,
-  Wallet,
-  Users,
-  Target,
-  Mail,
-} from "lucide-react";
-import { Suspense } from "react";
+import Title from "@/components/common/Title/Title";
+import Paragraph from "@/components/common/Paragraph/Paragraph";
+import { motion, AnimatePresence } from "framer-motion";
+import { Rocket, Heart, Zap, Globe, Coffee, Smile } from "lucide-react";
+import JobCard from "@/components/ui/Careers/JobCard";
+
+interface Career {
+  _id: string;
+  title: string;
+  department: string;
+  location: string;
+  type: string;
+  description: string;
+  requirements: string[];
+  benefits: string[];
+}
 
 const CareersPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  const [careers, setCareers] = useState<Career[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCareers = async () => {
+      try {
+        const res = await fetch("/api/careers");
+        const data = await res.json();
+        if (data.careers) {
+          setCareers(data.careers);
+        }
+      } catch (error) {
+        console.error("Failed to fetch careers", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCareers();
+  }, []);
+
+  const benefits = [
+    {
+      icon: <Heart className="w-6 h-6 text-brand-purple" />,
+      title: "Health & Wellness",
+      desc: "Comprehensive medical, dental, and vision coverage for you and your family.",
+    },
+    {
+      icon: <Zap className="w-6 h-6 text-brand-purple" />,
+      title: "Growth & Learning",
+      desc: "Annual learning budget, mentorship programs, and career development paths.",
+    },
+    {
+      icon: <Globe className="w-6 h-6 text-brand-purple" />,
+      title: "Remote Friendly",
+      desc: "Flexible work arrangements and support for remote collaboration.",
+    },
+    {
+      icon: <Coffee className="w-6 h-6 text-brand-purple" />,
+      title: "Work-Life Balance",
+      desc: "Generous PTO, parental leave, and mental health days.",
+    },
+    {
+      icon: <Smile className="w-6 h-6 text-brand-purple" />,
+      title: "Team Culture",
+      desc: "Regular team retreats, virtual events, and a supportive environment.",
+    },
+    {
+      icon: <Rocket className="w-6 h-6 text-brand-purple" />,
+      title: "Impact",
+      desc: "Work on projects that reach millions of users worldwide.",
+    },
+  ];
+
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
-      <section className="relative py-20 bg-brand-purple overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Briefcase className="w-7 h-7 text-white" />
-              <Title level={1}>Careers at FirgoMart</Title>
-            </div>
-            <Paragraph className="max-w-3xl mx-auto text-purple-100 text-lg sm:text-xl">
-              At FirgoMart, we believe people are the foundation of our success.
-              We are building a global e-commerce and logistics platform, and we
-              are always looking for passionate, talented, and motivated
-              individuals to grow with us.
-            </Paragraph>
-            <Paragraph className="max-w-3xl mx-auto text-purple-100">
-              If you are driven by innovation, teamwork, and the desire to
-              create meaningful impact, FirgoMart is the place for you.
-            </Paragraph>
-          </motion.div>
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Sparkles className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[color:var(--foreground)]">
-                Why Work With FirgoMart?
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Fast-growing global e-commerce environment</li>
-              <li>Learning, growth, and career development</li>
-              <li>Collaborative and inclusive culture</li>
-              <li>Exposure to logistics, technology, and digital commerce</li>
-              <li>Performance-driven and people-focused organization</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Users className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[color:var(--foreground)]">
-                Career Opportunities
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li className="flex items-center gap-2"><Monitor className="w-4 h-4 text-brand-purple" /> Technology & Software Development</li>
-              <li className="flex items-center gap-2"><Package className="w-4 h-4 text-brand-purple" /> Logistics & Supply Chain Operations</li>
-              <li className="flex items-center gap-2"><Truck className="w-4 h-4 text-brand-purple" /> Warehouse & Delivery Operations</li>
-              <li className="flex items-center gap-2"><Headphones className="w-4 h-4 text-brand-purple" /> Customer Support & Service</li>
-              <li className="flex items-center gap-2"><Megaphone className="w-4 h-4 text-brand-purple" /> Sales, Marketing & Growth</li>
-              <li className="flex items-center gap-2"><Wallet className="w-4 h-4 text-brand-purple" /> Finance, HR & Administration</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Target className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[color:var(--foreground)]">
-                Growth & Development
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Continuous learning and skill development</li>
-              <li>Career progression opportunities</li>
-              <li>On-the-job training and mentorship</li>
-              <li>Performance recognition and rewards</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="p-6 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10]"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <Users className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-lg font-bold text-[color:var(--foreground)]">Our Work Culture</h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Respectful and supportive workplace</li>
-              <li>Teamwork and open communication</li>
-              <li>Innovation and problem-solving mindset</li>
-              <li>Commitment to quality and customer satisfaction</li>
-            </ul>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <Mail className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[color:var(--foreground)]">How to Apply</h3>
+      <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
+        <section className="relative py-20 bg-brand-purple overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Rocket className="w-7 h-7 text-white" />
+                <Title level={1}>Join Our Mission</Title>
+              </div>
+              <Paragraph className="max-w-3xl mx-auto text-purple-100 text-lg sm:text-xl">
+                Build the future of e-commerce with us. We're looking for
+                passionate individuals who want to make a difference.
+              </Paragraph>
+            </motion.div>
           </div>
-          <div className="space-y-2 text-[var(--foreground)/70]">
-            <p>If you’re interested in joining FirgoMart, we’d love to hear from you.</p>
-            <p>Send your resume to <span className="font-medium text-brand-purple">careers@firgomart.com</span></p>
-            <p>Subject Line: <span className="font-medium">Position Name – Your Name</span></p>
-          </div>
-        </motion.div>
+        </section>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="mt-8 rounded-2xl border border-[var(--foreground)/10] bg-brand-purple/10 p-8"
-        >
-          <h3 className="text-xl font-bold text-[color:var(--foreground)] mb-2">Join Us</h3>
-          <Paragraph className="text-[var(--foreground)/70]">
-            Be a part of FirgoMart’s journey to build a trusted global e-commerce and logistics platform.
-            Together, let’s shape the future of online shopping and delivery.
-          </Paragraph>
-        </motion.div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4 text-[color:var(--foreground)]">
+                Why FirgoMart?
+              </h2>
+              <Paragraph className="text-[var(--foreground)/70] max-w-2xl mx-auto">
+                We take care of our people so they can take care of our
+                customers.
+              </Paragraph>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {benefits.map((benefit, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-[var(--background)] p-6 rounded-2xl border border-[var(--foreground)/10] hover:shadow-md transition-shadow"
+                >
+                  <div className="mb-4 bg-brand-purple/10 w-12 h-12 flex items-center justify-center rounded-xl">
+                    {benefit.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-[color:var(--foreground)]">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-[var(--foreground)/70] leading-relaxed">
+                    {benefit.desc}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          <div id="open-positions" className="scroll-mt-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4 text-[color:var(--foreground)]">
+                Open Positions
+              </h2>
+              <Paragraph className="text-[var(--foreground)/70] max-w-2xl mx-auto">
+                Find your next role and help us shape the future of shopping.
+              </Paragraph>
+            </div>
+
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <BeautifulLoader />
+              </div>
+            ) : careers.length > 0 ? (
+              <div className="grid gap-6 max-w-4xl mx-auto">
+                {careers.map((career) => (
+                  <JobCard
+                    key={career._id}
+                    career={career}
+                    expandedId={expandedId}
+                    setExpandedId={setExpandedId}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 bg-[var(--foreground)/5] rounded-2xl border border-[var(--foreground)/10]">
+                <p className="text-[var(--foreground)/60] text-lg">
+                  No open positions at the moment. Please check back later!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
     </Suspense>
   );
 };

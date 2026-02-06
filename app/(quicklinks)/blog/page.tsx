@@ -1,177 +1,147 @@
 "use client";
-import { useEffect } from "react";
-import dynamic from "next/dynamic";
+import React, { Suspense, useState, useEffect } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
-const Title = dynamic(() => import("@/components/common/Title/Title"));
-const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
+import Title from "@/components/common/Title/Title";
+import Paragraph from "@/components/common/Paragraph/Paragraph";
 import { motion } from "framer-motion";
-import {
-  BookOpen,
-  ShoppingCart,
-  Store,
-  Truck,
-  Megaphone,
-  TrendingUp,
-  Shield,
-} from "lucide-react";
-import { Suspense } from "react";
+import { BookOpen } from "lucide-react";
+import BlogCard from "@/components/ui/Blog/BlogCard";
+import CategoryCard from "@/components/ui/Blog/CategoryCard";
+
+interface Blog {
+  _id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  author: string;
+  category: string;
+  image: string;
+  publishedAt: string;
+  createdAt: string;
+}
 
 const BlogPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await fetch("/api/blogs");
+        const data = await res.json();
+        if (data.blogs) {
+          setBlogs(data.blogs);
+        }
+      } catch (error) {
+        console.error("Failed to fetch blogs", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
+  const categories = [
+    {
+      icon: "ShoppingCart",
+      title: "Shopping Guides",
+      items: [
+        "Product recommendations, buying tips, and comparisons",
+        "Learn how to shop smart and safely online",
+        "Discover new products and deals",
+        "Get updates on policies and features",
+      ],
+    },
+    {
+      icon: "TrendingUp",
+      title: "Seller Insights",
+      items: [
+        "Tips for growing your business on FirgoMart",
+        "Marketing strategies and best practices",
+        "Understanding seller tools and analytics",
+        "Success stories from our seller community",
+      ],
+    },
+    {
+      icon: "ShieldCheck",
+      title: "Platform News",
+      items: [
+        "Updates on platform features and improvements",
+        "Security and privacy enhancements",
+        "Community guidelines and policy changes",
+        "Company announcements and events",
+      ],
+    },
+  ];
+
   return (
     <Suspense fallback={<BeautifulLoader />}>
-    <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
-      <section className="relative py-20 bg-brand-purple overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <BookOpen className="w-7 h-7 text-white" />
-              <Title level={1}>FirgoMart Blog</Title>
-            </div>
-            <Paragraph className="max-w-3xl mx-auto text-purple-100 text-lg sm:text-xl">
-              Welcome to the FirgoMart Blog, your destination for insights,
-              updates, and knowledge from the world of e-commerce, logistics,
-              and digital business.
-            </Paragraph>
-            <Paragraph className="max-w-3xl mx-auto text-purple-100">
-              We inform, educate, and inspire customers, sellers, and partners
-              with valuable content to help you make better decisions and stay
-              updated with industry trends.
-            </Paragraph>
-          </motion.div>
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <ShoppingCart className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Shopping Guides
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Product recommendations, buying tips, and comparisons</li>
-              <li>Learn how to shop smart and safely online</li>
-              <li>Discover new products and deals</li>
-              <li>Get updates on policies and features</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.05 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Store className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Seller Insights</h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Best practices for selling online</li>
-              <li>Tips on product listings, pricing, and promotions</li>
-              <li>Insights into logistics and fulfillment strategies</li>
-              <li>Grow online businesses and improve sales</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Truck className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">
-                Logistics & Delivery
-              </h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Behind-the-scenes of supply chain and delivery</li>
-              <li>How FirgoMart ensures timely deliveries</li>
-              <li>Innovations in last-mile logistics</li>
-              <li>Cross-border shipping updates and practices</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <Megaphone className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Company Updates</h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Announcements and platform improvements</li>
-              <li>New features and product launches</li>
-              <li>Policy changes and service updates</li>
-              <li>Community and partner programs</li>
-            </ul>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-6"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <TrendingUp className="w-6 h-6 text-brand-purple" />
-              <h3 className="text-xl font-bold text-[color:var(--foreground)]">Industry Trends</h3>
-            </div>
-            <ul className="space-y-2 text-[var(--foreground)/70]">
-              <li>Latest developments in e-commerce</li>
-              <li>Global trade and market analysis</li>
-              <li>Technology and innovation highlights</li>
-              <li>Data-driven insights and reports</li>
-            </ul>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="mt-16 bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <Shield className="w-6 h-6 text-brand-purple" />
-            <h3 className="text-xl font-bold text-[color:var(--foreground)]">Our Commitment</h3>
+      <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
+        <section className="relative py-20 bg-brand-purple overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <BookOpen className="w-7 h-7 text-white" />
+                <Title level={1}>The FirgoMart Blog</Title>
+              </div>
+              <Paragraph className="max-w-3xl mx-auto text-purple-100 text-lg sm:text-xl">
+                Insights, updates, and stories from the world of e-commerce.
+              </Paragraph>
+            </motion.div>
           </div>
-          <Paragraph className="text-[var(--foreground)/70]">
-            We publish well-researched, easy-to-understand, and useful content.
-            Our goal is to add value to our community and build trust through
-            transparency and knowledge sharing.
-          </Paragraph>
-          <div className="mt-6">
-            <h4 className="text-lg font-semibold text-[color:var(--foreground)] mb-2">
-              Stay Connected
-            </h4>
-            <Paragraph className="text-[var(--foreground)/70]">
-              Check back regularly for new articles, updates, and insights from
-              FirgoMart.
-            </Paragraph>
+        </section>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            {categories.map((category, index) => (
+              <CategoryCard 
+                key={index} 
+                category={category} 
+                index={index} 
+              />
+            ))}
           </div>
-        </motion.div>
+
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold mb-8 text-[color:var(--foreground)] border-b border-[var(--foreground)/10] pb-4">
+              Latest Articles
+            </h2>
+
+            {loading ? (
+              <div className="flex justify-center py-20">
+                <BeautifulLoader />
+              </div>
+            ) : blogs.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {blogs.map((blog) => (
+                  <BlogCard
+                    key={blog._id}
+                    blog={blog}
+                    expandedId={expandedId}
+                    setExpandedId={setExpandedId}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-[var(--foreground)/5] rounded-2xl border border-[var(--foreground)/10]">
+                <p className="text-[var(--foreground)/60] text-lg">
+                  No articles published yet. Check back soon!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
     </Suspense>
   );
 };
