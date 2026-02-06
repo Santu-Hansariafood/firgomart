@@ -39,18 +39,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let productRoutes: MetadataRoute.Sitemap = []
   try {
-    const conn = await connectDB()
-    const Product = getProductModel(conn)
-    const products = await Product.find({}, '_id updatedAt').lean()
-    
-    productRoutes = products.map((product: any) => ({
-      url: `${baseUrl}/product/${product._id}`,
-      lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 0.7,
-    }))
+    if (!process.env.MONGODB_URI) {
+      console.warn('Skipping dynamic sitemap generation: MONGODB_URI not found')
+    } else {
+      const conn = await connectDB()
+      const Product = getProductModel(conn)
+      const products = await Product.find({}, '_id updatedAt').lean()
+      
+      productRoutes = products.map((product: any) => ({
+        url: `${baseUrl}/product/${product._id}`,
+        lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
+        changeFrequency: 'daily' as const,
+        priority: 0.7,
+      }))
+    }
   } catch (error) {
-    console.error('Sitemap generation error:', error)
+    console.warn('Sitemap generation failed (likely DB connection issue during build), returning static routes only.')
   }
 
   return [...staticRoutes, ...categoryRoutes, ...productRoutes]

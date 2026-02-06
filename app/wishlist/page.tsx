@@ -198,7 +198,7 @@ export default function WishlistPage() {
 
                   {product.discount && (
                     <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg shadow-red-500/30 z-20">
-                      -{product.discount}%
+                      {product.discount}% OFF
                     </span>
                   )}
                 </div>

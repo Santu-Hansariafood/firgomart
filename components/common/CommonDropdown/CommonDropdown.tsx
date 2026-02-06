@@ -33,17 +33,33 @@ const CommonDropdown: React.FC<CommonDropdownProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false)
       }
     }
 
     document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("touchstart", handleClickOutside)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
+      document.removeEventListener("touchstart", handleClickOutside)
     }
   }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false)
+      }
+    }
+    if (open) {
+      document.addEventListener("keydown", handleKeyDown)
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [open])
 
   const filteredOptions = options.filter((item) =>
     item.label.toLowerCase().includes(search.toLowerCase())

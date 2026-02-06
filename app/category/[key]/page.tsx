@@ -1,7 +1,9 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import categoriesData from '@/data/categories.json'
 import CategoryClient from './CategoryClient'
+import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
 
 type Props = {
   params: Promise<{ key: string }>
@@ -50,5 +52,9 @@ export default async function CategoryPage({ params }: Props) {
     notFound()
   }
 
-  return <CategoryClient categoryName={category.name} />
+  return (
+    <Suspense fallback={<BeautifulLoader />}>
+      <CategoryClient categoryName={category.name} />
+    </Suspense>
+  )
 }

@@ -196,7 +196,9 @@ export default function RootLayout({
             <CategorySubHeader />
           </Suspense>
           <main className="min-h-screen">{children}</main>
-          <Footer />
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
           <CookieConsent />
           <Toaster position="bottom-right" />
         </Providers>

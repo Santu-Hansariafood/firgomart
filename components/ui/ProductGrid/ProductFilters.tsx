@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { ChevronDown, SlidersHorizontal } from "lucide-react"
+import { useEffect, useRef } from "react"
 
 export type DropdownItem = {
   id: string | number
@@ -60,6 +61,20 @@ export function FilterControls({
     minPrice || maxPrice || minRating || selectedSize
   )
 
+  const sortRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
+        setIsSortDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [setIsSortDropdownOpen])
+
   const handleMobileTabClick = (tab: string) => {
     if (activeFilterTab === tab && isFilterOpen) {
       setIsFilterOpen(false)
@@ -73,7 +88,7 @@ export function FilterControls({
   return (
     <div className="relative z-[60] flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
       {/* Sort Dropdown - Mobile: Upper Layer (Order 1), Desktop: Right side (Order 2) */}
-      <div className="relative z-[70] order-1 sm:order-2 w-full sm:w-auto">
+      <div ref={sortRef} className="relative z-[70] order-1 sm:order-2 w-full sm:w-auto">
         <button
           onClick={() => setIsSortDropdownOpen((p) => !p)}
           className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 sm:px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 text-sm font-medium hover:bg-gray-50 sm:hover:bg-foreground/5 transition-all shadow-sm sm:shadow-none dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"

@@ -12,11 +12,17 @@ import {
   User,
   LogOut,
   ChevronDown,
+  ChevronUp,
   Moon,
   Sun,
   Truck,
   Heart,
   Gift,
+  LifeBuoy,
+  ShieldCheck,
+  RotateCcw,
+  FileText,
+  MessageCircle,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useAuth } from "@/context/AuthContext"
@@ -401,6 +407,52 @@ const Navbar: React.FC = () => {
                          </div>
                          {cartCount > 0 && <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{cartCount}</span>}
                       </button>
+                    </div>
+                    
+                    <div className="space-y-1 mt-4 pt-4 border-t border-foreground/5">
+                      <p className="px-3 text-xs font-semibold text-foreground/40 uppercase tracking-wider mb-2">Customer Service</p>
+                      <Link 
+                        href="/help"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
+                        <LifeBuoy className="w-5 h-5 opacity-70" /> Help Center
+                      </Link>
+                      <Link 
+                        href="/track-order"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
+                        <Truck className="w-5 h-5 opacity-70" /> Track Order
+                      </Link>
+                      <Link 
+                        href="/trust-safety"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
+                        <ShieldCheck className="w-5 h-5 opacity-70" /> Trust & Safety
+                      </Link>
+                      <Link 
+                        href="/returns"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
+                        <RotateCcw className="w-5 h-5 opacity-70" /> Returns & Refunds
+                      </Link>
+                      <Link 
+                        href="/shipping"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
+                        <FileText className="w-5 h-5 opacity-70" /> Shipping Info
+                      </Link>
+                      <Link 
+                        href="/faq"
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
+                        <MessageCircle className="w-5 h-5 opacity-70" /> FAQs
+                      </Link>
                     </div>
                     {isAuthenticated && (
                       <div className="pt-4 border-t border-foreground/5">

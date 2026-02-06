@@ -146,22 +146,33 @@ const Checkout: React.FC<CheckoutProps> = ({
   useEffect(() => {
     if (!user) return
     const u = user as any
-    let defaultAddr = (u.addresses || []).find((a: any) => a.isDefault)
-    if (!defaultAddr && u.addresses && u.addresses.length > 0) {
-      defaultAddr = u.addresses[0]
+    const addresses = Array.isArray(u.addresses) ? u.addresses : []
+    
+    let defaultAddr = addresses.find((a: any) => a.isDefault === true || String(a.isDefault) === 'true')
+    
+    if (!defaultAddr && addresses.length > 0) {
+      defaultAddr = addresses[0]
     }
     
-    setFormData(prev => ({
-      ...prev,
-      fullName: u.name || prev.fullName,
-      email: u.email || prev.email,
-      phone: u.mobile || prev.phone,
-      address: defaultAddr?.address || u.address || prev.address,
-      city: defaultAddr?.city || u.city || prev.city,
-      state: defaultAddr?.state || u.state || prev.state,
-      pincode: defaultAddr?.pincode || u.pincode || prev.pincode,
-      country: defaultAddr?.country || u.country || prev.country,
-    }))
+    setFormData(prev => {
+      const newAddress = defaultAddr?.address || u.address || prev.address
+      const newCity = defaultAddr?.city || u.city || prev.city
+      const newState = defaultAddr?.state || u.state || prev.state
+      const newPincode = defaultAddr?.pincode || u.pincode || prev.pincode
+      const newCountry = defaultAddr?.country || u.country || prev.country
+      
+      return {
+        ...prev,
+        fullName: u.name || prev.fullName,
+        email: u.email || prev.email,
+        phone: u.mobile || u.phone || prev.phone,
+        address: newAddress,
+        city: newCity,
+        state: newState,
+        pincode: newPincode,
+        country: newCountry,
+      }
+    })
     try {
       const st = defaultAddr?.state || u.state
       if (st) localStorage.setItem('deliverToState', st)

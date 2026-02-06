@@ -11,6 +11,14 @@ const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductM
 const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 
 export default function Page() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
     useCart();
   const searchParams = useSearchParams();
@@ -23,7 +31,7 @@ export default function Page() {
   };
 
   return (
-    <Suspense fallback={<Loading/>}>
+    <>
       {!search && <AdCarousel />}
       <ProductGrid
         onProductClick={setSelectedProduct}
@@ -46,6 +54,6 @@ export default function Page() {
           onRemoveItem={removeFromCart}
         />
       )}
-    </Suspense>
+    </>
   );
 }
