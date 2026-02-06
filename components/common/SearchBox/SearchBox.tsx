@@ -174,8 +174,17 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         value={value}
         placeholder={placeholder}
         onChange={(e) => {
-          onChange(e.target.value);
+          const val = e.target.value;
+          onChange(val);
           setShowSuggestions(true);
+          
+          if (val === "" && typeof window !== "undefined") {
+            const url = new URL(window.location.href);
+            if (url.searchParams.has("search")) {
+              url.searchParams.delete("search");
+              router.push(url.pathname + url.search);
+            }
+          }
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && onSearch) {
