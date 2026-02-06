@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { useSession, signIn, signOut } from "next-auth/react"
 
@@ -159,7 +159,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
-  const logout = (redirectPath: string = "/login") => {
+  const logout = useCallback((redirectPath: string = "/login") => {
     signOut({ redirect: false })
     router.push(redirectPath)
     setUser(null)
@@ -168,7 +168,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.removeItem("firgomart_user")
       localStorage.removeItem("admin_last_activity")
     }
-  }
+  }, [router])
+
+  useEffect(() => {
+    if (!user || String(user.role || "").toLowerCase() !== "admin") return
+
+    const TIMEOUT_MS = 15 * 60 * 1000
+    let timeoutId: NodeJS.Timeout
+
+    const handleLogout = () => {
+      logout("/login")
+    }
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      timeoutId = setTimeout(handleLogout, TIMEOUT_MS)
+    }
+
+    resetTimer()
+
+    const events = ["mousedown", "mousemove", "keydown", "click", "scroll", "touchstart"]
+    
+    events.forEach(event => document.addEventListener(event, resetTimer))
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId)
+      events.forEach(event => document.removeEventListener(event, resetTimer))
+    }
+  }, [user, logout])
 
   const updateUser = async (updatedData: Partial<User>) => {
     if (!user) return
