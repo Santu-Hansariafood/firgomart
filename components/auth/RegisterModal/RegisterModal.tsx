@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, useRef, ChangeEvent, FormEvent, KeyboardEvent, ClipboardEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff 
+  X, Mail, Lock, User, Phone, MapPin, Eye, EyeOff, CheckCircle 
 } from 'lucide-react'
 import { signIn } from 'next-auth/react'
 import dynamic from 'next/dynamic'
@@ -56,12 +56,13 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
   const [loading, setLoading] = useState(false)
-  const [emailOtp, setEmailOtp] = useState('')
+  const [emailOtp, setEmailOtp] = useState<string[]>(new Array(6).fill(''))
   const [emailOtpSent, setEmailOtpSent] = useState(false)
   const [emailOtpVerified, setEmailOtpVerified] = useState(false)
   const [emailOtpLoading, setEmailOtpLoading] = useState(false)
   const [emailOtpError, setEmailOtpError] = useState<string | null>(null)
   const [checking, setChecking] = useState<string | null>(null)
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const isEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)
   const isMobile = (val: string) => /^\d{10}$/.test(val.replace(/\D/g, ''))
@@ -188,7 +189,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
   }
 
   const verifyEmailOtp = async () => {
-    const code = emailOtp.trim()
+    const code = emailOtp.join('')
     if (!/^\d{6}$/.test(code)) {
       setEmailOtpError('Enter the 6-digit OTP sent to your email')
       return
@@ -224,6 +225,39 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       setEmailOtpVerified(false)
     } finally {
       setEmailOtpLoading(false)
+    }
+  }
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length > 1) value = value[value.length - 1]
+    if (!/^\d*$/.test(value)) return
+
+    const newOtp = [...emailOtp]
+    newOtp[index] = value
+    setEmailOtp(newOtp)
+
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (index: number, e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !emailOtp[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus()
+    }
+  }
+
+  const handleOtpPaste = (e: ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const pastedData = e.clipboardData.getData('text').slice(0, 6).replace(/\D/g, '')
+    if (pastedData) {
+      const newOtp = [...emailOtp]
+      pastedData.split('').forEach((char, i) => {
+        if (i < 6) newOtp[i] = char
+      })
+      setEmailOtp(newOtp)
+      const nextIndex = Math.min(pastedData.length, 5)
+      otpRefs.current[nextIndex]?.focus()
     }
   }
 
@@ -285,43 +319,69 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="fixed inset-0 z-[100] flex sm:items-center sm:justify-center bg-[var(--background)] sm:bg-black/50 p-0 sm:p-4 overflow-y-auto sm:overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-[var(--foreground)/20]"
+          className="bg-[var(--background)] text-[color:var(--foreground)] sm:rounded-2xl shadow-none sm:shadow-2xl w-full min-h-full sm:min-h-0 sm:h-auto sm:max-w-2xl sm:max-h-[90vh] flex flex-col border-0 sm:border border-[var(--foreground)/10]"
         >
-          <div className="bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-6 relative shrink-0">
+          <div className="p-6 sm:p-8 pb-0 relative shrink-0">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
+              className="absolute top-4 right-4 text-[var(--foreground)/50] hover:text-[color:var(--foreground)] hover:bg-[var(--foreground)/5] rounded-full p-2 transition-colors z-10"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6 sm:w-5 sm:h-5" />
             </button>
-            <Title level={2} className="text-white">
-              Create Account
-            </Title>
+            
+            <div className="space-y-2 mb-6 mt-4 sm:mt-0">
+              <Title level={2} className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
+                Create Account
+              </Title>
+              <Paragraph className="text-[var(--foreground)/60]">
+                Join us to start your shopping journey
+              </Paragraph>
+            </div>
 
-            <Paragraph className="text-white/80 mt-1">
-              Step {step} of 2 — {step === 1 ? 'Account Details' : 'Personal Information'}
-            </Paragraph>
-
-            <div className="flex mt-4 space-x-2">
-              <div className={`h-1 flex-1 rounded-full ${step >= 1 ? 'bg-white' : 'bg-brand-gray'}`} />
-              <div className={`h-1 flex-1 rounded-full ${step >= 2 ? 'bg-white' : 'bg-brand-gray'}`} />
+            <div className="relative">
+              <div className="absolute top-1/2 left-0 w-full h-1 bg-[var(--foreground)/5] -translate-y-1/2 rounded-full"></div>
+              <div className="relative flex justify-between items-center max-w-xs mx-auto">
+                <div className="flex flex-col items-center gap-2">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                    step >= 1 
+                      ? 'bg-linear-to-r from-brand-purple to-brand-red text-white shadow-lg shadow-brand-purple/20 scale-110' 
+                      : 'bg-[var(--foreground)/10] text-[var(--foreground)/40]'
+                  }`}>1</div>
+                  <span className={`text-xs font-medium transition-colors duration-300 ${
+                    step >= 1 ? 'text-brand-purple' : 'text-[var(--foreground)/40]'
+                  }`}>Account</span>
+                </div>
+                <div className={`flex-1 h-0.5 mx-4 transition-colors duration-500 ${
+                    step >= 2 ? 'bg-brand-purple' : 'bg-[var(--foreground)/10]'
+                  }`}></div>
+                <div className="flex flex-col items-center gap-2">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                    step >= 2 
+                      ? 'bg-linear-to-r from-brand-purple to-brand-red text-white shadow-lg shadow-brand-purple/20 scale-110' 
+                      : 'bg-[var(--foreground)/10] text-[var(--foreground)/40]'
+                  }`}>2</div>
+                  <span className={`text-xs font-medium transition-colors duration-300 ${
+                    step >= 2 ? 'text-brand-purple' : 'text-[var(--foreground)/40]'
+                  }`}>Personal</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1 sm:flex-none">
             {step === 1 ? (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                    First Name *
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                    First Name <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                  <div className="relative group">
+                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
                     <input
                       type="text"
                       name="name"
@@ -332,21 +392,23 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         if (errors.name) setErrors(prev => ({ ...prev, name: '' }))
                       }}
                       placeholder="Enter your first name"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                        errors.name ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                      className={`w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                        errors.name 
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                          : 'border-[var(--foreground)/10] focus:border-brand-purple'
                       }`}
                     />
                   </div>
-                  {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                  {errors.name && <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.name}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                    Email Address *
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                    Email Address <span className="text-red-500">*</span>
                   </label>
-                  <div className="space-y-2">
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                  <div className="space-y-3">
+                    <div className="relative group">
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
                       <input
                         type="email"
                         name="email"
@@ -358,56 +420,72 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         }}
                         placeholder="you@example.com"
                         onBlur={() => checkExists('email', formData.email)}
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                          errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                        className={`w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                          errors.email 
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                            : 'border-[var(--foreground)/10] focus:border-brand-purple'
                         }`}
                       />
                     </div>
                     {checking === 'email' && (
-                      <p className="text-blue-500 text-xs mt-1">Checking availability...</p>
+                      <p className="text-brand-purple text-xs mt-1 animate-pulse ml-1">Checking availability...</p>
                     )}
-                    <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-                      <div className="flex-1 flex gap-2 items-center">
-                        <input
-                          type="text"
-                          value={emailOtp}
-                          onChange={e => setEmailOtp(e.target.value)}
-                          maxLength={6}
-                          placeholder="Enter 6-digit OTP"
-                          className="flex-1 px-3 py-2 border rounded-lg bg-[var(--background)] text-[color:var(--foreground)] border-[var(--foreground)/20]"
-                        />
-                        <button
+                    <div className="flex flex-col gap-4">
+                      <div className="flex gap-2 justify-between max-w-sm w-full">
+                        {[0, 1, 2, 3, 4, 5].map((index) => (
+                          <input
+                            key={index}
+                            ref={(el) => {
+                                if (el) otpRefs.current[index] = el
+                            }}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={1}
+                            value={emailOtp[index] || ''}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                            onPaste={handleOtpPaste}
+                            className="w-9 h-11 sm:w-12 sm:h-14 text-center text-lg sm:text-xl font-bold border rounded-xl bg-[var(--background)] text-[color:var(--foreground)] border-[var(--foreground)/10] focus:border-brand-purple focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all p-0"
+                          />
+                        ))}
+                      </div>
+                      
+                      <div className="flex gap-3">
+                         <button
                           type="button"
                           onClick={verifyEmailOtp}
-                          disabled={emailOtpLoading || emailOtp.length < 6}
-                          className="px-3 py-2 text-xs font-medium rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={emailOtpLoading || emailOtp.join('').length < 6}
+                          className="flex-1 px-6 py-2.5 text-sm font-medium rounded-xl bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-green-600/20"
                         >
                           {emailOtpLoading ? 'Verifying...' : 'Verify OTP'}
                         </button>
+                        <button
+                          type="button"
+                          onClick={requestEmailOtp}
+                          disabled={emailOtpLoading || !formData.email}
+                          className="flex-1 px-6 py-2.5 text-sm font-medium rounded-xl bg-brand-purple/10 text-brand-purple hover:bg-brand-purple hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-brand-purple/20 whitespace-nowrap"
+                        >
+                          {emailOtpLoading ? 'Sending...' : emailOtpSent ? 'Resend OTP' : 'Send OTP'}
+                        </button>
                       </div>
-                      <button
-                        type="button"
-                        onClick={requestEmailOtp}
-                        disabled={emailOtpLoading || !formData.email}
-                        className="px-3 py-2 text-xs font-medium rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {emailOtpLoading ? 'Sending...' : emailOtpSent ? 'Resend OTP' : 'Send OTP'}
-                      </button>
                     </div>
                     {emailOtpVerified && !emailOtpError && (
-                      <p className="text-green-600 text-xs">Email verified via OTP.</p>
+                      <div className="flex items-center gap-2 text-green-600 text-sm bg-green-500/10 p-2 rounded-lg ml-1">
+                        <CheckCircle className="w-4 h-4" />
+                        Email verified successfully
+                      </div>
                     )}
-                    {emailOtpError && <p className="text-red-500 text-xs">{emailOtpError}</p>}
+                    {emailOtpError && <p className="text-red-500 text-sm ml-1">{emailOtpError}</p>}
                   </div>
-                  {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+                  {errors.email && <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.email}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                    Mobile Number *
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                    Mobile Number <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                  <div className="relative group">
+                    <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
                     <input
                       type="tel"
                       name="mobile"
@@ -419,57 +497,61 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                       }}
                       onBlur={() => checkExists('mobile', formData.mobile)}
                       placeholder="10-digit mobile number"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                        errors.mobile ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                      className={`w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                        errors.mobile 
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                          : 'border-[var(--foreground)/10] focus:border-brand-purple'
                       }`}
                     />
                   </div>
                   {checking === 'mobile' && (
-                    <p className="text-blue-500 text-xs mt-1">Checking availability...</p>
+                    <p className="text-brand-purple text-xs mt-1 animate-pulse ml-1">Checking availability...</p>
                   )}
-                  {errors.mobile && <p className="text-red-500 text-sm mt-1">{errors.mobile}</p>}
+                  {errors.mobile && <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.mobile}</p>}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {[{
-                    label: 'Password *',
+                    label: 'Password',
                     name: 'password',
                     show: showPassword,
                     toggle: () => setShowPassword(!showPassword),
-                    placeholder: 'Min 6 characters'
+                    placeholder: 'Min 6 chars'
                   }, {
-                    label: 'Confirm Password *',
+                    label: 'Confirm Password',
                     name: 'confirmPassword',
                     show: showConfirmPassword,
                     toggle: () => setShowConfirmPassword(!showConfirmPassword),
                     placeholder: 'Re-enter password'
                   }].map(({ label, name, show, toggle, placeholder }) => (
                     <div key={name}>
-                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                        {label}
+                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                        {label} <span className="text-red-500">*</span>
                       </label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
+                      <div className="relative group">
+                        <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
                         <input
                           type={show ? 'text' : 'password'}
                           name={name}
                           value={formData[name as 'password' | 'confirmPassword']}
                           onChange={handleChange}
                           placeholder={placeholder}
-                          className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                            errors[name] ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                          className={`w-full pl-11 pr-12 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                            errors[name] 
+                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                              : 'border-[var(--foreground)/10] focus:border-brand-purple'
                           }`}
                         />
                         <button
                           type="button"
                           onClick={toggle}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[color:var(--foreground)]"
+                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--foreground)/40] hover:text-[color:var(--foreground)] transition-colors"
                         >
                           {show ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
                       </div>
                       {errors[name] && (
-                        <p className="text-red-500 text-sm mt-1">{errors[name]}</p>
+                        <p className="text-red-500 text-sm mt-1.5 ml-1">{errors[name]}</p>
                       )}
                     </div>
                   ))}
@@ -477,37 +559,40 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all"
+                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4"
                 >
                   Next Step
                 </button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                    Address *
+                  <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                    Address <span className="text-red-500">*</span>
                   </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 w-5 h-5 text-[var(--foreground)/50]" />
+                  <div className="relative group">
+                    <MapPin className="absolute left-3.5 top-3.5 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
                     <textarea
                       name="address"
                       value={formData.address}
                       onChange={handleChange}
                       rows={3}
                       placeholder="Street address, apartment, suite, etc."
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                          errors.address ? 'border-red-500' : 'border-[var(--foreground)/20]'
-                        }`}
-                      />
+                      className={`w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                        errors.address 
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                          : 'border-[var(--foreground)/10] focus:border-brand-purple'
+                      }`}
+                    />
                   </div>
-                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+                  {errors.address && <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.address}</p>}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   {(['city', 'state', 'pincode'] as Array<keyof Pick<RegisterFormData, 'city' | 'state' | 'pincode'>>).map((field) => (
                     <div key={field}>
-                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2 capitalize">
-                        {field} *
+                      <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1 capitalize">
+                        {field} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -515,87 +600,115 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                         value={formData[field]}
                         onChange={handleChange}
                         placeholder={field === 'pincode' ? '6-digit pincode' : field}
-                        className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                          errors[field] ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                        className={`w-full px-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                          errors[field] 
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                            : 'border-[var(--foreground)/10] focus:border-brand-purple'
                         }`}
                       />
                       {errors[field] && (
-                        <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
+                        <p className="text-red-500 text-sm mt-1.5 ml-1">{errors[field]}</p>
                       )}
                     </div>
                   ))}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
-                    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                      Date of Birth *
+                    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                      Date of Birth <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="date"
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
-                        errors.dateOfBirth ? 'border-red-500' : 'border-[var(--foreground)/20]'
+                      className={`w-full px-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] ${
+                        errors.dateOfBirth 
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                          : 'border-[var(--foreground)/10] focus:border-brand-purple'
                       }`}
                     />
                     {errors.dateOfBirth && (
-                      <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>
+                      <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.dateOfBirth}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                      Gender *
+                    <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                      Gender <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      name="gender"
-                      value={formData.gender}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] ${
-                        errors.gender ? 'border-red-500' : 'border-[var(--foreground)/20]'
-                      }`}
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] appearance-none ${
+                          errors.gender 
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                            : 'border-[var(--foreground)/10] focus:border-brand-purple'
+                        }`}
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg className="w-4 h-4 text-[var(--foreground)/40]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
                     {errors.gender && (
-                      <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+                      <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.gender}</p>
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3">
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-6">
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="flex-1 bg-[var(--foreground)/10] text-[color:var(--foreground)] py-3 rounded-lg font-medium hover:bg-[var(--foreground)/15] transition-colors"
+                    className="flex-1 px-6 py-4 rounded-xl font-medium border border-[var(--foreground)/10] hover:bg-[var(--foreground)/5] transition-colors text-[color:var(--foreground)]"
                   >
                     Back
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-linear-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 bg-linear-to-r from-brand-purple to-brand-red text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                    {loading ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        Creating Account...
+                      </span>
+                    ) : 'Create Account'}
                   </button>
                 </div>
               </div>
             )}
-            <div className="text-center pt-4 border-t border-[var(--foreground)/20]">
-              <Paragraph className="text-[var(--foreground)/70]">
-                Already have an account?{' '}
-                <button
-                  type="button"
-                  onClick={onSwitchToLogin}
-                  className="text-brand-purple hover:text-brand-red font-medium"
-                >
-                  Sign in
-                </button>
-              </Paragraph>
 
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[var(--foreground)/10]"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-[var(--background)] text-[var(--foreground)/50]">
+                  Already have an account?
+                </span>
+              </div>
+            </div>
+
+            <div className="text-center pb-2">
+              <button
+                type="button"
+                onClick={onSwitchToLogin}
+                className="text-brand-purple hover:text-brand-red font-semibold transition-colors hover:underline decoration-2 underline-offset-4"
+              >
+                Sign in instead
+              </button>
             </div>
           </form>
         </motion.div>

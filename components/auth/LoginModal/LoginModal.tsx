@@ -116,97 +116,113 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-2 sm:p-6">
+      <div className="fixed inset-0 z-[100] flex sm:items-center sm:justify-center bg-[var(--background)] sm:bg-black/50 p-0 sm:p-4 overflow-y-auto sm:overflow-hidden">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-md bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/20]"
+          className="w-full min-h-full sm:min-h-0 sm:h-auto sm:max-w-md bg-[var(--background)] text-[color:var(--foreground)] sm:rounded-2xl shadow-none sm:shadow-2xl flex flex-col justify-center sm:justify-start border-0 sm:border border-[var(--foreground)/10]"
         >
-          <div className="relative bg-linear-to-r from-brand-purple to-brand-red p-4 sm:p-6">
+          <div className="p-6 sm:p-8 pb-0 relative shrink-0">
             <button
               onClick={onClose}
               aria-label="Close modal"
-              className="absolute top-4 right-4 text-white hover:bg-white/20 rounded-full p-2 transition"
+              className="absolute top-4 right-4 text-[var(--foreground)/50] hover:text-[color:var(--foreground)] hover:bg-[var(--foreground)/5] rounded-full p-2 transition z-10"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6 sm:w-5 sm:h-5" />
             </button>
-            <Title level={2} className="text-white">
-              Welcome Back
-            </Title>
 
-            <Paragraph className="text-white/80 mt-1 text-sm sm:text-base">
-              Sign in to continue shopping
-            </Paragraph>
+            <div className="text-center space-y-2">
+              <Title level={2} className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
+                Welcome Back
+              </Title>
+              <Paragraph className="text-[var(--foreground)/60]">
+                Sign in to continue your shopping journey
+              </Paragraph>
+            </div>
           </div>
-          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 overflow-y-auto">
+
+          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
             {errors.submit && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-500 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-500/10 border border-red-500/30 text-red-500 px-4 py-3 rounded-xl text-sm flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
                 {errors.submit}
               </div>
             )}
-            <div>
-              <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                Email or Mobile Number
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
-                <input
-                  type="text"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                    errors.email ? 'border-red-500' : 'border-[var(--foreground)/20]'
-                  }`}
-                  placeholder="Email or Mobile Number"
-                />
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                  Email or Mobile Number
+                </label>
+                <div className="relative group">
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
+                  <input
+                    type="text"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full pl-11 pr-4 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                      errors.email 
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-[var(--foreground)/10] focus:border-brand-purple'
+                    }`}
+                    placeholder="Enter your email or mobile"
+                  />
+                </div>
+                {errors.email && <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.email}</p>}
               </div>
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+
+              <div>
+                <label className="block text-sm font-medium text-[color:var(--foreground)] mb-1.5 ml-1">
+                  Password
+                </label>
+                <div className="relative group">
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full pl-11 pr-12 py-3.5 border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/30] ${
+                      errors.password 
+                        ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' 
+                        : 'border-[var(--foreground)/10] focus:border-brand-purple'
+                    }`}
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(prev => !prev)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--foreground)/40] hover:text-[color:var(--foreground)] transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1.5 ml-1">{errors.password}</p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-[color:var(--foreground)] mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/50]" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-purple bg-[var(--background)] text-[color:var(--foreground)] placeholder:text-[var(--foreground)/50] ${
-                    errors.password ? 'border-red-500' : 'border-[var(--foreground)/20]'
-                  }`}
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(prev => !prev)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--foreground)/50] hover:text-[color:var(--foreground)]"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 text-brand-purple border-[var(--foreground)/20] rounded focus:ring-brand-purple"
-                />
-                <span className="ml-2 text-sm text-[var(--foreground)/70]">Remember me</span>
+            <div className="flex items-center justify-between pt-2">
+              <label className="flex items-center cursor-pointer group">
+                <div className="relative flex items-center">
+                  <input
+                    type="checkbox"
+                    className="peer sr-only"
+                  />
+                  <div className="w-5 h-5 border-2 border-[var(--foreground)/20] rounded transition-all peer-checked:bg-brand-purple peer-checked:border-brand-purple group-hover:border-brand-purple/50"></div>
+                  <svg className="absolute w-3.5 h-3.5 text-white left-1 top-1 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <span className="ml-2 text-sm text-[var(--foreground)/70] group-hover:text-[color:var(--foreground)] transition-colors">Remember me</span>
               </label>
               <button
                 type="button"
                 onClick={onSwitchToForgot}
-                className="text-sm text-brand-purple hover:text-brand-red font-medium"
+                className="text-sm font-medium text-brand-purple hover:text-brand-red transition-colors"
               >
                 Forgot Password?
               </button>
@@ -215,22 +231,35 @@ const LoginModal: React.FC<LoginModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Signing in...
+                </span>
+              ) : 'Sign In'}
             </button>
 
-            <div className="text-center pt-4 border-t border-[var(--foreground)/20]">
-              <Paragraph className="text-sm text-[var(--foreground)/70]">
-                Don’t have an account?{' '}
-                <button
-                  type="button"
-                  onClick={onSwitchToRegister}
-                  className="text-brand-purple hover:text-brand-red font-medium"
-                >
-                  Sign up
-                </button>
-              </Paragraph>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[var(--foreground)/10]"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-[var(--background)] text-[var(--foreground)/50]">
+                  New to our platform?
+                </span>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={onSwitchToRegister}
+                className="text-brand-purple hover:text-brand-red font-semibold transition-colors hover:underline decoration-2 underline-offset-4"
+              >
+                Create an account
+              </button>
             </div>
           </form>
         </motion.div>
