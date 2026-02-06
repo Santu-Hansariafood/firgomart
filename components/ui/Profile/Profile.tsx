@@ -4,7 +4,8 @@ import { useState, ChangeEvent, useEffect, type SVGProps } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, X } from "lucide-react";
+import { User, Mail, Phone, MapPin, Calendar, Edit2, Save, X, ArrowLeft, LogOut, Plus } from "lucide-react";
+import AnimatedButton from "@/components/ui/AnimatedButton";
 
 interface UserData {
   name?: string;
@@ -164,14 +165,14 @@ const Profile = () => {
     <div className="min-h-screen bg-[var(--background)] py-8">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-4">
-          <button
-            type="button"
+          <AnimatedButton
+            variant="secondary"
             onClick={() => router.push("/")}
-            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[color:var(--foreground)]"
+            className="gap-2 !py-2 !px-3"
           >
-            <span className="text-lg">←</span>
+            <ArrowLeft className="w-4 h-4" />
             <span>Back to Home</span>
-          </button>
+          </AnimatedButton>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -192,18 +193,17 @@ const Profile = () => {
                 </div>
               </div>
               {!isEditing && (
-                <button
+                <AnimatedButton
                   onClick={() => setIsEditing(true)}
-                  className="w-full md:w-auto flex items-center justify-center space-x-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 rounded-lg transition-colors shrink-0 mt-2 md:mt-0"
+                  className="w-full md:w-auto gap-2 shrink-0 mt-2 md:mt-0"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span>Edit Profile</span>
-                </button>
+                </AnimatedButton>
               )}
             </div>
           </div>
-
-          <div className="p-8">
+          <div className="p-6 sm:p-8">
             <div className="mb-6 p-4 border rounded-lg bg-[var(--background)] border-[var(--foreground)/10]">
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
@@ -339,33 +339,36 @@ const Profile = () => {
             </div>
 
             {isEditing && (
-              <div className="flex space-x-4 mt-8">
-                <button
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                <AnimatedButton
                   onClick={handleSave}
-                  className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-brand-purple to-purple-400 text-white py-3 rounded-lg font-medium hover:from-purple-700 hover:to-purple-500 transition-all"
+                  className="flex-1 gap-2"
                 >
                   <Save className="w-5 h-5" />
                   <span>Save Changes</span>
-                </button>
-                <button
+                </AnimatedButton>
+                <AnimatedButton
+                  variant="secondary"
                   onClick={handleCancel}
-                  className="flex-1 flex items-center justify-center space-x-2 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  className="flex-1 gap-2"
                 >
                   <X className="w-5 h-5" />
                   <span>Cancel</span>
-                </button>
+                </AnimatedButton>
               </div>
             )}
 
             <div className="mt-8 pt-8 border-t border-gray-200">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
                 <h2 className="text-xl font-heading font-bold text-[color:var(--foreground)]">Saved Addresses</h2>
-                <button
+                <AnimatedButton
+                  variant="outline"
                   onClick={() => setShowAddAddress(!showAddAddress)}
-                  className="w-full sm:w-auto px-4 py-2 bg-purple-50 text-brand-purple hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors"
+                  className="w-full sm:w-auto gap-2 text-sm"
                 >
-                  {showAddAddress ? "Cancel" : "Add New Address"}
-                </button>
+                   {showAddAddress ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  <span>{showAddAddress ? "Cancel" : "Add New Address"}</span>
+                </AnimatedButton>
               </div>
 
               {showAddAddress && (
@@ -421,13 +424,13 @@ const Profile = () => {
                     />
                     <label htmlFor="isDefault" className="text-sm text-[color:var(--foreground)]">Set as default address</label>
                   </div>
-                  <button
+                  <AnimatedButton
                     onClick={handleAddAddress}
                     disabled={!newAddress.address || !newAddress.city || !newAddress.pincode}
-                    className="w-full py-3 bg-brand-purple text-white rounded-lg font-medium hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                    className="w-full"
                   >
                     Save Address
-                  </button>
+                  </AnimatedButton>
                 </div>
               )}
 
@@ -473,12 +476,14 @@ const Profile = () => {
             </div>
 
             <div className="mt-8 pt-8 border-t border-gray-200">
-              <button
+              <AnimatedButton
+                variant="ghost"
                 onClick={handleLogout}
-                className="w-full bg-red-50 text-red-600 py-3 rounded-lg font-medium hover:bg-red-100 transition-colors"
+                className="w-full !text-red-600 !bg-red-50 hover:!bg-red-100"
               >
+                <LogOut className="w-5 h-5 mr-2" />
                 Logout
-              </button>
+              </AnimatedButton>
             </div>
           </div>
         </motion.div>

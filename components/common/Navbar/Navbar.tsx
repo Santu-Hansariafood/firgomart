@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
           </Link>
         </p>
       </div>
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-[var(--foreground)/5] shadow-sm transition-all duration-300 supports-[backdrop-filter]:bg-background/60">
+      <nav className="sticky top-0 z-50 bg-background border-b border-[var(--foreground)/5] shadow-sm transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20 gap-4">
             <div className="flex items-center gap-2 sm:gap-4">
@@ -169,7 +169,7 @@ const Navbar: React.FC = () => {
                 onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
                 placeholder="Search for products, brands and more..."
                 enableSuggestions={true}
-                className="shadow-sm hover:shadow-md transition-all duration-300"
+                className="transition-all duration-300"
               />
             </div>
             <div className="flex items-center gap-1 sm:gap-2">
@@ -330,13 +330,12 @@ const Navbar: React.FC = () => {
             >
                <div className="flex flex-col h-full">
                  <div className="p-5 flex items-center justify-between border-b border-foreground/5">
-                   <div className="flex items-center gap-3">
-                     <div className="w-9 h-9 relative rounded-lg overflow-hidden shadow-sm">
-                       <Image src="/logo/firgomart.png" alt="Logo" fill className="object-contain" />
-                     </div>
-                     <span className="font-bold text-lg tracking-tight">Firgomart</span>
-                   </div>
-                   <button onClick={() => setMobileMenuOpen(false)} className="p-2 hover:bg-foreground/5 rounded-full transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-28 h-10 relative">
+                        <Image src="/logo/firgomart.png" alt="Logo" fill className="object-contain" />
+                      </div>
+                    </div>
+                    <button onClick={() => setMobileMenuOpen(false)} className="p-2 hover:bg-foreground/5 rounded-full transition-colors">
                      <X className="w-5 h-5" />
                    </button>
                  </div>
