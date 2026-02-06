@@ -195,7 +195,7 @@ const Profile = () => {
               {!isEditing && (
                 <AnimatedButton
                   onClick={() => setIsEditing(true)}
-                  className="w-full md:w-auto gap-2 shrink-0 mt-2 md:mt-0"
+                  className="w-full md:w-auto gap-2 shrink-0 mt-2 md:mt-0 !bg-white/20 !text-white !border !border-white/30 backdrop-blur-md hover:!bg-white/30 shadow-none"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span>Edit Profile</span>
@@ -477,12 +477,12 @@ const Profile = () => {
 
             <div className="mt-8 pt-8 border-t border-gray-200">
               <AnimatedButton
-                variant="ghost"
+                variant="outline"
                 onClick={handleLogout}
-                className="w-full !text-red-600 !bg-red-50 hover:!bg-red-100"
+                className="w-full !border-red-200 !text-red-600 hover:!bg-red-50 hover:!border-red-300 transition-all"
               >
                 <LogOut className="w-5 h-5 mr-2" />
-                Logout
+                Log Out
               </AnimatedButton>
             </div>
           </div>

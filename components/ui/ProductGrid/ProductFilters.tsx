@@ -115,14 +115,13 @@ export function FilterControls({
         )}
       </div>
 
-      {/* Filters Button - Mobile: Lower Layer (Order 2), Desktop: Left side (Order 1) */}
       <button
         onClick={() => setIsFilterOpen((p) => !p)}
         className={`relative order-2 sm:order-1 flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all w-full sm:w-auto
           ${
             isFilterOpen || hasFilters
               ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
-              : "bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 hover:bg-gray-50 sm:hover:bg-foreground/5 dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"
+              : "bg-purple-500 sm:bg-background border border-gray-200 sm:border-foreground/20 hover:bg-gray-50 sm:hover:bg-foreground/5 dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"
           }`}
       >
         <SlidersHorizontal className="w-4 h-4" />

@@ -196,7 +196,7 @@ const Navbar: React.FC = () => {
               </button>
               <button
                 onClick={() => setShowCart(true)}
-                className="relative p-2 text-foreground/80 hover:text-brand-purple hover:bg-foreground/5 rounded-full transition-colors group"
+                className="hidden md:flex relative p-2 text-foreground/80 hover:text-brand-purple hover:bg-foreground/5 rounded-full transition-colors group"
                 aria-label="Cart"
               >
                 <ShoppingCart className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -306,7 +306,7 @@ const Navbar: React.FC = () => {
                onChange={setSearchQuery}
                onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
                placeholder="Search essentials..."
-               className="shadow-none border-foreground/10 bg-foreground/5"
+               className="shadow-none border-foreground/10"
              />
           </div>
         </div>
