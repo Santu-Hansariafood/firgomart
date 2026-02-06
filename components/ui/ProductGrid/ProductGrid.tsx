@@ -372,9 +372,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
           <PriceCategoryBanner onSelectCategory={handlePriceCategorySelect} />
         </div>
 
-        <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-6 mb-10">
-          <div className="space-y-2 relative">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
+          <div className="space-y-2 relative w-full md:w-auto flex flex-col items-center md:items-start text-center md:text-left">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
                 Firgo
               </span>
@@ -385,7 +385,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                 Products
               </span>
             </h2>
-            <div className="flex items-center gap-3 text-sm text-foreground/60 font-medium">
+            <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-foreground/60 font-medium">
               <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple border border-brand-purple/20 shadow-sm backdrop-blur-sm">
                 {displayedProducts.length} Premium Items
               </span>

@@ -61,7 +61,7 @@ export function FilterControls({
       <div className="relative z-[70] order-1 sm:order-2 w-full sm:w-auto">
         <button
           onClick={() => setIsSortDropdownOpen((p) => !p)}
-          className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 sm:px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 text-sm font-medium hover:bg-gray-50 sm:hover:bg-foreground/5 transition-all shadow-sm sm:shadow-none dark:bg-gray-800/80 dark:border-gray-700/50 backdrop-blur-sm"
+          className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 sm:px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 text-sm font-medium hover:bg-gray-50 sm:hover:bg-foreground/5 transition-all shadow-sm sm:shadow-none dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"
         >
           <div className="flex items-center gap-2">
             <span className="text-gray-500 dark:text-gray-400 sm:text-foreground/70 text-xs sm:text-sm uppercase sm:normal-case font-bold sm:font-normal tracking-wider sm:tracking-normal">Sort by</span>
@@ -86,7 +86,7 @@ export function FilterControls({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute right-0 left-0 sm:left-auto mt-2 sm:mt-3 w-full sm:w-60 rounded-2xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-2xl overflow-hidden z-[80] dark:bg-background/90"
+            className="absolute right-0 left-0 sm:left-auto mt-2 sm:mt-3 w-full sm:w-60 rounded-2xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-2xl overflow-hidden z-[80] dark:bg-background/95 text-foreground"
           >
             {[
               ["relevance", "Relevance"],
@@ -101,7 +101,7 @@ export function FilterControls({
                   setIsSortDropdownOpen(false)
                   setPage(1)
                 }}
-                className={`w-full px-4 py-3 text-sm text-left transition-all
+                className={`w-full px-4 py-3 text-sm text-left transition-all text-foreground
                   ${
                     sortBy === value
                       ? "bg-brand-purple/10 text-brand-purple font-semibold dark:bg-brand-purple/20"
@@ -122,7 +122,7 @@ export function FilterControls({
           ${
             isFilterOpen || hasFilters
               ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
-              : "bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 hover:bg-gray-50 sm:hover:bg-foreground/5 dark:bg-gray-800/80 dark:border-gray-700/50 backdrop-blur-sm"
+              : "bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 hover:bg-gray-50 sm:hover:bg-foreground/5 dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"
           }`}
       >
         <SlidersHorizontal className="w-4 h-4" />
