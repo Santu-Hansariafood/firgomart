@@ -11,6 +11,8 @@ export type DropdownItem = {
 interface FilterControlsProps {
   isFilterOpen: boolean
   setIsFilterOpen: (v: boolean | ((prev: boolean) => boolean)) => void
+  activeFilterTab: string | null
+  setActiveFilterTab: (v: string | null) => void
   isSortDropdownOpen: boolean
   setIsSortDropdownOpen: (v: boolean | ((prev: boolean) => boolean)) => void
   sortBy: string
@@ -23,6 +25,7 @@ interface FilterControlsProps {
 }
 
 interface FilterPanelProps {
+  activeFilterTab: string | null
   minPrice: string
   setMinPrice: (v: string) => void
   maxPrice: string
@@ -41,6 +44,8 @@ interface FilterPanelProps {
 export function FilterControls({
   isFilterOpen,
   setIsFilterOpen,
+  activeFilterTab,
+  setActiveFilterTab,
   isSortDropdownOpen,
   setIsSortDropdownOpen,
   sortBy,
@@ -54,6 +59,16 @@ export function FilterControls({
   const hasFilters = Boolean(
     minPrice || maxPrice || minRating || selectedSize
   )
+
+  const handleMobileTabClick = (tab: string) => {
+    if (activeFilterTab === tab && isFilterOpen) {
+      setIsFilterOpen(false)
+      setActiveFilterTab(null)
+    } else {
+      setActiveFilterTab(tab)
+      setIsFilterOpen(true)
+    }
+  }
 
   return (
     <div className="relative z-[60] flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
@@ -115,9 +130,10 @@ export function FilterControls({
         )}
       </div>
 
+      {/* Desktop Filter Toggle Button */}
       <button
         onClick={() => setIsFilterOpen((p) => !p)}
-        className={`relative order-2 sm:order-1 flex items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all w-full sm:w-auto
+        className={`hidden sm:flex relative order-2 sm:order-1 items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all w-full sm:w-auto
           ${
             isFilterOpen || hasFilters
               ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
@@ -130,11 +146,42 @@ export function FilterControls({
           <span className="absolute top-3 right-4 sm:-top-1 sm:-right-1 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse border-2 border-white dark:border-gray-900 sm:border-none" />
         )}
       </button>
+
+      {/* Mobile Filter Tabs */}
+      <div className="flex sm:hidden order-2 overflow-x-auto gap-2 pb-1 scrollbar-hide">
+        {[
+            { id: 'price', label: 'Price' },
+            { id: 'size', label: 'Size' },
+            { id: 'rating', label: 'Rating' },
+        ].map((tab) => {
+            const isActive = activeFilterTab === tab.id && isFilterOpen
+            const isSelected = (tab.id === 'price' && (minPrice || maxPrice)) ||
+                             (tab.id === 'size' && selectedSize) ||
+                             (tab.id === 'rating' && minRating)
+
+            return (
+                <button
+                    key={tab.id}
+                    onClick={() => handleMobileTabClick(tab.id)}
+                    className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all border
+                        ${isActive 
+                            ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/20" 
+                            : isSelected
+                                ? "bg-brand-purple/10 text-brand-purple border-brand-purple/20"
+                                : "bg-white dark:bg-background border-gray-200 dark:border-foreground/20 text-foreground"
+                        }`}
+                >
+                    {tab.label}
+                </button>
+            )
+        })}
+      </div>
     </div>
   )
 }
 
 export function FilterPanel({
+  activeFilterTab,
   minPrice,
   setMinPrice,
   maxPrice,
@@ -157,85 +204,94 @@ export function FilterPanel({
       className="relative z-[50] rounded-3xl border border-foreground/10 bg-gradient-to-br from-background via-background to-foreground/5 shadow-2xl p-6 dark:from-background dark:to-foreground/10"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <FilterCard title="Price Range">
-          <div className="flex gap-3">
-            <InputBox
-              placeholder="Min"
-              value={minPrice}
-              onChange={(v) => {
-                setMinPrice(v)
-                setPage(1)
-              }}
-            />
-            <InputBox
-              placeholder="Max"
-              value={maxPrice}
-              onChange={(v) => {
-                setMaxPrice(v)
-                setPage(1)
-              }}
-            />
-          </div>
-        </FilterCard>
-
-        <FilterCard title="Size">
-          <div className="flex flex-wrap gap-2">
-            {(category ? getSizeOptionsForCategory(category) : allSizes).map(
-              (opt) => {
-                const val = String(opt.label)
-                const active = selectedSize === val
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setSelectedSize(active ? "" : val)
-                      setPage(1)
-                    }}
-                    className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all
-                      ${
-                        active
-                          ? "bg-brand-purple text-white shadow-lg shadow-purple-500/30 scale-105"
-                          : "bg-background border border-foreground/20 hover:border-brand-purple hover:scale-105 dark:bg-background/70"
-                      }`}
-                  >
-                    {opt.label}
-                  </button>
-                )
-              }
-            )}
-          </div>
-        </FilterCard>
-
-        <FilterCard title="Minimum Rating">
-          <div className="space-y-2">
-            {[4, 3, 2, 1].map((rating) => {
-              const active = minRating === rating
-              return (
-                <button
-                  key={rating}
-                  onClick={() => {
-                    setMinRating(active ? null : rating)
+        {/* Price Section */}
+        <div className={activeFilterTab && activeFilterTab !== 'price' ? 'hidden md:block' : ''}>
+            <FilterCard title="Price Range">
+            <div className="flex gap-3">
+                <InputBox
+                placeholder="Min"
+                value={minPrice}
+                onChange={(v) => {
+                    setMinPrice(v)
                     setPage(1)
-                  }}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all
-                    ${
-                      active
-                        ? "bg-brand-purple/10 text-brand-purple shadow-inner dark:text-brand-purple-400"
-                        : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
-                    }`}
-                >
-                  <span className="text-brand-purple text-lg">
-                    {"★".repeat(rating)}
-                    <span className="text-gray-400">
-                      {"★".repeat(5 - rating)}
+                }}
+                />
+                <InputBox
+                placeholder="Max"
+                value={maxPrice}
+                onChange={(v) => {
+                    setMaxPrice(v)
+                    setPage(1)
+                }}
+                />
+            </div>
+            </FilterCard>
+        </div>
+
+        {/* Size Section */}
+        <div className={activeFilterTab && activeFilterTab !== 'size' ? 'hidden md:block' : ''}>
+            <FilterCard title="Size">
+            <div className="flex flex-wrap gap-2">
+                {(category ? getSizeOptionsForCategory(category) : allSizes).map(
+                (opt) => {
+                    const val = String(opt.label)
+                    const active = selectedSize === val
+                    return (
+                    <button
+                        key={opt.id}
+                        onClick={() => {
+                        setSelectedSize(active ? "" : val)
+                        setPage(1)
+                        }}
+                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all
+                        ${
+                            active
+                            ? "bg-brand-purple text-white shadow-lg shadow-purple-500/30 scale-105"
+                            : "bg-background border border-foreground/20 hover:border-brand-purple hover:scale-105 dark:bg-background/70"
+                        }`}
+                    >
+                        {opt.label}
+                    </button>
+                    )
+                }
+                )}
+            </div>
+            </FilterCard>
+        </div>
+
+        {/* Rating Section */}
+        <div className={activeFilterTab && activeFilterTab !== 'rating' ? 'hidden md:block' : ''}>
+            <FilterCard title="Minimum Rating">
+            <div className="space-y-2">
+                {[4, 3, 2, 1].map((rating) => {
+                const active = minRating === rating
+                return (
+                    <button
+                    key={rating}
+                    onClick={() => {
+                        setMinRating(active ? null : rating)
+                        setPage(1)
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all
+                        ${
+                        active
+                            ? "bg-brand-purple/10 text-brand-purple shadow-inner dark:text-brand-purple-400"
+                            : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
+                        }`}
+                    >
+                    <span className="text-brand-purple text-lg">
+                        {"★".repeat(rating)}
+                        <span className="text-gray-400">
+                        {"★".repeat(5 - rating)}
+                        </span>
                     </span>
-                  </span>
-                  <span className="text-sm font-medium">& Up</span>
-                </button>
-              )
-            })}
-          </div>
-        </FilterCard>
+                    <span className="text-sm font-medium">& Up</span>
+                    </button>
+                )
+                })}
+            </div>
+            </FilterCard>
+        </div>
       </div>
 
       <div className="mt-6 flex justify-end">

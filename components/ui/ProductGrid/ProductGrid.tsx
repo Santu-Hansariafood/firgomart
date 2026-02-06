@@ -71,6 +71,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
   const [sortBy, setSortBy] = useState<string>('relevance')
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false)
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
+  const [activeFilterTab, setActiveFilterTab] = useState<string | null>(null)
   const [minPrice, setMinPrice] = useState<string>('')
   const [maxPrice, setMaxPrice] = useState<string>('')
   const [minRating, setMinRating] = useState<number | null>(null)
@@ -403,6 +404,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             <FilterControls
               isFilterOpen={isFilterOpen}
               setIsFilterOpen={setIsFilterOpen}
+              activeFilterTab={activeFilterTab}
+              setActiveFilterTab={setActiveFilterTab}
               isSortDropdownOpen={isSortDropdownOpen}
               setIsSortDropdownOpen={setIsSortDropdownOpen}
               sortBy={sortBy}
@@ -476,6 +479,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
         {isFilterOpen && (
           <div className="mb-8">
             <FilterPanel
+              activeFilterTab={activeFilterTab}
               minPrice={minPrice}
               setMinPrice={setMinPrice}
               maxPrice={maxPrice}
