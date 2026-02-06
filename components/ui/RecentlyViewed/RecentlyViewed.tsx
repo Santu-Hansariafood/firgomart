@@ -155,7 +155,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
                         </div>
                         {typeof product.rating === "number" && (
                         <div className="flex items-center space-x-1">
-                            <span className="text-yellow-500">★</span>
+                            <span className="text-brand-purple-500">★</span>
                             <span className="text-[10px] sm:text-sm text-foreground/60">{product.rating}</span>
                         </div>
                         )}

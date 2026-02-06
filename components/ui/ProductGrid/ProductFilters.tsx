@@ -220,11 +220,11 @@ export function FilterPanel({
                   className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all
                     ${
                       active
-                        ? "bg-yellow-400/20 text-yellow-700 shadow-inner dark:text-yellow-400"
+                        ? "bg-brand-purple/10 text-brand-purple shadow-inner dark:text-brand-purple-400"
                         : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
                     }`}
                 >
-                  <span className="text-yellow-500 text-lg">
+                  <span className="text-brand-purple text-lg">
                     {"★".repeat(rating)}
                     <span className="text-gray-400">
                       {"★".repeat(5 - rating)}

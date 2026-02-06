@@ -370,10 +370,12 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
 
                     {product.rating && (
                         <div className="absolute bottom-4 left-4 bg-black/70 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1">
-                            <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" /> 
-                            <span>{product.rating}</span>
-                            <span className="text-white/60 font-normal ml-1">({product.reviews ?? 0})</span>
-                        </div>
+                  <Star className="w-3.5 h-3.5 fill-brand-purple text-brand-purple" />
+                  <span>{product.rating}</span>
+                  <span className="text-white/60 font-normal ml-1">
+                    ({product.reviews ?? 0})
+                  </span>
+                </div>
                     )}
 
                     <button
@@ -648,7 +650,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                         <div className="flex gap-2 mb-4">
                           {[1, 2, 3, 4, 5].map((star) => (
                             <button key={star} onClick={() => setUserRating(star)} className="focus:outline-none">
-                              <Star className={`w-6 h-6 ${star <= userRating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/20 dark:text-white/20'}`} />
+                              <Star className={`w-6 h-6 ${star <= userRating ? 'fill-brand-purple text-brand-purple' : 'text-foreground/20 dark:text-white/20'}`} />
                             </button>
                           ))}
                         </div>
@@ -697,7 +699,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                             </div>
                             <div className="flex mb-2">
                               {Array.from({ length: 5 }).map((_, i) => (
-                                <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/20 dark:text-white/20'}`} />
+                                <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-brand-purple text-brand-purple' : 'text-foreground/20 dark:text-white/20'}`} />
                               ))}
                             </div>
                             <p className="text-foreground/80 dark:text-gray-300 text-sm">{review.comment}</p>

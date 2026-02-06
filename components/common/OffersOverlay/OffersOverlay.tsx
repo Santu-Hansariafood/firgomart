@@ -494,7 +494,7 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                                         </div>
                                         {product.rating && (
                                             <div className="flex items-center gap-1 mb-3">
-                                            <div className="flex text-yellow-400 text-xs">
+                                            <div className="flex text-brand-purple text-xs">
                                                 {"★".repeat(Math.round(product.rating))}
                                                 <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating))}</span>
                                             </div>

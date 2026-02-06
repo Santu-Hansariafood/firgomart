@@ -650,10 +650,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                         <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
-                    {typeof product.rating === "number" && (
-                      <div className="flex items-center gap-1 bg-yellow-400/10 px-1.5 py-0.5 rounded-md border border-yellow-400/20">
-                        <span className="text-yellow-500 text-[10px]">★</span>
-                        <span className="text-xs font-bold text-yellow-600">{product.rating}</span>
+                    {product.rating && (
+                      <div className="flex items-center gap-1 mb-3">
+                        <div className="flex text-brand-purple text-xs">
+                          {"★".repeat(Math.round(product.rating))}
+                          <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating))}</span>
+                        </div>
+                        <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
                       </div>
                     )}
                   </div>

@@ -86,7 +86,7 @@ export default function AdminIdleHandler() {
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full text-center space-y-4 animate-in fade-in zoom-in duration-300">
-        <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto text-yellow-600">
+        <div className="w-12 h-12 bg-brand-purple-100 rounded-full flex items-center justify-center mx-auto text-brand-purple-600">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
         </div>
         <div>

@@ -110,15 +110,15 @@ export default function SidebarFilters({
                 className={`w-full flex items-center justify-between px-3 py-2 rounded-lg transition-all text-sm
                   ${
                     active
-                      ? "bg-yellow-400/10 text-yellow-700 font-medium"
+                      ? "bg-brand-purple/10 text-brand-purple font-medium"
                       : "text-foreground/70 hover:bg-foreground/5"
                   }`}
               >
                 <span className="flex items-center gap-1">
-                  <span className="text-yellow-500">★</span>
+                  <span className="text-brand-purple">★</span>
                   <span>{rating} & Up</span>
                 </span>
-                {active && <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" />}
+                {active && <span className="w-1.5 h-1.5 rounded-full bg-brand-purple" />}
               </button>
             )
           })}

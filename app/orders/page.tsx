@@ -27,8 +27,9 @@
  
    const statusBadgeClass = (s?: string) => {
      const t = String(s || "").toLowerCase();
-     if (t === "pending") return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300";
-    if (["paid", "processing", "shipped"].includes(t)) return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
+     if (t === "pending") return "bg-brand-purple-50 text-brand-purple dark:bg-brand-purple/20 dark:text-brand-purple-300";
+     if (t === "processing") return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300";
+    if (["paid", "shipped"].includes(t)) return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300";
     if (["delivered", "completed"].includes(t)) return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300";
     if (["cancelled", "refunded", "returned"].includes(t)) return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300";
     return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";

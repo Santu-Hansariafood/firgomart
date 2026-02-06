@@ -225,10 +225,12 @@ export default function WishlistPage() {
                       )}
                     </div>
                     {typeof product.rating === "number" && (
-                      <div className="flex items-center gap-1 bg-yellow-400/10 px-1.5 py-0.5 rounded-md border border-yellow-400/20">
-                        <span className="text-yellow-500 text-[10px]">★</span>
-                        <span className="text-xs font-bold text-yellow-600">{product.rating}</span>
-                      </div>
+                      <div className="flex items-center gap-1 bg-brand-purple/10 px-1.5 py-0.5 rounded-md border border-brand-purple/20">
+                      <span className="text-brand-purple text-[10px]">★</span>
+                      <span className="text-xs font-bold text-brand-purple">
+                        {product.rating}
+                      </span>
+                    </div>
                     )}
                   </div>
 

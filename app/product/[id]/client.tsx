@@ -296,7 +296,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                 )}
 
                 {product.rating && (
-                  <div className="absolute bottom-2 left-2 bg-linear-to-br from-yellow-500/70 to-transparent backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg flex items-center">
+                  <div className="absolute bottom-2 left-2 bg-linear-to-br from-brand-purple-500/70 to-transparent backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg flex items-center">
                     <Star className="w-3 h-3 mr-1 fill-current" /> {product.rating} ({product.reviews ?? 0} reviews)
                   </div>
                 )}
@@ -549,8 +549,8 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                                          <div className="flex gap-1">
                                              {[1, 2, 3, 4, 5].map(star => (
                                                  <button key={star} onClick={() => setUserRating(star)}>
-                                                     <Star className={`w-6 h-6 ${star <= userRating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/30'}`} />
-                                                 </button>
+                                                 <Star className={`w-6 h-6 ${star <= userRating ? 'fill-brand-purple-400 text-brand-purple-400' : 'text-foreground/30'}`} />
+                                             </button>
                                              ))}
                                          </div>
                                      </div>
@@ -593,7 +593,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                                              </div>
                                              <div className="flex gap-1 mb-2">
                                                  {[...Array(5)].map((_, i) => (
-                                                     <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-foreground/30'}`} />
+                                                     <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'fill-brand-purple-400 text-brand-purple-400' : 'text-foreground/30'}`} />
                                                  ))}
                                              </div>
                                              <p className="text-foreground/70 text-sm">{review.comment}</p>

@@ -20,8 +20,8 @@ const items = [
   {
     icon: Crown,
     text: "Premium Products",
-    color: "text-yellow-400",
-    glow: "rgba(234,179,8,0.45)",
+    color: "text-brand-purple",
+    glow: "rgba(124, 58, 237, 0.45)",
     pulse: true,
   },
   {

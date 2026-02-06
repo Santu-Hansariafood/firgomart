@@ -165,11 +165,12 @@ export default function TrackOrderPage() {
                 </div>
               </div>
             ) : (
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-6 rounded-xl border border-yellow-200 dark:border-yellow-800 text-center">
-                <p className="text-yellow-800 dark:text-yellow-200">
-                  {result.message || "Tracking details are not available at this moment. Please check back later."}
-                </p>
-              </div>
+              <div className="bg-brand-purple-50 dark:bg-brand-purple/10 p-6 rounded-xl border border-brand-purple/20 dark:border-brand-purple/20 text-center">
+          <p className="text-brand-purple dark:text-brand-purple-200">
+            {result.message ||
+              "Tracking details are not available at this moment. Please check back later."}
+          </p>
+        </div>
             )}
           </motion.div>
         )}
