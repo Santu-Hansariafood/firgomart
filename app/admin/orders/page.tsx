@@ -456,8 +456,6 @@ export default function Page() {
         {selectedOrder && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-all duration-300">
             <div className="bg-white rounded-2xl w-full max-w-5xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-              
-              {/* Header */}
               <div className="px-6 py-5 border-b flex items-center justify-between bg-linear-to-r from-gray-50 to-white">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-brand-purple/10 rounded-xl">
@@ -492,8 +490,6 @@ export default function Page() {
                   </button>
                 </div>
               </div>
-
-              {/* Toolbar */}
               <div className="px-6 py-3 border-b bg-white flex flex-wrap gap-2 items-center">
                   {selectedOrder.status !== "shipped" && selectedOrder.status !== "delivered" && selectedOrder.status !== "cancelled" && selectedOrder.status !== "refunded" && (
                     <button
@@ -556,7 +552,6 @@ export default function Page() {
               <div className="flex-1 overflow-y-auto p-6 space-y-8 bg-gray-50/50">
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Customer Card */}
                   <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
                     <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold">
                       <User className="w-5 h-5 text-gray-500" />
@@ -573,8 +568,6 @@ export default function Page() {
                       </div>
                     </div>
                   </div>
-
-                  {/* Shipping Card */}
                   <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
                     <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold">
                       <MapPin className="w-5 h-5 text-gray-500" />
@@ -587,8 +580,6 @@ export default function Page() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Payment Card */}
                   {selectedOrder.payment && (
                     <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs">
                       <div className="flex items-center gap-2 mb-4 text-gray-900 font-semibold">
@@ -618,8 +609,6 @@ export default function Page() {
                     </div>
                   )}
                 </div>
-
-                {/* Items Section */}
                 <div className="bg-white rounded-xl border border-gray-200 shadow-xs overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
                     <h3 className="font-semibold text-gray-900">Order Items</h3>
@@ -681,8 +670,6 @@ export default function Page() {
                     </table>
                   </div>
                 </div>
-
-                {/* Status & Tracking */}
                 <div className="bg-white rounded-xl border border-gray-200 shadow-xs p-6">
                    <h3 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
                      <Truck className="w-5 h-5 text-gray-500" />
