@@ -148,6 +148,18 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} antialiased`}
       >
         <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-17932697360"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'AW-17932697360');            `}
+        </Script>
+        <Script
           id="firgomart-schema"
           type="application/ld+json"
           strategy="afterInteractive"
