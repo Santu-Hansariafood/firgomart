@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useCart } from "@/context/CartContext/CartContext";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Loading from "./loading";
 const AdCarousel = dynamic(() => import("@/components/common/AdCarousel/AdCarousel"));
@@ -12,6 +13,8 @@ const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 export default function Page() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
     useCart();
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search');
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
 
   const handleAddToCart = (product: any) => {
@@ -21,7 +24,7 @@ export default function Page() {
 
   return (
     <Suspense fallback={<Loading/>}>
-      <AdCarousel />
+      {!search && <AdCarousel />}
       <ProductGrid
         onProductClick={setSelectedProduct}
         onAddToCart={handleAddToCart}

@@ -17,13 +17,16 @@ import dynamic from "next/dynamic";
 import Image from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 
 const Footer: React.FC = () => {
-  const pathname = usePathname(); // Get current route
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search');
+
   const [showTop, setShowTop] = useState(false);
   const addressText =
     "Plot No. 678 1st Floor, Majherpara, P.O. Hatiara, P.S. Newtown, near Chota Masjid, Baguiati, Kolkata, West Bengal 700157";
@@ -49,6 +52,8 @@ const Footer: React.FC = () => {
 
   const hideOnPaths = ['/checkout', '/wishlist', '/cart', '/orders', '/profile'];
   if (hideOnPaths.some(path => pathname === path || pathname?.startsWith(`${path}/`))) return null;
+
+  if (search) return null;
 
   return (
     <footer className="bg-brand-black text-gray-300 pb-24 md:pb-0">

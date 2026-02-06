@@ -365,41 +365,47 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/20 rounded-full blur-[80px] -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
-          <MarqueeBanner />
-        </div>
-        
-        <div className="mb-12">
-          <PriceCategoryBanner onSelectCategory={handlePriceCategorySelect} />
-        </div>
+        {!search && (
+          <>
+            <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
+              <MarqueeBanner />
+            </div>
+            
+            <div className="mb-12">
+              <PriceCategoryBanner onSelectCategory={handlePriceCategorySelect} />
+            </div>
+          </>
+        )}
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
-          <div className="space-y-2 relative w-full md:w-auto flex flex-col items-center md:items-start text-center md:text-left">
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
-                Firgo
-              </span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-400 dark:via-rose-400 dark:to-red-400">
-                Mart
-              </span>
-              <span className="ml-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
-                Products
-              </span>
-            </h2>
-            <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-foreground/60 font-medium">
-              <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple border border-brand-purple/20 shadow-sm backdrop-blur-sm">
-                {displayedProducts.length} Premium Items
-              </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-foreground/20" />
-              <span className="flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          {!search && (
+            <div className="space-y-2 relative w-full md:w-auto flex flex-col items-center md:items-start text-center md:text-left">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                  Firgo
                 </span>
-                Live Inventory
-              </span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-400 dark:via-rose-400 dark:to-red-400">
+                  Mart
+                </span>
+                <span className="ml-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                  Products
+                </span>
+              </h2>
+              <div className="flex items-center justify-center md:justify-start gap-3 text-sm text-foreground/60 font-medium">
+                <span className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-brand-purple/10 text-brand-purple border border-brand-purple/20 shadow-sm backdrop-blur-sm">
+                  {displayedProducts.length} Premium Items
+                </span>
+                <span className="w-1.5 h-1.5 rounded-full bg-foreground/20" />
+                <span className="flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  </span>
+                  Live Inventory
+                </span>
+              </div>
             </div>
-          </div>
+          )}
           <div className="w-full md:w-auto z-10">
             <FilterControls
               isFilterOpen={isFilterOpen}
