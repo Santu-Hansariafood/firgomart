@@ -650,15 +650,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                         <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
-                    {product.rating && (
-                      <div className="flex items-center gap-1 mb-3">
-                        <div className="flex text-brand-purple text-xs">
-                          {"★".repeat(Math.round(product.rating))}
-                          <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating))}</span>
+                    <div className="flex items-center gap-1 mb-3">
+                      {(product.rating || 0) > 0 ? (
+                        <>
+                          <div className="flex text-brand-purple text-xs">
+                            {"★".repeat(Math.round(product.rating || 0))}
+                            <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
+                          </div>
+                          <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
+                        </>
+                      ) : (
+                        <div className="flex text-foreground/30 text-xs font-medium">
+                          0 ★
                         </div>
-                        <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex gap-2">
