@@ -157,14 +157,14 @@ const Navbar: React.FC = () => {
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <Link href="/" className="flex-shrink-0 relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 transition-transform hover:scale-105 active:scale-95">
+              <Link href="/" className="flex-shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transition-transform hover:scale-105 active:scale-95">
                 <Image
                   src="/logo/firgomart.png"
                   alt="Firgomart"
                   fill
                   className="object-contain"
                   priority
-                  sizes="(max-width: 768px) 48px, 64px"
+                  sizes="(max-width: 768px) 64px, 96px"
                 />
               </Link>
             </div>
