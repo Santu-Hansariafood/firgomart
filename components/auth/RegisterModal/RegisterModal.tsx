@@ -326,7 +326,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           className="bg-[var(--background)] text-[color:var(--foreground)] sm:rounded-2xl shadow-none sm:shadow-2xl w-full min-h-full sm:min-h-0 sm:h-auto sm:max-w-2xl sm:max-h-[90vh] flex flex-col border-0 sm:border border-[var(--foreground)/10]"
         >
-          <div className="p-6 sm:p-8 pb-0 relative shrink-0">
+          <div className="p-4 sm:p-5 pb-0 relative shrink-0">
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-[var(--foreground)/50] hover:text-[color:var(--foreground)] hover:bg-[var(--foreground)/5] rounded-full p-2 transition-colors z-10"
@@ -334,11 +334,11 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               <X className="w-6 h-6 sm:w-5 sm:h-5" />
             </button>
             
-            <div className="space-y-2 mb-6 mt-4 sm:mt-0">
-              <Title level={2} className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
+            <div className="space-y-1 mb-4 mt-2 sm:mt-0">
+              <Title level={2} className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
                 Create Account
               </Title>
-              <Paragraph className="text-[var(--foreground)/60]">
+              <Paragraph className="text-sm sm:text-base text-[var(--foreground)/60]">
                 Join us to start your shopping journey
               </Paragraph>
             </div>
@@ -346,8 +346,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <div className="relative">
               <div className="absolute top-1/2 left-0 w-full h-1 bg-[var(--foreground)/5] -translate-y-1/2 rounded-full"></div>
               <div className="relative flex justify-between items-center max-w-xs mx-auto">
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                <div className="flex flex-col items-center gap-1">
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                     step >= 1 
                       ? 'bg-linear-to-r from-brand-purple to-brand-red text-white shadow-lg shadow-brand-purple/20 scale-110' 
                       : 'bg-[var(--foreground)/10] text-[var(--foreground)/40]'
@@ -359,8 +359,8 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <div className={`flex-1 h-0.5 mx-4 transition-colors duration-500 ${
                     step >= 2 ? 'bg-brand-purple' : 'bg-[var(--foreground)/10]'
                   }`}></div>
-                <div className="flex flex-col items-center gap-2">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
+                <div className="flex flex-col items-center gap-1">
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                     step >= 2 
                       ? 'bg-linear-to-r from-brand-purple to-brand-red text-white shadow-lg shadow-brand-purple/20 scale-110' 
                       : 'bg-[var(--foreground)/10] text-[var(--foreground)/40]'
@@ -373,7 +373,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1 sm:flex-none">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-5 pb-32 sm:pb-8 space-y-4 sm:space-y-4 overflow-y-auto flex-1">
             {step === 1 ? (
               <div className="space-y-5">
                 <div>
