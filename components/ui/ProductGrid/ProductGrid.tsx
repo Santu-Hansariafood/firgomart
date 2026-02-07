@@ -47,13 +47,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
 
   const { deliverToState } = useGeolocation()
   
-  // Use hooks for logic
   const [page, setPage] = useState<number>(1)
   
-  // Pass setPage to useProductFilters
   const filters = useProductFilters(setPage)
   
-  // Now pass page and filters to useProductData
   const { 
     displayedProducts, 
     loading, 
@@ -64,9 +61,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
     category, 
     subcategory, 
     deliverToState, 
-    page,       // Pass page
-    setPage,    // Pass setPage to let hook update it (loadMore)
-    ...filters  // Pass all filter values
+    page,
+    setPage,
+    ...filters
   })
   
   const observerTarget = useRef<HTMLDivElement | null>(null)
@@ -354,25 +351,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                     interval={2500}
                   />
                   
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                  <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                  {/* Pack / Combo Label - Moved to Top */}
                   {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
-                    <span className="absolute top-3 left-3 bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50">
+                    <span className="absolute bottom-3 left-3 right-3 md:bottom-auto md:top-3 md:left-3 md:right-auto text-center md:text-left bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-xl md:rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50">
                       {product.name.toLowerCase().includes('combo') ? '✨ COMBO' : `📦 PACK OF ${product.unitsPerPack}`}
                     </span>
                   ) : null}
 
-                  {/* Discount Label */}
                   {product.discount && (
                     <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg z-20">
                       {product.discount}% OFF
                     </span>
                   )}
 
-                  {/* Product Details Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex flex-col justify-end h-full pointer-events-none">
+                  <div className="hidden md:flex absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex-col justify-end h-full pointer-events-none">
                     <div className="pointer-events-auto">
                       <p className="text-[10px] font-bold text-brand-purple mb-1 uppercase tracking-wider bg-white/90 dark:bg-black/80 inline-block px-2 py-0.5 rounded-full backdrop-blur-sm">
                         {product.category}
@@ -403,6 +396,43 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                           </div>
                         )}
                       </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3 md:hidden">
+                  <div className="mb-2">
+                    <p className="text-[10px] font-medium text-brand-purple mb-1 uppercase tracking-wider opacity-80">{product.category}</p>
+                    <h3 
+                      className="text-sm font-bold text-foreground leading-snug line-clamp-2 cursor-pointer"
+                      onClick={() => onProductClick(product)}
+                      title={product.name}
+                    >
+                      {product.name}
+                    </h3>
+                  </div>
+
+                  <div className="flex items-end justify-between gap-2">
+                    <div className="flex flex-col">
+                      <span className="text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
+                      {product.originalPrice && (
+                        <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {(product.rating || 0) > 0 ? (
+                        <>
+                          <div className="flex text-brand-purple text-xs">
+                            {"★".repeat(Math.round(product.rating || 0))}
+                            <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
+                          </div>
+                          <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
+                        </>
+                      ) : (
+                        <div className="flex text-foreground/30 text-xs font-medium">
+                          0 ★
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
