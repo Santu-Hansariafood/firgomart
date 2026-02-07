@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   CreditCard,
@@ -17,12 +17,15 @@ import {
   ArrowLeft,
   ShoppingBag
 } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
 import FallbackImage from '@/components/common/Image/FallbackImage'
-import { useAuth } from '@/context/AuthContext'
 import BackButton from '@/components/common/BackButton/BackButton'
 import countryData from '@/data/country.json'
+import { CartItem } from '@/types/checkout'
+import { useCheckoutForm } from '@/hooks/checkout/useCheckoutForm'
+import { useOrderSummary } from '@/hooks/checkout/useOrderSummary'
+import { useDeliveryValidation } from '@/hooks/checkout/useDeliveryValidation'
+import { usePayment } from '@/hooks/checkout/usePayment'
 
 const Rupee: React.FC<{ className?: string }> = ({ className }) => (
   <span className={className} style={{ fontFamily: 'system-ui, "Segoe UI Symbol", "Noto Sans", "Arial Unicode MS", sans-serif' }}>
@@ -30,44 +33,10 @@ const Rupee: React.FC<{ className?: string }> = ({ className }) => (
   </span>
 )
 
-interface CartItem {
-  id: number | string
-  name: string
-  price: number
-  image: string
-  originalPrice?: number
-  quantity?: number
-  stock?: number
-  unitsPerPack?: number
-  selectedSize?: string
-  selectedColor?: string
-  _uniqueId?: string
-  appliedOffer?: {
-    name: string
-    type: string
-    value?: string | number
-  }
-}
-
 interface CheckoutProps {
   cartItems: CartItem[]
   onUpdateQuantity?: (id: number | string, quantity: number) => void
   onRemoveItem?: (id: number | string) => void
-}
-
-interface FormData {
-  fullName: string
-  email: string
-  phone: string
-  address: string
-  city: string
-  state: string
-  pincode: string
-  country: string
-  cardNumber: string
-  cardName: string
-  expiryDate: string
-  cvv: string
 }
 
 const Checkout: React.FC<CheckoutProps> = ({
@@ -75,408 +44,47 @@ const Checkout: React.FC<CheckoutProps> = ({
   onUpdateQuantity,
   onRemoveItem,
 }) => {
-  const router = useRouter()
-  const { user } = useAuth()
   const [step, setStep] = useState<number>(1)
-  const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
-  const [lastOrder, setLastOrder] = useState<{ id?: string; orderNumber?: string } | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<'cashfree' | 'razorpay'>('cashfree')
-  const [formData, setFormData] = useState<FormData>({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: '',
-    country: 'India',
-    cardNumber: '',
-    cardName: '',
-    expiryDate: '',
-    cvv: '',
-  })
-  const [invalidItems, setInvalidItems] = useState<Array<{ id: number; name: string }>>([])
-  const [validating, setValidating] = useState<boolean>(false)
-  const [checkoutError, setCheckoutError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
-  const [deliveryFee, setDeliveryFee] = useState<number>(0)
-  const [orderSummary, setOrderSummary] = useState({ 
-    subtotal: 0, 
-    tax: 0, 
-    total: 0, 
-    items: [] as any[],
-    taxBreakdown: { cgst: 0, sgst: 0, igst: 0 }
-  })
-  const [showAddressModal, setShowAddressModal] = useState<boolean>(false)
+  
+  // Custom Hooks
+  const {
+    formData,
+    handleChange,
+    handleSelectAddress,
+    handleAddNewAddress,
+    showAddressModal,
+    setShowAddressModal,
+    user
+  } = useCheckoutForm()
 
-  async function safeJson(res: Response) {
-    try {
-      return await res.json()
-    } catch {
-      try {
-        const t = await res.text()
-        return { errorText: t }
-      } catch {
-        return {}
-      }
-    }
-  }
+  const {
+    deliveryFee,
+    orderSummary,
+    subtotal,
+    tax,
+    total
+  } = useOrderSummary({ cartItems, formData })
 
-  useEffect(() => {
-    try {
-      const saved = typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
-      if (saved) setFormData(prev => ({ ...prev, state: saved }))
-    } catch {}
-  }, [])
-  useEffect(() => {
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem('deliveryAddress') || '' : ''
-      if (!raw) return
-      const obj = JSON.parse(raw || '{}') as Partial<FormData>
-      setFormData(prev => ({
-        ...prev,
-        fullName: obj.fullName || prev.fullName,
-        email: obj.email || prev.email,
-        phone: obj.phone || prev.phone,
-        address: obj.address || prev.address,
-        city: obj.city || prev.city,
-        state: obj.state || prev.state,
-        pincode: obj.pincode || prev.pincode,
-        country: obj.country || prev.country,
-      }))
-    } catch {}
-  }, [])
-  useEffect(() => {
-    try {
-      if (formData.email || formData.fullName) {
-        localStorage.setItem('deliveryAddress', JSON.stringify(formData))
-      }
-    } catch {}
-  }, [formData])
+  const {
+    invalidItems,
+    validating,
+    validateDelivery
+  } = useDeliveryValidation({ cartItems })
 
-  useEffect(() => {
-    if (!user) return
-    const u = user as any
-    const addresses = Array.isArray(u.addresses) ? u.addresses : []
-    
-    let defaultAddr = addresses.find((a: any) => a.isDefault === true || String(a.isDefault) === 'true')
-    
-    if (!defaultAddr && addresses.length > 0) {
-      defaultAddr = addresses[0]
-    }
-    
-    setFormData(prev => {
-      const newAddress = defaultAddr?.address || u.address || prev.address
-      const newCity = defaultAddr?.city || u.city || prev.city
-      const newState = defaultAddr?.state || u.state || prev.state
-      const newPincode = defaultAddr?.pincode || u.pincode || prev.pincode
-      const newCountry = defaultAddr?.country || u.country || prev.country
-      
-      return {
-        ...prev,
-        fullName: u.name || prev.fullName,
-        email: u.email || prev.email,
-        phone: u.mobile || u.phone || prev.phone,
-        address: newAddress,
-        city: newCity,
-        state: newState,
-        pincode: newPincode,
-        country: newCountry,
-      }
-    })
-    try {
-      const st = defaultAddr?.state || u.state
-      if (st) localStorage.setItem('deliverToState', st)
-    } catch {}
-  }, [user])
-
-  useEffect(() => {
-    const fetchFee = async () => {
-      const valid = cartItems.filter(item => (item.stock ?? 0) > 0)
-      if (valid.length === 0) {
-        setDeliveryFee(0)
-        return
-      }
-      try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            items: valid.map(ci => ({ 
-              id: ci.id, 
-              quantity: ci.quantity ?? 1,
-              appliedOffer: ci.appliedOffer 
-            })),
-            dryRun: true,
-            state: formData.state,
-            country: formData.country
-          }),
-        })
-        const data = await safeJson(res)
-        if (res.ok) {
-          setDeliveryFee(data.deliveryFee || 0)
-          setOrderSummary({
-            subtotal: data.subtotal || 0,
-            tax: data.tax || 0,
-            total: data.total || 0,
-            items: data.items || [],
-            taxBreakdown: data.taxBreakdown || { cgst: 0, sgst: 0, igst: 0 }
-          })
-        }
-      } catch {}
-    }
-    const timer = setTimeout(fetchFee, 500)
-    return () => clearTimeout(timer)
-  }, [cartItems, formData.state])
-
-  async function validateDelivery(stateVal: string) {
-    if (!stateVal) {
-      setInvalidItems([])
-      return true
-    }
-    setValidating(true)
-    try {
-      const res = await fetch('/api/cart/validate-delivery', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          deliverToState: stateVal,
-          items: cartItems.map(ci => ({ id: ci.id })),
-        }),
-      })
-      const data = await safeJson(res)
-      if (!res.ok) throw new Error(data?.error || 'Validation failed')
-      const results: Array<{ id: string; deliverable: boolean }> = Array.isArray(data?.results) ? data.results : []
-      const badIds = new Set(results.filter(r => !r.deliverable).map(r => String(r.id)))
-      const invalid = cartItems
-        .filter(ci => badIds.has(String(ci.id)))
-        .map(ci => ({ id: ci.id as number, name: ci.name }))
-      setInvalidItems(invalid)
-      return invalid.length === 0
-    } catch {
-      setInvalidItems([])
-      return true
-    } finally {
-      setValidating(false)
-    }
-  }
+  const {
+    paymentMethod,
+    setPaymentMethod,
+    orderPlaced,
+    lastOrder,
+    checkoutError,
+    isSubmitting,
+    handlePlaceOrder,
+    router
+  } = usePayment({ cartItems, formData, total, onRemoveItem })
 
   const validItems = cartItems.filter(item => (item.stock ?? 0) > 0)
-  const { subtotal, tax, total } = orderSummary
-
   const indianStates = countryData.countries.find(c => c.country === "India")?.states || []
   const availableCountries = ["India", "United States", "United Kingdom", "Canada", "Australia", "Other"]
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
-  }
-
-  const handleSelectAddress = (addr: any) => {
-    const u = user as any
-    setFormData(prev => ({
-      ...prev,
-      fullName: u?.name || prev.fullName,
-      email: u?.email || prev.email,
-      phone: u?.mobile || u?.phone || prev.phone,
-      address: addr.address,
-      city: addr.city,
-      state: addr.state,
-      pincode: addr.pincode,
-      country: addr.country || 'India',
-    }))
-    setShowAddressModal(false)
-  }
-
-  const handleAddNewAddress = () => {
-    const u = user as any
-    setFormData({
-      fullName: u?.name || '',
-      email: u?.email || '',
-      phone: u?.mobile || u?.phone || '',
-      address: '',
-      city: '',
-      state: '',
-      pincode: '',
-      country: 'India',
-      cardNumber: '',
-      cardName: '',
-      expiryDate: '',
-      cvv: ''
-    })
-    setShowAddressModal(false)
-  }
-
-  const handlePlaceOrder = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (isSubmitting) return
-    setCheckoutError(null)
-    setIsSubmitting(true)
-    try {
-      const payload = {
-        buyerEmail: formData.email,
-        buyerName: formData.fullName,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        pincode: formData.pincode,
-        country: formData.country,
-        items: cartItems.map(ci => ({ 
-          id: ci.id, 
-          quantity: ci.quantity ?? 1,
-          selectedSize: ci.selectedSize,
-          selectedColor: ci.selectedColor,
-          appliedOffer: ci.appliedOffer
-        })),
-      }
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      const data = await safeJson(res)
-      if (!res.ok) {
-        if (data?.productId) {
-          const pid = Number(data.productId)
-          const item = cartItems.find(ci => ci.id === pid)
-          setCheckoutError(`Sorry, "${item?.name || 'Product'}" is out of stock and has been removed from your cart.`)
-          if (onRemoveItem) onRemoveItem(pid)
-        } else {
-          setCheckoutError(data?.error || "Failed to place order")
-        }
-        setIsSubmitting(false)
-        return
-      }
-
-      if (paymentMethod === 'cashfree') {
-        try {
-          const orderId = data.order._id || data.order.id
-          const initRes = await fetch('/api/payment/cashfree/initiate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId }),
-          })
-          const initData = await safeJson(initRes)
-          if (!initRes.ok) {
-            setCheckoutError(initData?.errorText || initData?.error || "Failed to initiate Cashfree payment")
-            setIsSubmitting(false)
-            return
-          }
-          const ensureScript = async () => {
-            const src = 'https://sdk.cashfree.com/js/v3/cashfree.js'
-            if (document.querySelector(`script[src="${src}"]`)) return
-            await new Promise<void>((resolve, reject) => {
-              const s = document.createElement('script')
-              s.src = src
-              s.onload = () => resolve()
-              s.onerror = () => reject(new Error('Failed to load Cashfree'))
-              document.body.appendChild(s)
-            })
-          }
-          await ensureScript()
-          const cf = (window as any).Cashfree({ mode: (initData.mode === 'production' ? 'production' : 'sandbox') })
-          cf.checkout({ paymentSessionId: String(initData.paymentSessionId || ''), redirectTarget: '_self' })
-          return
-        } catch {
-          setCheckoutError("Failed to connect to payment gateway")
-          setIsSubmitting(false)
-          return
-        }
-      }
-
-      if (paymentMethod === 'razorpay') {
-        try {
-          const orderId = data.order._id || data.order.id
-          const initRes = await fetch('/api/payment/razorpay/initiate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orderId }),
-          })
-          const initData = await safeJson(initRes)
-          if (!initRes.ok) {
-            setCheckoutError(initData?.error || initData?.errorText || "Failed to initiate Razorpay payment")
-            setIsSubmitting(false)
-            return
-          }
-          const ensureScript = async () => {
-            const src = 'https://checkout.razorpay.com/v1/checkout.js'
-            if (document.querySelector(`script[src="${src}"]`)) return
-            await new Promise<void>((resolve, reject) => {
-              const s = document.createElement('script')
-              s.src = src
-              s.onload = () => resolve()
-              s.onerror = () => reject(new Error('Failed to load Razorpay'))
-              document.body.appendChild(s)
-            })
-          }
-          await ensureScript()
-          const opts: any = {
-            key: initData.keyId,
-            amount: initData.amount,
-            currency: initData.currency || 'INR',
-            name: 'FirgoMart',
-            order_id: initData.rpOrderId,
-            prefill: {
-              name: initData.buyerName || formData.fullName,
-              email: initData.buyerEmail || formData.email,
-              contact: formData.phone,
-            },
-            notes: { orderNumber: initData.orderNumber || '' },
-            handler: async function (resp: any) {
-              try {
-                const verifyRes = await fetch('/api/payment/razorpay/verify', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    orderId,
-                    razorpay_payment_id: resp.razorpay_payment_id,
-                    razorpay_order_id: resp.razorpay_order_id,
-                    razorpay_signature: resp.razorpay_signature,
-                  }),
-                })
-                const verifyData = await safeJson(verifyRes)
-                if (verifyRes.ok && verifyData.status === 'confirmed') {
-                  setOrderPlaced(true)
-                  setLastOrder({ id: String(orderId), orderNumber: String(verifyData?.order?.orderNumber || '') })
-                  if (onRemoveItem) {
-                    cartItems.forEach(ci => onRemoveItem(ci.id))
-                  }
-                } else {
-                  setCheckoutError(verifyData?.error || "Payment verification failed")
-                }
-              } catch {
-                setCheckoutError("Failed to verify payment")
-              }
-            },
-            theme: { color: '#7800c8' },
-            modal: {
-              ondismiss: function() {
-                setIsSubmitting(false);
-              }
-            }
-          }
-          const rzp = new (window as any).Razorpay(opts)
-          rzp.open()
-          return
-        } catch {
-          setCheckoutError("Failed to connect to payment gateway")
-          setIsSubmitting(false)
-          return
-        }
-      }
-
-      setOrderPlaced(true)
-      setLastOrder({ id: String(data?.order?.id || ""), orderNumber: String(data?.order?.orderNumber || "") })
-      if (onRemoveItem) {
-        cartItems.forEach(ci => onRemoveItem(ci.id))
-      }
-    } catch {
-      setIsSubmitting(false)
-      setCheckoutError("An unexpected error occurred. Please try again.")
-    }
-  }
 
   if (orderPlaced) {
     return (
