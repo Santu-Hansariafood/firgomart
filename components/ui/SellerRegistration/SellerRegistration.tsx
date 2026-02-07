@@ -97,48 +97,43 @@ const SellerRegistration: React.FC = () => {
           animate="show"
           className="bg-[var(--background)] rounded-2xl shadow-2xl overflow-hidden border border-[var(--foreground)/15]"
         >
-            <div className="relative bg-gradient-to-br from-brand-purple to-brand-red p-4 sm:p-6 text-white overflow-hidden">
-              <div className="absolute inset-0 z-0 opacity-10">
-                <svg className="absolute inset-0 h-full w-full stroke-white/[0.05] [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" aria-hidden="true">
-                  <defs>
-                    <pattern id="grid-pattern" width="32" height="32" patternUnits="userSpaceOnUse" x="-1" y="-1">
-                      <path d="M.5 32V.5H32" fill="none"></path>
-                    </pattern>
-                  </defs>
-                  <rect width="100%" height="100%" strokeWidth="0" fill="url(#grid-pattern)"></rect>
-                </svg>
-              </div>
+            <div className="relative bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 p-6 sm:p-8">
+              {/* Decorative Background */}
+              <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-brand-purple/5 rounded-full blur-3xl" />
+              <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-brand-red/5 rounded-full blur-3xl" />
 
-              <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4 sm:gap-0">
-                <div className="relative w-40 h-14 sm:w-48 sm:h-16 bg-white backdrop-blur-lg rounded-2xl p-3 shadow-2xl border border-white/50 flex items-center justify-center transition-transform hover:scale-105 duration-300">
-                  <Image
-                    src="/logo/firgomart.png"
-                    alt="Firgomart"
-                    fill
-                    priority
-                    sizes="160px"
-                    className="object-contain"
-                  />
+              <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div className="space-y-4">
+                  <Link href="/" className="block relative w-48 h-14 transition-opacity hover:opacity-80">
+                    <Image
+                      src="/logo/firgomart.png"
+                      alt="Firgomart"
+                      fill
+                      priority
+                      className="object-contain object-left"
+                      sizes="(max-width: 768px) 192px, 256px"
+                    />
+                  </Link>
+                  <div>
+                    <h1 className="text-2xl sm:text-3xl font-heading font-bold text-[var(--foreground)] tracking-tight">
+                      Partner with Firgomart
+                    </h1>
+                    <p className="text-sm text-[var(--foreground)/60] mt-1">
+                      Join our global marketplace and reach millions of customers.
+                    </p>
+                  </div>
                 </div>
-                <BackButton
+
+                <Link 
                   href="/"
-                  label="Back to Home"
-                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-md"
-                />
+                  className="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--foreground)]/5 hover:bg-[var(--foreground)]/10 text-[var(--foreground)]/80 hover:text-brand-purple transition-all duration-300 font-medium text-sm"
+                >
+                  <span className="group-hover:-translate-x-1 transition-transform duration-300">←</span>
+                  <span>Back to Home</span>
+                </Link>
               </div>
+            </div>
 
-              <div className="relative z-10 space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium uppercase tracking-wider text-white border border-white/20 shadow-sm">
-                    Seller Registration
-                  </span>
-                  <div className="h-px w-8 bg-white/30 hidden sm:block" />
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-heading font-bold leading-tight tracking-tight drop-shadow-md">
-                  Start Selling on Firgomart
-                </h1>
-              </div>
-          </div>
           {showAgreementPopup && !submitted && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[100] p-4">
               <div className="bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl p-4 sm:p-6 w-full max-w-lg shadow-xl border border-[var(--foreground)/20] max-h-[90vh] flex flex-col">
