@@ -1029,28 +1029,32 @@ const Checkout: React.FC<CheckoutProps> = ({
                 </div>
 
                 {formData.country === 'India' && (
-                  orderSummary.taxBreakdown.igst > 0 ? (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[var(--foreground)]/70">IGST</span>
-                      <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
-                    </div>
-                  ) : (orderSummary.taxBreakdown.cgst > 0 || orderSummary.taxBreakdown.sgst > 0) ? (
-                    <>
+                  <>
+                    {orderSummary.taxBreakdown.igst > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--foreground)]/70">IGST</span>
+                        <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {orderSummary.taxBreakdown.cgst > 0 && (
                       <div className="flex justify-between text-sm">
                         <span className="text-[var(--foreground)]/70">CGST</span>
                         <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.cgst.toFixed(2)}</span>
                       </div>
+                    )}
+                    {orderSummary.taxBreakdown.sgst > 0 && (
                       <div className="flex justify-between text-sm">
                         <span className="text-[var(--foreground)]/70">SGST</span>
                         <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.sgst.toFixed(2)}</span>
                       </div>
-                    </>
-                  ) : (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-[var(--foreground)]/70">Tax</span>
-                      <span className="font-bold text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
-                    </div>
-                  )
+                    )}
+                    {orderSummary.taxBreakdown.igst === 0 && orderSummary.taxBreakdown.cgst === 0 && orderSummary.taxBreakdown.sgst === 0 && tax > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--foreground)]/70">Tax</span>
+                        <span className="font-bold text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
+                      </div>
+                    )}
+                  </>
                 )}
                 
                 <div className="flex justify-between text-sm">
