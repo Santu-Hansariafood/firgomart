@@ -268,7 +268,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
             <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-6 sm:mb-8">
               <div>
                 <div
-                className="relative aspect-[2/1] rounded-xl overflow-hidden bg-foreground/10 mb-4 cursor-pointer"
+                className="relative aspect-square rounded-xl overflow-hidden bg-foreground/10 mb-4 cursor-pointer"
                 onClick={(e) => {
                   if (images.length > 1) {
                     e.stopPropagation()

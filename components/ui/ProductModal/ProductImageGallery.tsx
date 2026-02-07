@@ -31,7 +31,7 @@ const ProductImageGallery = memo(({
     <>
       <div className="space-y-4">
         <div
-          className="relative aspect-[2/1] rounded-3xl overflow-hidden bg-white/50 dark:bg-black/50 border border-foreground/5 shadow-inner cursor-pointer group"
+          className="relative aspect-square rounded-3xl overflow-hidden bg-white/50 dark:bg-black/50 border border-foreground/5 shadow-inner cursor-pointer group"
           onClick={(e) => {
             if (images.length > 1) {
               e.stopPropagation()
