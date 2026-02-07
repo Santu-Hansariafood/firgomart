@@ -288,17 +288,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
         )}
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-8">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-background rounded-3xl overflow-hidden shadow-sm border border-foreground/5 p-3">
-                <div className="aspect-[4/5] bg-foreground/5 rounded-2xl animate-pulse mb-4" />
-                <div className="space-y-3 px-1">
-                  <div className="h-4 bg-foreground/5 rounded-full w-3/4 animate-pulse" />
-                  <div className="h-3 bg-foreground/5 rounded-full w-1/2 animate-pulse" />
-                  <div className="flex justify-between items-center pt-2">
-                    <div className="h-6 bg-foreground/5 rounded-full w-1/3 animate-pulse" />
-                    <div className="h-8 w-8 bg-foreground/5 rounded-full animate-pulse" />
-                  </div>
+              <div key={i} className="bg-background rounded-2xl overflow-hidden shadow-sm border border-foreground/5 relative aspect-[4/5]">
+                <div className="absolute inset-0 bg-foreground/5 animate-pulse" />
+                <div className="absolute bottom-0 left-0 right-0 p-3 space-y-2">
+                  <div className="h-4 bg-foreground/10 rounded-full w-3/4 animate-pulse" />
+                  <div className="h-3 bg-foreground/10 rounded-full w-1/2 animate-pulse" />
                 </div>
               </div>
             ))}
@@ -329,16 +325,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-8"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-4"
           >
             {displayedProducts.map((product) => (
               <motion.div
                 key={product.id}
                 variants={fadeInUp}
-                className="group bg-background rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-brand-purple/10 transition-all duration-500 border border-foreground/5 hover:-translate-y-1.5"
+                className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-gray-50 dark:bg-gray-900/50"
               >
                 <div 
-                  className="relative aspect-[4/5] overflow-hidden bg-gray-50 dark:bg-gray-900/50 cursor-pointer"
+                  className="relative aspect-[4/5] cursor-pointer overflow-hidden"
                   onClick={() => onProductClick({
                     ...product,
                     appliedOffer: filters.selectedOfferDetails ? {
@@ -358,85 +354,56 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                     interval={2500}
                   />
                   
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center pointer-events-none" />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-                  <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-xl border border-white/10 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
-                    Quick View
-                  </span>
-
+                  {/* Pack / Combo Label - Moved to Top */}
                   {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
-                    <span className="absolute bottom-3 left-3 right-3 text-center bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-xl shadow-lg z-10 border border-violet-200/50 dark:border-violet-500/50 shadow-violet-500/10">
-                      {product.name.toLowerCase().includes('combo') ? '✨ COMBO OFFER' : `📦 PACK OF ${product.unitsPerPack}`}
+                    <span className="absolute top-3 left-3 bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50">
+                      {product.name.toLowerCase().includes('combo') ? '✨ COMBO' : `📦 PACK OF ${product.unitsPerPack}`}
                     </span>
                   ) : null}
 
+                  {/* Discount Label */}
                   {product.discount && (
-                    <span className="absolute top-3 right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg shadow-red-500/30 z-20">
+                    <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg z-20">
                       {product.discount}% OFF
                     </span>
                   )}
-                </div>
-                
-                <div className="p-4">
-                  <div className="mb-3">
-                    <p className="text-[10px] font-medium text-brand-purple mb-1 uppercase tracking-wider opacity-80">{product.category}</p>
-                    <h3 
-                      className="text-sm font-bold text-foreground leading-snug line-clamp-2 cursor-pointer hover:text-brand-purple transition-colors min-h-[2.5em]"
-                      onClick={() => onProductClick(product)}
-                      title={product.name}
-                    >
-                      {product.name}
-                    </h3>
-                  </div>
 
-                  <div className="flex items-end justify-between gap-2 mb-4">
-                    <div className="flex flex-col">
-                      <span className="text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 mb-3">
-                      {(product.rating || 0) > 0 ? (
-                        <>
-                          <div className="flex text-brand-purple text-xs">
-                            {"★".repeat(Math.round(product.rating || 0))}
-                            <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
+                  {/* Product Details Overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex flex-col justify-end h-full pointer-events-none">
+                    <div className="pointer-events-auto">
+                      <p className="text-[10px] font-bold text-brand-purple mb-1 uppercase tracking-wider bg-white/90 dark:bg-black/80 inline-block px-2 py-0.5 rounded-full backdrop-blur-sm">
+                        {product.category}
+                      </p>
+                      
+                      <h3 
+                        className="text-sm font-bold text-white leading-snug line-clamp-2 mb-2 drop-shadow-md"
+                        title={product.name}
+                      >
+                        {product.name}
+                      </h3>
+
+                      <div className="flex items-end justify-between gap-2">
+                        <div className="flex flex-col">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-lg font-extrabold text-white">₹{formatPrice(product.price)}</span>
+                            {product.originalPrice && (
+                              <span className="text-xs text-white/60 line-through font-medium">₹{formatPrice(product.originalPrice)}</span>
+                            )}
                           </div>
-                          <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
-                        </>
-                      ) : (
-                        <div className="flex text-foreground/30 text-xs font-medium">
-                          0 ★
                         </div>
-                      )}
+                        
+                        {(product.rating || 0) > 0 && (
+                          <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md">
+                            <span className="text-yellow-400 text-xs">★</span>
+                            <span className="text-[10px] font-bold text-white">{product.rating}</span>
+                            <span className="text-[9px] text-white/60">({product.reviews})</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => onProductClick(product)}
-                      className="hidden sm:inline-flex flex-1 py-2.5 border border-foreground/10 text-foreground/70 rounded-xl hover:bg-foreground/5 hover:text-foreground transition-all text-xs font-bold items-center justify-center uppercase tracking-wide"
-                    >
-                      Details
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        if ((product.stock ?? 0) > 0) {
-                          onAddToCart(product)
-                        }
-                      }}
-                      disabled={(product.stock ?? 0) <= 0}
-                      className={`flex-1 py-2.5 rounded-xl transition-all duration-300 text-xs font-bold flex items-center justify-center gap-2 uppercase tracking-wide shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 ${
-                        (product.stock ?? 0) > 0
-                          ? 'bg-brand-purple text-white shadow-brand-purple/25 hover:bg-brand-purple/90'
-                          : 'bg-foreground/5 text-foreground/30 cursor-not-allowed shadow-none'
-                      }`}
-                    >
-                      <ShoppingCart className="w-3.5 h-3.5" />
-                      <span>{(product.stock ?? 0) > 0 ? 'Add' : 'Sold'}</span>
-                    </button>
                   </div>
                 </div>
               </motion.div>
