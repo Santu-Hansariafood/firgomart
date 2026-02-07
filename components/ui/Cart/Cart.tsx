@@ -159,6 +159,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[var(--background)]">
                 {items.map((item) => {
                   const summaryItem = orderSummary?.items?.find((si: any) => String(si.productId) === String(item.id))
+                  const maxQty = item.price >= 1000 ? 2 : 3
                   return (
                   <motion.div
                     key={item.id}
@@ -230,9 +231,9 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                             {item.quantity ?? 1}
                           </span>
                           <button
-                            onClick={() => onUpdateQuantity(item._uniqueId || item.id, Math.min((summaryItem?.stock ?? item.stock ?? 3), Math.min(3, (item.quantity ?? 1) + 1)))}
-                            className={`w-6 h-6 flex items-center justify-center rounded-md hover:bg-white dark:hover:bg-black/20 text-[var(--foreground)] transition-shadow shadow-sm ${((item.quantity ?? 1) >= 3 || (summaryItem?.stock ?? item.stock ?? 0) <= (item.quantity ?? 0) || (summaryItem?.stock ?? item.stock ?? 0) <= 0) ? 'opacity-30 cursor-not-allowed' : ''}`}
-                            disabled={(item.quantity ?? 1) >= 3 || (summaryItem?.stock ?? item.stock ?? 0) <= (item.quantity ?? 0) || (summaryItem?.stock ?? item.stock ?? 0) <= 0}
+                            onClick={() => onUpdateQuantity(item._uniqueId || item.id, Math.min((summaryItem?.stock ?? item.stock ?? maxQty), Math.min(maxQty, (item.quantity ?? 1) + 1)))}
+                            className={`w-6 h-6 flex items-center justify-center rounded-md hover:bg-white dark:hover:bg-black/20 text-[var(--foreground)] transition-shadow shadow-sm ${((item.quantity ?? 1) >= maxQty || (summaryItem?.stock ?? item.stock ?? 0) <= (item.quantity ?? 0) || (summaryItem?.stock ?? item.stock ?? 0) <= 0) ? 'opacity-30 cursor-not-allowed' : ''}`}
+                            disabled={(item.quantity ?? 1) >= maxQty || (summaryItem?.stock ?? item.stock ?? 0) <= (item.quantity ?? 0) || (summaryItem?.stock ?? item.stock ?? 0) <= 0}
                           >
                             <Plus className="w-3 h-3" />
                           </button>

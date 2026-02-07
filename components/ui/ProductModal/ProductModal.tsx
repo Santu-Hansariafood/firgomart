@@ -278,6 +278,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
     }
   }
 
+  const maxQty = product.price >= 1000 ? 2 : 3
+
   return (
     <AnimatePresence>
       <div
@@ -546,10 +548,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     </button>
                     <span className="w-12 text-center font-bold text-foreground dark:text-white">{quantity}</span>
                     <button 
-                        onClick={() => setQuantity(Math.min(3, product.stock || 10, quantity + 1))}
-                        disabled={quantity >= Math.min(3, product.stock || 10)}
+                        onClick={() => setQuantity(Math.min(maxQty, product.stock || 10, quantity + 1))}
+                        disabled={quantity >= Math.min(maxQty, product.stock || 10)}
                         className={`w-10 h-10 flex items-center justify-center rounded-lg shadow-sm transition-all ${
-                            quantity >= Math.min(3, product.stock || 10)
+                            quantity >= Math.min(maxQty, product.stock || 10)
                                 ? 'text-foreground/30 dark:text-white/30 cursor-not-allowed' 
                                 : 'hover:bg-background text-foreground dark:text-white'
                         }`}

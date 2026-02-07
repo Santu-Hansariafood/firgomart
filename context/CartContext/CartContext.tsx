@@ -94,15 +94,17 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           const itemId = item._uniqueId || `${item.id}-${item.selectedSize || ''}-${item.selectedColor || ''}${item.appliedOffer ? `-${item.appliedOffer.name}` : ''}`;
           if (itemId !== uniqueId) return item
           const current = item.quantity || 1
-          const stock = item.stock ?? MAX_QTY
-          const next = Math.min(stock, Math.min(MAX_QTY, current + inc))
-          return { ...item, quantity: next, _uniqueId: itemId } // Ensure _uniqueId is set
+          const stock = item.stock ?? 3
+          const maxQty = item.price >= 1000 ? 2 : 3
+          const next = Math.min(stock, Math.min(maxQty, current + inc))
+          return { ...item, quantity: next, _uniqueId: itemId }
         });
       }
       const startQty = product.quantity && product.quantity > 0 ? product.quantity : 1
-      const stock = product.stock ?? MAX_QTY
+      const stock = product.stock ?? 3
+      const maxQty = product.price >= 1000 ? 2 : 3
       if (stock <= 0) return prev
-      return [...prev, { ...productWithId, quantity: Math.min(stock, Math.min(MAX_QTY, startQty)) }];
+      return [...prev, { ...productWithId, quantity: Math.min(stock, Math.min(maxQty, startQty)) }];
     });
   };
 
@@ -110,9 +112,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCartItems((prev) => {
        const item = prev.find(i => (i._uniqueId || i.id) === id)
        if (!item) return prev
-       const stock = item.stock ?? MAX_QTY
+       const stock = item.stock ?? 3
+       const maxQty = item.price >= 1000 ? 2 : 3
        if (quantity <= 0) return prev.filter((item) => (item._uniqueId || item.id) !== id)
-       return prev.map((item) => ((item._uniqueId || item.id) === id ? { ...item, quantity: Math.min(stock, Math.min(MAX_QTY, Math.max(1, quantity))) } : item))
+       return prev.map((item) => ((item._uniqueId || item.id) === id ? { ...item, quantity: Math.min(stock, Math.min(maxQty, Math.max(1, quantity))) } : item))
     });
   };
 

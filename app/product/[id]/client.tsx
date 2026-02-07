@@ -242,6 +242,8 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
     }
   }
 
+  const maxQty = product.price >= 1000 ? 2 : 3
+
   return (
     <div className="bg-background text-foreground min-h-screen pt-24 pb-12">
         <div className="container mx-auto px-4 sm:px-6">
@@ -470,8 +472,11 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                     </button>
                     <span className="text-xl font-medium w-12 text-center">{quantity}</span>
                     <button
-                      onClick={() => setQuantity(Math.min(3, quantity + 1))}
-                      className="w-10 h-10 border border-foreground/20 rounded-lg flex items-center justify-center hover:bg-foreground/10 transition-colors"
+                      onClick={() => setQuantity(Math.min(maxQty, product.stock || 10, quantity + 1))}
+                      disabled={quantity >= Math.min(maxQty, product.stock || 10)}
+                      className={`w-10 h-10 border border-foreground/20 rounded-lg flex items-center justify-center transition-colors ${
+                        quantity >= Math.min(maxQty, product.stock || 10) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-foreground/10'
+                      }`}
                     >
                       +
                     </button>
