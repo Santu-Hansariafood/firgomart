@@ -181,7 +181,7 @@ const CartPage = () => {
                       <button
                         onClick={() => updateQuantity(item._uniqueId || item.id, (item.quantity || 1) + 1)}
                         className="p-2 hover:bg-[var(--foreground)/5] transition-colors disabled:opacity-30"
-                        disabled={(item.quantity || 1) >= (item.stock || 10)}
+                        disabled={(item.quantity || 1) >= Math.min(item.price >= 1000 ? 2 : 3, item.stock || 10)}
                       >
                         <Plus className="w-4 h-4 text-[color:var(--foreground)]" />
                       </button>

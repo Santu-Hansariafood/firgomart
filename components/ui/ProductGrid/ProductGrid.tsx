@@ -288,16 +288,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
         )}
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-8">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="bg-background rounded-3xl overflow-hidden shadow-sm border border-foreground/5 p-3">
-                <div className="aspect-[4/5] bg-foreground/5 rounded-2xl animate-pulse mb-4" />
-                <div className="space-y-3 px-1">
+              <div key={i} className="bg-background rounded-2xl overflow-hidden shadow-sm border border-foreground/5 p-2">
+                <div className="aspect-[3/2] bg-foreground/5 rounded-xl animate-pulse mb-3" />
+                <div className="space-y-2 px-1">
                   <div className="h-4 bg-foreground/5 rounded-full w-3/4 animate-pulse" />
                   <div className="h-3 bg-foreground/5 rounded-full w-1/2 animate-pulse" />
-                  <div className="flex justify-between items-center pt-2">
-                    <div className="h-6 bg-foreground/5 rounded-full w-1/3 animate-pulse" />
-                    <div className="h-8 w-8 bg-foreground/5 rounded-full animate-pulse" />
+                  <div className="flex justify-between items-center pt-1">
+                    <div className="h-5 bg-foreground/5 rounded-full w-1/3 animate-pulse" />
+                    <div className="h-7 w-7 bg-foreground/5 rounded-full animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -329,16 +329,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-8"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-6"
           >
             {displayedProducts.map((product) => (
               <motion.div
                 key={product.id}
                 variants={fadeInUp}
-                className="group bg-background rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-brand-purple/10 transition-all duration-500 border border-foreground/5 hover:-translate-y-1.5"
+                className="group bg-background rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-brand-purple/5 transition-all duration-300 border border-foreground/5 hover:-translate-y-1"
               >
                 <div 
-                  className="relative aspect-[4/5] overflow-hidden bg-gray-50 dark:bg-gray-900/50 cursor-pointer"
+                  className="relative aspect-[3/2] overflow-hidden bg-gray-50 dark:bg-gray-900/50 cursor-pointer"
                   onClick={() => onProductClick({
                     ...product,
                     appliedOffer: filters.selectedOfferDetails ? {
@@ -377,11 +377,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                   )}
                 </div>
                 
-                <div className="p-4">
-                  <div className="mb-3">
-                    <p className="text-[10px] font-medium text-brand-purple mb-1 uppercase tracking-wider opacity-80">{product.category}</p>
+                <div className="p-3">
+                  <div className="mb-2">
+                    <p className="text-[9px] font-bold text-brand-purple mb-0.5 uppercase tracking-wider opacity-90">{product.category}</p>
                     <h3 
-                      className="text-sm font-bold text-foreground leading-snug line-clamp-2 cursor-pointer hover:text-brand-purple transition-colors min-h-[2.5em]"
+                      className="text-xs sm:text-sm font-semibold text-foreground leading-tight line-clamp-2 cursor-pointer hover:text-brand-purple transition-colors min-h-[2.5em]"
                       onClick={() => onProductClick(product)}
                       title={product.name}
                     >
@@ -389,21 +389,21 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                     </h3>
                   </div>
 
-                  <div className="flex items-end justify-between gap-2 mb-4">
+                  <div className="flex items-end justify-between gap-2 mb-2">
                     <div className="flex flex-col">
-                      <span className="text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
+                      <span className="text-base font-bold text-foreground">₹{formatPrice(product.price)}</span>
                       {product.originalPrice && (
-                        <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
+                        <span className="text-[10px] text-foreground/40 line-through font-medium">₹{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
-                    <div className="flex items-center gap-1 mb-3">
+                    <div className="flex items-center gap-0.5 mb-1">
                       {(product.rating || 0) > 0 ? (
                         <>
-                          <div className="flex text-brand-purple text-xs">
+                          <div className="flex text-brand-purple text-[10px]">
                             {"★".repeat(Math.round(product.rating || 0))}
                             <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
                           </div>
-                          <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
+                          <span className="text-[9px] text-foreground/40 ml-0.5">({product.reviews || 0})</span>
                         </>
                       ) : (
                         <div className="flex text-foreground/30 text-xs font-medium">
