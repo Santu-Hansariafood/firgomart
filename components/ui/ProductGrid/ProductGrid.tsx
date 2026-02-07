@@ -1,45 +1,35 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, Eye, X, ChevronDown, Gift, ShoppingBag } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
-import categoriesData from '@/data/categories.json'
+import { X, Gift, ShoppingBag, ShoppingCart } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
+import OffersFilterChips from '@/components/ui/Filters/OffersFilterChips'
+import { FilterControls, FilterPanel } from './ProductFilters'
+import { Product } from '@/types/product'
+import { useProductFilters } from '@/hooks/product-grid/useProductFilters'
+import { useProductData } from '@/hooks/product-grid/useProductData'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
+import { getSizeOptionsForCategory, allSizes, subcategoryOptionsFor, sanitizeImageUrl, formatPrice } from '@/utils/productUtils'
+
 const MarqueeBanner = dynamic(() => import('@/components/ui/MarqueeBanner/MarqueeBanner'))
 const PriceCategoryBanner = dynamic(() => import('@/components/ui/PriceCategoryBanner/PriceCategoryBanner'))
 const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
-import { FilterControls, FilterPanel } from './ProductFilters'
 
-interface Product {
-  id: string | number
-  name: string
-  image: string
-  images?: string[]
-  category: string
-  subcategory?: string
-  price: number
-  originalPrice?: number
-  discount?: number
-  rating?: number
-  brand?: string
-  colors?: string[]
-  sizes?: string[]
-  about?: string
-  additionalInfo?: string
-  description?: string
-  reviews?: number
-  stock?: number
-  unitsPerPack?: number
-  isAdminProduct?: boolean
-  hsnCode?: string
-  appliedOffer?: {
-    name: string
-    type: string
-    value?: string | number
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
   }
+}
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
 }
 
 interface ProductGridProps {
@@ -49,283 +39,37 @@ interface ProductGridProps {
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, initialCategory }) => {
-  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
-  const [page, setPage] = useState<number>(1)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [hasMore, setHasMore] = useState<boolean>(true)
   const searchParams = useSearchParams()
   const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
   const category = initialCategory || (searchParams.get('category') || '').trim()
   const subcategory = (searchParams.get('subcategory') || '').trim()
-  const [deliverToState, setDeliverToState] = useState<string>(() => {
-    try {
-      return typeof window !== 'undefined' ? localStorage.getItem('deliverToState') || '' : ''
-    } catch {
-      return ''
-    }
-  })
-  const observerTarget = useRef<HTMLDivElement | null>(null)
-  const productsPerPage = 24
-  const [geoAsked, setGeoAsked] = useState<boolean>(false)
-  const [sortBy, setSortBy] = useState<string>('relevance')
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false)
-  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false)
-  const [activeFilterTab, setActiveFilterTab] = useState<string | null>(null)
-  const [minPrice, setMinPrice] = useState<string>('')
-  const [maxPrice, setMaxPrice] = useState<string>('')
-  const [minRating, setMinRating] = useState<number | null>(null)
-  const [selectedSize, setSelectedSize] = useState<string>('')
-  const [selectedOffer, setSelectedOffer] = useState<string>('')
-  const [selectedOfferDetails, setSelectedOfferDetails] = useState<Offer | null>(null)
+
+  const { deliverToState } = useGeolocation()
   
-  const handlePriceCategorySelect = (min: number, max: number, type?: string) => {
-    setMinRating(null)
-    setSelectedSize('')
-    setSelectedOffer('')
-    setSelectedOfferDetails(null)
-    
-    if (type === 'discount') {
-      setMinPrice('')
-      setMaxPrice('')
-      setSortBy('price-asc')
-    } else if (type === 'special') {
-      setMinPrice('')
-      setMaxPrice('')
-      setSortBy('relevance')
-    } else {
-      setMinPrice(String(min))
-      setMaxPrice(String(max))
-      setSortBy('price-asc')
-    }
-    setPage(1)
-  }
-
-  type DropdownItem = { id: string | number; label: string }
-  const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
-    const createNumSizes = (start: number, end: number) => {
-      const arr: DropdownItem[] = []
-      for (let i = start; i <= end; i++) arr.push({ id: String(i), label: String(i) })
-      return arr
-    }
-    let newSizes: DropdownItem[] = []
-    if (cat === "Women's Fashion" || cat === "Men's Fashion" || cat === "Women's Footwear") {
-      newSizes = createNumSizes(4, 10)
-      newSizes = [
-        { id: 'XS', label: 'XS' },
-        { id: 'S', label: 'S' },
-        { id: 'M', label: 'M' },
-        { id: 'L', label: 'L' },
-        { id: 'XL', label: 'XL' },
-        { id: 'XXL', label: 'XXL' },
-        { id: '3XL', label: '3XL' },
-        { id: 'Free Size', label: 'Free Size' },
-        ...newSizes,
-      ]
-    } else if (cat === "Men's Footwear") {
-      newSizes = createNumSizes(4, 11)
-    } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen" || cat === "Mobiles & Accessories" || cat === "Jewellery & Accessories") {
-      newSizes = []
-    } else {
-      newSizes = [
-        { id: 'XS', label: 'XS' },
-        { id: 'S', label: 'S' },
-        { id: 'M', label: 'M' },
-        { id: 'L', label: 'L' },
-        { id: 'XL', label: 'XL' },
-        { id: 'XXL', label: 'XXL' },
-        { id: '3XL', label: '3XL' },
-        { id: 'Free Size', label: 'Free Size' },
-      ]
-    }
-    return newSizes
-  }
-  const allSizes: DropdownItem[] = [
-    { id: 'XS', label: 'XS' },
-    { id: 'S', label: 'S' },
-    { id: 'M', label: 'M' },
-    { id: 'L', label: 'L' },
-    { id: 'XL', label: 'XL' },
-    { id: 'XXL', label: 'XXL' },
-    { id: '3XL', label: '3XL' },
-    { id: 'Free Size', label: 'Free Size' },
-    ...Array.from({ length: 8 }, (_, i) => ({ id: String(4 + i), label: String(4 + i) })), // 4-11
-  ]
-
-  const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
-  const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
-
-  type ApiProduct = {
-    _id?: string | number
-    id?: string | number
-    name: string
-    image?: string
-    images?: string[]
-    category: string
-    subcategory?: string
-    price: number
-    originalPrice?: number
-    discount?: number
-    rating?: number
-    brand?: string
-    colors?: string[]
-    sizes?: string[]
-    about?: string
-    additionalInfo?: string
-    description?: string
-    reviews?: number
-    stock?: number
-    unitsPerPack?: number
-    isAdminProduct?: boolean
-    hsnCode?: string
-  }
-
-  type JsonCategory = { name: string; subcategories?: string[] }
-  const subcategoryOptionsFor = useCallback((cat: string): DropdownItem[] => {
-    const entry = ((categoriesData as { categories: JsonCategory[] }).categories || []).find((c) => c.name === cat)
-    const subs: string[] = Array.isArray(entry?.subcategories) ? entry!.subcategories : []
-    return subs.map((s) => ({ id: s, label: s }))
-  }, [])
-
-  const shuffleArray = (array: Product[]) => {
-    const newArray = [...array]
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
-    }
-    return newArray
-  }
-
-  const fetchPage = useCallback(async (pageNum: number) => {
-    try {
-      const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
-      const adminParam = !deliverToState ? `&adminOnly=true` : ''
-      const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
-      const categoryParam = category ? `&category=${encodeURIComponent(category)}` : ''
-      const subcategoryParam = subcategory ? `&subcategory=${encodeURIComponent(subcategory)}` : ''
-      const sortParam = sortBy !== 'relevance' ? `&sortBy=${encodeURIComponent(sortBy)}` : ''
-      const priceParam = minPrice || maxPrice ? `&minPrice=${minPrice}&maxPrice=${maxPrice}` : ''
-      const ratingParam = minRating ? `&minRating=${minRating}` : ''
-      const sizeParam = selectedSize ? `&size=${encodeURIComponent(selectedSize)}` : ''
-      const offerParam = selectedOffer ? `&offer=${encodeURIComponent(selectedOffer)}` : ''
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}`)
-      if (!res.ok) return []
-      const data = await res.json()
-      const list = Array.isArray(data.products) ? data.products : []
-      return list.map((p: ApiProduct) => ({
-        id: p._id || p.id,
-        name: p.name,
-        image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
-        images: Array.isArray(p.images) ? p.images : undefined,
-        category: p.category,
-        subcategory: p.subcategory,
-        price: p.price,
-        originalPrice: p.originalPrice,
-        discount: p.discount,
-        rating: p.rating,
-        brand: p.brand,
-        colors: p.colors,
-        sizes: p.sizes,
-        about: p.about,
-        additionalInfo: p.additionalInfo,
-        description: p.description,
-        reviews: p.reviews,
-        stock: p.stock,
-        unitsPerPack: p.unitsPerPack,
-        isAdminProduct: p.isAdminProduct,
-        hsnCode: p.hsnCode,
-        appliedOffer: (selectedOfferDetails && (
-          (!selectedOfferDetails.category || selectedOfferDetails.category === p.category) &&
-          (!selectedOfferDetails.subcategory || selectedOfferDetails.subcategory === p.subcategory)
-        )) ? {
-          name: selectedOfferDetails.name,
-          type: selectedOfferDetails.type,
-          value: selectedOfferDetails.value
-        } : undefined
-      })) as Product[]
-    } catch {
-      return []
-    }
-  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails])
-
-  useEffect(() => {
-    const loadInitial = async () => {
-      setLoading(true)
-      setDisplayedProducts([]) 
-      const [first, second] = await Promise.all([fetchPage(1), fetchPage(2)])
-      let initial = [...first, ...second]
-      
-      if (sortBy === 'relevance' && !search) {
-        initial = shuffleArray(initial)
-      }
-      
-      setDisplayedProducts(initial)
-      setPage(2)
-      setHasMore(second.length === productsPerPage)
-      setLoading(false)
-    }
-    loadInitial()
-  }, [fetchPage])
-
-  useEffect(() => {
-    const save = (s: string | undefined, country?: string | undefined) => {
-      const valid = typeof s === 'string' && s.trim().length > 0
-      const inIndia = typeof country === 'string' ? country.trim().toLowerCase() === 'india' : true
-      if (valid && inIndia) {
-        setDeliverToState(s!.trim())
-        try { localStorage.setItem('deliverToState', s!.trim()) } catch {}
-      }
-    }
-    const geolocate = async () => {
-      if (geoAsked || deliverToState) return
-      setGeoAsked(true)
-      try {
-        await new Promise<void>((resolve) => {
-          if (!('geolocation' in navigator)) { resolve(); return }
-          navigator.geolocation.getCurrentPosition(
-            async (pos) => {
-              try {
-                const lat = pos.coords.latitude
-                const lon = pos.coords.longitude
-                const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`)
-                const data = await res.json()
-                const state = data?.principalSubdivision || ''
-                const country = data?.countryName || ''
-                save(state, country)
-              } catch {}
-              resolve()
-            },
-            () => resolve(),
-            { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
-          )
-        })
-      } catch {}
-      try {
-        if (!deliverToState) {
-          const r = await fetch('https://ipapi.co/json/')
-          const j = await r.json()
-          const state = j?.region || ''
-          const country = j?.country_name || ''
-          save(state, country)
-        }
-      } catch {}
-    }
-    geolocate()
-  }, [deliverToState, geoAsked])
-
-  const loadMore = useCallback(() => {
-    if (loading || !hasMore) return
-
-    setLoading(true)
-    ;(async () => {
-      const nextPage = page + 1
-      const next = await fetchPage(nextPage)
-      setDisplayedProducts(prev => [...prev, ...next])
-      setPage(nextPage)
-      setHasMore(next.length === productsPerPage)
-      setLoading(false)
-    })()
-  }, [page, loading, hasMore, fetchPage])
+  // Use hooks for logic
+  const [page, setPage] = useState<number>(1)
+  
+  // Pass setPage to useProductFilters
+  const filters = useProductFilters(setPage)
+  
+  // Now pass page and filters to useProductData
+  const { 
+    displayedProducts, 
+    loading, 
+    hasMore, 
+    loadMore 
+  } = useProductData({
+    search, 
+    category, 
+    subcategory, 
+    deliverToState, 
+    page,       // Pass page
+    setPage,    // Pass setPage to let hook update it (loadMore)
+    ...filters  // Pass all filter values
+  })
+  
+  const observerTarget = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -356,7 +100,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       params.delete('subcategory')
       router.push(`/?${params.toString()}`, { scroll: false })
     }
-  }, [category, subcategory, searchParams, router, subcategoryOptionsFor])
+  }, [category, subcategory, searchParams, router])
 
   return (
     <section className="min-h-screen py-12 bg-background relative overflow-hidden">
@@ -372,7 +116,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
             </div>
             
             <div className="mb-12">
-              <PriceCategoryBanner onSelectCategory={handlePriceCategorySelect} />
+              <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
             </div>
           </>
         )}
@@ -408,25 +152,25 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
           )}
           <div className="w-full md:w-auto z-10">
             <FilterControls
-              isFilterOpen={isFilterOpen}
-              setIsFilterOpen={setIsFilterOpen}
-              activeFilterTab={activeFilterTab}
-              setActiveFilterTab={setActiveFilterTab}
-              isSortDropdownOpen={isSortDropdownOpen}
-              setIsSortDropdownOpen={setIsSortDropdownOpen}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              minPrice={minPrice}
-              maxPrice={maxPrice}
-              minRating={minRating}
-              selectedSize={selectedSize}
+              isFilterOpen={filters.isFilterOpen}
+              setIsFilterOpen={filters.setIsFilterOpen}
+              activeFilterTab={filters.activeFilterTab}
+              setActiveFilterTab={filters.setActiveFilterTab}
+              isSortDropdownOpen={filters.isSortDropdownOpen}
+              setIsSortDropdownOpen={filters.setIsSortDropdownOpen}
+              sortBy={filters.sortBy}
+              setSortBy={filters.setSortBy}
+              minPrice={filters.minPrice}
+              maxPrice={filters.maxPrice}
+              minRating={filters.minRating}
+              selectedSize={filters.selectedSize}
               setPage={setPage}
             />
           </div>
         </div>
 
         <AnimatePresence>
-          {selectedOfferDetails && (
+          {filters.selectedOfferDetails && (
             <motion.div
               initial={{ opacity: 0, height: 0, marginBottom: 0 }}
               animate={{ opacity: 1, height: 'auto', marginBottom: 32 }}
@@ -443,22 +187,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                       <span className="bg-brand-purple text-white px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-widest shadow-lg shadow-brand-purple/30">
                         Active Offer
                       </span>
-                      <span className="text-foreground/60 text-sm font-medium border-l-2 border-foreground/10 pl-2">{selectedOfferDetails.type}</span>
+                      <span className="text-foreground/60 text-sm font-medium border-l-2 border-foreground/10 pl-2">{filters.selectedOfferDetails.type}</span>
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{selectedOfferDetails.name}</h3>
-                    {selectedOfferDetails.value && (
+                    <h3 className="text-2xl sm:text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">{filters.selectedOfferDetails.name}</h3>
+                    {filters.selectedOfferDetails.value && (
                       <p className="text-brand-purple font-semibold text-lg flex items-center gap-2">
                         <Gift className="w-5 h-5" />
-                        {selectedOfferDetails.type.includes('discount') 
-                          ? `Get ${selectedOfferDetails.value}% Instant Discount` 
-                          : selectedOfferDetails.value}
+                        {filters.selectedOfferDetails.type.includes('discount') 
+                          ? `Get ${filters.selectedOfferDetails.value}% Instant Discount` 
+                          : filters.selectedOfferDetails.value}
                       </p>
                     )}
                   </div>
                   <button 
                     onClick={() => {
-                      setSelectedOffer('')
-                      setSelectedOfferDetails(null)
+                      filters.setSelectedOffer('')
+                      filters.setSelectedOfferDetails(null)
                       setPage(1)
                     }}
                     className="p-2 rounded-full hover:bg-foreground/5 transition-colors group/close"
@@ -473,37 +217,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
 
         <div className="mb-10">
           <OffersFilterChips
-            selectedOffer={selectedOffer || undefined}
+            selectedOffer={filters.selectedOffer || undefined}
             onChange={(next, offer) => { 
-              setSelectedOffer(next || '')
-              setSelectedOfferDetails(offer || null)
+              filters.setSelectedOffer(next || '')
+              filters.setSelectedOfferDetails(offer || null)
               setPage(1) 
             }}
           />
         </div>
 
-        {isFilterOpen && (
+        {filters.isFilterOpen && (
           <div className="mb-8">
             <FilterPanel
-              activeFilterTab={activeFilterTab}
-              minPrice={minPrice}
-              setMinPrice={setMinPrice}
-              maxPrice={maxPrice}
-              setMaxPrice={setMaxPrice}
-              minRating={minRating}
-              setMinRating={setMinRating}
-              selectedSize={selectedSize}
-              setSelectedSize={setSelectedSize}
+              activeFilterTab={filters.activeFilterTab}
+              minPrice={filters.minPrice}
+              setMinPrice={filters.setMinPrice}
+              maxPrice={filters.maxPrice}
+              setMaxPrice={filters.setMaxPrice}
+              minRating={filters.minRating}
+              setMinRating={filters.setMinRating}
+              selectedSize={filters.selectedSize}
+              setSelectedSize={filters.setSelectedSize}
               setPage={setPage}
-              onClearFilters={() => {
-                setMinPrice('')
-                setMaxPrice('')
-                setMinRating(null)
-                setSelectedSize('')
-                setSelectedOffer('')
-                setSelectedOfferDetails(null)
-                setPage(1)
-              }}
+              onClearFilters={filters.clearAllFilters}
               category={category}
               getSizeOptionsForCategory={getSizeOptionsForCategory}
               allSizes={allSizes}
@@ -605,10 +341,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                   className="relative aspect-[4/5] overflow-hidden bg-gray-50 dark:bg-gray-900/50 cursor-pointer"
                   onClick={() => onProductClick({
                     ...product,
-                    appliedOffer: selectedOfferDetails ? {
-                      name: selectedOfferDetails.name,
-                      type: selectedOfferDetails.type,
-                      value: selectedOfferDetails.value
+                    appliedOffer: filters.selectedOfferDetails ? {
+                      name: filters.selectedOfferDetails.name,
+                      type: filters.selectedOfferDetails.type,
+                      value: filters.selectedOfferDetails.value
                     } : undefined
                   })}
                 >

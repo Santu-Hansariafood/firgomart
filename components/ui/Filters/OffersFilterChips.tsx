@@ -57,7 +57,6 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
       </div>
 
       <div className="flex items-center gap-3 overflow-x-auto py-2 px-1 scrollbar-hide touch-pan-x">
-        {/* Desktop Title - Hidden on Mobile */}
         <div className="hidden md:flex items-center gap-2 shrink-0 pr-2 border-r border-gray-200 dark:border-gray-800">
           <Tag className="w-4 h-4 text-brand-purple" />
           <span className="text-sm font-bold text-gray-800 dark:text-gray-200 whitespace-nowrap">Special Offers</span>

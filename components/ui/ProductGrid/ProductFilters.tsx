@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { ChevronDown, SlidersHorizontal } from "lucide-react"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, memo } from "react"
 
 export type DropdownItem = {
   id: string | number
@@ -42,7 +42,7 @@ interface FilterPanelProps {
   allSizes: DropdownItem[]
 }
 
-export function FilterControls({
+export const FilterControls = memo(function FilterControls({
   isFilterOpen,
   setIsFilterOpen,
   activeFilterTab,
@@ -87,7 +87,6 @@ export function FilterControls({
 
   return (
     <div className="relative z-[60] flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-      {/* Sort Dropdown - Mobile: Upper Layer (Order 1), Desktop: Right side (Order 2) */}
       <div ref={sortRef} className="relative z-[70] order-1 sm:order-2 w-full sm:w-auto">
         <button
           onClick={() => setIsSortDropdownOpen((p) => !p)}
@@ -145,7 +144,6 @@ export function FilterControls({
         )}
       </div>
 
-      {/* Desktop Filter Toggle Button */}
       <button
         onClick={() => setIsFilterOpen((p) => !p)}
         className={`hidden sm:flex relative order-2 sm:order-1 items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all w-full sm:w-auto
@@ -162,7 +160,6 @@ export function FilterControls({
         )}
       </button>
 
-      {/* Mobile Filter Tabs */}
       <div className="flex sm:hidden order-2 overflow-x-auto gap-2 pb-1 scrollbar-hide">
         {[
             { id: 'price', label: 'Price' },
@@ -193,9 +190,9 @@ export function FilterControls({
       </div>
     </div>
   )
-}
+})
 
-export function FilterPanel({
+export const FilterPanel = memo(function FilterPanel({
   activeFilterTab,
   minPrice,
   setMinPrice,
@@ -243,7 +240,6 @@ export function FilterPanel({
             </FilterCard>
         </div>
 
-        {/* Size Section */}
         <div className={activeFilterTab && activeFilterTab !== 'size' ? 'hidden md:block' : ''}>
             <FilterCard title="Size">
             <div className="flex flex-wrap gap-2">
@@ -274,7 +270,6 @@ export function FilterPanel({
             </FilterCard>
         </div>
 
-        {/* Rating Section */}
         <div className={activeFilterTab && activeFilterTab !== 'rating' ? 'hidden md:block' : ''}>
             <FilterCard title="Minimum Rating">
             <div className="space-y-2">
@@ -319,7 +314,7 @@ export function FilterPanel({
       </div>
     </motion.div>
   )
-}
+})
 
 
 function FilterCard({

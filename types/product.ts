@@ -1,0 +1,38 @@
+export interface Product {
+  id: string | number
+  name: string
+  image: string
+  images?: string[]
+  category: string
+  subcategory?: string
+  price: number
+  originalPrice?: number
+  discount?: number
+  rating?: number
+  brand?: string
+  colors?: string[]
+  sizes?: string[]
+  about?: string
+  additionalInfo?: string
+  description?: string
+  reviews?: number
+  stock?: number
+  unitsPerPack?: number
+  isAdminProduct?: boolean
+  hsnCode?: string
+  weight?: string | number
+  weightUnit?: string
+  height?: string | number
+  width?: string | number
+  dimensionUnit?: string
+  appliedOffer?: {
+    name: string
+    type: string
+    value?: string | number
+  }
+}
+
+export type DropdownItem = {
+  id: string | number
+  label: string
+}
