@@ -157,7 +157,11 @@ const Navbar: React.FC = () => {
               >
                 <Menu className="w-6 h-6" />
               </button>
-              <Link href="/" className="flex-shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transition-transform hover:scale-105 active:scale-95">
+              <Link 
+                href="/" 
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="flex-shrink-0 relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 transition-transform hover:scale-105 active:scale-95"
+              >
                 <Image
                   src="/logo/firgomart.png"
                   alt="Firgomart"
@@ -386,7 +390,14 @@ const Navbar: React.FC = () => {
                     )}
                     <div className="space-y-1">
                       <p className="px-3 text-xs font-semibold text-foreground/40 uppercase tracking-wider mb-2">Menu</p>
-                      <Link href="/" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors">
+                      <Link 
+                        href="/" 
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }} 
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors"
+                      >
                         <Store className="w-5 h-5 opacity-70" /> Home
                       </Link>
                       <button onClick={() => { setMobileMenuOpen(false); setShowOffers(true) }} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors">

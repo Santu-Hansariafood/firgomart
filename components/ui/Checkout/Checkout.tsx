@@ -609,6 +609,11 @@ const Checkout: React.FC<CheckoutProps> = ({
                               Color: <span className="w-2.5 h-2.5 rounded-full border border-gray-300" style={{ background: item.selectedColor }} />
                             </span>
                           )}
+                          {summaryItem?.gstPercent !== undefined && (
+                            <span className="text-[10px] bg-gray-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-gray-200 dark:border-zinc-700 font-medium">
+                              GST: {summaryItem.gstPercent}%
+                            </span>
+                          )}
                       </div>
 
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>

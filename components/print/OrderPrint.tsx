@@ -99,6 +99,10 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
           const sellerAddress = [seller.address, seller.city, seller.state, seller.pincode]
             .filter(Boolean)
             .join(", ")
+          
+          const buyerState = (order.state || "").trim().toLowerCase()
+          const sellerState = (seller.state || "").trim().toLowerCase()
+          const isInterstate = buyerState && sellerState && buyerState !== sellerState
 
           return (
             <div key={idx} className="page-break-after-always min-h-[297mm] p-8 flex flex-col relative border-b-2 border-dashed border-gray-300 print:border-none">
@@ -264,8 +268,14 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                       <th className="py-2 text-right">Gross Amount</th>
                       <th className="py-2 text-right">Discount</th>
                       <th className="py-2 text-right">Taxable Value</th>
-                      <th className="py-2 text-right">CGST</th>
-                      <th className="py-2 text-right">SGST</th>
+                      {isInterstate ? (
+                        <th className="py-2 text-right">IGST</th>
+                      ) : (
+                        <>
+                          <th className="py-2 text-right">CGST</th>
+                          <th className="py-2 text-right">SGST</th>
+                        </>
+                      )}
                       <th className="py-2 text-right">Total</th>
                     </tr>
                   </thead>
@@ -291,8 +301,9 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                       const gstPercent = item.gstPercent || 18
                       const gstAmount = item.gstAmount || ((taxable * gstPercent) / 100)
                       
-                      const cgst = gstAmount / 2
-                      const sgst = gstAmount / 2
+                      const cgst = isInterstate ? 0 : gstAmount / 2
+                      const sgst = isInterstate ? 0 : gstAmount / 2
+                      const igst = isInterstate ? gstAmount : 0
                       const total = taxable + gstAmount
                       
                       return (
@@ -318,8 +329,14 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                           <td className="py-2 text-right">{fmt(grossAmount)}</td>
                           <td className="py-2 text-right">{fmt(discountTotal)}</td>
                           <td className="py-2 text-right">{fmt(taxable)}</td>
-                          <td className="py-2 text-right">{fmt(cgst)}</td>
-                          <td className="py-2 text-right">{fmt(sgst)}</td>
+                          {isInterstate ? (
+                            <td className="py-2 text-right">{fmt(igst)}</td>
+                          ) : (
+                            <>
+                              <td className="py-2 text-right">{fmt(cgst)}</td>
+                              <td className="py-2 text-right">{fmt(sgst)}</td>
+                            </>
+                          )}
                           <td className="py-2 text-right font-bold">{fmt(total)}</td>
                         </tr>
                       )
@@ -329,7 +346,7 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                      <tr>
                         <td className="py-2">TOTAL</td>
                         <td className="py-2 text-right">{items.reduce((s:number, i:any) => s + i.quantity, 0)}</td>
-                        <td className="py-2 text-right" colSpan={5}></td>
+                        <td className="py-2 text-right" colSpan={isInterstate ? 4 : 5}></td>
                         <td className="py-2 text-right">{fmt(taxDetails.total)}</td>
                      </tr>
                   </tfoot>

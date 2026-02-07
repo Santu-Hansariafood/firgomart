@@ -97,15 +97,23 @@ export default async function PrintOrderPage({ params }: { params: Promise<{ id:
     const totalTax = items.reduce((sum: number, it: any) => sum + (it.gstAmount || ((it.price * it.quantity * (it.gstPercent || 18)) / 100)), 0)
     const totalAmount = totalTaxable + totalTax
     
+    const buyerState = (order.state || "").trim().toLowerCase()
+    const sellerState = (sellerDetails.state || "").trim().toLowerCase()
+    const isInterstate = buyerState && sellerState && buyerState !== sellerState
+
+    const cgst = isInterstate ? 0 : totalTax / 2
+    const sgst = isInterstate ? 0 : totalTax / 2
+    const igst = isInterstate ? totalTax : 0
+    
     sellerGroups.push({
       seller: sellerDetails,
       items,
       taxDetails: {
         total: totalAmount,
         taxable: totalTaxable,
-        cgst: totalTax / 2,
-        sgst: totalTax / 2,
-        igst: 0 
+        cgst,
+        sgst,
+        igst
       }
     })
   }

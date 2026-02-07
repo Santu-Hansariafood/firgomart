@@ -22,7 +22,21 @@ function getGstPercent(categoryKeyOrName?: string): number {
     c.key.toLowerCase() === normalized || 
     c.name.toLowerCase() === normalized
   )
-  return cat?.gstPercent ?? 18
+  
+  if (!cat) return 18
+
+  // Check direct gstPercent
+  if (typeof (cat as any).gstPercent === 'number') {
+    return (cat as any).gstPercent
+  }
+
+  // Check nested gstRules (e.g. for Jewellery)
+  const rules = (cat as any).gstRules
+  if (rules?.default?.gstPercent && typeof rules.default.gstPercent === 'number') {
+    return rules.default.gstPercent
+  }
+
+  return 18
 }
 
 export async function POST(request: Request) {

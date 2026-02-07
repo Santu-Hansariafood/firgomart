@@ -198,15 +198,15 @@ const Profile = () => {
                   </div>
                 </div>
                 
-                <div className="flex-1">
-                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-[var(--foreground)] tracking-tight">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-[var(--foreground)] tracking-tight break-words">
                     {user.name}
                   </h2>
                   <div className="flex flex-wrap gap-3 mt-2">
                     {user.email && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70">
-                        <Mail className="w-3 h-3" />
-                        {user.email}
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70 max-w-full">
+                        <Mail className="w-3 h-3 flex-shrink-0" />
+                        <span className="truncate">{user.email}</span>
                       </span>
                     )}
                     {user.mobile && (

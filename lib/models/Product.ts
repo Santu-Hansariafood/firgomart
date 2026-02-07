@@ -83,6 +83,7 @@ const ProductSchema = new Schema<IProduct>(
 
 ProductSchema.index({ name: "text", category: "text", subcategory: "text", brand: "text", description: "text" })
 
+// Optimized indexes for filtering and sorting
 ProductSchema.index({ category: 1, status: 1, price: 1 })
 ProductSchema.index({ category: 1, status: 1, rating: -1 })
 ProductSchema.index({ category: 1, status: 1, createdAt: -1 })
@@ -90,6 +91,9 @@ ProductSchema.index({ category: 1, status: 1, createdAt: -1 })
 ProductSchema.index({ category: 1, subcategory: 1, status: 1, price: 1 })
 ProductSchema.index({ category: 1, subcategory: 1, status: 1, rating: -1 })
 ProductSchema.index({ category: 1, subcategory: 1, status: 1, createdAt: -1 })
+
+ProductSchema.index({ category: 1 }, { collation: { locale: 'en', strength: 2 } })
+ProductSchema.index({ subcategory: 1 }, { collation: { locale: 'en', strength: 2 } })
 
 ProductSchema.index({ isAdminProduct: 1, status: 1 })
 ProductSchema.index({ sellerHasGST: 1, status: 1 })

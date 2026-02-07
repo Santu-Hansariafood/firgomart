@@ -32,11 +32,21 @@ export interface CheckoutFormData {
   cvv: string
 }
 
+export interface SummaryItem {
+  productId: string
+  gstPercent: number
+  gstAmount: number
+  cgst: number
+  sgst: number
+  igst: number
+  stock: number
+}
+
 export interface OrderSummary {
   subtotal: number
   tax: number
   total: number
-  items: any[]
+  items: SummaryItem[]
   taxBreakdown: {
     cgst: number
     sgst: number

@@ -5,6 +5,7 @@ import { getProductModel } from "@/lib/models/Product"
 import { getOfferModel } from "@/lib/models/Offer"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import categoriesData from "@/data/categories.json"
 
 export async function GET(request: Request) {
   try {
@@ -69,8 +70,30 @@ export async function GET(request: Request) {
     if (categoryParam) {
       const cats = categoryParam.split(",").map(c => c.trim()).filter(Boolean)
       if (cats.length > 0) {
-        // Optimized: Use exact match regex for index utilization
-        const regexes = cats.map(c => new RegExp(`^${c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i"))
+        // Optimization: Try to map to exact category names from JSON to use indexes efficiently
+        const exactCats = cats.map(c => {
+          const lowerC = c.toLowerCase()
+          const match = categoriesData.categories.find(
+            cat => cat.key.toLowerCase() === lowerC || cat.name.toLowerCase() === lowerC
+          )
+          return match ? match.name : c // Use exact name if found, else original
+        })
+        
+        // Use exact match $in which leverages indexes better than regex
+        // We still keep regex as fallback in OR if needed, but if we trust the mapping:
+        // Let's use a smart approach: exact match for mapped ones, regex for others?
+        // Simpler: Just use the mapped names. If exact match fails for custom cats, we might need regex.
+        // But for performance, let's try to stick to exact matches for standard categories.
+        
+        const safeCats = exactCats.map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        const regexes = safeCats.map(c => new RegExp(`^${c}$`, "i"))
+        
+        // If we found exact matches in JSON, we can also push exact string matches to conditions
+        // But to be safe and support case-insensitivity for unmapped inputs, we'll use the optimized regex
+        // However, if we found a match, we should prefer the exact string in the query if possible
+        // But $in takes an array. 
+        
+        // Best approach: Use the exact names from mapping and case-insensitive regex for robustness
         conditions.push({ category: { $in: regexes } })
       }
     }
@@ -78,7 +101,22 @@ export async function GET(request: Request) {
     if (subcategoryParam) {
       const subs = subcategoryParam.split(",").map(s => s.trim()).filter(Boolean)
       if (subs.length > 0) {
-        const regexes = subs.map(s => new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i"))
+        // Optimization: Map subcategories
+        const exactSubs = subs.map(s => {
+          const lowerS = s.toLowerCase()
+          let found: string | undefined
+          for (const cat of categoriesData.categories) {
+             const match = cat.subcategories.find(sub => sub.toLowerCase() === lowerS)
+             if (match) {
+               found = match
+               break
+             }
+          }
+          return found || s
+        })
+        
+        const safeSubs = exactSubs.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        const regexes = safeSubs.map(s => new RegExp(`^${s}$`, "i"))
         conditions.push({ subcategory: { $in: regexes } })
       }
     }

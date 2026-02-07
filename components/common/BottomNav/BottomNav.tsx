@@ -128,6 +128,9 @@ const BottomNav: React.FC<BottomNavProps> = ({
                   key={idx}
                   href={item.href}
                   onClick={(e) => {
+                    if (item.label === "Home") {
+                       window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
                     if (item.label === "Cart") {
                        return;
                     }
