@@ -143,7 +143,7 @@ const CartPage = () => {
                         {item.name}
                       </h3>
                       <button
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item._uniqueId || item.id)}
                         className="p-2 text-[var(--foreground)/40] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors -mr-2 -mt-2"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -169,7 +169,7 @@ const CartPage = () => {
                     
                     <div className="flex items-center border border-[var(--foreground)/20] rounded-lg overflow-hidden bg-[var(--background)]">
                       <button
-                        onClick={() => updateQuantity(item.id, (item.quantity || 1) - 1)}
+                        onClick={() => updateQuantity(item._uniqueId || item.id, (item.quantity || 1) - 1)}
                         className="p-2 hover:bg-[var(--foreground)/5] transition-colors disabled:opacity-30"
                         disabled={(item.quantity || 1) <= 1}
                       >
@@ -179,7 +179,7 @@ const CartPage = () => {
                         {item.quantity || 1}
                       </span>
                       <button
-                        onClick={() => updateQuantity(item.id, (item.quantity || 1) + 1)}
+                        onClick={() => updateQuantity(item._uniqueId || item.id, (item.quantity || 1) + 1)}
                         className="p-2 hover:bg-[var(--foreground)/5] transition-colors disabled:opacity-30"
                         disabled={(item.quantity || 1) >= (item.stock || 10)}
                       >

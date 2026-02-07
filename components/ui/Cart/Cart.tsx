@@ -6,25 +6,8 @@ import FallbackImage from '@/components/common/Image/FallbackImage'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useAuth } from '@/context/AuthContext'
-
-interface CartItem {
-  id: number | string
-  name: string
-  price: number
-  originalPrice?: number
-  quantity?: number
-  image: string
-  stock?: number
-  unitsPerPack?: number
-  selectedSize?: string
-  selectedColor?: string
-  _uniqueId?: string
-  appliedOffer?: {
-    name: string
-    type: string
-    value?: string | number
-  }
-}
+import { CartItem } from '@/types/checkout'
+import { useCartSummary } from '@/hooks/cart/useCartSummary'
 
 interface CartProps {
   items: CartItem[]
@@ -36,44 +19,7 @@ interface CartProps {
 const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveItem }) => {
   const router = useRouter()
   const { isAuthenticated } = useAuth()
-  const [orderSummary, setOrderSummary] = React.useState<any>(null)
-
-  React.useEffect(() => {
-    const fetchSummary = async () => {
-      if (items.length === 0) {
-        setOrderSummary(null)
-        return
-      }
-
-      let country = 'India'
-      try {
-        const raw = typeof window !== 'undefined' ? localStorage.getItem('deliveryAddress') : ''
-        if (raw) {
-          const parsed = JSON.parse(raw)
-          if (parsed.country) country = parsed.country
-        }
-      } catch {}
-
-      try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            items: items.map(ci => ({ id: ci.id, quantity: ci.quantity ?? 1 })),
-            dryRun: true,
-            country
-          }),
-        })
-        if (res.ok) {
-          const data = await res.json()
-          setOrderSummary(data)
-        }
-      } catch {}
-    }
-    
-    const timer = setTimeout(fetchSummary, 300)
-    return () => clearTimeout(timer)
-  }, [items])
+  const { orderSummary } = useCartSummary(items)
 
   const localTotal = items.reduce((sum, item) => {
     if ((item.stock ?? 0) <= 0) return sum
@@ -162,7 +108,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   const maxQty = item.price >= 1000 ? 2 : 3
                   return (
                   <motion.div
-                    key={item.id}
+                    key={item._uniqueId || item.id}
                     layout
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
