@@ -69,57 +69,17 @@ export async function GET(request: Request) {
     if (categoryParam) {
       const cats = categoryParam.split(",").map(c => c.trim()).filter(Boolean)
       if (cats.length > 0) {
-        const catConditions = cats.map(c => {
-          const lowerC = c.toLowerCase()
-          
-          if (lowerC.includes("men") && !lowerC.includes("women")) {
-             return { 
-               $and: [
-                 { category: { $regex: new RegExp(c, "i") } },
-                 { category: { $not: { $regex: /women/i } } }
-               ]
-             }
-          }
-          
-          if (lowerC === "rings" || lowerC === "ring") {
-             return {
-               $and: [
-                 { category: { $regex: new RegExp(c, "i") } },
-                 { category: { $not: { $regex: /earring|key/i } } }
-               ]
-             }
-          }
-
-          return { 
-            $or: [
-               { category: { $regex: new RegExp(`^${c}$`, "i") } },
-               { category: { $regex: new RegExp(c, "i") } }
-            ]
-          }
-        })
-        
-        conditions.push({ $or: catConditions })
+        // Optimized: Use exact match regex for index utilization
+        const regexes = cats.map(c => new RegExp(`^${c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i"))
+        conditions.push({ category: { $in: regexes } })
       }
     }
 
     if (subcategoryParam) {
       const subs = subcategoryParam.split(",").map(s => s.trim()).filter(Boolean)
       if (subs.length > 0) {
-        const subConditions = subs.map(s => {
-           const lowerS = s.toLowerCase()
-           
-           if (lowerS === "rings" || lowerS === "ring") {
-              return {
-                $and: [
-                  { subcategory: { $regex: new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") } },
-                  { subcategory: { $not: { $regex: /earring/i } } }
-                ]
-              }
-           }
-           
-           return { subcategory: { $regex: new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i") } }
-        })
-        conditions.push({ $or: subConditions })
+        const regexes = subs.map(s => new RegExp(`^${s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, "i"))
+        conditions.push({ subcategory: { $in: regexes } })
       }
     }
 

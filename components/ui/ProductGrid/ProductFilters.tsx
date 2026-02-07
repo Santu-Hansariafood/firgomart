@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ChevronDown, SlidersHorizontal } from "lucide-react"
-import { useEffect, useRef, memo } from "react"
+import { ChevronDown, SlidersHorizontal, Star } from "lucide-react"
+import { useEffect, useRef, memo, useState } from "react"
 
 export type DropdownItem = {
   id: string | number
@@ -75,37 +75,45 @@ export const FilterControls = memo(function FilterControls({
     }
   }, [setIsSortDropdownOpen])
 
-  const handleMobileTabClick = (tab: string) => {
-    if (activeFilterTab === tab && isFilterOpen) {
-      setIsFilterOpen(false)
-      setActiveFilterTab(null)
-    } else {
-      setActiveFilterTab(tab)
-      setIsFilterOpen(true)
-    }
-  }
-
   return (
-    <div className="relative z-[60] flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-      <div ref={sortRef} className="relative z-[70] order-1 sm:order-2 w-full sm:w-auto">
+    <div className="relative z-[60] flex flex-row items-center justify-end gap-2 sm:gap-4 w-full">
+      <button
+        onClick={() => setIsFilterOpen((p) => !p)}
+        className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all border
+          ${
+            isFilterOpen || hasFilters
+              ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/20"
+              : "bg-white/80 dark:bg-background/80 border-gray-200 dark:border-foreground/20 hover:bg-gray-50 dark:hover:bg-foreground/5 text-foreground backdrop-blur-sm"
+          }`}
+      >
+        <SlidersHorizontal className="w-4 h-4" />
+        <span className="hidden xs:inline">Filters</span>
+        {hasFilters && (
+          <span className="flex items-center justify-center w-5 h-5 ml-1 text-[10px] bg-white text-brand-purple rounded-full font-bold">
+            {[!!minPrice || !!maxPrice, !!minRating, !!selectedSize].filter(Boolean).length}
+          </span>
+        )}
+      </button>
+
+      <div ref={sortRef} className="relative z-[70]">
         <button
           onClick={() => setIsSortDropdownOpen((p) => !p)}
-          className="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-2 px-4 sm:px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full bg-white sm:bg-background border border-gray-200 sm:border-foreground/20 text-sm font-medium hover:bg-gray-50 sm:hover:bg-foreground/5 transition-all shadow-sm sm:shadow-none dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl sm:rounded-full bg-white/80 dark:bg-background/80 border border-gray-200 dark:border-foreground/20 text-sm font-medium hover:bg-gray-50 dark:hover:bg-foreground/5 transition-all backdrop-blur-sm text-foreground min-w-[140px] sm:min-w-[180px] justify-between"
         >
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 dark:text-gray-400 sm:text-foreground/70 text-xs sm:text-sm uppercase sm:normal-case font-bold sm:font-normal tracking-wider sm:tracking-normal">Sort by</span>
-            <span className="font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center gap-2 truncate">
+            <span className="text-gray-500 dark:text-gray-400 text-xs uppercase font-bold tracking-wider hidden sm:inline">Sort:</span>
+            <span className="font-semibold text-gray-900 dark:text-white truncate">
               {sortBy === "relevance"
                 ? "Relevance"
                 : sortBy === "price-asc"
                 ? "Price: Low to High"
                 : sortBy === "price-desc"
                 ? "Price: High to Low"
-                : "Rating"}
+                : "Top Rated"}
             </span>
           </div>
           <ChevronDown
-            className={`w-4 h-4 text-gray-500 transition-transform ${
+            className={`w-4 h-4 text-gray-500 flex-shrink-0 transition-transform ${
               isSortDropdownOpen ? "rotate-180" : ""
             }`}
           />
@@ -113,9 +121,9 @@ export const FilterControls = memo(function FilterControls({
 
         {isSortDropdownOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute right-0 left-0 sm:left-auto mt-2 sm:mt-3 w-full sm:w-60 rounded-2xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-2xl overflow-hidden z-[80] dark:bg-background/95 text-foreground"
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className="absolute right-0 mt-2 w-48 sm:w-56 rounded-xl bg-background/95 backdrop-blur-xl border border-foreground/10 shadow-xl overflow-hidden z-[80] origin-top-right"
           >
             {[
               ["relevance", "Relevance"],
@@ -130,11 +138,11 @@ export const FilterControls = memo(function FilterControls({
                   setIsSortDropdownOpen(false)
                   setPage(1)
                 }}
-                className={`w-full px-4 py-3 text-sm text-left transition-all text-foreground
+                className={`w-full px-4 py-2.5 text-sm text-left transition-all
                   ${
                     sortBy === value
-                      ? "bg-brand-purple/10 text-brand-purple font-semibold dark:bg-brand-purple/20"
-                      : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
+                      ? "bg-brand-purple/10 text-brand-purple font-semibold"
+                      : "text-foreground hover:bg-foreground/5"
                   }`}
               >
                 {label}
@@ -142,51 +150,6 @@ export const FilterControls = memo(function FilterControls({
             ))}
           </motion.div>
         )}
-      </div>
-
-      <button
-        onClick={() => setIsFilterOpen((p) => !p)}
-        className={`hidden sm:flex relative order-2 sm:order-1 items-center justify-center gap-2 px-6 py-3 sm:py-2.5 rounded-xl sm:rounded-full text-sm font-semibold transition-all w-full sm:w-auto
-          ${
-            isFilterOpen || hasFilters
-              ? "bg-gradient-to-r from-brand-purple to-purple-600 text-white shadow-lg shadow-purple-500/30"
-              : "bg-purple-500 sm:bg-background border border-gray-200 sm:border-foreground/20 hover:bg-gray-50 sm:hover:bg-foreground/5 dark:bg-background dark:border-foreground/20 backdrop-blur-sm text-foreground"
-          }`}
-      >
-        <SlidersHorizontal className="w-4 h-4" />
-        Filters
-        {hasFilters && (
-          <span className="absolute top-3 right-4 sm:-top-1 sm:-right-1 h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse border-2 border-white dark:border-gray-900 sm:border-none" />
-        )}
-      </button>
-
-      <div className="flex sm:hidden order-2 overflow-x-auto gap-2 pb-1 scrollbar-hide">
-        {[
-            { id: 'price', label: 'Price' },
-            { id: 'size', label: 'Size' },
-            { id: 'rating', label: 'Rating' },
-        ].map((tab) => {
-            const isActive = activeFilterTab === tab.id && isFilterOpen
-            const isSelected = (tab.id === 'price' && (minPrice || maxPrice)) ||
-                             (tab.id === 'size' && selectedSize) ||
-                             (tab.id === 'rating' && minRating)
-
-            return (
-                <button
-                    key={tab.id}
-                    onClick={() => handleMobileTabClick(tab.id)}
-                    className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all border
-                        ${isActive 
-                            ? "bg-brand-purple text-white border-brand-purple shadow-lg shadow-brand-purple/20" 
-                            : isSelected
-                                ? "bg-brand-purple/10 text-brand-purple border-brand-purple/20"
-                                : "bg-white dark:bg-background border-gray-200 dark:border-foreground/20 text-foreground"
-                        }`}
-                >
-                    {tab.label}
-                </button>
-            )
-        })}
       </div>
     </div>
   )
@@ -208,146 +171,169 @@ export const FilterPanel = memo(function FilterPanel({
   getSizeOptionsForCategory,
   allSizes,
 }: FilterPanelProps) {
+  const [mobileTab, setMobileTab] = useState<'price' | 'size' | 'rating'>('price')
+
+  const MIN_PRICE_LIMIT = 0
+  const MAX_PRICE_LIMIT = 5000
+  
+  const currentMin = minPrice ? parseInt(minPrice) : MIN_PRICE_LIMIT
+  const currentMax = maxPrice ? parseInt(maxPrice) : MAX_PRICE_LIMIT
+
+  const handlePriceRangeChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'min' | 'max') => {
+    const value = parseInt(e.target.value)
+    if (type === 'min') {
+      if (value <= currentMax) {
+        setMinPrice(value.toString())
+        setPage(1)
+      }
+    } else {
+      if (value >= currentMin) {
+        setMaxPrice(value.toString())
+        setPage(1)
+      }
+    }
+  }
+
+  const minPercent = ((currentMin - MIN_PRICE_LIMIT) / (MAX_PRICE_LIMIT - MIN_PRICE_LIMIT)) * 100
+  const maxPercent = ((currentMax - MIN_PRICE_LIMIT) / (MAX_PRICE_LIMIT - MIN_PRICE_LIMIT)) * 100
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: -14 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -14 }}
-      className="relative z-[50] rounded-3xl border border-foreground/10 bg-gradient-to-br from-background via-background to-foreground/5 shadow-2xl p-6 dark:from-background dark:to-foreground/10"
+      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+      animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
+      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+      className="relative z-[50] overflow-hidden"
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Price Section */}
-        <div className={activeFilterTab && activeFilterTab !== 'price' ? 'hidden md:block' : ''}>
-            <FilterCard title="Price Range">
-            <div className="flex gap-3">
-                <InputBox
-                placeholder="Min"
-                value={minPrice}
-                onChange={(v) => {
-                    setMinPrice(v)
-                    setPage(1)
-                }}
-                />
-                <InputBox
-                placeholder="Max"
-                value={maxPrice}
-                onChange={(v) => {
-                    setMaxPrice(v)
-                    setPage(1)
-                }}
-                />
-            </div>
-            </FilterCard>
+      <div className="rounded-3xl border border-foreground/10 bg-background/60 backdrop-blur-xl shadow-lg p-5 dark:bg-background/40">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-foreground">Filters</h3>
+          <button
+            onClick={onClearFilters}
+            className="text-xs font-semibold text-brand-purple hover:text-brand-purple/80 transition-colors px-3 py-1.5 rounded-full bg-brand-purple/10 hover:bg-brand-purple/20"
+          >
+            Clear All
+          </button>
         </div>
 
-        <div className={activeFilterTab && activeFilterTab !== 'size' ? 'hidden md:block' : ''}>
-            <FilterCard title="Size">
+        <div className="flex md:hidden p-1 bg-foreground/5 rounded-xl mb-6 relative">
+          {(['price', 'size', 'rating'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setMobileTab(tab)}
+              className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10
+                ${
+                  mobileTab === tab
+                    ? "bg-white dark:bg-foreground/20 text-brand-purple shadow-sm"
+                    : "text-foreground/50 hover:text-foreground/70"
+                }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className={`space-y-6 ${mobileTab !== 'price' ? 'hidden md:block' : ''}`}>
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-foreground/70 uppercase tracking-wider">Price Range</h4>
+              <div className="text-xs font-bold text-brand-purple bg-brand-purple/10 px-2 py-1 rounded-md">
+                ₹{currentMin} - ₹{currentMax}
+              </div>
+            </div>
+
+            <div className="relative h-2 w-full mt-2 mb-6">
+              <div className="absolute top-0eft-0 right-0 bobotgomf0o10 rounded-full"></div>
+              <div 
+                className="absolute top-0 bottom-0 bg-0nbo- omu0l"
+                style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
+              ></div>
+
+              <input
+                type="range"
+                min={MIN_PRICE_LIMIT}
+                max={MAX_PRICE_LIMIT}
+                value={currentMin}
+                onChange={(e) => handlePriceRangeChange(e, 'min')}
+                className={`absolute top-0 left-0 w-full h-2 appearance-none bg-transpa2 pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-purple [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-brand-purple [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:cursor-pointer ${currentMin > (MAX_PRICE_LIMIT - 100) ? "z-50" : "z-30"}`}
+              />
+
+              <input
+                type="range"
+                min={MIN_PRICE_LIMIT}
+                max={MAX_PRICE_LIMIT}
+                value={currentMax}
+                onChange={(e) => handlePriceRangeChange(e, 'max')}
+                className="absolute top-0 left-0 w-full h-2 appearance-none bg-transparen2inter-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-purple [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-brand-purple [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:cursor-pointer z-40"
+              />
+            </div>
+          </div>
+
+          <div className={`space-y-3 ${mobileTab !== 'size' ? 'hidden md:block' : ''}`}>
+            <h4 className="text-sm font-semibold text-foreground/70 uppercase tracking-wider">Size</h4>
             <div className="flex flex-wrap gap-2">
-                {(category ? getSizeOptionsForCategory(category) : allSizes).map(
-                (opt) => {
-                    const val = String(opt.label)
-                    const active = selectedSize === val
-                    return (
-                    <button
-                        key={opt.id}
-                        onClick={() => {
-                        setSelectedSize(active ? "" : val)
-                        setPage(1)
-                        }}
-                        className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-semibold transition-all
-                        ${
-                            active
-                            ? "bg-brand-purple text-white shadow-lg shadow-purple-500/30 scale-105"
-                            : "bg-background border border-foreground/20 hover:border-brand-purple hover:scale-105 dark:bg-background/70"
-                        }`}
-                    >
-                        {opt.label}
-                    </button>
-                    )
-                }
-                )}
-            </div>
-            </FilterCard>
-        </div>
-
-        <div className={activeFilterTab && activeFilterTab !== 'rating' ? 'hidden md:block' : ''}>
-            <FilterCard title="Minimum Rating">
-            <div className="space-y-2">
-                {[4, 3, 2, 1].map((rating) => {
-                const active = minRating === rating
+              {(category ? getSizeOptionsForCategory(category) : allSizes).map((opt) => {
+                const val = String(opt.label)
+                const active = selectedSize === val
                 return (
-                    <button
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setSelectedSize(active ? "" : val)
+                      setPage(1)
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border
+                      ${
+                        active
+                          ? "bg-brand-purple text-white border-brand-purple shadow-sm"
+                          : "bg-background/50 border-foreground/10 hover:border-brand-purple/50 text-foreground"
+                      }`}
+                  >
+                    {opt.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className={`space-y-3 ${mobileTab !== 'rating' ? 'hidden md:block' : ''}`}>
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-foreground/70 uppercase tracking-wider">Minimum Rating</h4>
+              {minRating && (
+                <span className="text-xs font-medium text-brand-purple bg-brand-purple/10 px-2 py-0.5 rounded-full">
+                  {minRating} Stars & Up
+                </span>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-1.5 p-3 rounded-2xl bg-background/50 border border-foreground/5">
+              {[1, 2, 3, 4, 5].map((rating) => {
+                const isActive = (minRating || 0) >= rating
+                return (
+                  <button
                     key={rating}
                     onClick={() => {
-                        setMinRating(active ? null : rating)
-                        setPage(1)
+                      setMinRating(minRating === rating ? null : rating)
+                      setPage(1)
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all
-                        ${
-                        active
-                            ? "bg-brand-purple/10 text-brand-purple shadow-inner dark:text-brand-purple-400"
-                            : "hover:bg-foreground/5 dark:hover:bg-foreground/10"
-                        }`}
-                    >
-                    <span className="text-brand-purple text-lg">
-                        {"★".repeat(rating)}
-                        <span className="text-gray-400">
-                        {"★".repeat(5 - rating)}
-                        </span>
-                    </span>
-                    <span className="text-sm font-medium">& Up</span>
-                    </button>
+                    className="group relative focus:outline-none flex-1 flex justify-center"
+                  >
+                    <Star 
+                      className={`w-8 h-8 md:w-6 md:h-6 transition-all duration-300 
+                        ${isActive 
+                          ? "fill-brand-purple text-brand-purple drop-shadow-sm scale-110" 
+                          : "text-foreground/20 hover:text-brand-purple/40 hover:scale-110"
+                        }`} 
+                    />
+                  </button>
                 )
-                })}
+              })}
             </div>
-            </FilterCard>
+            <p className="text-[10px] text-foreground/40 text-center font-medium">
+              Tap a star to filter by rating
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div className="mt-6 flex justify-end">
-        <button
-          onClick={onClearFilters}
-          className="px-7 py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-gray-200 to-gray-300 hover:from-brand-purple hover:to-purple-600 hover:text-white transition-all shadow-md dark:from-foreground/20 dark:to-foreground/30"
-        >
-          Clear All Filters
-        </button>
       </div>
     </motion.div>
   )
 })
-
-
-function FilterCard({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-2xl border border-foreground/10 bg-background/80 backdrop-blur p-5 shadow-md dark:bg-background/70">
-      <h4 className="mb-4 text-sm font-bold text-foreground/80">{title}</h4>
-      {children}
-    </div>
-  )
-}
-
-function InputBox({
-  placeholder,
-  value,
-  onChange,
-}: {
-  placeholder: string
-  value: string
-  onChange: (v: string) => void
-}) {
-  return (
-    <input
-      type="number"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full px-4 py-2.5 rounded-xl border border-foreground/20 bg-background focus:ring-2 focus:ring-brand-purple focus:outline-none transition-all dark:bg-background/70"
-    />
-  )
-}

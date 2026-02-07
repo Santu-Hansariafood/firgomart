@@ -83,6 +83,17 @@ const ProductSchema = new Schema<IProduct>(
 
 ProductSchema.index({ name: "text", category: "text", subcategory: "text", brand: "text", description: "text" })
 
+ProductSchema.index({ category: 1, status: 1, price: 1 })
+ProductSchema.index({ category: 1, status: 1, rating: -1 })
+ProductSchema.index({ category: 1, status: 1, createdAt: -1 })
+
+ProductSchema.index({ category: 1, subcategory: 1, status: 1, price: 1 })
+ProductSchema.index({ category: 1, subcategory: 1, status: 1, rating: -1 })
+ProductSchema.index({ category: 1, subcategory: 1, status: 1, createdAt: -1 })
+
+ProductSchema.index({ isAdminProduct: 1, status: 1 })
+ProductSchema.index({ sellerHasGST: 1, status: 1 })
+
 export function getProductModel(conn: Connection): Model<IProduct> {
   const models = conn.models as Record<string, Model<IProduct>>
   const existing = models.Product

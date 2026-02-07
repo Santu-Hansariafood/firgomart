@@ -1,8 +1,8 @@
 {
   "categories": [
     {
-      "name": "Mobiles & Accessories",
-      "key": "mobiles-accessories",
+      "name": "Mobile & Electronics",
+      "key": "mobile-electronics",
       "image": "/image/mobile.webp",
       "gstPercent": 18,
       "hsnChapters": ["85"],
@@ -22,19 +22,19 @@
         "Earphones & Headphones": ["8518"]
       },
       "subcategories": [
-        "Smartphones",
-        "Feature Phones",
         "Apple",
-        "Samsung",
-        "Xiaomi",
-        "Realme",
-        "OnePlus",
-        "Motorola",
+        "Earphones & Headphones",
+        "Feature Phones",
         "Mobile Chargers",
-        "Power Banks",
         "Mobile Covers",
+        "Motorola",
+        "OnePlus",
+        "Power Banks",
+        "Realme",
+        "Samsung",
         "Screen Protectors",
-        "Earphones & Headphones"
+        "Smartphones",
+        "Xiaomi"
       ]
     },
     {
@@ -59,19 +59,19 @@
         "Dupattas & Stoles": ["62"]
       },
       "subcategories": [
-        "Kurtis & Tunics",
-        "Sarees",
         "Blouses",
-        "Suits & Sets",
         "Co-ord Sets",
-        "Tops & T-Shirts",
         "Dresses",
+        "Dupattas & Stoles",
+        "Kurtis & Tunics",
         "Leggings & Bottom Wear",
-        "Palazzos & Skirts",
-        "Shrugs & Jackets",
         "Nightwear & Loungewear",
-        "Winter Wear",
-        "Dupattas & Stoles"
+        "Palazzos & Skirts",
+        "Sarees",
+        "Shrugs & Jackets",
+        "Suits & Sets",
+        "Tops & T-Shirts",
+        "Winter Wear"
       ]
     },
     {
@@ -94,17 +94,17 @@
         "Hoodies & Jackets": ["61", "62"]
       },
       "subcategories": [
-        "T-Shirts",
         "Casual Shirts",
-        "Formal Shirts",
-        "Jeans",
-        "Trousers & Track Pants",
-        "Shorts",
         "Co-ord Sets",
         "Ethnic Wear",
+        "Formal Shirts",
+        "Hoodies & Jackets",
         "Innerwear & Sleepwear",
-        "Winter Wear",
-        "Hoodies & Jackets"
+        "Jeans",
+        "Shorts",
+        "T-Shirts",
+        "Trousers & Track Pants",
+        "Winter Wear"
       ]
     },
     {
@@ -125,15 +125,15 @@
         "Bellies Shoes": ["64"]
       },
       "subcategories": [
+        "Bellies Shoes",
+        "Boots",
+        "Ethnic Footwear",
         "Flats",
         "Heels",
-        "Wedges",
-        "Ethnic Footwear",
         "Sandals",
-        "Sports Shoes",
-        "Boots",
         "Slippers & Flip-Flops",
-        "Bellies Shoes"
+        "Sports Shoes",
+        "Wedges"
       ]
     },
     {
@@ -198,24 +198,24 @@
         "Kids Jewellery": ["7117"]
       },
       "subcategories": [
+        "Anklets",
         "Artificial Jewellery",
-        "Earrings",
-        "Necklaces",
-        "Chains & Pendants",
         "Bangles",
         "Bracelets",
-        "Rings",
-        "Jewellery Sets",
-        "Anklets",
-        "Toe Rings",
-        "Nose Pins",
+        "Bridal Jewellery (Imitation)",
+        "Chains & Pendants",
         "Chokers",
-        "Statement Jewellery",
+        "Daily Wear Jewellery",
+        "Earrings",
+        "Jewellery Sets",
+        "Kids Jewellery",
+        "Necklaces",
+        "Nose Pins",
         "Oxidised Jewellery",
         "Party Wear Jewellery",
-        "Daily Wear Jewellery",
-        "Bridal Jewellery (Imitation)",
-        "Kids Jewellery"
+        "Rings",
+        "Statement Jewellery",
+        "Toe Rings"
       ]
     },
     {
@@ -258,28 +258,28 @@
         "Fashion Masks": ["6307"]
       },
       "subcategories": [
-        "Hair Accessories",
-        "Hair Clips",
-        "Hair Bands",
-        "Scrunchies",
-        "Watches",
-        "Sunglasses",
-        "Eyewear Frames",
-        "Handbags",
-        "Purses",
-        "Wallets",
         "Backpacks",
-        "Sling Bags",
-        "Clutches",
-        "Travel Accessories",
-        "Cosmetic Pouches",
         "Belts",
-        "Scarves & Stoles",
         "Caps & Hats",
+        "Clutches",
+        "Cosmetic Pouches",
+        "Eyewear Frames",
+        "Fashion Masks",
         "Gloves",
-        "Socks",
+        "Hair Accessories",
+        "Hair Bands",
+        "Hair Clips",
+        "Handbags",
         "Keychains",
-        "Fashion Masks"
+        "Purses",
+        "Scarves & Stoles",
+        "Scrunchies",
+        "Sling Bags",
+        "Socks",
+        "Sunglasses",
+        "Travel Accessories",
+        "Wallets",
+        "Watches"
       ]
     },
     {
@@ -305,20 +305,20 @@
         "Makeup Kits & Combos": ["3304"]
       },
       "subcategories": [
-        "Face Wash & Cleansers",
-        "Face Creams & Moisturizers",
-        "Serums & Sunscreens",
-        "Face Masks & Packs",
-        "Lipsticks",
-        "Kajal & Eyeliner",
-        "Nail Care",
-        "Hair Oils",
-        "Shampoo & Conditioners",
         "Beard Care",
-        "Perfumes",
-        "Deodorants",
         "Beauty Tools",
-        "Makeup Kits & Combos"
+        "Deodorants",
+        "Face Creams & Moisturizers",
+        "Face Masks & Packs",
+        "Face Wash & Cleansers",
+        "Hair Oils",
+        "Kajal & Eyeliner",
+        "Lipsticks",
+        "Makeup Kits & Combos",
+        "Nail Care",
+        "Perfumes",
+        "Serums & Sunscreens",
+        "Shampoo & Conditioners"
       ]
     },
     {
@@ -342,18 +342,18 @@
         "Bathroom Accessories": ["3924"]
       },
       "subcategories": [
+        "Bathroom Accessories",
         "Bedsheets",
+        "Cookware",
         "Curtains",
         "Cushions & Covers",
-        "Wall Décor & Frames",
-        "Lighting & Lamps",
-        "Home Décor Items",
-        "Cookware",
         "Dining & Serveware",
+        "Home Décor Items",
         "Kitchen Tools & Accessories",
+        "Lighting & Lamps",
         "Storage Containers",
-        "Water Bottles",
-        "Bathroom Accessories"
+        "Wall Décor & Frames",
+        "Water Bottles"
       ]
     }
   ]

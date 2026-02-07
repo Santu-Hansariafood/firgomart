@@ -8,13 +8,13 @@ import AnimatedButton from "@/components/ui/AnimatedButton/AnimatedButton"
 
 export default function DownloadAppPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col items-center p-4 relative overflow-x-hidden">
       <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-purple/5 rounded-full blur-3xl" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-red/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-4xl w-full mx-auto text-center z-10 space-y-12">
+      <div className="max-w-4xl w-full mx-auto my-auto text-center z-10 space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,10 +90,10 @@ export default function DownloadAppPage() {
             <Link href="/">
               <AnimatedButton
                 variant="primary"
-                className="!py-3 !px-8 text-lg shadow-lg shadow-brand-purple/20"
+                className="!py-3 !px-8 text-lg shadow-lg shadow-brand-purple/20 !whitespace-normal h-auto text-center"
               >
                 <span>Continue in Web View</span>
-                <ArrowRight className="w-5 h-5 ml-2" />
+                <ArrowRight className="w-5 h-5 ml-2 inline-block" />
               </AnimatedButton>
             </Link>
           </div>
