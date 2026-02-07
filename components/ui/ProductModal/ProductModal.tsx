@@ -295,7 +295,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-[100px] pointer-events-none -z-10" />
 
           <div className="sticky top-0 bg-background/80 backdrop-blur-xl border-b border-foreground/5 px-6 py-4 flex items-center justify-between z-30">
-            <h2 className="text-xl font-heading font-bold truncate pr-4 text-foreground/90">{product.name}</h2>
+            <h2 className="text-lg font-semibold truncate pr-4 text-gray-900 dark:text-gray-50">{product.name}</h2>
             <div className="flex items-center gap-3">
               <button
                 onClick={handleShare}
@@ -441,7 +441,7 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                       </span>
                     )}
                   </div>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold mb-3 leading-tight text-foreground/90 dark:text-white">
+                  <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 leading-tight text-gray-900 dark:text-gray-50">
                       {product.name}
                   </h2>
                 </div>

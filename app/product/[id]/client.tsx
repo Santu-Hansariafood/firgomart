@@ -363,7 +363,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                       </span>
                     )}
                   </div>
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-[var(--foreground)] mb-4 leading-tight tracking-tight">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-2 leading-tight">
                     {product.name}
                   </h1>
                 </div>
