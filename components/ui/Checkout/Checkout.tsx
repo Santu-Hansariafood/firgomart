@@ -1,11 +1,21 @@
 'use client'
 
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   CreditCard,
   MapPin,
   CheckCircle,
+  Plus,
+  Edit2,
+  ChevronRight,
+  ShieldCheck,
+  Truck,
+  CheckCircle2,
+  X,
+  Wallet,
+  ArrowLeft,
+  ShoppingBag
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { fadeInUp } from '@/utils/animations/animations'
@@ -97,6 +107,7 @@ const Checkout: React.FC<CheckoutProps> = ({
     items: [] as any[],
     taxBreakdown: { cgst: 0, sgst: 0, igst: 0 }
   })
+  const [showAddressModal, setShowAddressModal] = useState<boolean>(false)
 
   async function safeJson(res: Response) {
     try {
@@ -262,6 +273,41 @@ const Checkout: React.FC<CheckoutProps> = ({
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  const handleSelectAddress = (addr: any) => {
+    const u = user as any
+    setFormData(prev => ({
+      ...prev,
+      fullName: u?.name || prev.fullName,
+      email: u?.email || prev.email,
+      phone: u?.mobile || u?.phone || prev.phone,
+      address: addr.address,
+      city: addr.city,
+      state: addr.state,
+      pincode: addr.pincode,
+      country: addr.country || 'India',
+    }))
+    setShowAddressModal(false)
+  }
+
+  const handleAddNewAddress = () => {
+    const u = user as any
+    setFormData({
+      fullName: u?.name || '',
+      email: u?.email || '',
+      phone: u?.mobile || u?.phone || '',
+      address: '',
+      city: '',
+      state: '',
+      pincode: '',
+      country: 'India',
+      cardNumber: '',
+      cardName: '',
+      expiryDate: '',
+      cvv: ''
+    })
+    setShowAddressModal(false)
+  }
+
   const handlePlaceOrder = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (isSubmitting) return
@@ -404,7 +450,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 setCheckoutError("Failed to verify payment")
               }
             },
-            theme: { color: '#2563eb' },
+            theme: { color: '#7800c8' },
             modal: {
               ondismiss: function() {
                 setIsSubmitting(false);
@@ -434,512 +480,683 @@ const Checkout: React.FC<CheckoutProps> = ({
 
   if (orderPlaced) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--background)] flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-purple/20 rounded-full blur-[100px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/20 rounded-full blur-[100px]" />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-8 max-w-md w-full text-center shadow-xl dark:shadow-none"
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "backOut" }}
+          className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-3xl p-8 md:p-12 max-w-lg w-full text-center shadow-2xl relative z-10"
         >
-          <CheckCircle className="w-16 h-16 text-green-500 dark:text-green-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-heading font-bold text-gray-900 dark:text-gray-100 mb-2">
-            Order Placed Successfully!
-          </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-2">
-            Order ID: {lastOrder?.orderNumber || lastOrder?.id || ""}
-          </p>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Your order will be delivered within 3-5 business days.
-          </p>
-          {lastOrder?.id && (
-            <a
-              href={`/api/orders/${encodeURIComponent(lastOrder.id)}/receipt?download=true`}
-              className="inline-block mb-4 px-6 py-3 border-2 border-blue-600 dark:border-blue-500 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors font-medium"
+          <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6 relative">
+            <motion.div 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
             >
-              Download Receipt
-            </a>
-          )}
-          <button
-            onClick={() => router.push('/')}
-            className="px-6 py-3 bg-linear-to-r from-blue-600 to-blue-400 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all"
-          >
-            Continue Shopping
-          </button>
+              <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1.2 }}
+              transition={{ delay: 0.4, duration: 1, repeat: Infinity, repeatType: "reverse" }}
+              className="absolute inset-0 border-2 border-green-500/30 rounded-full"
+            />
+          </div>
+          
+          <h2 className="text-3xl font-heading font-bold text-[var(--foreground)] mb-3">
+            Order Confirmed!
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-8 text-lg">
+            Thank you for your purchase. Your order has been placed successfully.
+          </p>
+          
+          <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-2xl p-6 mb-8 border border-gray-100 dark:border-zinc-700/50">
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-1 uppercase tracking-wider font-semibold">Order ID</p>
+            <p className="text-xl font-mono font-bold text-[var(--foreground)] tracking-wide">
+              {lastOrder?.orderNumber || lastOrder?.id || ""}
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {lastOrder?.id && (
+              <a
+                href={`/api/orders/${encodeURIComponent(lastOrder.id)}/receipt?download=true`}
+                className="flex-1 px-6 py-3.5 border border-gray-200 dark:border-zinc-700 text-[var(--foreground)] rounded-xl hover:bg-gray-50 dark:hover:bg-zinc-800 transition-all font-medium flex items-center justify-center gap-2"
+              >
+                Download Receipt
+              </a>
+            )}
+            <button
+              onClick={() => router.push('/')}
+              className="flex-1 px-6 py-3.5 bg-brand-purple text-white rounded-xl font-medium hover:bg-brand-purple/90 transition-all shadow-lg shadow-brand-purple/25 flex items-center justify-center gap-2 group"
+            >
+              Continue Shopping
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
         </motion.div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        <BackButton href="/" className="mb-6" />
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+    <div className="min-h-screen bg-[var(--background)] pt-8 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+             <button onClick={() => router.push('/cart')} className="p-2 hover:bg-[var(--foreground)]/5 rounded-full transition-colors">
+               <ArrowLeft className="w-5 h-5 text-[var(--foreground)]" />
+             </button>
+             <h1 className="text-2xl font-bold font-heading text-[var(--foreground)]">Checkout</h1>
+          </div>
+          
+          {/* Progress Stepper */}
+          <div className="hidden md:flex items-center space-x-4">
+            <div className={`flex items-center gap-2 ${step >= 1 ? 'text-brand-purple font-medium' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= 1 ? 'border-brand-purple bg-brand-purple text-white' : 'border-gray-300 text-gray-400'}`}>
+                <MapPin className="w-4 h-4" />
+              </div>
+              <span>Address</span>
+            </div>
+            <div className="w-16 h-0.5 bg-gray-200 dark:bg-gray-700 relative">
+               <div className={`absolute top-0 left-0 h-full bg-brand-purple transition-all duration-300 ${step >= 2 ? 'w-full' : 'w-0'}`} />
+            </div>
+            <div className={`flex items-center gap-2 ${step >= 2 ? 'text-brand-purple font-medium' : 'text-gray-400'}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= 2 ? 'border-brand-purple bg-brand-purple text-white' : 'border-gray-300 text-gray-400'}`}>
+                <CreditCard className="w-4 h-4" />
+              </div>
+              <span>Payment</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
+          {/* Main Content Form */}
+          <div className="lg:col-span-8">
             <motion.div
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-[var(--background)] border rounded-xl p-6 text-[color:var(--foreground)]"
+              className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden"
             >
-              <div className="flex items-center space-x-4 mb-6">
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    step >= 1
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
-                  }`}
-                >
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div className="flex-1 h-1 bg-gray-200 dark:bg-gray-700">
-                  <div
-                    className={`h-full bg-blue-600 transition-all ${
-                      step >= 2 ? 'w-full' : 'w-0'
-                    }`}
-                  />
-                </div>
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    step >= 2
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
-                  }`}
-                >
-                  <CreditCard className="w-5 h-5" />
-                </div>
+              {/* Step Header for Mobile */}
+              <div className="md:hidden p-4 bg-gray-50 dark:bg-white/5 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
+                <span className="font-bold text-[var(--foreground)]">
+                  {step === 1 ? 'Shipping Address' : 'Payment Method'}
+                </span>
+                <span className="text-xs font-medium px-2 py-1 bg-[var(--foreground)]/10 rounded text-[var(--foreground)]">
+                  Step {step} of 2
+                </span>
               </div>
-              {step === 1 && (
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault()
-                    const ok = await validateDelivery(formData.state)
-                    if (ok) setStep(2)
-                  }}
-                  className="space-y-4"
-                >
-                  <h2 className="text-xl font-heading font-bold text-[color:var(--foreground)] mb-4">
-                    Delivery Address
-                  </h2>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="fullName"
-                      placeholder="Full Name *"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      required
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Email *"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                  </div>
-                  <input
-                    type="tel"
-                    name="phone"
-                    placeholder="Phone Number *"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    pattern="[0-9]{10}"
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                  />
-                  <textarea
-                    name="address"
-                    placeholder="Address *"
-                    value={formData.address}
-                    onChange={handleChange}
-                    required
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                  />
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="relative">
-                      <select
-                        name="country"
-                        value={formData.country}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 appearance-none"
-                      >
-                        {availableCountries.map((c) => (
-                          <option key={c} value={c}>
-                            {c}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
-                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                          <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                        </svg>
-                      </div>
-                    </div>
 
-                    {formData.country === 'India' ? (
-                      <div className="relative">
-                        <select
-                          name="state"
-                          value={formData.state}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 appearance-none"
-                        >
-                          <option value="">Select State *</option>
-                          {indianStates.map((s) => (
-                            <option key={s.state} value={s.state}>
-                              {s.state}
-                            </option>
-                          ))}
-                        </select>
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 dark:text-gray-300">
-                          <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                            <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                          </svg>
+              <div className="p-6 md:p-8">
+                {step === 1 && (
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault()
+                      const ok = await validateDelivery(formData.state)
+                      if (ok) setStep(2)
+                    }}
+                    className="space-y-6"
+                  >
+                    {(user as any)?.addresses?.length > 0 && (
+                      <div className="p-5 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-900/30">
+                        <div className="flex items-center justify-between mb-4">
+                           <h3 className="font-semibold text-[var(--foreground)] flex items-center gap-2 text-base">
+                             <ShieldCheck className="w-4 h-4 text-brand-purple" />
+                             Saved Addresses
+                           </h3>
+                           <div className="flex gap-2">
+                             <button 
+                               type="button"
+                               onClick={handleAddNewAddress}
+                               className="text-xs font-medium px-3 py-1.5 rounded-lg border border-dashed border-gray-400 hover:border-brand-purple hover:text-brand-purple transition-colors flex items-center gap-1"
+                             >
+                               <Plus className="w-3 h-3" /> Add New
+                             </button>
+                             <button 
+                               type="button"
+                               onClick={() => setShowAddressModal(true)}
+                               className="text-xs font-medium px-3 py-1.5 rounded-lg bg-brand-purple text-white shadow-lg shadow-brand-purple/20 hover:bg-brand-purple/90 transition-all flex items-center gap-1"
+                             >
+                               Change <ChevronRight className="w-3 h-3" />
+                             </button>
+                           </div>
+                        </div>
+                        
+                        <div className="p-4 bg-white dark:bg-zinc-800 rounded-xl border border-blue-200 dark:border-blue-800/30 flex items-start gap-4 relative overflow-hidden shadow-sm">
+                          <div className="absolute top-0 right-0 px-3 py-1 bg-brand-purple text-white text-[10px] font-bold rounded-bl-xl shadow-sm">
+                            SELECTED
+                          </div>
+                          <div className="mt-1 p-2 bg-brand-purple/10 rounded-full text-brand-purple shrink-0">
+                            <MapPin className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <p className="font-bold text-[var(--foreground)] text-sm mb-1">{formData.fullName || "Recipient Name"}</p>
+                            <p className="font-medium text-[var(--foreground)]/80 text-sm">{formData.address || "Enter address details below"}</p>
+                            <p className="text-xs text-[var(--foreground)]/60 mt-1">
+                              {formData.city} {formData.state ? `, ${formData.state}` : ''} {formData.pincode ? `- ${formData.pincode}` : ''}
+                            </p>
+                            <p className="text-xs text-[var(--foreground)]/60 uppercase tracking-wider mt-1 font-semibold">{formData.country}</p>
+                            <p className="text-xs text-[var(--foreground)]/70 mt-2 flex items-center gap-1">
+                               <span className="font-semibold">Phone:</span> {formData.phone}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    ) : (
-                      <input
-                        type="text"
-                        name="state"
-                        placeholder="State/Province *"
-                        value={formData.state}
-                        onChange={handleChange}
-                        required
-                        className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                      />
                     )}
 
-                    <input
-                      type="text"
-                      name="city"
-                      placeholder="City *"
-                      value={formData.city}
-                      onChange={handleChange}
-                      required
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                  
-                    <input
-                      type="text"
-                      name="pincode"
-                      placeholder="Pincode/Zip *"
-                      value={formData.pincode}
-                      onChange={handleChange}
-                      required
-                      className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
-                    />
-                  </div>
+                    <div>
+                      <h2 className="text-xl font-heading font-bold text-[color:var(--foreground)] mb-6 flex items-center gap-2">
+                        <Truck className="w-5 h-5 text-gray-400" />
+                        Delivery Details
+                      </h2>
+                      
+                      <div className="grid md:grid-cols-2 gap-5">
+                        <div className="space-y-1">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">Full Name</label>
+                           <input
+                            type="text"
+                            name="fullName"
+                            placeholder="John Doe"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">Email Address</label>
+                           <input
+                            type="email"
+                            name="email"
+                            placeholder="john@example.com"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all"
+                          />
+                        </div>
+                        <div className="space-y-1 md:col-span-2">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">Phone Number</label>
+                           <input
+                            type="tel"
+                            name="phone"
+                            placeholder="10-digit mobile number"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                            pattern="[0-9]{10}"
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all"
+                          />
+                        </div>
+                        <div className="space-y-1 md:col-span-2">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">Address (Area and Street)</label>
+                           <textarea
+                            name="address"
+                            placeholder="Flat / House No / Floor / Building"
+                            value={formData.address}
+                            onChange={handleChange}
+                            required
+                            rows={3}
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all resize-none"
+                          />
+                        </div>
+                        
+                        <div className="space-y-1">
+                          <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">Country</label>
+                          <div className="relative">
+                            <select
+                              name="country"
+                              value={formData.country}
+                              onChange={handleChange}
+                              required
+                              className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] appearance-none transition-all"
+                            >
+                              {availableCountries.map((c) => (
+                                <option key={c} value={c}>
+                                  {c}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                              <ChevronRight className="w-4 h-4 rotate-90" />
+                            </div>
+                          </div>
+                        </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3 bg-linear-to-r from-blue-600 to-blue-400 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-500 transition-all"
-                  >
-                    {validating ? 'Checking delivery...' : 'Continue to Payment'}
-                  </button>
-
-                  {invalidItems.length > 0 && (
-                    <div className="mt-4 p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-                      <p className="text-sm text-red-700 dark:text-red-300 mb-2">
-                        Some items cannot be delivered to <strong>{formData.state}</strong>.
-                        Remove them or change the delivery state.
-                      </p>
-                      <ul className="space-y-2">
-                        {invalidItems.map(item => (
-                          <li key={String(item.id)} className="flex items-center justify-between">
-                            <span className="text-sm text-red-800 dark:text-red-200">{item.name}</span>
-                            {onRemoveItem && (
-                              <button
-                                type="button"
-                                onClick={() => onRemoveItem(item.id)}
-                                className="text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                        <div className="space-y-1">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">State</label>
+                           {formData.country === 'India' ? (
+                            <div className="relative">
+                              <select
+                                name="state"
+                                value={formData.state}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] appearance-none transition-all"
                               >
-                                Remove
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </form>
-              )}
-              {step === 2 && (
-                <form onSubmit={handlePlaceOrder} className="space-y-4">
-                  <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
-                    Payment Details
-                  </h2>
-                  <div className="mb-6">
-                    <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-4">
-                      Select Payment Method
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4 mb-6">
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('cashfree')}
-                        className={`p-4 border-2 rounded-lg transition-all ${
-                          paymentMethod === 'cashfree'
-                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                        }`}
-                      >
-                        <CreditCard
-                          className={`w-6 h-6 mx-auto mb-2 ${
-                            paymentMethod === 'cashfree'
-                              ? 'text-blue-600'
-                              : 'text-gray-400'
-                          }`}
-                        />
-                        <p
-                          className={`text-sm font-medium ${
-                            paymentMethod === 'cashfree'
-                              ? 'text-blue-600'
-                              : 'text-gray-600 dark:text-gray-400'
-                          }`}
-                        >
-                          Cashfree (Cards, UPI, NetBanking, Wallets)
-                        </p>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setPaymentMethod('razorpay')}
-                        className={`p-4 border-2 rounded-lg transition-all ${
-                          paymentMethod === 'razorpay'
-                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
-                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                        }`}
-                      >
-                        <CreditCard
-                          className={`w-6 h-6 mx-auto mb-2 ${
-                            paymentMethod === 'razorpay'
-                              ? 'text-blue-600'
-                              : 'text-gray-400'
-                          }`}
-                        />
-                        <p
-                          className={`text-sm font-medium ${
-                            paymentMethod === 'razorpay'
-                              ? 'text-blue-600'
-                              : 'text-gray-600 dark:text-gray-400'
-                          }`}
-                        >
-                          Razorpay (Cards, UPI, NetBanking, Wallets)
-                        </p>
-                      </button>
-                    </div>
-                  </div>
+                                <option value="">Select State</option>
+                                {indianStates.map((s) => (
+                                  <option key={s.state} value={s.state}>
+                                    {s.state}
+                                  </option>
+                                ))}
+                              </select>
+                              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                <ChevronRight className="w-4 h-4 rotate-90" />
+                              </div>
+                            </div>
+                          ) : (
+                            <input
+                              type="text"
+                              name="state"
+                              placeholder="State/Province"
+                              value={formData.state}
+                              onChange={handleChange}
+                              required
+                              className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all"
+                            />
+                          )}
+                        </div>
 
-                  {(paymentMethod === 'cashfree') ? (
-                    <div className="space-y-4 mt-4">
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
-                          Pay using Cashfree
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          You will complete payment securely with Cashfree Checkout. Supports Cards, UPI, NetBanking and Wallets.
-                        </p>
-                        <p className="text-xl font-bold text-blue-600">
-                          <Rupee />{total.toFixed(2)}
-                        </p>
+                        <div className="space-y-1">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">City</label>
+                           <input
+                            type="text"
+                            name="city"
+                            placeholder="City / District / Town"
+                            value={formData.city}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all"
+                          />
+                        </div>
+                      
+                        <div className="space-y-1">
+                           <label className="text-xs font-medium text-[var(--foreground)]/70 ml-1">Pincode</label>
+                           <input
+                            type="text"
+                            name="pincode"
+                            placeholder="Pincode"
+                            value={formData.pincode}
+                            onChange={handleChange}
+                            required
+                            className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/50 bg-gray-50 dark:bg-zinc-800 text-[var(--foreground)] transition-all"
+                          />
+                        </div>
                       </div>
                     </div>
-                  ) : (
-                    <div className="space-y-4 mt-4">
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6 text-center">
-                        <h3 className="text-lg font-heading font-semibold text-[var(--foreground)] mb-2">
-                          Pay using Razorpay
-                        </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                          You will complete payment securely with Razorpay Checkout. Supports Cards, UPI, NetBanking and Wallets.
-                        </p>
-                        <p className="text-xl font-bold text-blue-600">
-                          <Rupee />{total.toFixed(2)}
-                        </p>
-                      </div>
-                    </div>
-                  )}
 
-                  <div className="flex space-x-4">
-                    <button
-                      type="button"
-                      onClick={() => setStep(1)}
-                      className="flex-1 py-3 inline-flex items-center justify-center rounded-lg border bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium"
-                    >
-                      Back
-                    </button>
                     <button
                       type="submit"
-                      disabled={validItems.length === 0 || isSubmitting}
-                      className={`flex-1 py-3 rounded-lg font-medium transition-all ${
-                        validItems.length === 0 || isSubmitting
-                          ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                          : 'bg-linear-to-r from-blue-600 to-blue-400 text-white hover:from-blue-700 hover:to-blue-500'
-                      }`}
+                      className="w-full py-4 bg-brand-purple text-white rounded-xl font-bold text-lg shadow-xl shadow-brand-purple/20 hover:bg-brand-purple/90 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 mt-8"
                     >
-                      {isSubmitting ? 'Processing...' : 'Place Order'}
+                      {validating ? (
+                        <>Checking delivery area...</>
+                      ) : (
+                         <>Continue to Payment <ChevronRight className="w-5 h-5" /></>
+                      )}
                     </button>
-                  </div>
-                  {checkoutError && (
-                    <div className="mt-4 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 text-center">
-                      {checkoutError}
+
+                    {invalidItems.length > 0 && (
+                      <div className="mt-4 p-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800/50 flex gap-3">
+                        <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-full h-fit text-red-600">
+                           <X className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-red-700 dark:text-red-400 mb-1">
+                            Some items cannot be delivered to {formData.state}
+                          </p>
+                          <p className="text-xs text-red-600 dark:text-red-400/80 mb-3">
+                            Please remove them to proceed or change the delivery address.
+                          </p>
+                          <ul className="space-y-2">
+                            {invalidItems.map(item => (
+                              <li key={String(item.id)} className="flex items-center justify-between text-sm bg-white dark:bg-zinc-900 p-2 rounded-lg border border-red-100 dark:border-red-900/30">
+                                <span className="text-red-800 dark:text-red-200 font-medium">{item.name}</span>
+                                {onRemoveItem && (
+                                  <button
+                                    type="button"
+                                    onClick={() => onRemoveItem(item.id)}
+                                    className="text-xs px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 font-bold transition-colors"
+                                  >
+                                    Remove
+                                  </button>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                  </form>
+                )}
+
+                {step === 2 && (
+                  <form onSubmit={handlePlaceOrder} className="space-y-6">
+                    <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4 flex items-center gap-2">
+                       <Wallet className="w-5 h-5 text-gray-400" />
+                       Payment Method
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                      <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 }}
+                        type="button"
+                        onClick={() => setPaymentMethod('cashfree')}
+                        className={`p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-left ${
+                          paymentMethod === 'cashfree'
+                            ? 'border-brand-purple bg-brand-purple/5 ring-1 ring-brand-purple shadow-lg shadow-brand-purple/10'
+                            : 'border-gray-200 dark:border-zinc-700 hover:border-brand-purple/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                        }`}
+                      >
+                        {paymentMethod === 'cashfree' && (
+                           <div className="absolute top-3 right-3 text-brand-purple">
+                             <CheckCircle2 className="w-5 h-5" />
+                           </div>
+                        )}
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
+                          paymentMethod === 'cashfree' ? 'bg-brand-purple text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500'
+                        }`}>
+                          <CreditCard className="w-6 h-6" />
+                        </div>
+                        <p className={`font-bold text-lg mb-1 ${paymentMethod === 'cashfree' ? 'text-brand-purple' : 'text-[var(--foreground)]'}`}>
+                          Cashfree
+                        </p>
+                        <p className="text-xs text-[var(--foreground)]/60">
+                          Cards, UPI, NetBanking, Wallets
+                        </p>
+                      </motion.button>
+
+                      <motion.button
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                        type="button"
+                        onClick={() => setPaymentMethod('razorpay')}
+                        className={`p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-left ${
+                          paymentMethod === 'razorpay'
+                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/10 ring-1 ring-blue-600 shadow-lg shadow-blue-600/10'
+                            : 'border-gray-200 dark:border-zinc-700 hover:border-blue-400/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
+                        }`}
+                      >
+                         {paymentMethod === 'razorpay' && (
+                           <div className="absolute top-3 right-3 text-blue-600">
+                             <CheckCircle2 className="w-5 h-5" />
+                           </div>
+                        )}
+                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
+                          paymentMethod === 'razorpay' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500'
+                        }`}>
+                          <ShieldCheck className="w-6 h-6" />
+                        </div>
+                        <p className={`font-bold text-lg mb-1 ${paymentMethod === 'razorpay' ? 'text-blue-600' : 'text-[var(--foreground)]'}`}>
+                          Razorpay
+                        </p>
+                        <p className="text-xs text-[var(--foreground)]/60">
+                          Secure Payment Gateway
+                        </p>
+                      </motion.button>
                     </div>
-                  )}
-                </form>
-              )}
+
+                    <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-2xl p-6 text-center border border-gray-100 dark:border-zinc-700">
+                       <p className="text-sm text-[var(--foreground)]/70 mb-2">
+                         You will be redirected to the secure payment gateway to complete your purchase of
+                       </p>
+                       <p className="text-3xl font-bold text-brand-purple font-heading">
+                         <Rupee />{total.toFixed(2)}
+                       </p>
+                    </div>
+
+                    <div className="flex flex-col-reverse md:flex-row gap-4 pt-4">
+                      <button
+                        type="button"
+                        onClick={() => setStep(1)}
+                        className="flex-1 py-4 inline-flex items-center justify-center rounded-xl border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-[var(--foreground)] hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors font-bold"
+                      >
+                        Back to Address
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={validItems.length === 0 || isSubmitting}
+                        className={`flex-1 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-all ${
+                          validItems.length === 0 || isSubmitting
+                            ? 'bg-gray-300 dark:bg-zinc-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                            : 'bg-brand-purple text-white hover:bg-brand-purple/90 shadow-brand-purple/25 hover:scale-[1.02]'
+                        }`}
+                      >
+                        {isSubmitting ? (
+                          <>Processing...</>
+                        ) : (
+                          <>Pay Now <ChevronRight className="w-5 h-5" /></>
+                        )}
+                      </button>
+                    </div>
+
+                    {checkoutError && (
+                      <div className="mt-4 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 text-center font-medium">
+                        {checkoutError}
+                      </div>
+                    )}
+                  </form>
+                )}
+              </div>
             </motion.div>
           </div>
 
-          <div>
+          {/* Order Summary Sidebar */}
+          <div className="lg:col-span-4">
             <motion.div
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-[var(--background)] border border-gray-200 dark:border-gray-700 rounded-xl p-6 lg:sticky lg:top-24 text-[color:var(--foreground)] mt-6 lg:mt-0 mb-24 lg:mb-0"
+              className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-6 lg:sticky lg:top-24 shadow-sm"
             >
-              <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-4">
+              <h2 className="text-xl font-heading font-bold text-[var(--foreground)] mb-6 flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5 text-gray-400" />
                 Order Summary
               </h2>
 
-              <div className="space-y-3 mb-4 max-h-64 overflow-y-auto">
+              <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {cartItems.map((item) => {
                   const summaryItem = orderSummary.items.find(si => String(si.productId) === String(item.id))
                   return (
-                  <div key={item._uniqueId || item.id} className="flex space-x-3">
-                    <FallbackImage
-                      src={item.image}
-                      alt={item.name}
-                      width={64}
-                      height={64}
-                      className="object-cover rounded-lg w-16 h-16"
-                    />
+                  <div key={item._uniqueId || item.id} className="flex gap-4 group">
+                    <div className="relative shrink-0">
+                      <FallbackImage
+                        src={item.image}
+                        alt={item.name}
+                        width={72}
+                        height={72}
+                        className="object-cover rounded-xl w-[72px] h-[72px] border border-gray-100 dark:border-zinc-800"
+                      />
+                      <span className="absolute -top-2 -right-2 w-6 h-6 bg-gray-900 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">
+                         {item.quantity ?? 1}
+                      </span>
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-[var(--foreground)] line-clamp-2">
+                      <h3 className="text-sm font-bold text-[var(--foreground)] line-clamp-2 leading-tight mb-1 group-hover:text-brand-purple transition-colors">
                         {item.name}
                       </h3>
+                      
                       {item.appliedOffer && (
-                        <div className="text-xs text-green-600 mb-1 flex items-center gap-1 font-medium">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-600" />
-                          <span>
-                            {item.appliedOffer.name} 
-                            {item.appliedOffer.value ? ` (${item.appliedOffer.value}${item.appliedOffer.type.includes('discount') ? '% OFF' : ''})` : ''}
-                          </span>
+                        <div className="text-[10px] px-1.5 py-0.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded w-fit font-bold mb-1">
+                          {item.appliedOffer.name} 
                         </div>
                       )}
-                      {(item.selectedSize || item.selectedColor) && (
-                        <div className="flex flex-wrap gap-2 text-xs text-[var(--foreground)]/60 mb-1">
+                      
+                      <div className="flex flex-wrap gap-2 text-xs text-[var(--foreground)]/60 mb-1">
                           {item.selectedSize && <span>Size: {item.selectedSize}</span>}
                           {item.selectedColor && (
                             <span className="flex items-center gap-1">
-                              Color: <span className="w-2 h-2 rounded-full border border-gray-300" style={{ background: item.selectedColor }} />
+                              Color: <span className="w-2.5 h-2.5 rounded-full border border-gray-300" style={{ background: item.selectedColor }} />
                             </span>
                           )}
-                        </div>
-                      )}
-                      {typeof item.unitsPerPack === 'number' && item.unitsPerPack > 1 && (
-                        <p className="text-xs text-[var(--foreground)]/60">Pack of {item.unitsPerPack}</p>
-                      )}
-                      <p className="text-sm text-[var(--foreground)]/60">
-                        Qty: {item.quantity ?? 1}
-                      </p>
+                      </div>
+
                       <p className={`text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>
                         <Rupee />{(item.price * (item.quantity ?? 1)).toFixed(2)}
                       </p>
-                      {summaryItem && formData.country === 'India' && (
-                        <div className="text-xs text-[var(--foreground)]/60">
-                          {summaryItem.igst > 0 ? (
-                             <span>IGST: {summaryItem.gstPercent}%</span>
-                          ) : (summaryItem.cgst > 0 || summaryItem.sgst > 0) ? (
-                             <span>CGST: {(summaryItem.gstPercent || 0)/2}% + SGST: {(summaryItem.gstPercent || 0)/2}%</span>
-                          ) : (
-                             <span>GST: {summaryItem.gstPercent}%</span>
-                          )}
-                        </div>
-                      )}
                       {(item.stock ?? 0) <= 0 && (
-                        <span className="text-xs text-red-600 font-medium">Out of Stock (Excluded)</span>
+                        <span className="text-xs text-red-600 font-bold">Out of Stock</span>
                       )}
                     </div>
                   </div>
                 )})}
               </div>
 
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 space-y-2">
+              <div className="border-t border-dashed border-gray-200 dark:border-zinc-700 pt-6 space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--foreground)]/70">Subtotal</span>
-                  <span className="font-medium text-[var(--foreground)]"><Rupee />{subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-[var(--foreground)]"><Rupee />{subtotal.toFixed(2)}</span>
                 </div>
                 
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
+                  <span>Platform Fees</span>
+                  <span className="font-bold">FREE</span>
+                </div>
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
+                  <span>Packaging Fees</span>
+                  <span className="font-bold">FREE</span>
+                </div>
+
                 {formData.country === 'India' && (
                   orderSummary.taxBreakdown.igst > 0 ? (
                     <div className="flex justify-between text-sm">
-                      <span className="text-[var(--foreground)]/70">
-                        IGST {(() => {
-                          if (!orderSummary.items?.length) return ''
-                          const rates = new Set(orderSummary.items.map(i => i.gstPercent))
-                          return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
-                        })()}
-                      </span>
-                      <span className="font-medium text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
+                      <span className="text-[var(--foreground)]/70">IGST</span>
+                      <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
                     </div>
                   ) : (orderSummary.taxBreakdown.cgst > 0 || orderSummary.taxBreakdown.sgst > 0) ? (
                     <>
                       <div className="flex justify-between text-sm">
-                        <span className="text-[var(--foreground)]/70">
-                          CGST {(() => {
-                            if (!orderSummary.items?.length) return ''
-                            const rates = new Set(orderSummary.items.map(i => (i.gstPercent || 0) / 2))
-                            return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
-                          })()}
-                        </span>
-                        <span className="font-medium text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.cgst.toFixed(2)}</span>
+                        <span className="text-[var(--foreground)]/70">CGST</span>
+                        <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.cgst.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-[var(--foreground)]/70">
-                          SGST {(() => {
-                            if (!orderSummary.items?.length) return ''
-                            const rates = new Set(orderSummary.items.map(i => (i.gstPercent || 0) / 2))
-                            return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
-                          })()}
-                        </span>
-                        <span className="font-medium text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.sgst.toFixed(2)}</span>
+                        <span className="text-[var(--foreground)]/70">SGST</span>
+                        <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.sgst.toFixed(2)}</span>
                       </div>
                     </>
                   ) : (
                     <div className="flex justify-between text-sm">
-                      <span className="text-[var(--foreground)]/70">
-                        GST {(() => {
-                          if (!orderSummary.items?.length) return ''
-                          const rates = new Set(orderSummary.items.map(i => i.gstPercent))
-                          return rates.size === 1 ? `(${Array.from(rates)[0]}%)` : ''
-                        })()}
-                      </span>
-                      <span className="font-medium text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
+                      <span className="text-[var(--foreground)]/70">Tax</span>
+                      <span className="font-bold text-[var(--foreground)]"><Rupee />{tax.toFixed(2)}</span>
                     </div>
                   )
                 )}
-                <div className="flex justify-between text-sm text-green-600">
-                  <span>Delivery</span>
-                  <span className="font-medium">{deliveryFee > 0 ? (<><Rupee />{deliveryFee}</>) : 'FREE'}</span>
-                </div>
-                <div className="pt-2 border-t border-gray-200 dark:border-gray-700 flex justify-between">
-                  <span className="font-heading font-bold text-[var(--foreground)]">
-                    Total
+                
+                <div className="flex justify-between text-sm">
+                  <span className="text-[var(--foreground)]/70">Delivery Fee</span>
+                  <span className={`font-bold ${deliveryFee > 0 ? 'text-[var(--foreground)]' : 'text-green-600'}`}>
+                    {deliveryFee > 0 ? <><Rupee />{deliveryFee}</> : 'FREE'}
                   </span>
-                  <span className="font-heading font-bold text-[var(--foreground)] text-xl">
+                </div>
+
+                <div className="pt-4 border-t border-gray-200 dark:border-zinc-700 flex justify-between items-end">
+                  <span className="font-heading font-bold text-[var(--foreground)] text-lg">
+                    Total Pay
+                  </span>
+                  <span className="font-heading font-bold text-brand-purple text-2xl">
                     <Rupee />{total.toFixed(2)}
                   </span>
                 </div>
-                <div className="h-4 lg:hidden"></div>
+              </div>
+              
+              <div className="mt-6 p-4 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-zinc-800">
+                <div className="flex items-center gap-3 mb-2">
+                  <ShieldCheck className="w-5 h-5 text-green-600" />
+                  <span className="font-bold text-sm text-[var(--foreground)]">Safe & Secure Payment</span>
+                </div>
+                <p className="text-xs text-[var(--foreground)]/60 ml-8">
+                  Your payment information is encrypted and processed securely.
+                </p>
               </div>
             </motion.div>
           </div>
         </div>
       </div>
+
+      {/* Address Selection Modal */}
+      <AnimatePresence>
+        {showAddressModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-[var(--background)] w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col"
+            >
+              <div className="p-5 border-b border-[var(--foreground)]/10 flex justify-between items-center bg-gray-50 dark:bg-white/5">
+                <h3 className="font-bold text-lg flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-brand-purple" />
+                  Select Delivery Address
+                </h3>
+                <button 
+                  onClick={() => setShowAddressModal(false)}
+                  className="p-2 hover:bg-[var(--foreground)]/10 rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                <button
+                  onClick={handleAddNewAddress}
+                  className="w-full p-4 border-2 border-dashed border-[var(--foreground)]/20 rounded-2xl flex items-center gap-4 hover:border-brand-purple hover:bg-brand-purple/5 transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-[var(--foreground)]/5 flex items-center justify-center group-hover:bg-brand-purple group-hover:text-white transition-colors">
+                    <Plus className="w-6 h-6" />
+                  </div>
+                  <div className="text-left">
+                    <span className="font-bold block group-hover:text-brand-purple transition-colors text-lg">Add New Address</span>
+                    <span className="text-sm text-[var(--foreground)]/60">Enter a new delivery location</span>
+                  </div>
+                </button>
+
+                {(user as any)?.addresses?.map((addr: any, idx: number) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectAddress(addr)}
+                    className={`w-full p-4 border rounded-2xl flex items-start gap-4 transition-all text-left relative overflow-hidden group ${
+                      formData.address === addr.address
+                        ? 'border-brand-purple bg-brand-purple/5 ring-1 ring-brand-purple' 
+                        : 'border-[var(--foreground)]/10 hover:border-brand-purple/50 hover:bg-[var(--foreground)]/5'
+                    }`}
+                  >
+                    {formData.address === addr.address && (
+                      <div className="absolute top-0 right-0 p-2 bg-brand-purple rounded-bl-2xl">
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    <div className={`mt-1 p-2 rounded-full shrink-0 ${formData.address === addr.address ? 'bg-brand-purple text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500'}`}>
+                      <MapPin className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-[var(--foreground)] mb-1 flex items-center gap-2 text-base">
+                        {addr.type || "Home"}
+                        {addr.isDefault && <span className="text-[10px] bg-gray-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full border border-gray-200 dark:border-zinc-700">Default</span>}
+                      </div>
+                      <p className="text-sm text-[var(--foreground)]/80 line-clamp-2 mb-1">{addr.address}</p>
+                      <p className="text-sm text-[var(--foreground)]/60 font-medium">
+                        {addr.city}, {addr.state} - {addr.pincode}
+                      </p>
+                      <p className="text-xs text-[var(--foreground)]/40 mt-1 uppercase tracking-wider font-bold">{addr.country || 'India'}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

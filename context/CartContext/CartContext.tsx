@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface CartItem {
   id: number | string;
@@ -29,6 +29,7 @@ interface CartContextType {
   updateQuantity: (id: number | string, quantity: number) => void;
   removeFromCart: (id: number | string) => void;
   clearCart: () => void;
+  isLoaded: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -36,7 +37,31 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [showCart, setShowCart] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
   const MAX_QTY = 3;
+
+  useEffect(() => {
+    try {
+      const saved = typeof window !== 'undefined' ? localStorage.getItem('cartItems') : null;
+      if (saved) {
+        setCartItems(JSON.parse(saved));
+      }
+    } catch (error) {
+      console.error("Failed to load cart from local storage", error);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      try {
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      } catch (error) {
+        console.error("Failed to save cart to local storage", error);
+      }
+    }
+  }, [cartItems, isLoaded]);
 
   const clearCart = () => setCartItems([]);
 
@@ -105,6 +130,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         updateQuantity,
         removeFromCart,
         clearCart,
+        isLoaded,
       }}
     >
       {children}

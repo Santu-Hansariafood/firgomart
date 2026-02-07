@@ -363,17 +363,16 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                       </span>
                     )}
                   </div>
-                  <h1 className="text-xl sm:text-2xl font-heading font-bold mb-2 bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-[var(--foreground)] mb-4 leading-tight tracking-tight">
                     {product.name}
                   </h1>
                 </div>
                 
-
                 <div className="flex items-baseline space-x-3 mb-2">
                   <span className="text-2xl sm:text-3xl font-bold">₹{currentPrice}</span>
                   {(product.originalPrice || hasOffer) && (
                     <>
-                      <span className="text-xl text-[var(--foreground)/50] line-through">
+                      <span className="text-xl text-red-500 line-through">
                         ₹{product.originalPrice || product.price}
                       </span>
                     </>

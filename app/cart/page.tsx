@@ -195,6 +195,16 @@ const CartPage = () => {
                   <span>Subtotal</span>
                   <span className="font-medium text-[color:var(--foreground)]">₹{subtotal.toFixed(2)}</span>
                 </div>
+                
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Platform Fees</span>
+                  <span className="font-medium">FREE (₹0)</span>
+                </div>
+                <div className="flex justify-between text-green-600 dark:text-green-400">
+                  <span>Packaging Fees</span>
+                  <span className="font-medium">FREE (₹0)</span>
+                </div>
+
                 {summary.tax > 0 && (
                   <div className="flex justify-between">
                     <span>GST (Tax)</span>
