@@ -597,6 +597,7 @@ const Checkout: React.FC<CheckoutProps> = ({
               <div className="p-6 md:p-8">
                 {step === 1 && (
                   <form
+                    id="checkout-address-form"
                     onSubmit={async (e) => {
                       e.preventDefault()
                       const ok = await validateDelivery(formData.state)
@@ -795,7 +796,7 @@ const Checkout: React.FC<CheckoutProps> = ({
 
                     <button
                       type="submit"
-                      className="w-full py-4 bg-brand-purple text-white rounded-xl font-bold text-lg shadow-xl shadow-brand-purple/20 hover:bg-brand-purple/90 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 mt-8"
+                      className="hidden md:flex w-full py-4 bg-brand-purple text-white rounded-xl font-bold text-lg shadow-xl shadow-brand-purple/20 hover:bg-brand-purple/90 transition-all hover:scale-[1.01] active:scale-[0.99] items-center justify-center gap-2 mt-8"
                     >
                       {validating ? (
                         <>Checking delivery area...</>
@@ -1086,6 +1087,22 @@ const Checkout: React.FC<CheckoutProps> = ({
             </motion.div>
           </div>
         </div>
+
+        {step === 1 && (
+          <div className="md:hidden mt-6 pb-6">
+            <button
+              type="submit"
+              form="checkout-address-form"
+              className="w-full py-4 bg-brand-purple text-white rounded-xl font-bold text-lg shadow-xl shadow-brand-purple/20 hover:bg-brand-purple/90 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+            >
+              {validating ? (
+                <>Checking delivery area...</>
+              ) : (
+                 <>Continue to Payment <ChevronRight className="w-5 h-5" /></>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Address Selection Modal */}
