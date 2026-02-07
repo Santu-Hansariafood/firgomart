@@ -162,7 +162,7 @@ const Profile = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[var(--background)] py-8 sm:py-12">
+    <div className="min-h-screen bg-[var(--background)] pt-8 pb-32 sm:pt-12 sm:pb-40">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -184,7 +184,6 @@ const Profile = () => {
           className="bg-[var(--background)] rounded-3xl shadow-xl overflow-hidden border border-[var(--foreground)/10]"
         >
           <div className="relative bg-white dark:bg-zinc-900 border-b border-gray-100 dark:border-zinc-800 p-8">
-             {/* Decorative Background */}
             <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-brand-purple/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-brand-red/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -351,9 +350,7 @@ const Profile = () => {
                   </div>
                </div>
 
-               {/* Right Column: Delivery Address Summary & Actions */}
                <div className="space-y-8">
-                  {/* Default Address Card */}
                   <div className="p-6 rounded-2xl bg-gray-50 dark:bg-zinc-800/50 border border-gray-100 dark:border-zinc-700">
                       <div className="flex items-center gap-2 text-[var(--foreground)] mb-4">
                         <div className="w-8 h-8 rounded-full bg-brand-purple/10 flex items-center justify-center">
@@ -390,7 +387,6 @@ const Profile = () => {
                </div>
             </div>
 
-            {/* Saved Addresses Section */}
             <div className="mt-12 pt-10 border-t border-gray-100 dark:border-zinc-800">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
                 <div>

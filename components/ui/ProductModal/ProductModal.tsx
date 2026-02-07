@@ -291,7 +291,6 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
           onClick={(e) => e.stopPropagation()}
           className="bg-background/95 backdrop-blur-2xl text-foreground rounded-3xl max-w-5xl w-full max-h-[90vh] overflow-y-auto flex flex-col border border-foreground/10 shadow-2xl relative"
         >
-            {/* Decorative Background Elements */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-brand-purple/10 dark:bg-brand-purple/20 rounded-full blur-[100px] pointer-events-none -z-10" />
             <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-[100px] pointer-events-none -z-10" />
 
@@ -536,14 +535,24 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
                     <div className="flex items-center bg-foreground/5 dark:bg-white/5 rounded-xl p-1 w-fit">
                     <button 
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background shadow-sm transition-all text-foreground dark:text-white"
+                        disabled={quantity <= 1}
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg shadow-sm transition-all ${
+                            quantity <= 1 
+                                ? 'text-foreground/30 dark:text-white/30 cursor-not-allowed' 
+                                : 'hover:bg-background text-foreground dark:text-white'
+                        }`}
                     >
                         -
                     </button>
                     <span className="w-12 text-center font-bold text-foreground dark:text-white">{quantity}</span>
                     <button 
-                        onClick={() => setQuantity(Math.min(product.stock || 10, quantity + 1))}
-                        className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background shadow-sm transition-all text-foreground dark:text-white"
+                        onClick={() => setQuantity(Math.min(3, product.stock || 10, quantity + 1))}
+                        disabled={quantity >= Math.min(3, product.stock || 10)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-lg shadow-sm transition-all ${
+                            quantity >= Math.min(3, product.stock || 10)
+                                ? 'text-foreground/30 dark:text-white/30 cursor-not-allowed' 
+                                : 'hover:bg-background text-foreground dark:text-white'
+                        }`}
                     >
                         +
                     </button>
