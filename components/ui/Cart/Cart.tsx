@@ -300,7 +300,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   Proceed to Checkout
                 </button>
                 <p className="text-xs text-center text-[var(--foreground)/40]">
-                  Secure Checkout powered by Razorpay
+                  Secure Checkout powered by Razorpay and Cashfree
                 </p>
               </div>
             </>

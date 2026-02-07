@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { CheckCircle, XCircle, Loader2, MapPin, CreditCard, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext/CartContext';
+import BeautifulLoader from '@/components/common/Loader/BeautifulLoader';
 
 function StatusContent() {
   const searchParams = useSearchParams();
@@ -192,7 +193,7 @@ export default function PaymentStatusPage() {
   return (
     <div className="min-h-screen bg-[var(--background)] py-12">
       <div className="max-w-4xl mx-auto bg-[var(--background)] text-[color:var(--foreground)] rounded-2xl shadow-sm p-8">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<BeautifulLoader />}>
             <StatusContent />
         </Suspense>
       </div>

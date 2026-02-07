@@ -107,14 +107,19 @@ const CartPage = () => {
   return (
     <div className="min-h-screen bg-[var(--background)] pb-24 md:pb-12">
       <div className="sticky top-0 z-10 bg-[var(--background)]/80 backdrop-blur-md border-b border-[var(--foreground)/10] px-4 py-3 flex items-center gap-3 md:hidden">
-        <button onClick={() => router.back()} className="p-2 -ml-2 hover:bg-[var(--foreground)/5] rounded-full transition-colors">
+        <Link href="/" className="p-2 -ml-2 hover:bg-[var(--foreground)/5] rounded-full transition-colors">
           <ArrowLeft className="w-5 h-5 text-[color:var(--foreground)]" />
-        </button>
+        </Link>
         <h1 className="text-lg font-bold text-[color:var(--foreground)]">Shopping Cart ({cartItems.length})</h1>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-6 md:py-12">
-        <h1 className="text-3xl font-heading font-bold text-[color:var(--foreground)] mb-8 hidden md:block">Shopping Cart</h1>
+        <div className="hidden md:flex items-center gap-4 mb-8">
+          <Link href="/" className="p-2 -ml-2 hover:bg-[var(--foreground)/5] rounded-full transition-colors group" title="Back to Home">
+            <ArrowLeft className="w-6 h-6 text-[color:var(--foreground)] group-hover:text-brand-purple transition-colors" />
+          </Link>
+          <h1 className="text-3xl font-heading font-bold text-[color:var(--foreground)]">Shopping Cart</h1>
+        </div>
         
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1 space-y-4">
