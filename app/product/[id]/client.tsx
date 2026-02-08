@@ -75,11 +75,19 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
   
+  const [reviewEligibility, setReviewEligibility] = useState<{ canReview: boolean; reason?: string; returnPeriodEnds?: string } | null>(null)
+  
   const [isSaved, setIsSaved] = useState(false)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (session?.user) {
+      // Check review eligibility
+      fetch(`/api/reviews/eligibility?productId=${product.id}`)
+        .then(res => res.json())
+        .then(data => setReviewEligibility(data))
+        .catch(() => {})
+
       fetch('/api/user/history', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -546,9 +554,21 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                              <div className="flex items-center justify-between mb-6">
                                 <h3 className="text-lg font-bold">Customer Reviews</h3>
                                 {session ? (
-                                    <button onClick={() => setReviewFormOpen(!reviewFormOpen)} className="text-brand-purple font-medium hover:underline">
-                                        {reviewFormOpen ? 'Cancel Review' : 'Write a Review'}
-                                    </button>
+                                    reviewEligibility?.canReview ? (
+                                        <button onClick={() => setReviewFormOpen(!reviewFormOpen)} className="text-brand-purple font-medium hover:underline">
+                                            {reviewFormOpen ? 'Cancel Review' : 'Write a Review'}
+                                        </button>
+                                    ) : (
+                                        <div className="text-sm text-foreground/60 italic px-3 py-1 bg-foreground/5 rounded-lg border border-foreground/10">
+                                            {reviewEligibility?.reason === 'Return period active' 
+                                                ? `Review available after ${new Date(reviewEligibility.returnPeriodEnds!).toLocaleDateString()}`
+                                                : reviewEligibility?.reason === 'Not delivered yet'
+                                                ? 'Review available after delivery'
+                                                : reviewEligibility?.reason === 'Already reviewed'
+                                                ? 'You have already reviewed this product'
+                                                : 'Purchase and receive product to review'}
+                                        </div>
+                                    )
                                 ) : (
                                     <p className="text-sm text-foreground/60">Log in to write a review</p>
                                 )}
