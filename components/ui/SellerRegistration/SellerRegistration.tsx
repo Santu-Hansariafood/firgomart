@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { 
   Upload, CheckCircle, User, Building2, Mail, Phone, MapPin, 
-  CreditCard, FileText, Landmark, Map, Flag, Globe, Hash
+  CreditCard, FileText, Landmark, Map, Flag, Globe, Hash, ExternalLink, ArrowUpRight
 } from 'lucide-react'
 import { fadeInUp } from '@/utils/animations/animations'
 import Link from 'next/link'
@@ -610,7 +610,8 @@ const SellerRegistration: React.FC = () => {
                     {checking === 'gstNumber' && <p className="text-brand-purple text-xs ml-1 animate-pulse">Checking availability...</p>}
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-2">
                       <label className="text-sm font-medium text-[color:var(--foreground)] ml-1">PAN Number <span className="text-red-500">*</span></label>
                       <div className="relative group">
@@ -659,6 +660,27 @@ const SellerRegistration: React.FC = () => {
                       {errors.aadhaar && <p className="text-red-500 text-xs ml-1">{errors.aadhaar}</p>}
                     </div>
                   </div>
+
+                  <div className="mt-4 p-4 rounded-xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800 flex items-start gap-3">
+                    <div className="p-1.5 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 shrink-0 mt-0.5">
+                      <ExternalLink className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">Don't have a GST Number?</h4>
+                      <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
+                        You can apply for GST registration online through the official government portal.
+                      </p>
+                      <a 
+                        href="https://services.gst.gov.in/services/login" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        Apply for GST <ArrowUpRight className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                  </>
                 )}
               </div>
             </div>
