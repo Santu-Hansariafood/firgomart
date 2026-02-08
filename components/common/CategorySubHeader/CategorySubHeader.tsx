@@ -5,37 +5,39 @@ import FallbackImage from "@/components/common/Image/FallbackImage"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import categoriesData from "@/data/categories.json"
 
-type JsonCategory = { name: string; image: string }
-const categories: Array<{ id: number; name: string; image: string }> =
+type JsonCategory = { name: string; image: string; key: string }
+const categories: Array<{ id: number; name: string; image: string; key: string }> =
   (categoriesData as { categories: JsonCategory[] }).categories.map((c, i) => ({
     id: i + 1,
     name: c.name,
     image: c.image,
+    key: c.key,
   }))
 
 const CategorySubHeader: React.FC = () => {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const currentSelected = (searchParams.get('category') || '').trim()
-
+  // Support both legacy query param and new route
+  const currentSelectedName = (searchParams.get('category') || '').trim()
+  
   const isAdminHost =
     typeof window !== 'undefined' &&
     window.location.hostname.toLowerCase().includes('admin')
 
   const isHome = pathname === '/'
+  const isCategoryPage = pathname.startsWith('/category/')
+  
   const hide =
     isAdminHost ||
-    !isHome
+    (!isHome && !isCategoryPage)
 
-  const toggleCategory = (catName: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    if (currentSelected === catName) {
-      params.delete('category')
+  const toggleCategory = (catKey: string) => {
+    if (pathname === `/category/${catKey}`) {
+      router.push('/')
     } else {
-      params.set('category', catName)
+      router.push(`/category/${catKey}`)
     }
-    router.push(`/?${params.toString()}`, { scroll: false })
   }
 
   if (hide) return null
@@ -55,7 +57,8 @@ const CategorySubHeader: React.FC = () => {
           "
         >
           {categories.map((category, index) => {
-            const isActive = currentSelected === category.name
+            // Active if we are on the category page OR if the query param matches (legacy support)
+            const isActive = pathname === `/category/${category.key}` || currentSelectedName === category.name
 
             return (
               <motion.div
@@ -66,7 +69,7 @@ const CategorySubHeader: React.FC = () => {
                 className="shrink-0 snap-center"
               >
                 <button
-                  onClick={() => toggleCategory(category.name)}
+                  onClick={() => toggleCategory(category.key)}
                   className={`
                     group flex flex-col items-center gap-2 px-2 py-1 rounded-xl
                     transition-all duration-300 focus:outline-none relative

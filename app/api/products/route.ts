@@ -79,22 +79,10 @@ export async function GET(request: Request) {
           return match ? match.name : c // Use exact name if found, else original
         })
         
-        // Use exact match $in which leverages indexes better than regex
-        // We still keep regex as fallback in OR if needed, but if we trust the mapping:
-        // Let's use a smart approach: exact match for mapped ones, regex for others?
-        // Simpler: Just use the mapped names. If exact match fails for custom cats, we might need regex.
-        // But for performance, let's try to stick to exact matches for standard categories.
-        
-        const safeCats = exactCats.map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-        const regexes = safeCats.map(c => new RegExp(`^${c}$`, "i"))
-        
-        // If we found exact matches in JSON, we can also push exact string matches to conditions
-        // But to be safe and support case-insensitivity for unmapped inputs, we'll use the optimized regex
-        // However, if we found a match, we should prefer the exact string in the query if possible
-        // But $in takes an array. 
-        
-        // Best approach: Use the exact names from mapping and case-insensitive regex for robustness
-        conditions.push({ category: { $in: regexes } })
+        // Use exact string matching which leverages the { category: 1 } index optimally
+        // This is much faster than regex, even anchored regex.
+        // Since we mapped to canonical names above, this handles case-insensitive input correctly for known categories.
+        conditions.push({ category: { $in: exactCats } })
       }
     }
 
@@ -115,9 +103,7 @@ export async function GET(request: Request) {
           return found || s
         })
         
-        const safeSubs = exactSubs.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
-        const regexes = safeSubs.map(s => new RegExp(`^${s}$`, "i"))
-        conditions.push({ subcategory: { $in: regexes } })
+        conditions.push({ subcategory: { $in: exactSubs } })
       }
     }
 

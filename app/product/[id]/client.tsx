@@ -207,12 +207,20 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
           comment: userComment
         })
       })
+
+      const data = await res.json()
+
       if (res.ok) {
+        toast.success('Review submitted successfully')
         setUserComment('')
         setReviewFormOpen(false)
         fetchReviews()
+      } else {
+        toast.error(data.error || 'Failed to submit review')
       }
-    } catch {}
+    } catch {
+      toast.error('Something went wrong')
+    }
     setSubmittingReview(false)
   }, [session, product.id, userRating, userComment, fetchReviews])
 

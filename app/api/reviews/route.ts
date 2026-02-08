@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
 import { getReviewModel } from "@/lib/models/Review"
 import { getProductModel } from "@/lib/models/Product"
+import { getOrderModel } from "@/lib/models/Order"
 
 export async function GET(request: Request) {
   try {
@@ -37,6 +38,40 @@ export async function POST(request: Request) {
     const conn = await connectDB()
     const Review = getReviewModel(conn)
     const Product = getProductModel(conn)
+    const Order = getOrderModel(conn)
+
+    // Check if user has purchased and received the product
+    const orders = await (Order as any).find({
+      buyerEmail: session.user.email,
+      "items.productId": productId,
+      status: "delivered",
+      deliveredAt: { $exists: true }
+    }).sort({ deliveredAt: -1 }).lean()
+
+    if (!orders || orders.length === 0) {
+      // Check if they have any order at all (pending/shipped) to give a better error
+      const anyOrder = await (Order as any).findOne({
+        buyerEmail: session.user.email,
+        "items.productId": productId
+      }).lean()
+      
+      if (anyOrder) {
+        return NextResponse.json({ error: "You can only review this product after it has been delivered." }, { status: 403 })
+      }
+      return NextResponse.json({ error: "You can only review products you have purchased." }, { status: 403 })
+    }
+
+    // Check return period (7 days)
+    const latestOrder = orders[0]
+    const deliveredDate = new Date(latestOrder.deliveredAt)
+    const returnPeriodEnds = new Date(deliveredDate)
+    returnPeriodEnds.setDate(returnPeriodEnds.getDate() + 7)
+
+    if (new Date() < returnPeriodEnds) {
+       return NextResponse.json({ 
+         error: `Review available after return period ends on ${returnPeriodEnds.toLocaleDateString()}.` 
+       }, { status: 403 })
+    }
 
     const newReview = await (Review as any).create({
       productId,
