@@ -85,6 +85,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
                 </div>
               )}
             </div>
+
+            {onAddToCart && (
+               <button
+                 onClick={(e) => {
+                   e.stopPropagation()
+                   onAddToCart(product)
+                 }}
+                 className="w-full mt-3 py-2 bg-brand-purple text-white text-xs font-bold rounded-lg hover:bg-brand-purple/90 transition-colors active:scale-95 shadow-lg"
+               >
+                 Add to Cart
+               </button>
+             )}
           </div>
         </div>
       </div>
@@ -132,7 +144,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
               e.stopPropagation()
               onAddToCart(product)
             }}
-            className="w-full mt-2 py-2 bg-foreground text-background text-xs font-bold rounded-lg hover:opacity-90 transition-opacity active:scale-95"
+            className="w-full mt-2 py-2 bg-brand-purple text-white text-xs font-bold rounded-lg hover:bg-brand-purple/90 transition-colors active:scale-95"
           >
             Add to Cart
           </button>
