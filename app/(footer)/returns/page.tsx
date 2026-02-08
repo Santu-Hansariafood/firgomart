@@ -77,6 +77,57 @@ const ReturnsPage = () => {
               );
             })}
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mt-8 rounded-2xl border border-[var(--foreground)/10] p-6 sm:p-8 bg-[var(--background)]"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <Globe className="w-6 h-6 text-brand-purple" />
+              <h3 className="text-xl font-bold">International Orders – Return & Refund Policy</h3>
+            </div>
+            
+            <div className="space-y-4 text-[var(--foreground)/80] leading-relaxed">
+              <p>
+                Orders shipped outside India are classified as international orders. Due to cross-border logistics, customs regulations, and high international return costs, <strong>international orders are not eligible for standard returns or exchanges.</strong>
+              </p>
+
+              <div>
+                <p className="font-semibold mb-2">Refunds for international orders will be considered only in the following cases:</p>
+                <ul className="list-disc pl-5 space-y-1 text-[var(--foreground)/70]">
+                  <li>Product received is damaged</li>
+                  <li>Product received is defective</li>
+                  <li>Wrong product delivered</li>
+                </ul>
+                <p className="mt-2 text-sm text-[var(--foreground)/60]">
+                  All such requests must be raised within 48 hours of delivery, along with clear images or videos as proof for verification.
+                </p>
+              </div>
+
+              <p>
+                For approved international refund cases, physical return of the product to India may not be required. FirgoMart reserves the right to process refunds after internal verification without requesting the customer to return the product, depending on the nature of the issue.
+              </p>
+
+              <div className="p-4 bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20 text-sm">
+                <span className="font-semibold text-red-600 dark:text-red-400">Important Note:</span> Customs duties, import taxes, international shipping charges, and any local fees paid in the destination country are strictly non-refundable under all circumstances.
+              </div>
+
+              <p>
+                <strong>Cash on Delivery (COD) is available only for orders shipped within India.</strong> All international orders must be prepaid using supported online payment methods.
+              </p>
+
+              <p>
+                Approved refunds for international prepaid orders will be processed to the original payment method only. Refund timelines may vary based on payment gateway processing, bank policies, and foreign exchange regulations.
+              </p>
+
+              <p className="text-sm text-[var(--foreground)/60] italic">
+                If an international order is rejected, delayed, returned, or confiscated by customs authorities due to import restrictions, prohibited items, or local regulations of the destination country, FirgoMart shall not be liable for refunds or replacements.
+              </p>
+            </div>
+          </motion.div>
+
           <div className="grid md:grid-cols-2 gap-8 mt-12">
             <div className="rounded-2xl border p-6">
               <h3 className="font-bold mb-3">Help & Support</h3>

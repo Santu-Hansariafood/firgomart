@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import dynamic from "next/dynamic";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   HelpCircle,
   ShoppingCart,
@@ -15,11 +15,93 @@ import {
   Mail,
   Phone,
   Handshake,
+  Globe,
+  ChevronDown,
 } from "lucide-react";
 import { Suspense } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
+import { useState } from "react";
+
+const INTERNATIONAL_FAQS = [
+  {
+    id: 1,
+    question: "Does FirgoMart deliver internationally?",
+    answer: "Yes. FirgoMart delivers selected products to multiple countries. All international orders are shipped directly from India using international logistics partners."
+  },
+  {
+    id: 2,
+    question: "Are customs duties and import taxes included in the product price?",
+    answer: "No. For international orders, customs duties, import taxes, VAT, or any local charges imposed by the destination country are not included in the product price. These charges, if applicable, must be paid by the customer at the time of delivery or customs clearance."
+  },
+  {
+    id: 3,
+    question: "Is Cash on Delivery (COD) available for international orders?",
+    answer: "No. Cash on Delivery (COD) is available only for orders shipped within India. All international orders must be prepaid using supported online payment methods."
+  },
+  {
+    id: 4,
+    question: "What is the return policy for international orders?",
+    answer: "International orders are not eligible for standard returns or exchanges due to cross-border logistics and customs regulations. Refunds are considered only if the product is damaged, defective, or incorrectly delivered, subject to verification."
+  },
+  {
+    id: 5,
+    question: "Do I need to return the product for an international refund?",
+    answer: "In most approved international refund cases, physical return of the product to India is not required. FirgoMart reserves the right to decide the refund method after verification."
+  },
+  {
+    id: 6,
+    question: "How long does an international refund take?",
+    answer: "Approved refunds for international prepaid orders are processed to the original payment method. Refund timelines may vary depending on the payment gateway, bank processing time, and foreign exchange regulations."
+  },
+  {
+    id: 7,
+    question: "What if my order is delayed or stopped by customs?",
+    answer: "International delivery timelines may vary due to customs clearance and regulatory checks. If an order is delayed, rejected, seized, or returned by customs due to import restrictions or local regulations of the destination country, FirgoMart is not liable for refunds or replacements."
+  },
+  {
+    id: 8,
+    question: "Are all products eligible for international shipping?",
+    answer: "Not all products may be eligible for delivery to every country. Buyers are responsible for ensuring that the products ordered comply with the import laws and regulations of their destination country."
+  }
+];
+
+const FaqItem = ({ item, isOpen, onClick }: { item: typeof INTERNATIONAL_FAQS[0], isOpen: boolean, onClick: () => void }) => {
+  return (
+    <div className={`border rounded-xl transition-all duration-300 overflow-hidden ${isOpen ? 'border-brand-purple bg-brand-purple/5' : 'border-[var(--foreground)]/10 hover:border-brand-purple/50'}`}>
+      <button
+        onClick={onClick}
+        className="w-full flex items-center justify-between p-4 sm:p-5 text-left transition-colors"
+      >
+        <span className={`font-semibold text-sm sm:text-base ${isOpen ? 'text-brand-purple' : 'text-[var(--foreground)]'}`}>
+          {item.id}. {item.question}
+        </span>
+        <ChevronDown className={`w-5 h-5 text-brand-purple transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="px-4 sm:px-5 pb-4 sm:pb-5 text-[var(--foreground)]/70 text-sm leading-relaxed">
+              {item.answer}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 const FaqPage = () => {
+  const [openId, setOpenId] = useState<number | null>(1);
+
+  const toggleFaq = (id: number) => {
+    setOpenId(openId === id ? null : id);
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -155,6 +237,30 @@ const FaqPage = () => {
             </ul>
           </motion.div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-[var(--background)] rounded-2xl shadow-sm border border-[var(--foreground)/10] p-8"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <Globe className="w-6 h-6 text-brand-purple" />
+            <h3 className="text-xl font-bold text-[color:var(--foreground)]">International Orders – FAQs</h3>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            {INTERNATIONAL_FAQS.map((faq) => (
+              <FaqItem
+                key={faq.id}
+                item={faq}
+                isOpen={openId === faq.id}
+                onClick={() => toggleFaq(faq.id)}
+              />
+            ))}
+          </div>
+        </motion.div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">

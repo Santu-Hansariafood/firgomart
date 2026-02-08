@@ -49,7 +49,7 @@ export default function DownloadAppPage() {
                 <Play className="w-8 h-8 fill-current" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Google Playstore</h3>
+                <h3 className="text-lg font-bold text-foreground">Play Store</h3>
                 <p className="text-sm text-foreground/50">Coming Soon</p>
               </div>
             </div>
