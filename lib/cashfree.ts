@@ -89,10 +89,12 @@ export async function getCashfreeOrder(orderId: string) {
 
 export async function verifyGST(gstNumber: string) {
   const host = getHost()
+  console.log(`[Cashfree] Verifying GST ${gstNumber} at ${host}/verification/gst`)
   const res = await fetch(`${host}/verification/gst`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "x-api-version": cashfreeConfig.apiVersion,
       "x-client-id": cashfreeConfig.appId,
       "x-client-secret": cashfreeConfig.secretKey,
     },
@@ -115,10 +117,12 @@ export async function verifyGST(gstNumber: string) {
 
 export async function verifyBankAccount(params: { bankAccount: string, ifsc: string, name: string, phone: string }) {
   const host = getHost()
+  console.log(`[Cashfree] Verifying Bank Account ${params.bankAccount} at ${host}/verification/bank-account/sync`)
   const res = await fetch(`${host}/verification/bank-account/sync`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "x-api-version": cashfreeConfig.apiVersion,
       "x-client-id": cashfreeConfig.appId,
       "x-client-secret": cashfreeConfig.secretKey,
     },
