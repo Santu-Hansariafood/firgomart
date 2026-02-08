@@ -58,7 +58,11 @@ const SellerRegistration: React.FC = () => {
     bankVerified,
     bankVerifying,
     bankError,
-    handleVerifyBank
+    handleVerifyBank,
+    ifscVerified,
+    ifscVerifying,
+    ifscError,
+    bankData
   } = useSellerRegistration()
 
   const agreementTitle = (sellerAgreementContent as { title?: string }).title || 'Seller Agreement'
@@ -411,17 +415,22 @@ const SellerRegistration: React.FC = () => {
                       onChange={handleChange} 
                       required 
                       disabled={bankVerified}
-                      className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
-                        errors.bankIfsc 
+                      className={`w-full pl-11 pr-10 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
+                        errors.bankIfsc || ifscError
                           ? 'border-red-500 focus:border-red-500' 
-                          : bankVerified
+                          : bankVerified || ifscVerified
                             ? 'border-green-500 focus:border-green-500'
                             : 'border-[var(--foreground)/15] focus:border-brand-purple'
                       } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter IFSC code"
                     />
+                    {ifscVerifying && (
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2">
+                        <div className="w-4 h-4 border-2 border-brand-purple border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    )}
                   </div>
-                  {errors.bankIfsc && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.bankIfsc}</p>}
+                  {(errors.bankIfsc || ifscError) && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.bankIfsc || ifscError}</p>}
                 </div>
               </div>
 
@@ -490,6 +499,12 @@ const SellerRegistration: React.FC = () => {
                     'Verify Bank Details'
                   )}
                 </button>
+                {bankVerified && bankData?.data && (
+                  <div className="w-full mt-2 text-sm text-green-600 bg-green-500/10 p-3 rounded-lg border border-green-500/20 flex items-center gap-2">
+                     <User className="w-4 h-4 shrink-0" />
+                     <span>Verified Name: <strong>{bankData.data.nameAtBank || bankData.data.name_at_bank || bankData.data.beneName || "Verified"}</strong></span>
+                  </div>
+                )}
                 {bankError && <p className="text-red-500 text-sm">{bankError}</p>}
                 {errors.bankAccount && <p className="text-red-500 text-sm">{errors.bankAccount}</p>}
               </div>

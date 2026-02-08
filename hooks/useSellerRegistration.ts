@@ -54,6 +54,7 @@ export const useSellerRegistration = () => {
   const {
     gstVerified, gstVerifying, gstError, gstData, verifyGst,
     bankVerified, bankVerifying, bankError, bankData, verifyBank,
+    ifscVerified, ifscVerifying, ifscError, ifscData, verifyIfsc,
     setGstVerified, setBankVerified
   } = useSellerVerification();
 
@@ -74,29 +75,35 @@ export const useSellerRegistration = () => {
 
   const handleVerifyGst = async () => {
     if (!formData.gstNumber) return;
-    const isValid = await verifyGst(formData.gstNumber);
-    if (isValid) {
-      setErrors(prev => {
-        const next = { ...prev };
-        delete next.gstNumber;
-        return next;
-      });
+    const success = await verifyGst(formData.gstNumber);
+    if (success) {
+       // Auto-fill address if possible, but Cashfree GST verification result structure varies
+       // For now, just mark verified
+    }
+  };
+
+  const handleVerifyIfsc = async (code: string) => {
+    const data = await verifyIfsc(code);
+    if (data) {
+        setFormData(prev => ({
+            ...prev,
+            bankName: data.BANK,
+            bankBranch: data.BRANCH
+        }));
     }
   };
 
   const handleVerifyBank = async () => {
-    const isValid = await verifyBank(
-      formData.bankAccount || "",
-      formData.bankIfsc || "",
-      formData.ownerName || "",
+    // We pass empty strings if undefined so that the verifyBank function triggers the validation error
+    const success = await verifyBank(
+      formData.bankAccount || "", 
+      formData.bankIfsc || "", 
+      formData.ownerName || "", 
       formData.phone || ""
     );
-    if (isValid) {
-      setErrors(prev => {
-        const next = { ...prev };
-        delete next.bankAccount;
-        return next;
-      });
+    
+    if (success) {
+        // Verification successful
     }
   };
 
@@ -110,6 +117,9 @@ export const useSellerRegistration = () => {
 
     if (name === "panNumber" || name === "gstNumber" || name === "bankIfsc") {
       val = val.toUpperCase();
+    }
+    if (name === "bankIfsc" && val.length === 11) {
+      handleVerifyIfsc(val);
     }
     if (name === "pincode" || name === "aadhaar" || name === "phone") {
       val = val.replace(/\D/g, "");
@@ -231,6 +241,7 @@ export const useSellerRegistration = () => {
     serverError,
     isSubmitting,
     gstVerified, gstVerifying, gstError, gstData, handleVerifyGst,
-    bankVerified, bankVerifying, bankError, handleVerifyBank,
+    bankVerified, bankVerifying, bankError, bankData, handleVerifyBank,
+    ifscVerified, ifscVerifying, ifscError, ifscData, handleVerifyIfsc,
   };
 };

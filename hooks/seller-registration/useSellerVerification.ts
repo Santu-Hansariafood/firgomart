@@ -11,6 +11,33 @@ export const useSellerVerification = () => {
   const [bankError, setBankError] = useState<string | null>(null);
   const [bankData, setBankData] = useState<any>(null);
 
+  const [ifscVerified, setIfscVerified] = useState(false);
+  const [ifscVerifying, setIfscVerifying] = useState(false);
+  const [ifscError, setIfscError] = useState<string | null>(null);
+  const [ifscData, setIfscData] = useState<any>(null);
+
+  const verifyIfsc = async (code: string) => {
+    if (!code || code.length !== 11) return false;
+    setIfscVerifying(true);
+    setIfscError(null);
+    setIfscVerified(false);
+    try {
+      const res = await fetch(`/api/verification/ifsc?code=${code}`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Invalid IFSC Code');
+      }
+      setIfscVerified(true);
+      setIfscData(data);
+      return data;
+    } catch (err: any) {
+      setIfscError(err.message);
+      return null;
+    } finally {
+      setIfscVerifying(false);
+    }
+  };
+
   const verifyGst = async (gstNumber: string) => {
     if (!gstNumber) return false;
     setGstVerifying(true);
@@ -81,6 +108,7 @@ export const useSellerVerification = () => {
   return {
     gstVerified, gstVerifying, gstError, gstData, verifyGst,
     bankVerified, bankVerifying, bankError, bankData, verifyBank,
+    ifscVerified, ifscVerifying, ifscError, ifscData, verifyIfsc,
     setGstVerified, setBankVerified
   };
 };
