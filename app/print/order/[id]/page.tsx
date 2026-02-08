@@ -99,11 +99,11 @@ export default async function PrintOrderPage({ params }: { params: Promise<{ id:
     
     const buyerState = (order.state || "").trim().toLowerCase()
     const sellerState = (sellerDetails.state || "").trim().toLowerCase()
-    const isInterstate = buyerState && sellerState && buyerState !== sellerState
+    const isIntrastate = buyerState && sellerState && buyerState === sellerState
 
-    const cgst = isInterstate ? 0 : totalTax / 2
-    const sgst = isInterstate ? 0 : totalTax / 2
-    const igst = isInterstate ? totalTax : 0
+    const cgst = isIntrastate ? totalTax / 2 : 0
+    const sgst = isIntrastate ? totalTax / 2 : 0
+    const igst = isIntrastate ? 0 : totalTax
     
     sellerGroups.push({
       seller: sellerDetails,

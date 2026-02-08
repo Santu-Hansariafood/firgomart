@@ -206,11 +206,11 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
 
       let igst = 0, cgst = 0, sgst = 0
       if (taxTotal > 0) {
-        if (buyerState && sellerSt && buyerState !== sellerSt) {
-          igst = taxTotal
-        } else {
+        if (buyerState && sellerSt && buyerState === sellerSt) {
           cgst = taxTotal / 2
           sgst = taxTotal / 2
+        } else {
+          igst = taxTotal
         }
       }
 
@@ -260,11 +260,11 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
 
     let igst = 0, cgst = 0, sgst = 0
     if (taxTotal > 0) {
-      if (buyerState && sellerSt && buyerState !== sellerSt) {
-        igst = taxTotal
-      } else {
+      if (buyerState && sellerSt && buyerState === sellerSt) {
         cgst = taxTotal / 2
         sgst = taxTotal / 2
+      } else {
+        igst = taxTotal
       }
     }
     
