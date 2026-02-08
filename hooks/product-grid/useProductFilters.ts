@@ -62,3 +62,5 @@ export function useProductFilters(setPage: (page: number) => void) {
     clearAllFilters
   }
 }
+
+export type ProductFilters = ReturnType<typeof useProductFilters>

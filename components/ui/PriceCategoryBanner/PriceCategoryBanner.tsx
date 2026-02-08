@@ -56,7 +56,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
     {
     id: 'under-599',
     title: 'Under ₹599',
-    subtitle: 'Smart Choice',
+    subtitle: 'customer Choice',
     icon: Zap,
     color: 'bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800',
     iconBg: 'bg-white dark:bg-teal-900/20',

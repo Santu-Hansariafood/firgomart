@@ -3,18 +3,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Gift, ShoppingBag, ShoppingCart } from 'lucide-react'
+import { X, Gift, ShoppingBag, ShoppingCart, Eye } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import OffersFilterChips from '@/components/ui/Filters/OffersFilterChips'
 import { FilterControls, FilterPanel } from './ProductFilters'
 import { Product } from '@/types/product'
-import { useProductFilters } from '@/hooks/product-grid/useProductFilters'
+import { ProductFilters, useProductFilters } from '@/hooks/product-grid/useProductFilters'
 import { useProductData } from '@/hooks/product-grid/useProductData'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 import { getSizeOptionsForCategory, allSizes, subcategoryOptionsFor, sanitizeImageUrl, formatPrice } from '@/utils/productUtils'
 
-const MarqueeBanner = dynamic(() => import('@/components/ui/MarqueeBanner/MarqueeBanner'))
-const PriceCategoryBanner = dynamic(() => import('@/components/ui/PriceCategoryBanner/PriceCategoryBanner'))
 const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
 
 const staggerContainer = {
@@ -38,9 +36,21 @@ interface ProductGridProps {
   initialCategory?: string
   hideFilters?: boolean
   newArrivals?: boolean
+  filters?: ProductFilters
+  page?: number
+  setPage?: React.Dispatch<React.SetStateAction<number>>
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, initialCategory, hideFilters = false, newArrivals }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ 
+  onProductClick, 
+  onAddToCart, 
+  initialCategory, 
+  hideFilters = false, 
+  newArrivals,
+  filters: externalFilters,
+  page: externalPage,
+  setPage: externalSetPage
+}) => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
@@ -49,9 +59,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
 
   const { deliverToState } = useGeolocation()
   
-  const [page, setPage] = useState<number>(1)
-  
-  const filters = useProductFilters(setPage)
+  const [internalPage, setInternalPage] = useState<number>(1)
+  const internalFilters = useProductFilters(setInternalPage)
+
+  const page = externalPage ?? internalPage
+  const setPage = externalSetPage ?? setInternalPage
+  const filters = externalFilters ?? internalFilters
   
   const { 
     displayedProducts, 
@@ -109,13 +122,6 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/20 rounded-full blur-[80px] -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
-          <MarqueeBanner />
-        </div>
-        
-        <div className="mb-12">
-          <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
-        </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
           {!search && (
@@ -401,6 +407,38 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
                           </div>
                         )}
                       </div>
+
+                      {/* Desktop Hover Buttons */}
+                      <div className="flex gap-2 mt-3">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onProductClick({
+                              ...product,
+                              appliedOffer: filters.selectedOfferDetails ? {
+                                name: filters.selectedOfferDetails.name,
+                                type: filters.selectedOfferDetails.type,
+                                value: filters.selectedOfferDetails.value
+                              } : undefined
+                            })
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white py-2 rounded-xl text-xs font-bold transition-all duration-300"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          Details
+                        </button>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onAddToCart(product)
+                          }}
+                          className="flex-1 flex items-center justify-center gap-2 bg-white text-black hover:bg-white/90 py-2 rounded-xl text-xs font-bold transition-all duration-300 shadow-lg"
+                        >
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                          Add
+                        </button>
+                      </div>
+
                     </div>
                   </div>
                 </div>
