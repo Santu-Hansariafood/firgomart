@@ -8,6 +8,7 @@ import React from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { CartItem } from '@/types/checkout'
 import { useCartSummary } from '@/hooks/cart/useCartSummary'
+import { getMaxQuantity } from '@/utils/productUtils'
 
 interface CartProps {
   items: CartItem[]
@@ -105,7 +106,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[var(--background)]">
                 {items.map((item) => {
                   const summaryItem = orderSummary?.items?.find((si: any) => String(si.productId) === String(item.id))
-                  const maxQty = item.price >= 1000 ? 2 : 3
+                  const maxQty = getMaxQuantity(item.price)
                   return (
                   <motion.div
                     key={item._uniqueId || item.id}

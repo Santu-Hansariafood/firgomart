@@ -42,12 +42,13 @@ interface UseProductDataProps {
   selectedOfferDetails: Offer | null
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
+  newArrivals?: boolean
 }
 
 export function useProductData({
   search, category, subcategory, deliverToState, sortBy,
   minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails,
-  page, setPage
+  page, setPage, newArrivals
 }: UseProductDataProps) {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -75,8 +76,9 @@ export function useProductData({
       const ratingParam = minRating ? `&minRating=${minRating}` : ''
       const sizeParam = selectedSize ? `&size=${encodeURIComponent(selectedSize)}` : ''
       const offerParam = selectedOffer ? `&offer=${encodeURIComponent(selectedOffer)}` : ''
+      const newArrivalsParam = newArrivals ? '&newArrivals=true' : ''
       
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}`)
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}${newArrivalsParam}`)
       
       if (!res.ok) return []
       const data = await res.json()
@@ -116,7 +118,7 @@ export function useProductData({
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails])
+  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, newArrivals])
 
   useEffect(() => {
     const loadInitial = async () => {

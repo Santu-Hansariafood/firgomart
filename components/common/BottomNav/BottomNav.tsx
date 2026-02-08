@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, ShoppingCart, User, Truck, Heart } from "lucide-react"
+import { Home, ShoppingCart, Truck, Heart, ShoppingBasket } from "lucide-react"
 import { useCart } from "@/context/CartContext/CartContext"
 import { useAuth } from "@/context/AuthContext"
 import { motion } from "framer-motion"
@@ -51,10 +51,9 @@ const BottomNav: React.FC<BottomNavProps> = ({
       badge: cartCount > 0 ? cartCount : null,
     },
     {
-      label: "Profile",
-      icon: User,
-      href: isAuthenticated ? "/profile" : null,
-      action: !isAuthenticated ? onLoginClick : undefined,
+      label: "Grocery",
+      icon: ShoppingBasket,
+      href: "/grocery",
     },
   ]
 

@@ -36,9 +36,11 @@ interface ProductGridProps {
   onProductClick: (product: Product) => void
   onAddToCart: (product: Product) => void
   initialCategory?: string
+  hideFilters?: boolean
+  newArrivals?: boolean
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, initialCategory }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, initialCategory, hideFilters = false, newArrivals }) => {
   const searchParams = useSearchParams()
   const router = useRouter()
   const search = (searchParams.get('search') || '').trim()
@@ -63,7 +65,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
     deliverToState, 
     page,
     setPage,
-    ...filters
+    ...filters,
+    newArrivals
   })
   
   const observerTarget = useRef<HTMLDivElement | null>(null)
@@ -106,7 +109,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/20 rounded-full blur-[80px] -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {!search && (
+        {!search && !hideFilters && (
           <>
             <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
               <MarqueeBanner />
@@ -122,13 +125,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
           {!search && (
             <div className="space-y-2 relative w-full md:w-auto flex flex-col items-center md:items-start text-center md:text-left">
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                <span className="text-brand-purple">
                   Firgo
                 </span>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-600 via-rose-500 to-red-600 dark:from-red-400 dark:via-rose-400 dark:to-red-400">
+                <span className="bg-clip-text text-red-500">
                   Mart
                 </span>
-                <span className="ml-2 bg-clip-text text-transparent bg-gradient-to-r from-brand-purple via-indigo-500 to-brand-purple dark:from-violet-300 dark:via-pink-300 dark:to-violet-300 bg-[length:200%_auto] animate-gradient">
+                <span className="ml-2 text-brand-purple">
                   Products
                 </span>
               </h2>
@@ -147,27 +150,30 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
               </div>
             </div>
           )}
-          <div className="w-full md:w-auto z-10">
-            <FilterControls
-              isFilterOpen={filters.isFilterOpen}
-              setIsFilterOpen={filters.setIsFilterOpen}
-              activeFilterTab={filters.activeFilterTab}
-              setActiveFilterTab={filters.setActiveFilterTab}
-              isSortDropdownOpen={filters.isSortDropdownOpen}
-              setIsSortDropdownOpen={filters.setIsSortDropdownOpen}
-              sortBy={filters.sortBy}
-              setSortBy={filters.setSortBy}
-              minPrice={filters.minPrice}
-              maxPrice={filters.maxPrice}
-              minRating={filters.minRating}
-              selectedSize={filters.selectedSize}
-              setPage={setPage}
-            />
-          </div>
+          {!hideFilters && (
+            <div className="w-full md:w-auto z-10">
+              <FilterControls
+                isFilterOpen={filters.isFilterOpen}
+                setIsFilterOpen={filters.setIsFilterOpen}
+                activeFilterTab={filters.activeFilterTab}
+                setActiveFilterTab={filters.setActiveFilterTab}
+                isSortDropdownOpen={filters.isSortDropdownOpen}
+                setIsSortDropdownOpen={filters.setIsSortDropdownOpen}
+                sortBy={filters.sortBy}
+                setSortBy={filters.setSortBy}
+                minPrice={filters.minPrice}
+                maxPrice={filters.maxPrice}
+                minRating={filters.minRating}
+                selectedSize={filters.selectedSize}
+                setPage={setPage}
+              />
+            </div>
+          )}
         </div>
 
-        <AnimatePresence>
-          {filters.selectedOfferDetails && (
+        {!hideFilters && (
+          <AnimatePresence>
+            {filters.selectedOfferDetails && (
             <motion.div
               initial={{ opacity: 0, height: 0, marginBottom: 0 }}
               animate={{ opacity: 1, height: 'auto', marginBottom: 32 }}
@@ -210,20 +216,23 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+          </AnimatePresence>
+        )}
 
-        <div className="mb-10">
-          <OffersFilterChips
-            selectedOffer={filters.selectedOffer || undefined}
-            onChange={(next, offer) => { 
-              filters.setSelectedOffer(next || '')
-              filters.setSelectedOfferDetails(offer || null)
-              setPage(1) 
-            }}
-          />
-        </div>
+        {!hideFilters && (
+          <div className="mb-10">
+            <OffersFilterChips
+              selectedOffer={filters.selectedOffer || undefined}
+              onChange={(next, offer) => { 
+                filters.setSelectedOffer(next || '')
+                filters.setSelectedOfferDetails(offer || null)
+                setPage(1) 
+              }}
+            />
+          </div>
+        )}
 
-        {filters.isFilterOpen && (
+        {!hideFilters && filters.isFilterOpen && (
           <div className="mb-8">
             <FilterPanel
               activeFilterTab={filters.activeFilterTab}

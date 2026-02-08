@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
+import { getMaxQuantity } from "@/utils/productUtils";
+
 interface CartItem {
   id: number | string;
   name: string;
@@ -95,14 +97,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           if (itemId !== uniqueId) return item
           const current = item.quantity || 1
           const stock = item.stock ?? 3
-          const maxQty = item.price >= 1000 ? 2 : 3
+          const maxQty = getMaxQuantity(item.price)
           const next = Math.min(stock, Math.min(maxQty, current + inc))
           return { ...item, quantity: next, _uniqueId: itemId }
         });
       }
       const startQty = product.quantity && product.quantity > 0 ? product.quantity : 1
       const stock = product.stock ?? 3
-      const maxQty = product.price >= 1000 ? 2 : 3
+      const maxQty = getMaxQuantity(product.price)
       if (stock <= 0) return prev
       return [...prev, { ...productWithId, quantity: Math.min(stock, Math.min(maxQty, startQty)) }];
     });
@@ -113,7 +115,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
        const item = prev.find(i => (i._uniqueId || i.id) === id)
        if (!item) return prev
        const stock = item.stock ?? 3
-       const maxQty = item.price >= 1000 ? 2 : 3
+       const maxQty = getMaxQuantity(item.price)
        if (quantity <= 0) return prev.filter((item) => (item._uniqueId || item.id) !== id)
        return prev.map((item) => ((item._uniqueId || item.id) === id ? { ...item, quantity: Math.min(stock, Math.min(maxQty, Math.max(1, quantity))) } : item))
     });

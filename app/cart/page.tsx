@@ -7,6 +7,7 @@ import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, Gift, ShieldCheck } from "
 import FallbackImage from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { getMaxQuantity } from "@/utils/productUtils";
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -181,7 +182,7 @@ const CartPage = () => {
                       <button
                         onClick={() => updateQuantity(item._uniqueId || item.id, (item.quantity || 1) + 1)}
                         className="p-2 hover:bg-[var(--foreground)/5] transition-colors disabled:opacity-30"
-                        disabled={(item.quantity || 1) >= Math.min(item.price >= 1000 ? 2 : 3, item.stock || 10)}
+                        disabled={(item.quantity || 1) >= Math.min(getMaxQuantity(item.price), item.stock || 10)}
                       >
                         <Plus className="w-4 h-4 text-[color:var(--foreground)]" />
                       </button>
@@ -201,6 +202,18 @@ const CartPage = () => {
                   <span className="font-medium text-[color:var(--foreground)]">₹{subtotal.toFixed(2)}</span>
                 </div>
                 
+                {summary.tax > 0 && (
+                  <div className="flex justify-between">
+                    <span>GST (Tax)</span>
+                    <span className="font-medium text-[color:var(--foreground)]">₹{summary.tax.toFixed(2)}</span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between">
+                  <span>Delivery Fee</span>
+                  <span className="font-bold text-green-600">{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>
+                </div>
+
                 <div className="flex justify-between text-green-600 dark:text-green-400">
                   <span>Platform Fees</span>
                   <span className="font-medium">FREE (₹0)</span>
@@ -208,17 +221,6 @@ const CartPage = () => {
                 <div className="flex justify-between text-green-600 dark:text-green-400">
                   <span>Packaging Fees</span>
                   <span className="font-medium">FREE (₹0)</span>
-                </div>
-
-                {summary.tax > 0 && (
-                  <div className="flex justify-between">
-                    <span>GST (Tax)</span>
-                    <span className="font-medium text-[color:var(--foreground)]">₹{summary.tax.toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span>Delivery Fee</span>
-                  <span className="font-bold text-green-600">{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>
                 </div>
                 <div className="border-t border-[var(--foreground)/10] pt-4 mt-2 flex justify-between items-end">
                   <span className="font-bold text-base text-[color:var(--foreground)]">Total Amount</span>

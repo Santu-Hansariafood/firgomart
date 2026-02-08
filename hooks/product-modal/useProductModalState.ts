@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Product } from '@/types/product'
+import { getMaxQuantity } from '@/utils/productUtils'
 
 interface UseProductModalStateProps {
   product: Product
@@ -26,7 +27,7 @@ export function useProductModalState({ product }: UseProductModalStateProps) {
   }, [images.length])
 
   const handleQuantityChange = useCallback((type: 'inc' | 'dec') => {
-    const maxQty = product.price >= 1000 ? 2 : 3
+    const maxQty = getMaxQuantity(product.price)
     setQuantity((prev) => {
       if (type === 'inc') return Math.min(prev + 1, maxQty)
       return Math.max(1, prev - 1)
@@ -50,6 +51,6 @@ export function useProductModalState({ product }: UseProductModalStateProps) {
     nextImage,
     prevImage,
     handleQuantityChange,
-    maxQty: product.price >= 1000 ? 2 : 3
+    maxQty: getMaxQuantity(product.price)
   }
 }

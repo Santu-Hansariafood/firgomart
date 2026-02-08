@@ -65,3 +65,9 @@ export const subcategoryOptionsFor = (cat: string): DropdownItem[] => {
 export const formatPrice = (price: number) => {
   return new Intl.NumberFormat('en-IN').format(price)
 }
+
+export const getMaxQuantity = (price: number): number => {
+  if (price < 1000) return 3
+  if (price < 2000) return 2
+  return 1
+}

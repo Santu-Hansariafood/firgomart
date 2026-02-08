@@ -9,6 +9,8 @@ const AdCarousel = dynamic(() => import("@/components/common/AdCarousel/AdCarous
 const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
 const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
 const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
+const NewArrivals = dynamic(() => import("@/components/ui/NewArrivals/NewArrivals"));
+const TrendingProducts = dynamic(() => import("@/components/ui/TrendingProducts/TrendingProducts"));
 
 export default function Page() {
   return (
@@ -33,9 +35,16 @@ function HomeContent() {
   return (
     <>
       {!search && <AdCarousel />}
+      {!search && (
+        <>
+          <NewArrivals />
+          <TrendingProducts />
+        </>
+      )}
       <ProductGrid
         onProductClick={setSelectedProduct}
         onAddToCart={handleAddToCart}
+        hideFilters={!search}
       />
 
       {selectedProduct && (

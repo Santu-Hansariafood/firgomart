@@ -9,6 +9,7 @@ import FallbackImage from '@/components/common/Image/FallbackImage'
 import Script from 'next/script'
 import { useCart } from '@/context/CartContext/CartContext'
 import toast from 'react-hot-toast'
+import { getMaxQuantity } from '@/utils/productUtils'
 
 interface Product {
   id: string | number
@@ -258,7 +259,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
     }
   }
 
-  const maxQty = product.price >= 1000 ? 2 : 3
+  const maxQty = getMaxQuantity(product.price)
 
   return (
     <div className="bg-background text-foreground min-h-screen pt-24 pb-12">

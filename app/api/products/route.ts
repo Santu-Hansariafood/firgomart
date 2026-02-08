@@ -25,12 +25,19 @@ export async function GET(request: Request) {
     const sizeParam = (url.searchParams.get("size") || "").trim()
     const offerKey = (url.searchParams.get("offer") || "").trim()
     const sortBy = (url.searchParams.get("sortBy") || "").trim()
+    const newArrivals = (url.searchParams.get("newArrivals") || "").toLowerCase() === "true"
     const skip = (page - 1) * limit
     const conn = await connectDB()
     const Product = getProductModel(conn)
     const Offer = getOfferModel(conn)
     
     const conditions: Record<string, unknown>[] = []
+
+    if (newArrivals) {
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+      conditions.push({ createdAt: { $gte: sevenDaysAgo } })
+    }
 
     if (adminOnly) conditions.push({ isAdminProduct: true })
     if (createdByEmail) conditions.push({ createdByEmail })

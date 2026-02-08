@@ -632,34 +632,40 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className="text-[var(--foreground)]/70">Subtotal</span>
                   <span className="font-bold text-[var(--foreground)]"><Rupee />{subtotal.toFixed(2)}</span>
                 </div>
-                
-                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
-                  <span>Platform Fees</span>
-                  <span className="font-bold">FREE</span>
-                </div>
-                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
-                  <span>Packaging Fees</span>
-                  <span className="font-bold">FREE</span>
-                </div>
 
                 {formData.country === 'India' && (
                   <>
-                    {orderSummary.taxBreakdown.igst > 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-[var(--foreground)]/70">IGST</span>
-                        <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
-                      </div>
-                    )}
                     {orderSummary.taxBreakdown.cgst > 0 && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-[var(--foreground)]/70">CGST</span>
+                        <span className="text-[var(--foreground)]/70">
+                          CGST {(() => {
+                            const percents = Array.from(new Set(orderSummary.items.map(i => i.gstPercent || 0)))
+                            return percents.length === 1 ? `(${percents[0] / 2}%)` : ''
+                          })()}
+                        </span>
                         <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.cgst.toFixed(2)}</span>
                       </div>
                     )}
                     {orderSummary.taxBreakdown.sgst > 0 && (
                       <div className="flex justify-between text-sm">
-                        <span className="text-[var(--foreground)]/70">SGST</span>
+                        <span className="text-[var(--foreground)]/70">
+                          SGST {(() => {
+                            const percents = Array.from(new Set(orderSummary.items.map(i => i.gstPercent || 0)))
+                            return percents.length === 1 ? `(${percents[0] / 2}%)` : ''
+                          })()}
+                        </span>
                         <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.sgst.toFixed(2)}</span>
+                      </div>
+                    )}
+                    {orderSummary.taxBreakdown.igst > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-[var(--foreground)]/70">
+                          IGST {(() => {
+                            const percents = Array.from(new Set(orderSummary.items.map(i => i.gstPercent || 0)))
+                            return percents.length === 1 ? `(${percents[0]}%)` : ''
+                          })()}
+                        </span>
+                        <span className="font-bold text-[var(--foreground)]"><Rupee />{orderSummary.taxBreakdown.igst.toFixed(2)}</span>
                       </div>
                     )}
                     {orderSummary.taxBreakdown.igst === 0 && orderSummary.taxBreakdown.cgst === 0 && orderSummary.taxBreakdown.sgst === 0 && tax > 0 && (
@@ -676,6 +682,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                   <span className={`font-bold ${deliveryFee > 0 ? 'text-[var(--foreground)]' : 'text-green-600'}`}>
                     {deliveryFee > 0 ? <><Rupee />{deliveryFee}</> : 'FREE'}
                   </span>
+                </div>
+                
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
+                  <span>Platform Fees</span>
+                  <span className="font-bold">FREE</span>
+                </div>
+                <div className="flex justify-between text-sm text-green-600 dark:text-green-400">
+                  <span>Packaging Fees</span>
+                  <span className="font-bold">FREE</span>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200 dark:border-zinc-700 flex justify-between items-end">
