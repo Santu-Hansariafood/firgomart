@@ -89,8 +89,8 @@ export async function getCashfreeOrder(orderId: string) {
 
 export async function verifyGST(gstNumber: string) {
   const host = getHost()
-  console.log(`[Cashfree] Verifying GST ${gstNumber} at ${host}/verification/gst`)
-  const res = await fetch(`${host}/verification/gst`, {
+  console.log(`[Cashfree] Verifying GST ${gstNumber} at ${host}/verification/gstin`)
+  const res = await fetch(`${host}/verification/gstin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -98,7 +98,7 @@ export async function verifyGST(gstNumber: string) {
       "x-client-id": cashfreeConfig.appId,
       "x-client-secret": cashfreeConfig.secretKey,
     },
-    body: JSON.stringify({ gst_number: gstNumber }),
+    body: JSON.stringify({ GSTIN: gstNumber }),
   })
   if (!res.ok) {
     let message = "Failed to verify GST"
