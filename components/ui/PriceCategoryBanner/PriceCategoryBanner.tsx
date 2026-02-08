@@ -102,37 +102,29 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
   ]
 
   return (
-    <div className="mb-6 overflow-hidden -mx-4 sm:mx-0 relative group">
+    <div className="mb-6 relative group">
       <div className="pointer-events-none absolute left-0 top-0 h-full w-12 z-10 bg-gradient-to-r from-background to-transparent" />
       <div className="pointer-events-none absolute right-0 top-0 h-full w-12 z-10 bg-gradient-to-l from-background to-transparent" />
       
-      <motion.div
-        className="flex w-max"
-        animate={{ x: ["-50%", "0%"] }}
-        transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-      >
-        {[1, 2].map((loop) => (
-          <div key={loop} className="flex gap-3 sm:gap-4 px-1.5 sm:px-2">
-            {categories.map((cat) => (
-              <motion.button
-                key={`${loop}-${cat.id}`}
-                whileHover={{ y: -4, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => onSelectCategory(cat.min, cat.max, cat.type)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-sm transition-all hover:shadow-md ${cat.color} min-w-[140px] sm:min-w-fit`}
-              >
-                <div className={`p-2 rounded-full shadow-sm ${cat.iconBg} ${cat.iconColor}`}>
-                  <cat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div className="text-left">
-                  <div className="font-bold text-sm sm:text-base leading-tight">{cat.title}</div>
-                  <div className="text-[10px] sm:text-xs opacity-80 font-medium">{cat.subtitle}</div>
-                </div>
-              </motion.button>
-            ))}
-          </div>
+      <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        {categories.map((cat) => (
+          <motion.button
+            key={cat.id}
+            whileHover={{ y: -4, scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => onSelectCategory(cat.min, cat.max, cat.type)}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-sm transition-all hover:shadow-md ${cat.color} min-w-[140px] sm:min-w-fit flex-shrink-0`}
+          >
+            <div className={`p-2 rounded-full shadow-sm ${cat.iconBg} ${cat.iconColor}`}>
+              <cat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-sm sm:text-base leading-tight">{cat.title}</div>
+              <div className="text-[10px] sm:text-xs opacity-80 font-medium">{cat.subtitle}</div>
+            </div>
+          </motion.button>
         ))}
-      </motion.div>
+      </div>
     </div>
   )
 }

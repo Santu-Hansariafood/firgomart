@@ -109,17 +109,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({ onProductClick, onAddToCart, 
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/20 rounded-full blur-[80px] -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {!search && !hideFilters && (
-          <>
-            <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
-              <MarqueeBanner />
-            </div>
-            
-            <div className="mb-12">
-              <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
-            </div>
-          </>
-        )}
+        <div className="mb-8 transform hover:scale-[1.01] transition-transform duration-500">
+          <MarqueeBanner />
+        </div>
+        
+        <div className="mb-12">
+          <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
+        </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
           {!search && (
