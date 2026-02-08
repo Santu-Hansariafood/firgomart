@@ -49,7 +49,16 @@ const SellerRegistration: React.FC = () => {
     requestEmailOtp,
     verifyEmailOtp,
     serverError,
-    isSubmitting
+    isSubmitting,
+    gstVerified,
+    gstVerifying,
+    gstError,
+    gstData,
+    handleVerifyGst,
+    bankVerified,
+    bankVerifying,
+    bankError,
+    handleVerifyBank
   } = useSellerRegistration()
 
   const agreementTitle = (sellerAgreementContent as { title?: string }).title || 'Seller Agreement'
@@ -379,7 +388,14 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankAccount ?? ''} 
                       onChange={handleChange} 
                       required 
-                      className="w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border border-[var(--foreground)/15] rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition-all duration-200 text-[color:var(--foreground)] placeholder-[var(--foreground)/40]" 
+                      disabled={bankVerified}
+                      className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
+                        errors.bankAccount || bankError
+                          ? 'border-red-500 focus:border-red-500' 
+                          : bankVerified
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                      } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter bank account number"
                     />
                   </div>
@@ -394,7 +410,14 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankIfsc ?? ''} 
                       onChange={handleChange} 
                       required 
-                      className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${errors.bankIfsc ? 'border-red-500 focus:border-red-500' : 'border-[var(--foreground)/15] focus:border-brand-purple'} text-[color:var(--foreground)] placeholder-[var(--foreground)/40]`}
+                      disabled={bankVerified}
+                      className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
+                        errors.bankIfsc 
+                          ? 'border-red-500 focus:border-red-500' 
+                          : bankVerified
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                      } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter IFSC code"
                     />
                   </div>
@@ -413,7 +436,12 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankName ?? ''} 
                       onChange={handleChange} 
                       required 
-                      className="w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border border-[var(--foreground)/15] rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition-all duration-200 text-[color:var(--foreground)] placeholder-[var(--foreground)/40]" 
+                      disabled={bankVerified}
+                      className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
+                         bankVerified
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                      } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter bank name"
                     />
                   </div>
@@ -428,11 +456,42 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankBranch ?? ''} 
                       onChange={handleChange} 
                       required 
-                      className="w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border border-[var(--foreground)/15] rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 focus:border-brand-purple transition-all duration-200 text-[color:var(--foreground)] placeholder-[var(--foreground)/40]" 
+                      disabled={bankVerified}
+                      className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
+                         bankVerified
+                            ? 'border-green-500 focus:border-green-500'
+                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                      } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter branch name"
                     />
                   </div>
                 </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-2 mt-4 mb-6">
+                <button
+                  type="button"
+                  onClick={handleVerifyBank}
+                  disabled={bankVerifying || bankVerified || !formData.bankAccount || !formData.bankIfsc}
+                  className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
+                    bankVerified 
+                      ? 'bg-green-500/10 text-green-600 border border-green-500/20 cursor-default'
+                      : 'bg-brand-purple text-white hover:bg-brand-purple/90 shadow-lg shadow-brand-purple/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none'
+                  }`}
+                >
+                  {bankVerifying ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      Verifying...
+                    </>
+                  ) : bankVerified ? (
+                    <>Verified <CheckCircle className="w-4 h-4" /></>
+                  ) : (
+                    'Verify Bank Details'
+                  )}
+                </button>
+                {bankError && <p className="text-red-500 text-sm">{bankError}</p>}
+                {errors.bankAccount && <p className="text-red-500 text-sm">{errors.bankAccount}</p>}
               </div>
 
               <div>
@@ -588,26 +647,83 @@ const SellerRegistration: React.FC = () => {
                 {formData.hasGST ? (
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-[color:var(--foreground)] ml-1">GST Number <span className="text-red-500">*</span></label>
-                    <div className="relative group">
-                      <FileText className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
-                      <input
-                        type="text"
-                        name="gstNumber"
-                        value={formData.gstNumber}
-                        onChange={handleChange}
-                        onBlur={() => checkExists('gstNumber', formData.gstNumber)}
-                        pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
-                        required
-                        className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
-                          errors.gstNumber 
-                            ? 'border-red-500 focus:border-red-500' 
-                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
-                        } text-[color:var(--foreground)] placeholder-[var(--foreground)/40]`}
-                        placeholder="Enter 15-digit GST number"
-                      />
+                    <div className="flex gap-2 items-start">
+                      <div className="relative group flex-1">
+                        <FileText className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--foreground)/40] group-focus-within:text-brand-purple transition-colors" />
+                        <input
+                          type="text"
+                          name="gstNumber"
+                          value={formData.gstNumber}
+                          onChange={handleChange}
+                          onBlur={() => checkExists('gstNumber', formData.gstNumber)}
+                          pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}"
+                          required
+                          disabled={gstVerified}
+                          className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
+                            errors.gstNumber || gstError
+                              ? 'border-red-500 focus:border-red-500' 
+                              : gstVerified
+                                ? 'border-green-500 focus:border-green-500'
+                                : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                          } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
+                          placeholder="Enter 15-digit GST number"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleVerifyGst}
+                        disabled={gstVerifying || gstVerified || !formData.gstNumber}
+                        className={`px-5 py-3.5 rounded-xl font-medium transition-all shrink-0 flex items-center gap-2 ${
+                          gstVerified 
+                            ? 'bg-green-500/10 text-green-600 border border-green-500/20 cursor-default'
+                            : 'bg-brand-purple text-white hover:bg-brand-purple/90 shadow-lg shadow-brand-purple/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none'
+                        }`}
+                      >
+                        {gstVerifying ? (
+                          <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : gstVerified ? (
+                          <>Verified <CheckCircle className="w-4 h-4" /></>
+                        ) : (
+                          'Verify'
+                        )}
+                      </button>
                     </div>
+                    {gstError && <p className="text-red-500 text-xs ml-1">{gstError}</p>}
                     {errors.gstNumber && <p className="text-red-500 text-xs ml-1">{errors.gstNumber}</p>}
                     {checking === 'gstNumber' && <p className="text-brand-purple text-xs ml-1 animate-pulse">Checking availability...</p>}
+                    
+                    {gstVerified && gstData && (
+                      <div className="mt-3 p-4 rounded-xl bg-green-500/5 border border-green-500/20 space-y-3 text-sm animate-in fade-in slide-in-from-top-2">
+                         <div className="flex items-center gap-2 text-green-600 font-medium pb-2 border-b border-green-500/10">
+                            <CheckCircle className="w-4 h-4" />
+                            <span>GSTIN Verified Successfully</span>
+                         </div>
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                           <div>
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Legal Name</p>
+                              <p className="font-semibold text-[color:var(--foreground)]">{gstData.legal_name_of_business || gstData.trade_name || 'N/A'}</p>
+                           </div>
+                           <div>
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Trade Name</p>
+                              <p className="font-medium text-[color:var(--foreground)]">{gstData.trade_name || 'N/A'}</p>
+                           </div>
+                           <div>
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Taxpayer Type</p>
+                              <p className="font-medium text-[color:var(--foreground)]">{gstData.taxpayer_type || 'N/A'}</p>
+                           </div>
+                           <div>
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Status</p>
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                (gstData.gstin_status === 'Active' || !gstData.gstin_status) 
+                                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' 
+                                  : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                              }`}>
+                                {gstData.gstin_status || 'Active'}
+                              </span>
+                           </div>
+                         </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <>

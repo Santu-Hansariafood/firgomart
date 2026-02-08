@@ -86,3 +86,60 @@ export async function getCashfreeOrder(orderId: string) {
   }
   return res.json()
 }
+
+export async function verifyGST(gstNumber: string) {
+  const host = getHost()
+  const res = await fetch(`${host}/verification/gst`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-client-id": cashfreeConfig.appId,
+      "x-client-secret": cashfreeConfig.secretKey,
+    },
+    body: JSON.stringify({ gst_number: gstNumber }),
+  })
+  if (!res.ok) {
+    let message = "Failed to verify GST"
+    try {
+      const data = await res.json()
+      message = data?.message || data?.error || JSON.stringify(data)
+    } catch {
+      try {
+        message = await res.text()
+      } catch {}
+    }
+    throw new Error(`[${res.status}] ${message}`)
+  }
+  return res.json()
+}
+
+export async function verifyBankAccount(params: { bankAccount: string, ifsc: string, name: string, phone: string }) {
+  const host = getHost()
+  const res = await fetch(`${host}/verification/bank-account/sync`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-client-id": cashfreeConfig.appId,
+      "x-client-secret": cashfreeConfig.secretKey,
+    },
+    body: JSON.stringify({
+      bank_account: params.bankAccount,
+      ifsc: params.ifsc,
+      name: params.name,
+      phone: params.phone
+    }),
+  })
+  if (!res.ok) {
+    let message = "Failed to verify Bank Account"
+    try {
+      const data = await res.json()
+      message = data?.message || data?.error || JSON.stringify(data)
+    } catch {
+      try {
+        message = await res.text()
+      } catch {}
+    }
+    throw new Error(`[${res.status}] ${message}`)
+  }
+  return res.json()
+}

@@ -5,6 +5,7 @@ import { useSellerOTP } from "./seller-registration/useSellerOTP";
 import { useSellerValidation } from "./seller-registration/useSellerValidation";
 import { useSellerAgreement } from "./seller-registration/useSellerAgreement";
 import { useSellerSubmission } from "./seller-registration/useSellerSubmission";
+import { useSellerVerification } from "./seller-registration/useSellerVerification";
 import { SellerFormData } from "../types/seller";
 
 export const useSellerRegistration = () => {
@@ -50,6 +51,12 @@ export const useSellerRegistration = () => {
     submitted, serverError, isSubmitting, submitRegistration: performSubmission
   } = useSellerSubmission();
 
+  const {
+    gstVerified, gstVerifying, gstError, gstData, verifyGst,
+    bankVerified, bankVerifying, bankError, bankData, verifyBank,
+    setGstVerified, setBankVerified
+  } = useSellerVerification();
+
   const requestEmailOtp = async () => {
      await requestOtp(formData.email, errors);
   }
@@ -64,6 +71,34 @@ export const useSellerRegistration = () => {
         });
     }
   }
+
+  const handleVerifyGst = async () => {
+    if (!formData.gstNumber) return;
+    const isValid = await verifyGst(formData.gstNumber);
+    if (isValid) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.gstNumber;
+        return next;
+      });
+    }
+  };
+
+  const handleVerifyBank = async () => {
+    const isValid = await verifyBank(
+      formData.bankAccount || "",
+      formData.bankIfsc || "",
+      formData.ownerName || "",
+      formData.phone || ""
+    );
+    if (isValid) {
+      setErrors(prev => {
+        const next = { ...prev };
+        delete next.bankAccount;
+        return next;
+      });
+    }
+  };
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
@@ -92,6 +127,9 @@ export const useSellerRegistration = () => {
       ...prev,
       [name]: type === "checkbox" ? (checked ?? false) : val,
     }));
+
+    if (name === "gstNumber") setGstVerified(false);
+    if (["bankAccount", "bankIfsc", "ownerName", "phone"].includes(name)) setBankVerified(false);
 
     const err = validateField(name, val);
     setErrors((prev) => {
@@ -128,6 +166,20 @@ export const useSellerRegistration = () => {
       setErrors((prev) => ({
         ...prev,
         email: "Please verify your email with OTP",
+      }));
+      return;
+    }
+    if (formData.hasGST && !gstVerified) {
+      setErrors((prev) => ({
+        ...prev,
+        gstNumber: "Please verify GST Number",
+      }));
+      return;
+    }
+    if (formData.bankAccount && !bankVerified) {
+      setErrors((prev) => ({
+        ...prev,
+        bankAccount: "Please verify Bank Account",
       }));
       return;
     }
@@ -178,5 +230,7 @@ export const useSellerRegistration = () => {
     verifyEmailOtp,
     serverError,
     isSubmitting,
+    gstVerified, gstVerifying, gstError, gstData, handleVerifyGst,
+    bankVerified, bankVerifying, bankError, handleVerifyBank,
   };
 };
