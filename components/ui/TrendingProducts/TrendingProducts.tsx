@@ -5,6 +5,7 @@ import { Product } from '@/types/product'
 import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
+import { ArrowRight } from 'lucide-react'
 
 export default function TrendingProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -46,6 +47,12 @@ export default function TrendingProducts() {
     <section className="py-10 px-4 md:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-brand-purple">Trending Products</h2>
+        <button 
+          onClick={() => router.push('/trending-products')}
+          className="md:hidden flex items-center gap-2 text-brand-purple hover:underline font-medium"
+        >
+          View All <ArrowRight className="w-4 h-4" />
+        </button>
       </div>
       
       {loading ? (

@@ -141,7 +141,7 @@ export const FilterControls = memo(function FilterControls({
                 className={`w-full px-4 py-2.5 text-sm text-left transition-all
                   ${
                     sortBy === value
-                      ? "bg-brand-purple/10 text-brand-purple font-semibold"
+                      ? "bg-brand-purple text-white font-semibold"
                       : "text-foreground hover:bg-foreground/5"
                   }`}
               >
@@ -223,7 +223,7 @@ export const FilterPanel = memo(function FilterPanel({
               className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10
                 ${
                   mobileTab === tab
-                    ? "bg-white dark:bg-foreground/20 text-brand-purple shadow-sm"
+                    ? "bg-brand-purple text-white shadow-sm"
                     : "text-foreground/50 hover:text-foreground/70"
                 }`}
             >

@@ -422,7 +422,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                               } : undefined
                             })
                           }}
-                          className="flex-1 flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white py-2 rounded-xl text-xs font-bold transition-all duration-300"
+                          className="flex-1 flex items-center justify-center gap-2 bg-white text-brand-purple hover:bg-gray-50 py-2 rounded-xl text-xs font-bold transition-all duration-300 shadow-lg"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           Details
@@ -432,7 +432,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                             e.stopPropagation()
                             onAddToCart(product)
                           }}
-                          className="flex-1 flex items-center justify-center gap-2 bg-white text-black hover:bg-white/90 py-2 rounded-xl text-xs font-bold transition-all duration-300 shadow-lg"
+                          className="flex-1 flex items-center justify-center gap-2 bg-brand-purple text-white hover:bg-brand-purple/90 py-2 rounded-xl text-xs font-bold transition-all duration-300 shadow-lg"
                         >
                           <ShoppingBag className="w-3.5 h-3.5" />
                           Add
@@ -478,6 +478,16 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                       )}
                     </div>
                   </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onAddToCart(product)
+                    }}
+                    className="w-full mt-2 py-2 bg-brand-purple text-white text-xs font-bold rounded-lg hover:bg-brand-purple/90 transition-colors active:scale-95"
+                  >
+                    Add to Cart
+                  </button>
                 </div>
               </motion.div>
             ))}
