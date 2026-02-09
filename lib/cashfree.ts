@@ -94,11 +94,10 @@ export async function verifyGST(gstNumber: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-version": cashfreeConfig.apiVersion,
       "x-client-id": cashfreeConfig.appId,
       "x-client-secret": cashfreeConfig.secretKey,
     },
-    body: JSON.stringify({ GSTIN: gstNumber }),
+    body: JSON.stringify({ gstin: gstNumber }),
   })
   if (!res.ok) {
     let message = "Failed to verify GST"
@@ -122,7 +121,6 @@ export async function verifyBankAccount(params: { bankAccount: string, ifsc: str
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-version": cashfreeConfig.apiVersion,
       "x-client-id": cashfreeConfig.appId,
       "x-client-secret": cashfreeConfig.secretKey,
     },
