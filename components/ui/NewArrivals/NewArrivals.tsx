@@ -46,8 +46,13 @@ export default function NewArrivals() {
   return (
     <section className="pt-0 pb-8 px-4 md:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">
-          <span className="text-brand-purple">New</span> <span className="text-red-500">Arrivals</span>
+        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
+          <span className="text-brand-purple">
+            New
+          </span>
+          <span className="bg-clip-text text-red-500 ml-2">
+            Arrivals
+          </span>
         </h2>
         <button 
           onClick={() => router.push('/new-arrivals')}

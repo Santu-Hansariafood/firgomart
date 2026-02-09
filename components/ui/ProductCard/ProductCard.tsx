@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { Product } from '@/types/product'
 import { sanitizeImageUrl, formatPrice } from '@/utils/productUtils'
+import { Share2, Heart } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
 
@@ -20,11 +22,55 @@ const fadeInUp = {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false }) => {
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const url = `${window.location.origin}/product/${product._id || product.id}`
+    
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: `Check out ${product.name} on FirgoMart!`,
+        url
+      }).catch((err) => {
+        console.error('Error sharing:', err)
+        if (err.name !== 'AbortError') {
+          toast.error('Failed to share product')
+        }
+      })
+    } else {
+      navigator.clipboard.writeText(url)
+        .then(() => toast.success('Link copied to clipboard'))
+        .catch(() => toast.error('Failed to copy link'))
+    }
+  }
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    toast.success('Added to wishlist')
+  }
+
   return (
     <motion.div
       variants={fadeInUp}
       className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-gray-50 dark:bg-gray-900/50 h-full"
     >
+      <div className="absolute top-3 right-3 z-30 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button
+          onClick={handleWishlist}
+          className="p-2 bg-white/90 dark:bg-black/80 rounded-full shadow-lg hover:scale-110 transition-transform text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-500"
+          title="Add to Wishlist"
+        >
+          <Heart className="w-4 h-4" />
+        </button>
+        <button
+          onClick={handleShare}
+          className="p-2 bg-white/90 dark:bg-black/80 rounded-full shadow-lg hover:scale-110 transition-transform text-gray-600 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-500"
+          title="Share Product"
+        >
+          <Share2 className="w-4 h-4" />
+        </button>
+      </div>
+
       <div 
         className="relative aspect-[4/5] cursor-pointer overflow-hidden"
         onClick={() => onProductClick(product)}
@@ -48,12 +94,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
         ) : null}
 
         {product.discount && (
-          <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg z-20">
+          <span className="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg z-20">
             {product.discount}% OFF
           </span>
         )}
 
-        {/* Desktop Overlay Details */}
         <div className="hidden md:flex absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex-col justify-end h-full pointer-events-none">
           <div className="pointer-events-auto">
             <p className="text-[10px] font-bold text-brand-purple mb-1 uppercase tracking-wider bg-white/90 dark:bg-black/80 inline-block px-2 py-0.5 rounded-full backdrop-blur-sm">
@@ -101,7 +146,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
         </div>
       </div>
 
-      {/* Mobile Details Below Image */}
       <div className="md:hidden p-3 flex flex-col gap-1.5">
         <p className="text-[10px] font-bold text-brand-purple uppercase tracking-wider">
           {product.category}

@@ -12,6 +12,7 @@ const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGri
 const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
 const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 const NewArrivals = dynamic(() => import("@/components/ui/NewArrivals/NewArrivals"));
+const PendingReviews = dynamic(() => import("@/components/ui/PendingReviews/PendingReviews"));
 const TrendingProducts = dynamic(() => import("@/components/ui/TrendingProducts/TrendingProducts"));
 const MarqueeBanner = dynamic(() => import("@/components/ui/MarqueeBanner/MarqueeBanner"));
 const PriceCategoryBanner = dynamic(() => import("@/components/ui/PriceCategoryBanner/PriceCategoryBanner"));
@@ -52,6 +53,7 @@ function HomeContent() {
             <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
           </div>
 
+          <PendingReviews />
           <NewArrivals />
           <TrendingProducts />
         </Suspense>
