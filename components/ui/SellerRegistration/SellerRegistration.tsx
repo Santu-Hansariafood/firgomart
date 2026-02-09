@@ -481,7 +481,7 @@ const SellerRegistration: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleVerifyBank}
-                  disabled={bankVerifying || bankVerified || !formData.bankAccount || !formData.bankIfsc}
+                  disabled={bankVerifying || bankVerified || !formData.bankAccount || !formData.bankIfsc || !formData.ownerName || !formData.phone}
                   className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
                     bankVerified 
                       ? 'bg-green-500/10 text-green-600 border border-green-500/20 cursor-default'

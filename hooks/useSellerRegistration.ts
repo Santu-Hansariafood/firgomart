@@ -94,7 +94,17 @@ export const useSellerRegistration = () => {
   };
 
   const handleVerifyBank = async () => {
-    // We pass empty strings if undefined so that the verifyBank function triggers the validation error
+    const newErrors: Partial<Record<keyof SellerFormData, string>> = {};
+    if (!formData.bankAccount) newErrors.bankAccount = "Bank Account is required";
+    if (!formData.bankIfsc) newErrors.bankIfsc = "IFSC Code is required";
+    if (!formData.ownerName) newErrors.ownerName = "Owner Name is required";
+    if (!formData.phone) newErrors.phone = "Phone Number is required";
+
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(prev => ({ ...prev, ...newErrors }));
+        return;
+    }
+
     const success = await verifyBank(
       formData.bankAccount || "", 
       formData.bankIfsc || "", 
@@ -186,7 +196,17 @@ export const useSellerRegistration = () => {
       }));
       return;
     }
-    if (formData.bankAccount && !bankVerified) {
+    if (!formData.bankAccount || !formData.bankIfsc || !formData.ownerName || !formData.phone) {
+      setErrors((prev) => ({
+        ...prev,
+        bankAccount: !formData.bankAccount ? "Bank Account is required" : prev.bankAccount,
+        bankIfsc: !formData.bankIfsc ? "IFSC Code is required" : prev.bankIfsc,
+        ownerName: !formData.ownerName ? "Account Holder Name is required" : prev.ownerName,
+        phone: !formData.phone ? "Phone Number is required" : prev.phone,
+      }));
+      return;
+    }
+    if (!bankVerified) {
       setErrors((prev) => ({
         ...prev,
         bankAccount: "Please verify Bank Account",

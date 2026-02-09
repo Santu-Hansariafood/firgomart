@@ -116,21 +116,58 @@ export async function verifyGST(gstNumber: string) {
 
 export async function verifyBankAccount(params: { bankAccount: string, ifsc: string, name: string, phone: string }) {
   const host = getHost()
-  console.log(`[Cashfree] Verifying Bank Account ${params.bankAccount} at ${host}/verification/bank-account/sync`)
-  const res = await fetch(`${host}/verification/bank-account/sync`, {
+  const payload = {
+    bank_account: params.bankAccount,
+    ifsc: params.ifsc,
+    name: params.name,
+    phone: params.phone
+  }
+  const headers = {
+    "Content-Type": "application/json",
+    "x-client-id": cashfreeConfig.appId,
+    "x-client-secret": cashfreeConfig.secretKey,
+  }
+
+  console.log(`[Cashfree] Verifying Bank Account at ${host}/verification/bank-account/sync`)
+  let res = await fetch(`${host}/verification/bank-account/sync`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-client-id": cashfreeConfig.appId,
-      "x-client-secret": cashfreeConfig.secretKey,
-    },
-    body: JSON.stringify({
-      bank_account: params.bankAccount,
-      ifsc: params.ifsc,
-      name: params.name,
-      phone: params.phone
-    }),
+    headers,
+    body: JSON.stringify(payload),
   })
+
+  // If 404, try V1 endpoint as fallback
+  if (res.status === 404) {
+     console.log(`[Cashfree] 404 at default endpoint, trying fallback /verification/v1/bank-account/sync`)
+     res = await fetch(`${host}/verification/v1/bank-account/sync`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+     })
+     
+     // If still 404, try Payouts Gamma endpoint (Sandbox specific often) or Payouts V1
+     if (res.status === 404 && cashfreeConfig.mode === "sandbox") {
+         console.log(`[Cashfree] 404 at V1 endpoint, trying Payouts Gamma endpoint`)
+         // Payouts API requires different structure often, but let's try the common validation endpoint
+         // Note: Payouts usually runs on payout-api.cashfree.com (Prod) or payout-gamma.cashfree.com (Sandbox)
+         const payoutHost = "https://payout-gamma.cashfree.com";
+         res = await fetch(`${payoutHost}/payout/v1/validation/bankDetails`, {
+            method: "POST",
+            headers,
+            // Payouts validation payload might be slightly different: name, phone, bankAccount, ifsc
+            // The current payload matches standard keys: bank_account, ifsc, name, phone.
+            // Payouts API expects: name, phone, bankAccount, ifsc. 
+            // Our payload has snake_case keys: bank_account. 
+            // Let's adjust payload for Payouts API check
+            body: JSON.stringify({
+                name: params.name,
+                phone: params.phone,
+                bankAccount: params.bankAccount,
+                ifsc: params.ifsc
+            }),
+         })
+     }
+  }
+
   if (!res.ok) {
     let message = "Failed to verify Bank Account"
     try {

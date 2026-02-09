@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { verifyBankAccount } from "@/lib/cashfree"
 
 export async function POST(request: Request) {
+  // Verifying Bank Account via Cashfree with Fallbacks
   try {
     const { bankAccount, ifsc, name, phone } = await request.json()
     if (!bankAccount || !ifsc || !name || !phone) {
