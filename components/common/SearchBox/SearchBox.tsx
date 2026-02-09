@@ -92,6 +92,19 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   }, [value, enableSuggestions]);
 
   useEffect(() => {
+    if (!value || value.trim().length === 0) return;
+
+    const handler = setTimeout(() => {
+      if (onSearch) {
+        onSearch(value);
+        setShowSuggestions(false);
+      }
+    }, 800);
+
+    return () => clearTimeout(handler);
+  }, [value, onSearch]);
+
+  useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setShowSuggestions(false);

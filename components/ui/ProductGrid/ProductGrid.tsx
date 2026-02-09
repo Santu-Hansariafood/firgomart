@@ -116,7 +116,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   }, [category, subcategory, searchParams, router])
 
   return (
-    <section className="min-h-screen py-12 bg-background relative overflow-hidden">
+    <section className="min-h-screen pt-0 pb-12 bg-background relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[600px] bg-brand-purple/5 dark:bg-brand-purple/20 -skew-y-3 transform origin-top-left -z-10" />
       <div className="absolute top-[20%] right-0 w-[400px] h-[400px] bg-blue-500/5 dark:bg-blue-500/20 rounded-full blur-[100px] -z-10" />
       <div className="absolute bottom-0 left-10 w-[300px] h-[300px] bg-rose-500/5 dark:bg-rose-500/20 rounded-full blur-[80px] -z-10" />

@@ -40,21 +40,21 @@ function HomeContent() {
   };
 
   return (
-    <>
+    <Suspense fallback={<Loading />}>
       {!search && <AdCarousel />}
       {!search && (
-        <>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 transform hover:scale-[1.01] transition-transform duration-500">
+        <Suspense fallback={<Loading />}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 transform hover:scale-[1.01] transition-transform duration-500">
             <MarqueeBanner />
           </div>
           
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
             <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
           </div>
 
           <NewArrivals />
           <TrendingProducts />
-        </>
+        </Suspense>
       )}
       <ProductGrid
         onProductClick={setSelectedProduct}
@@ -81,6 +81,6 @@ function HomeContent() {
           onRemoveItem={removeFromCart}
         />
       )}
-    </>
+    </Suspense>
   );
 }

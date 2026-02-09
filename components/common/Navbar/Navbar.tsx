@@ -78,6 +78,19 @@ const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const { cartItems, setShowCart } = useCart()
+
+  useEffect(() => {
+    // Clear search param on mount (refresh)
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href)
+      if (url.searchParams.has("search")) {
+        url.searchParams.delete("search")
+        router.replace(url.pathname + url.search)
+        setSearchQuery("")
+      }
+    }
+  }, [])
+
   const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
   const sellerInfo = (user?.sellerDetails || null) as SellerInfo | null
 

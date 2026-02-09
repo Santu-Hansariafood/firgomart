@@ -44,7 +44,7 @@ export default function TrendingProducts() {
   if (!loading && products.length === 0) return null
 
   return (
-    <section className="py-10 px-4 md:px-8 max-w-7xl mx-auto">
+    <section className="pt-0 pb-10 px-4 md:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-brand-purple">Trending Products</h2>
         <button 
