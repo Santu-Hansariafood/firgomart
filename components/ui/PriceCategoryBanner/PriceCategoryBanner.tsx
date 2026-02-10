@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Tag, Sparkles, Gift, Zap, Star, ShoppingBag } from 'lucide-react'
 
@@ -8,6 +9,8 @@ interface PriceCategoryBannerProps {
 }
 
 export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryBannerProps) {
+  const [activeId, setActiveId] = useState<string | null>(null)
+
   const categories = [
     {
       id: 'under-199',
@@ -47,9 +50,9 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       title: 'Under ₹499',
       subtitle: 'Trending Now',
       icon: ShoppingBag,
-      color: 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800',
-      iconBg: 'bg-white dark:bg-indigo-900/20',
-      iconColor: 'text-indigo-600 dark:text-indigo-400',
+      color: 'bg-zinc-50 dark:bg-zinc-950/30 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800',
+      iconBg: 'bg-white dark:bg-zinc-900/20',
+      iconColor: 'text-zinc-700 dark:text-zinc-300',
       min: 400,
       max: 499
     },
@@ -106,14 +109,19 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       <div className="pointer-events-none absolute left-0 top-0 h-full w-12 z-10 bg-gradient-to-r from-background to-transparent" />
       <div className="pointer-events-none absolute right-0 top-0 h-full w-12 z-10 bg-gradient-to-l from-background to-transparent" />
       
-      <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {categories.map((cat) => (
           <motion.button
             key={cat.id}
             whileHover={{ y: -4, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            onClick={() => onSelectCategory(cat.min, cat.max, cat.type)}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-sm transition-all hover:shadow-md ${cat.color} min-w-[140px] sm:min-w-fit flex-shrink-0`}
+            onClick={() => {
+              setActiveId(cat.id)
+              onSelectCategory(cat.min, cat.max, cat.type)
+            }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border shadow-sm transition-all hover:shadow-md ${cat.color} min-w-[140px] sm:min-w-fit flex-shrink-0 ${
+              activeId === cat.id ? 'ring-2 ring-offset-2 ring-brand-purple scale-[1.02]' : ''
+            }`}
           >
             <div className={`p-2 rounded-full shadow-sm ${cat.iconBg} ${cat.iconColor}`}>
               <cat.icon className="w-5 h-5 sm:w-6 sm:h-6" />
