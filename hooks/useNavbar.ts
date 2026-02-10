@@ -48,12 +48,11 @@ export const useNavbar = () => {
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const { cartItems, setShowCart } = useCart()
-  const { deliverToState, requestLocation, loading: locationLoading } = useGeolocation()
+  const { deliverToState, requestLocation, loading: locationLoading, updateLocation } = useGeolocation()
 
   const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
   const sellerInfo = (user?.sellerDetails || null) as SellerInfo | null
 
-  // URL Params cleanup
   useEffect(() => {
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href)
@@ -84,14 +83,12 @@ export const useNavbar = () => {
     }
   }, [])
 
-  // Theme effect
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.documentElement.setAttribute("data-theme", theme)
     }
   }, [theme])
 
-  // Location modal auto-show
   useEffect(() => {
     if (typeof window !== 'undefined' && !deliverToState && isAuthenticated) {
       const seen = sessionStorage.getItem('location_modal_seen')
@@ -166,6 +163,11 @@ export const useNavbar = () => {
     setShowLocationModal(false)
   }
 
+  const handleManualLocation = (state: string) => {
+    updateLocation(state)
+    setShowLocationModal(false)
+  }
+
   return {
     state: {
       searchQuery,
@@ -201,7 +203,8 @@ export const useNavbar = () => {
       handleSwitchToLogin,
       handleSwitchToForgot,
       handleLogout,
-      handleRequestLocation
+      handleRequestLocation,
+      handleManualLocation
     }
   }
 }

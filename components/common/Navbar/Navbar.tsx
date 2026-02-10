@@ -55,7 +55,8 @@ const Navbar: React.FC = () => {
     handleSwitchToLogin,
     handleSwitchToForgot,
     handleLogout,
-    handleRequestLocation
+    handleRequestLocation,
+    handleManualLocation
   } = actions
 
   return (
@@ -171,6 +172,7 @@ const Navbar: React.FC = () => {
         isOpen={showLocationModal}
         onClose={() => setShowLocationModal(false)}
         onRequestLocation={handleRequestLocation}
+        onManualLocation={handleManualLocation}
         loading={locationLoading}
       />
       <BottomNav 
