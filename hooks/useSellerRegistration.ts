@@ -206,10 +206,10 @@ export const useSellerRegistration = () => {
       }));
       return;
     }
-    if (!bankVerified) {
+    if (!ifscVerified) {
       setErrors((prev) => ({
         ...prev,
-        bankAccount: "Please verify Bank Account",
+        bankIfsc: "Please verify IFSC Code",
       }));
       return;
     }

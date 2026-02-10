@@ -392,13 +392,10 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankAccount ?? ''} 
                       onChange={handleChange} 
                       required 
-                      disabled={bankVerified}
                       className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
                         errors.bankAccount || bankError
                           ? 'border-red-500 focus:border-red-500' 
-                          : bankVerified
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                          : 'border-[var(--foreground)/15] focus:border-brand-purple'
                       } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter bank account number"
                     />
@@ -414,11 +411,10 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankIfsc ?? ''} 
                       onChange={handleChange} 
                       required 
-                      disabled={bankVerified}
                       className={`w-full pl-11 pr-10 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
                         errors.bankIfsc || ifscError
                           ? 'border-red-500 focus:border-red-500' 
-                          : bankVerified || ifscVerified
+                          : ifscVerified
                             ? 'border-green-500 focus:border-green-500'
                             : 'border-[var(--foreground)/15] focus:border-brand-purple'
                       } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
@@ -445,11 +441,8 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankName ?? ''} 
                       onChange={handleChange} 
                       required 
-                      disabled={bankVerified}
                       className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
-                         bankVerified
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                        'border-[var(--foreground)/15] focus:border-brand-purple'
                       } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter bank name"
                     />
@@ -465,11 +458,8 @@ const SellerRegistration: React.FC = () => {
                       value={formData.bankBranch ?? ''} 
                       onChange={handleChange} 
                       required 
-                      disabled={bankVerified}
                       className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
-                         bankVerified
-                            ? 'border-green-500 focus:border-green-500'
-                            : 'border-[var(--foreground)/15] focus:border-brand-purple'
+                        'border-[var(--foreground)/15] focus:border-brand-purple'
                       } text-[color:var(--foreground)] placeholder-[var(--foreground)/40] disabled:opacity-70`}
                       placeholder="Enter branch name"
                     />
@@ -478,34 +468,7 @@ const SellerRegistration: React.FC = () => {
               </div>
 
               <div className="flex flex-col items-end gap-2 mt-4 mb-6">
-                <button
-                  type="button"
-                  onClick={handleVerifyBank}
-                  disabled={bankVerifying || bankVerified || !formData.bankAccount || !formData.bankIfsc || !formData.ownerName || !formData.phone}
-                  className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
-                    bankVerified 
-                      ? 'bg-green-500/10 text-green-600 border border-green-500/20 cursor-default'
-                      : 'bg-brand-purple text-white hover:bg-brand-purple/90 shadow-lg shadow-brand-purple/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none'
-                  }`}
-                >
-                  {bankVerifying ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      Verifying...
-                    </>
-                  ) : bankVerified ? (
-                    <>Verified <CheckCircle className="w-4 h-4" /></>
-                  ) : (
-                    'Verify Bank Details'
-                  )}
-                </button>
-                {bankVerified && bankData?.data && (
-                  <div className="w-full mt-2 text-sm text-green-600 bg-green-500/10 p-3 rounded-lg border border-green-500/20 flex items-center gap-2">
-                     <User className="w-4 h-4 shrink-0" />
-                     <span>Verified Name: <strong>{bankData.data.nameAtBank || bankData.data.name_at_bank || bankData.data.beneName || "Verified"}</strong></span>
-                  </div>
-                )}
-                {bankError && <p className="text-red-500 text-sm">{bankError}</p>}
+                {/* Bank Verification Removed as per requirement - Relying on IFSC verification */}
                 {errors.bankAccount && <p className="text-red-500 text-sm">{errors.bankAccount}</p>}
               </div>
 
@@ -714,9 +677,9 @@ const SellerRegistration: React.FC = () => {
                             <span>GSTIN Verified Successfully</span>
                          </div>
                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                           <div>
-                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Legal Name</p>
-                              <p className="font-semibold text-[color:var(--foreground)]">{gstData.legal_name_of_business || gstData.trade_name || 'N/A'}</p>
+                           <div className="sm:col-span-2">
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Legal Name of Business</p>
+                              <p className="font-semibold text-[color:var(--foreground)]">{gstData.legal_name_of_business || 'N/A'}</p>
                            </div>
                            <div>
                               <p className="text-[var(--foreground)]/50 text-xs mb-1">Trade Name</p>
@@ -725,6 +688,10 @@ const SellerRegistration: React.FC = () => {
                            <div>
                               <p className="text-[var(--foreground)]/50 text-xs mb-1">Taxpayer Type</p>
                               <p className="font-medium text-[color:var(--foreground)]">{gstData.taxpayer_type || 'N/A'}</p>
+                           </div>
+                           <div>
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Registration Date</p>
+                              <p className="font-medium text-[color:var(--foreground)]">{gstData.date_of_registration || 'N/A'}</p>
                            </div>
                            <div>
                               <p className="text-[var(--foreground)]/50 text-xs mb-1">Status</p>
@@ -736,6 +703,25 @@ const SellerRegistration: React.FC = () => {
                                 {gstData.gstin_status || 'Active'}
                               </span>
                            </div>
+                           <div className="sm:col-span-2">
+                              <p className="text-[var(--foreground)]/50 text-xs mb-1">Principal Place of Business</p>
+                              <p className="font-medium text-[color:var(--foreground)] text-sm">{gstData.principal_place_of_business || 'N/A'}</p>
+                           </div>
+                           {gstData.nature_of_business_activity && (
+                             <div className="sm:col-span-2">
+                                <p className="text-[var(--foreground)]/50 text-xs mb-1">Nature of Business Activity</p>
+                                <div className="flex flex-wrap gap-1">
+                                  {Array.isArray(gstData.nature_of_business_activity) 
+                                    ? gstData.nature_of_business_activity.map((activity: string, i: number) => (
+                                      <span key={i} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-[var(--foreground)]/5 text-[color:var(--foreground)]">
+                                        {activity}
+                                      </span>
+                                    ))
+                                    : <span className="text-sm text-[color:var(--foreground)]">{gstData.nature_of_business_activity}</span>
+                                  }
+                                </div>
+                             </div>
+                           )}
                          </div>
                       </div>
                     )}

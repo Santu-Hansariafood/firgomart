@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server"
 
 export const razorpayConfig = {
   keyId: process.env.RAZORPAY_KEY_ID || "",
@@ -40,9 +41,10 @@ export function verifyRazorpaySignature(
 }
 
 export async function verifyRazorpayGST(gstNumber: string) {
-  // Razorpay does not have a public API for GST verification.
-  // We will perform a format validation here.
-  // Format: 2 digits (State) + 5 chars (PAN) + 4 digits (PAN) + 1 char (PAN) + 1 digit (Entity No) + Z + 1 char (Check)
+  // Razorpay Standard API does not expose a public GST Verification endpoint.
+  // We use Cashfree (via api/verification/gst) for real verification.
+  // This function serves as a mock/format validator fallback.
+  
   const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/
   
   if (!gstRegex.test(gstNumber)) {
@@ -55,9 +57,15 @@ export async function verifyRazorpayGST(gstNumber: string) {
   return {
     valid: true,
     gstin: gstNumber,
-    legal_name_of_business: "Verified via Razorpay (Format)",
-    trade_name: "Verified Merchant",
+    legal_name_of_business: "Verified Business Legal Name (Mock)",
+    trade_name: "Verified Business Trade Name (Mock)",
     gstin_status: "Active",
+    taxpayer_type: "Regular",
+    center_jurisdiction: "Range-1",
+    state_jurisdiction: "Ward-1",
+    date_of_registration: "01/01/2023",
+    principal_place_of_business: "123, Verified Street, Business District, State - 123456",
+    nature_of_business_activity: ["Retail Business", "Wholesale Business"],
     message: "GST Number format is valid (Verified via Razorpay Format Check)",
   }
 }
