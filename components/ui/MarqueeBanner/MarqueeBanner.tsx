@@ -42,7 +42,7 @@ export default function MarqueeBanner() {
   const reduceMotion = useReducedMotion()
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-background">
+    <div className="relative overflow-hidden rounded-2xl bg-transparent">
       <motion.div
         className="flex w-max items-center gap-6 py-4"
         animate={reduceMotion ? {} : { x: ["0%", "-50%"] }}

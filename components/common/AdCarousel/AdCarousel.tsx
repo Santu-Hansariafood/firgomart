@@ -79,7 +79,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
 
   if (loading) {
     return (
-      <section className="bg-[var(--background)] py-8">
+      <section className="bg-transparent py-8">
         <div className="max-w-7xl mx-auto px-4">
           <div className="h-64 md:h-96 rounded-2xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
         </div>
@@ -92,7 +92,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
   const currentAd = banners[current]
 
   return (
-    <section className="bg-[var(--background)] py-8">
+    <section className="bg-transparent py-8">
       <div className="max-w-7xl mx-auto px-4">
         <div className="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-xl group">
           <AnimatePresence mode="wait">

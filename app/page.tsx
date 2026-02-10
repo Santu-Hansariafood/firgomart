@@ -42,49 +42,51 @@ function HomeContent() {
   };
 
   return (
-    <Suspense fallback={<Loading />}>
-      {!search && <AdCarousel />}
-      {!search && (
-        <Suspense fallback={<Loading />}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 transform hover:scale-[1.01] transition-transform duration-500">
-            <MarqueeBanner />
-          </div>
-          
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-            <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
-          </div>
+    <div className="bg-gradient-to-b from-[#7800c8]/5 via-white to-[#f00000]/5 dark:bg-none min-h-screen">
+      <Suspense fallback={<Loading />}>
+        {!search && <AdCarousel />}
+        {!search && (
+          <Suspense fallback={<Loading />}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-4 transform hover:scale-[1.01] transition-transform duration-500">
+              <MarqueeBanner />
+            </div>
+            
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+              <PriceCategoryBanner onSelectCategory={filters.handlePriceCategorySelect} />
+            </div>
 
-          <PendingReviews />
-          <NewArrivals />
-          <TrendingProducts />
-          <SellerProducts />
-        </Suspense>
-      )}
-      <ProductGrid
-        onProductClick={setSelectedProduct}
-        onAddToCart={handleAddToCart}
-        hideFilters={!search}
-        filters={filters}
-        page={page}
-        setPage={setPage}
-      />
-
-      {selectedProduct && (
-        <ProductModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+            <PendingReviews />
+            <NewArrivals />
+            <TrendingProducts />
+            <SellerProducts />
+          </Suspense>
+        )}
+        <ProductGrid
+          onProductClick={setSelectedProduct}
           onAddToCart={handleAddToCart}
+          hideFilters={!search}
+          filters={filters}
+          page={page}
+          setPage={setPage}
         />
-      )}
 
-      {showCart && (
-        <Cart
-          items={cartItems}
-          onClose={() => setShowCart(false)}
-          onUpdateQuantity={updateQuantity}
-          onRemoveItem={removeFromCart}
-        />
-      )}
-    </Suspense>
+        {selectedProduct && (
+          <ProductModal
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            onAddToCart={handleAddToCart}
+          />
+        )}
+
+        {showCart && (
+          <Cart
+            items={cartItems}
+            onClose={() => setShowCart(false)}
+            onUpdateQuantity={updateQuantity}
+            onRemoveItem={removeFromCart}
+          />
+        )}
+      </Suspense>
+    </div>
   );
 }
