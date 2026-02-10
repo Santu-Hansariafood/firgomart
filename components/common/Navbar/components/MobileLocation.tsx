@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-react"
+import { MapPin, ChevronDown } from "lucide-react"
 
 interface MobileLocationProps {
   isAuthenticated: boolean
@@ -16,27 +16,25 @@ const MobileLocation = ({
   setShowLoginModal
 }: MobileLocationProps) => {
   return (
-    <button 
-      className="md:hidden flex items-center gap-2 mr-auto ml-2 px-3 py-1.5 rounded-full bg-brand-purple/5 border border-brand-purple/10 active:scale-95 transition-all" 
-      onClick={() => {
-        if (!isAuthenticated) {
-          setShowLoginModal(true)
-          return
-        }
-        setShowLocationModal(true)
-      }}
-    >
-      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-purple to-brand-red p-[1px] flex-shrink-0">
-         <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-            <MapPin className="w-3.5 h-3.5 text-brand-purple" />
-         </div>
-      </div>
-      <div className="flex flex-col items-start text-left">
-        <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-red truncate max-w-[110px] leading-none">
+    <div className="md:hidden w-full bg-gradient-to-r from-brand-purple to-brand-red text-white">
+      <button 
+        className="w-full max-w-7xl mx-auto px-3 py-2 flex items-center gap-2 text-xs sm:text-sm font-medium"
+        onClick={() => {
+          if (!isAuthenticated) {
+            setShowLoginModal(true)
+            return
+          }
+          setShowLocationModal(true)
+        }}
+      >
+        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/90" />
+        <span className="opacity-90">Deliver to:</span>
+        <span className="font-bold truncate max-w-[200px]">
           {locationLoading ? "Locating..." : (deliverToState || "Select Location")}
         </span>
-      </div>
-    </button>
+        <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80 ml-auto sm:ml-1" />
+      </button>
+    </div>
   )
 }
 
