@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { User, Mail, Phone, MapPin, Calendar, Edit2, X, LogOut, Plus } from "lucide-react";
+import { LocationDetector, LocationData } from "@/components/common/LocationDetector/LocationDetector";
 
 interface UserData {
   name?: string;
@@ -112,6 +113,26 @@ const Profile = () => {
     setFormData(user || {});
     setErrors({});
     setIsEditing(false);
+  };
+
+  const handleLocationDetected = (data: LocationData) => {
+    setFormData(prev => ({
+      ...prev,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      pincode: data.pincode
+    }));
+  };
+
+  const handleNewAddressLocationDetected = (data: LocationData) => {
+    setNewAddress(prev => ({
+      ...prev,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+      pincode: data.pincode
+    }));
   };
 
   const handleAddAddress = () => {
@@ -304,10 +325,15 @@ const Profile = () => {
                   </div>
 
                   <div>
-                     <h3 className="text-lg font-bold text-[var(--foreground)] mb-6 flex items-center gap-2">
+                    <div className="flex items-center justify-between mb-6">
+                     <h3 className="text-lg font-bold text-[var(--foreground)] flex items-center gap-2">
                        <MapPin className="w-5 h-5 text-brand-purple" />
                        Primary Address
                     </h3>
+                    {isEditing && (
+                      <LocationDetector onLocationDetected={handleLocationDetected} />
+                    )}
+                    </div>
                     <div className="space-y-6">
                         <div className="relative">
                            <textarea
@@ -413,7 +439,10 @@ const Profile = () => {
                      className="mb-8 overflow-hidden"
                   >
                     <div className="p-6 md:p-8 bg-gray-50 dark:bg-zinc-800/30 rounded-2xl border border-gray-200 dark:border-zinc-700">
-                      <h3 className="text-lg font-bold mb-6">New Address Details</h3>
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-bold">New Address Details</h3>
+                        <LocationDetector onLocationDetected={handleNewAddressLocationDetected} />
+                      </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <SimpleInput
                           label="Name"

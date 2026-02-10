@@ -3,7 +3,6 @@ export interface SellerFormData {
   ownerName: string;
   email: string;
   phone: string;
-  address: string;
   country: string;
   state: string;
   district: string;

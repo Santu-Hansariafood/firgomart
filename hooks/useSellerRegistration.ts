@@ -14,7 +14,6 @@ export const useSellerRegistration = () => {
     ownerName: "",
     email: "",
     phone: "",
-    address: "",
     country: "India",
     state: "",
     district: "",
