@@ -52,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
   return (
     <motion.div
       variants={fadeInUp}
-      className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-gray-50 dark:bg-gray-900/50 h-full"
+      className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-900/50 h-full"
     >
       <div className="absolute top-3 right-3 z-30 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button

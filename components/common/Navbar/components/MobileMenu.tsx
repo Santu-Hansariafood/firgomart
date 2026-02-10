@@ -50,7 +50,7 @@ const MobileMenu = ({
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-background z-[70] md:hidden shadow-2xl overflow-y-auto border-r border-border/50"
+            className="fixed top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white dark:bg-background z-[70] md:hidden shadow-2xl overflow-y-auto border-r border-border/50"
           >
              <div className="flex flex-col h-full">
                <div className="p-5 flex items-center justify-between border-b border-foreground/5">

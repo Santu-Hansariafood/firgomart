@@ -3,11 +3,11 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #171717;
 
   --card-bg: #ffffff;
-  --card-border: #f3f4f6;
+  --card-border: #e5e5e5;
 
   --brand-red: #f00000;
   --brand-purple: #7800c8;
@@ -29,7 +29,7 @@
 }
 
 html[data-theme="light"] {
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #171717;
 }
 

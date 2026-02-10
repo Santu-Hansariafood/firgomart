@@ -43,7 +43,7 @@ const UserMenu = ({
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="absolute right-0 mt-3 w-72 bg-background/95 backdrop-blur-xl border border-foreground/10 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden ring-1 ring-black/5"
+            className="absolute right-0 mt-3 w-72 bg-white/95 dark:bg-background/95 backdrop-blur-xl border border-foreground/10 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden ring-1 ring-black/5"
           >
              {user?.role === "seller" ? (
                <>
