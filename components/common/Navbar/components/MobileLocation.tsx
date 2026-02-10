@@ -32,7 +32,6 @@ const MobileLocation = ({
          </div>
       </div>
       <div className="flex flex-col items-start text-left">
-        <span className="text-[10px] font-semibold text-foreground/60 leading-none mb-0.5">Location</span>
         <span className="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-purple to-brand-red truncate max-w-[110px] leading-none">
           {locationLoading ? "Locating..." : (deliverToState || "Select Location")}
         </span>
