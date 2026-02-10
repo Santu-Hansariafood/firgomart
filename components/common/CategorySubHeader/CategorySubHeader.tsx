@@ -1,6 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useEffect } from "react"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import categoriesData from "@/data/categories.json"
@@ -18,7 +19,6 @@ const CategorySubHeader: React.FC = () => {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  // Support both legacy query param and new route
   const currentSelectedName = (searchParams.get('category') || '').trim()
   
   const isAdminHost =
@@ -31,6 +31,12 @@ const CategorySubHeader: React.FC = () => {
   const hide =
     isAdminHost ||
     (!isHome && !isCategoryPage)
+
+  useEffect(() => {
+    if (pathname.startsWith('/category/')) {
+      router.replace('/')
+    }
+  }, [])
 
   const toggleCategory = (catKey: string) => {
     if (pathname === `/category/${catKey}`) {
@@ -57,7 +63,6 @@ const CategorySubHeader: React.FC = () => {
           "
         >
           {categories.map((category, index) => {
-            // Active if we are on the category page OR if the query param matches (legacy support)
             const isActive = pathname === `/category/${category.key}` || currentSelectedName === category.name
 
             return (

@@ -80,11 +80,29 @@ const Navbar: React.FC = () => {
   const { cartItems, setShowCart } = useCart()
 
   useEffect(() => {
-    // Clear search param on mount (refresh)
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href)
-      if (url.searchParams.has("search")) {
-        url.searchParams.delete("search")
+      const paramsToRemove = [
+        "search",
+        "category",
+        "subcategory",
+        "minPrice",
+        "maxPrice",
+        "sort",
+        "rating",
+        "size",
+        "offer"
+      ]
+      
+      let hasChanges = false
+      paramsToRemove.forEach(param => {
+        if (url.searchParams.has(param)) {
+          url.searchParams.delete(param)
+          hasChanges = true
+        }
+      })
+
+      if (hasChanges) {
         router.replace(url.pathname + url.search)
         setSearchQuery("")
       }
