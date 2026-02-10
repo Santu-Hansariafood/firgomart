@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -129,6 +129,13 @@ const Navbar: React.FC = () => {
   }
   const initials = getInitials(user?.name, user?.email)
 
+  const handleSearch = useCallback((q: string) => {
+    const s = (q || "").trim()
+    if (s) {
+      router.push(`/?search=${encodeURIComponent(s)}`)
+    }
+  }, [router])
+
   useEffect(() => {
     if (typeof document !== "undefined") {
       document.documentElement.setAttribute("data-theme", theme)
@@ -207,7 +214,7 @@ const Navbar: React.FC = () => {
               <SearchBox
                 value={searchQuery}
                 onChange={setSearchQuery}
-                onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
+                onSearch={handleSearch}
                 placeholder="Search for products, brands and more..."
                 enableSuggestions={true}
                 className="transition-all duration-300"
@@ -345,7 +352,7 @@ const Navbar: React.FC = () => {
              <SearchBox
                value={searchQuery}
                onChange={setSearchQuery}
-               onSearch={(q) => { const s = (q || "").trim(); if (s) router.push(`/?search=${encodeURIComponent(s)}`) }}
+               onSearch={handleSearch}
                placeholder="Search essentials..."
                className="shadow-none border-foreground/10"
              />

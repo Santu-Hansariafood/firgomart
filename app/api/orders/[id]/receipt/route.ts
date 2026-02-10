@@ -88,9 +88,17 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       const pid = ((doc.items || [])[0] as unknown as { productId?: unknown })?.productId as { toString?: () => string } | undefined
       const productId = pid?.toString?.() || (pid as unknown as string | undefined)
       if (productId) {
-        type ProductLean = { sellerState?: string; createdByEmail?: string }
+        type ProductLean = { sellerState?: string; createdByEmail?: string; isAdminProduct?: boolean }
         const p = await (Product as unknown as { findById: (id: string) => { lean: () => Promise<ProductLean | null> } }).findById(productId).lean()
         sellerState = typeof p?.sellerState === "string" ? p!.sellerState : undefined
+        const isAdmin = p?.isAdminProduct === true
+        
+        if (isAdmin || (!sellerState && !p?.createdByEmail)) {
+           sellerState = "West Bengal"
+           sellerBusiness = "FirgoMart Admin"
+           sellerGST = ADMIN_GST
+        }
+        
         const sellerEmail = typeof p?.createdByEmail === "string" ? p!.createdByEmail : undefined
         if (sellerEmail) {
           const found = await findSellerAcrossDBs({ email: sellerEmail })
@@ -170,18 +178,13 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
 
         pdf.text(String(it.name || "") + extraInfo + offerText, colItem, y, { width: 260 })
         if (offerText) {
-             // Change color for offer text
-             // Since pdfkit text flow is continuous, we might need more control if we want color.
-             // But simpler is to just append text.
-             // If we want color we need separate text calls or rich text (not easily supported in simple pdfkit usage here).
-             // We'll stick to text append for simplicity and reliability.
+
         }
         
         pdf.text(String(qty), colQty, y)
         pdf.text(`₹${price.toFixed(2)}`, colPrice, y)
         pdf.text(`₹${amt.toFixed(2)}`, colAmt, y)
         
-        // Calculate height of item text to adjust y
         const textHeight = pdf.heightOfString(String(it.name || "") + extraInfo + offerText, { width: 260 })
         y += Math.max(textHeight, 18) + 4
       }

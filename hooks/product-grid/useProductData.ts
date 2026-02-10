@@ -43,12 +43,14 @@ interface UseProductDataProps {
   page: number
   setPage: React.Dispatch<React.SetStateAction<number>>
   newArrivals?: boolean
+  adminOnly?: boolean
+  sellerOnly?: boolean
 }
 
 export function useProductData({
   search, category, subcategory, deliverToState, sortBy,
   minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails,
-  page, setPage, newArrivals
+  page, setPage, newArrivals, adminOnly, sellerOnly
 }: UseProductDataProps) {
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -67,7 +69,12 @@ export function useProductData({
   const fetchPage = useCallback(async (pageNum: number) => {
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
-      const adminParam = !deliverToState ? `&adminOnly=true` : ''
+      
+      const shouldDefaultToAdmin = !deliverToState && !search && !sellerOnly && adminOnly !== false
+      
+      const adminParam = (adminOnly || shouldDefaultToAdmin) ? `&adminOnly=true` : ''
+      const sellerParam = sellerOnly ? `&sellerOnly=true` : ''
+      
       const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
       const categoryParam = category ? `&category=${encodeURIComponent(category)}` : ''
       const subcategoryParam = subcategory ? `&subcategory=${encodeURIComponent(subcategory)}` : ''
@@ -78,7 +85,7 @@ export function useProductData({
       const offerParam = selectedOffer ? `&offer=${encodeURIComponent(selectedOffer)}` : ''
       const newArrivalsParam = newArrivals ? '&newArrivals=true' : ''
       
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}${newArrivalsParam}`)
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${sellerParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}${newArrivalsParam}`)
       
       if (!res.ok) return []
       const data = await res.json()
@@ -118,7 +125,7 @@ export function useProductData({
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, newArrivals])
+  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, newArrivals, adminOnly, sellerOnly])
 
   useEffect(() => {
     const loadInitial = async () => {

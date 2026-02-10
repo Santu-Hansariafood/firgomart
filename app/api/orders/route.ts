@@ -90,15 +90,23 @@ export async function POST(request: Request) {
     const Order = getOrderModel(conn)
 
     const ids = items.map((i) => i.id)
-    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string; sellerState?: string; createdByEmail?: string; gstPercent?: number }
+    type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string; sellerState?: string; createdByEmail?: string; gstPercent?: number; isAdminProduct?: boolean }
     const products = await (Product as unknown as { find: (q: unknown) => { lean: () => Promise<ProductLean[]> } })
       .find({ _id: { $in: ids } }).lean()
     const prodMap: Record<string, ProductLean> = {}
     
     const sellerStateCache: Record<string, string> = {}
     
+    // Default Admin State (FirgoMart)
+    const ADMIN_STATE = "West Bengal"
+
     for (const p of products as ProductLean[]) {
-      if (!p.sellerState && p.createdByEmail) {
+      // If it's an admin product, use Admin State
+      if (p.isAdminProduct) {
+        p.sellerState = ADMIN_STATE
+      } 
+      // If sellerState is missing, try to fetch from Seller details
+      else if (!p.sellerState && p.createdByEmail) {
         if (sellerStateCache[p.createdByEmail]) {
           p.sellerState = sellerStateCache[p.createdByEmail]
         } else {
@@ -111,6 +119,11 @@ export async function POST(request: Request) {
             }
           } catch {}
         }
+      }
+      
+      // Fallback: If still no sellerState and it might be an admin product (no createdByEmail), assume Admin
+      if (!p.sellerState && !p.createdByEmail) {
+         p.sellerState = ADMIN_STATE
       }
       
       prodMap[String(p._id)] = p

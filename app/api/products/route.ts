@@ -13,6 +13,7 @@ export async function GET(request: Request) {
     const limit = Math.max(1, Math.min(100, Number(url.searchParams.get("limit") || 20)))
     const page = Math.max(1, Number(url.searchParams.get("page") || 1))
     const adminOnly = (url.searchParams.get("adminOnly") || "").toLowerCase() === "true"
+    const sellerOnly = (url.searchParams.get("sellerOnly") || "").toLowerCase() === "true"
     const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
     const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
     const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
@@ -40,6 +41,7 @@ export async function GET(request: Request) {
     }
 
     if (adminOnly) conditions.push({ isAdminProduct: true })
+    if (sellerOnly) conditions.push({ isAdminProduct: { $ne: true } })
     if (createdByEmail) conditions.push({ createdByEmail })
 
     if (!isNaN(minPrice) && minPrice >= 0) {
@@ -55,7 +57,7 @@ export async function GET(request: Request) {
       conditions.push({ sizes: { $in: [new RegExp(`^${sizeParam}$`, "i")] } })
     }
 
-    if (!createdByEmail) {
+    if (!createdByEmail && !adminOnly && !search) {
       if (deliverToState) {
         conditions.push({
           $or: [
