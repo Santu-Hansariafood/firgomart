@@ -263,5 +263,6 @@ export const useSellerRegistration = () => {
     gstVerified, gstVerifying, gstError, gstData, handleVerifyGst,
     bankVerified, bankVerifying, bankError, bankData, handleVerifyBank,
     ifscVerified, ifscVerifying, ifscError, ifscData, handleVerifyIfsc,
+    handleStateChange,
   };
 };
