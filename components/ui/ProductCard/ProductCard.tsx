@@ -15,6 +15,7 @@ interface ProductCardProps {
   onProductClick: (product: Product) => void
   onAddToCart?: (product: Product) => void
   priority?: boolean
+  onWishlistToggle?: (product: Product, added: boolean) => void
 }
 
 const fadeInUp = {
@@ -22,7 +23,7 @@ const fadeInUp = {
   show: { opacity: 1, y: 0 }
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false, onWishlistToggle }) => {
   const { data: session } = useSession()
 
   const handleShare = (e: React.MouseEvent) => {
@@ -62,6 +63,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
       })
       const data = await res.json()
       if (res.ok && data.success) {
+        if (onWishlistToggle) {
+          onWishlistToggle(product, data.added)
+        }
         toast.success(data.added ? 'Added to wishlist' : 'Removed from wishlist')
       } else {
         toast.error(data?.error || 'Failed to update wishlist')
