@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { motion } from "framer-motion"
@@ -19,7 +19,8 @@ export default function AdminLogin() {
   const { login } = useAuth()
 
   const [email, setEmail] = useState("")
-  const [otp, setOtp] = useState("")
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""])
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
   const [step, setStep] = useState<"request" | "verify">("request")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,6 +42,7 @@ export default function AdminLogin() {
       if (!res.ok) throw new Error(data?.error || "Failed to request OTP")
       if (typeof data?.otp === "string") setDebugOtp(data.otp)
       setStep("verify")
+      setOtpValues(["", "", "", "", "", ""])
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Something went wrong"
       setError(msg)
@@ -48,14 +50,50 @@ export default function AdminLogin() {
     setLoading(false)
   }
 
+  const handleOtpChange = (index: number, value: string) => {
+    if (isNaN(Number(value))) return
+    const next = [...otpValues]
+    next[index] = value
+    setOtpValues(next)
+    if (value && index < 5) {
+      otpRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus()
+    }
+  }
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData("text").slice(0, 6).split("")
+    const next = [...otpValues]
+    pasted.forEach((val, idx) => {
+      if (idx < 6 && !isNaN(Number(val))) {
+        next[idx] = val
+      }
+    })
+    setOtpValues(next)
+    if (pasted.length > 0) {
+      otpRefs.current[Math.min(pasted.length, 5)]?.focus()
+    }
+  }
+
   const verifyOtp = async () => {
+    const code = otpValues.join("")
+    if (!/^\d{6}$/.test(code)) {
+      setError("Enter the 6-digit OTP")
+      return
+    }
     setLoading(true)
     setError(null)
     try {
       const res = await fetch("/api/admin/login/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
+        body: JSON.stringify({ email, otp: code }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data?.error || "Invalid or expired OTP")
@@ -71,7 +109,7 @@ export default function AdminLogin() {
   }
 
   const resend = () => {
-    setOtp("")
+    setOtpValues(["", "", "", "", "", ""])
     requestOtp()
   }
 
@@ -120,21 +158,30 @@ export default function AdminLogin() {
           {step === "verify" && (
             <div className="space-y-4">
               <label className="text-sm font-medium text-gray-700">Enter OTP</label>
-              <div className="relative">
-                <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={e => setOtp(e.target.value)}
-                  placeholder="6-digit code"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
+              <div className="flex items-center gap-3">
+                <Hash className="w-5 h-5 text-gray-400" />
+                <div className="flex gap-2 flex-1 justify-between">
+                  {otpValues.map((digit, index) => (
+                    <input
+                      key={index}
+                      ref={el => { otpRefs.current[index] = el }}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={e => handleOtpChange(index, e.target.value)}
+                      onKeyDown={e => handleOtpKeyDown(index, e)}
+                      onPaste={handlePaste}
+                      className="w-10 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    />
+                  ))}
+                </div>
               </div>
               {debugOtp && <p className="text-xs text-gray-500">Demo OTP: {debugOtp}</p>}
               <div className="flex items-center gap-3">
                 <button
                   onClick={verifyOtp}
-                  disabled={loading || otp.length < 6}
+                  disabled={loading || otpValues.join("").length !== 6}
                   className="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition disabled:opacity-50"
                 >
                   {loading ? "Verifying..." : "Verify & Login"}

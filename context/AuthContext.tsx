@@ -70,6 +70,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter()
 
   useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      const raw = window.localStorage.getItem("firgomart_user")
+      if (!raw) return
+      const stored = JSON.parse(raw) as User | null
+      if (stored && stored.email) {
+        setUser(stored)
+        setIsAuthenticated(true)
+      }
+    } catch {}
+  }, [])
+
+  useEffect(() => {
     if (status === "authenticated") {
       const sUser = (session?.user as User) || null
       const cleaned = sUser ? { ...sUser } : null
@@ -103,13 +116,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const u = (data as any).user as User
             if (String(u.role || "").toLowerCase() !== "seller") delete (u as any).sellerDetails
             setUser(u)
+            if (typeof window !== "undefined") {
+              try {
+                window.localStorage.setItem("firgomart_user", JSON.stringify(u))
+              } catch {}
+            }
             setIsAuthenticated(true)
           }
         })
         .catch(() => {})
     } else if (status === "unauthenticated") {
-      setUser(null)
-      setIsAuthenticated(false)
+      if (typeof window !== "undefined") {
+        try {
+          const raw = window.localStorage.getItem("firgomart_user")
+          if (raw) {
+            const stored = JSON.parse(raw) as User | null
+            if (stored && stored.email) {
+              setUser(stored)
+              setIsAuthenticated(true)
+            } else {
+              setUser(null)
+              setIsAuthenticated(false)
+            }
+          } else {
+            setUser(null)
+            setIsAuthenticated(false)
+          }
+        } catch {
+          setUser(null)
+          setIsAuthenticated(false)
+        }
+      } else {
+        setUser(null)
+        setIsAuthenticated(false)
+      }
     }
     setLoading(status === "loading")
   }, [status, session])
@@ -125,8 +165,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (ok) router.push("/")
       return ok
     }
-    setUser(userData || null)
-    setIsAuthenticated(!!userData)
+    const nextUser = (userData || null) as User | null
+    setUser(nextUser)
+    setIsAuthenticated(!!nextUser)
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem("firgomart_user", JSON.stringify(nextUser))
+      } catch {}
+    }
     return true
   }
 
@@ -201,6 +247,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (!user) return
     const updatedUser = { ...user, ...updatedData }
     setUser(updatedUser)
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.setItem("firgomart_user", JSON.stringify(updatedUser))
+      } catch {}
+    }
     try {
       await fetch("/api/auth/profile", {
         method: "PUT",

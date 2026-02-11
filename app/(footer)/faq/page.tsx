@@ -26,22 +26,22 @@ const INTERNATIONAL_FAQS = [
   {
     id: 1,
     question: "Does FirgoMart deliver internationally?",
-    answer: "Yes. FirgoMart delivers selected products to multiple countries. All international orders are shipped directly from India using international logistics partners."
+    answer: "Yes. FirgoMart ships selected products to multiple countries. All international orders are processed and dispatched directly from India through authorized logistics partners."
   },
   {
     id: 2,
-    question: "Are customs duties and import taxes included in the product price?",
-    answer: "No. For international orders, customs duties, import taxes, VAT, or any local charges imposed by the destination country are not included in the product price. These charges, if applicable, must be paid by the customer at the time of delivery or customs clearance."
+    question: "Is Cash on Delivery (COD) available for all locations?",
+    answer: "Cash on Delivery (COD) is enabled only in locations where it is operationally feasible and supported by our logistics partners. During checkout, customers will be clearly informed whether COD is available for their selected delivery location. If COD is not available in that area, only prepaid payment options will be displayed."
   },
   {
     id: 3,
-    question: "Is Cash on Delivery (COD) available for international orders?",
-    answer: "No. Cash on Delivery (COD) is available only for orders shipped within India. All international orders must be prepaid using supported online payment methods."
+    question: "Are customs duties and import taxes included in the product price?",
+    answer: "No. For international shipments, customs duties, import taxes, VAT, or any other local government charges imposed by the destination country are not included in the product price. Such charges, if applicable, are the sole responsibility of the customer."
   },
   {
     id: 4,
     question: "What is the return policy for international orders?",
-    answer: "International orders are not eligible for standard returns or exchanges due to cross-border logistics and customs regulations. Refunds are considered only if the product is damaged, defective, or incorrectly delivered, subject to verification."
+    answer: "Due to cross-border logistics and customs regulations, international orders are generally not eligible for standard returns or exchanges. Refunds will be considered only in the following cases: the product received is damaged, the product is defective, or an incorrect product was delivered. All such issues must be reported within 48 hours of delivery and must be supported with clear photo or video evidence for verification."
   },
   {
     id: 5,
@@ -51,12 +51,12 @@ const INTERNATIONAL_FAQS = [
   {
     id: 6,
     question: "How long does an international refund take?",
-    answer: "Approved refunds for international prepaid orders are processed to the original payment method. Refund timelines may vary depending on the payment gateway, bank processing time, and foreign exchange regulations."
+    answer: "Approved refunds for prepaid international orders will be issued to the original payment method only. Refund timelines may vary depending on the payment provider, banking processes, and applicable foreign exchange regulations. Customs duties, international shipping charges, and destination country fees are non-refundable under all circumstances."
   },
   {
     id: 7,
     question: "What if my order is delayed or stopped by customs?",
-    answer: "International delivery timelines may vary due to customs clearance and regulatory checks. If an order is delayed, rejected, seized, or returned by customs due to import restrictions or local regulations of the destination country, FirgoMart is not liable for refunds or replacements."
+    answer: "International delivery timelines may vary depending on customs clearance procedures and regulatory checks in the destination country. If an order is delayed, rejected, seized, or returned due to import restrictions, prohibited items, or local regulatory requirements, FirgoMart shall not be liable for refunds or replacements arising from such circumstances."
   },
   {
     id: 8,
