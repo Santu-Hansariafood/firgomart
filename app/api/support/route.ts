@@ -9,6 +9,7 @@ export async function POST(request: Request) {
     const email = String(body?.email || "").trim()
     const subject = String(body?.subject || "").trim()
     const message = String(body?.message || "").trim()
+    const source = String(body?.source || "").trim() || "enquiry"
 
     if (!email || !email.includes("@") || !subject || !message) {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
     const notes = name ? [{ time: new Date(), author: email, text: `Contact name: ${name}` }] : []
     const doc = await (Ticket as any).create({
       buyerEmail: email,
+      source,
       subject,
       message,
       status: "open",

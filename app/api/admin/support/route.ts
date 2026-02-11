@@ -48,6 +48,7 @@ export async function GET(request: Request) {
     const status = (url.searchParams.get("status") || "").trim()
     const priority = (url.searchParams.get("priority") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
+    const source = (url.searchParams.get("source") || "").trim()
     const sortBy = (url.searchParams.get("sortBy") || "createdAt").trim()
     const sortOrder = (url.searchParams.get("sortOrder") || "desc").trim().toLowerCase() === "asc" ? 1 : -1
 
@@ -56,6 +57,7 @@ export async function GET(request: Request) {
     const q: any = {}
     if (status) q.status = status
     if (priority) q.priority = priority
+    if (source) q.source = source
     if (search) {
       const r = new RegExp(search, "i")
       q.$or = [
@@ -74,6 +76,7 @@ export async function GET(request: Request) {
       id: t._id?.toString?.() || String(t._id),
       orderNumber: t.orderNumber,
       buyerEmail: t.buyerEmail,
+      source: t.source,
       subject: t.subject,
       message: t.message,
       status: t.status,

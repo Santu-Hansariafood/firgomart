@@ -16,6 +16,7 @@ type TicketRow = {
   id: string
   orderNumber: string
   buyerEmail?: string
+  source?: string
   subject?: string
   message?: string
   status?: string
@@ -63,6 +64,12 @@ export default function Page() {
   ]
   const [selectedPriority, setSelectedPriority] = useState<DropdownItem>(priorityOptions[0])
 
+  const sourceOptions: DropdownItem[] = [
+    { id: "", label: "All Types" },
+    { id: "enquiry", label: "Enquiry" },
+  ]
+  const [selectedSource, setSelectedSource] = useState<DropdownItem>(sourceOptions[0])
+
   useEffect(() => {
     if (!allowed) return
     let cancelled = false
@@ -76,6 +83,7 @@ export default function Page() {
         params.set("limit", String(pageSize))
         if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
         if (selectedPriority?.id !== undefined) params.set("priority", String(selectedPriority.id))
+        if (selectedSource?.id !== undefined) params.set("source", String(selectedSource.id))
         if (search) params.set("search", search)
         if (sortKey) params.set("sortBy", String(sortKey))
         params.set("sortOrder", sortOrder)
@@ -98,7 +106,7 @@ export default function Page() {
       if (!cancelled) setLoading(false)
     })()
     return () => { cancelled = true }
-  }, [allowed, page, selectedStatus, selectedPriority, search, sortKey, sortOrder])
+  }, [allowed, page, selectedStatus, selectedPriority, selectedSource, search, sortKey, sortOrder])
 
   const updateStatus = async (id: string, status: string) => {
     try {
@@ -153,7 +161,16 @@ export default function Page() {
               placeholder="Priority"
             />
           </div>
-          <div className="md:col-span-3">
+          <div>
+            <CommonDropdown
+              label="Type"
+              options={sourceOptions}
+              selected={selectedSource}
+              onChange={(v) => { if (!Array.isArray(v)) setSelectedSource(v) }}
+              placeholder="Type"
+            />
+          </div>
+          <div className="md:col-span-2">
             <SearchBox value={search} onChange={setSearch} placeholder="Search tickets" />
           </div>
         </div>
@@ -167,6 +184,7 @@ export default function Page() {
             columns={[
               { key: "orderNumber", label: "Order", sortable: true },
               { key: "buyerEmail", label: "Email" },
+              { key: "source", label: "Type" },
               { key: "subject", label: "Subject" },
               { key: "status", label: "Status", sortable: true, render: (r) => (
                 <select defaultValue={r.status} className="border rounded px-2 py-1" onChange={(e) => updateStatus(r.id, e.currentTarget.value)}>
