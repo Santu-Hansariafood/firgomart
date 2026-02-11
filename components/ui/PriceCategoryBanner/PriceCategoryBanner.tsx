@@ -106,9 +106,6 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
 
   return (
     <div className="relative group">
-      <div className="pointer-events-none absolute left-0 top-0 h-full w-12 z-10 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute right-0 top-0 h-full w-12 z-10 bg-gradient-to-l from-background to-transparent" />
-      
       <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {categories.map((cat) => (
           <motion.button
