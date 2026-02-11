@@ -42,11 +42,35 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const MAX_QTY = 3;
 
+  const sanitizeCartItem = (item: any): CartItem => {
+    return {
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
+      originalPrice: item.originalPrice,
+      quantity: item.quantity,
+      stock: item.stock,
+      unitsPerPack: item.unitsPerPack,
+      selectedSize: item.selectedSize,
+      selectedColor: item.selectedColor,
+      _uniqueId: item._uniqueId,
+      appliedOffer: item.appliedOffer ? {
+        name: item.appliedOffer.name,
+        type: item.appliedOffer.type,
+        value: item.appliedOffer.value
+      } : undefined
+    };
+  };
+
   useEffect(() => {
     try {
       const saved = typeof window !== 'undefined' ? localStorage.getItem('cartItems') : null;
       if (saved) {
-        setCartItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed.map(sanitizeCartItem));
+        }
       }
     } catch (error) {
       console.error("Failed to load cart from local storage", error);
@@ -58,7 +82,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (isLoaded) {
       try {
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        const sanitizedItems = cartItems.map(sanitizeCartItem);
+        localStorage.setItem('cartItems', JSON.stringify(sanitizedItems));
       } catch (error) {
         console.error("Failed to save cart to local storage", error);
       }
@@ -69,8 +94,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const addToCart = (product: CartItem) => {
     setCartItems((prev) => {
-      // Calculate price if offer is applied and it's a percentage value
-      let finalProduct = { ...product };
+      let finalProduct = { ...sanitizeCartItem(product) };
       if (finalProduct.appliedOffer && finalProduct.appliedOffer.value) {
         const val = Number(finalProduct.appliedOffer.value);
         if (!isNaN(val) && val > 0 && val <= 100) {

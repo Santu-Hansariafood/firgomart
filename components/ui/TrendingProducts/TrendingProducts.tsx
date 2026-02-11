@@ -56,9 +56,9 @@ export default function TrendingProducts() {
         </h2>
         <button 
           onClick={() => router.push('/trending-products')}
-          className="md:hidden flex items-center gap-2 text-brand-purple hover:underline font-medium"
+          className="flex items-center gap-2 text-brand-purple hover:underline font-medium"
         >
-          View All <ArrowRight className="w-4 h-4" />
+          See All <ArrowRight className="w-4 h-4" />
         </button>
       </div>
       

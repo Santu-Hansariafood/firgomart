@@ -152,13 +152,6 @@ const Footer: React.FC = () => {
                 </div>
               </li>
               <li className="flex items-start space-x-2">
-                <Landmark className="w-4 h-4 mt-1 shrink-0" />
-                <div>
-                  <span className="text-gray-400">GSTIN:</span> 19AAGCF5282L1Z3
-                </div>
-              </li>
-
-              <li className="flex items-start space-x-2">
                 <MapPin className="w-4 h-4 mt-1 shrink-0" />
                 <Link
                   href={addressHref}
