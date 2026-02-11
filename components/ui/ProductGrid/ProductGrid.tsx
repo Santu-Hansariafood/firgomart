@@ -1,19 +1,17 @@
-'use client'
+"use client"
 
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Gift, ShoppingBag, ShoppingCart, Eye } from 'lucide-react'
-import dynamic from 'next/dynamic'
+import { X, Gift, ShoppingBag } from 'lucide-react'
 import OffersFilterChips from '@/components/ui/Filters/OffersFilterChips'
 import { FilterControls, FilterPanel } from './ProductFilters'
 import { Product } from '@/types/product'
+import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import { ProductFilters, useProductFilters } from '@/hooks/product-grid/useProductFilters'
 import { useProductData } from '@/hooks/product-grid/useProductData'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
-import { getSizeOptionsForCategory, allSizes, subcategoryOptionsFor, sanitizeImageUrl, formatPrice } from '@/utils/productUtils'
-
-const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
+import { getSizeOptionsForCategory, allSizes, subcategoryOptionsFor } from '@/utils/productUtils'
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -335,162 +333,31 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             viewport={{ once: true }}
             className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-4"
           >
-            {displayedProducts.map((product) => (
-              <motion.div
-                key={product.id}
-                variants={fadeInUp}
-                className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-gray-50 dark:bg-gray-900/50"
-              >
-                <div 
-                  className="relative aspect-[4/5] cursor-pointer overflow-hidden"
-                  onClick={() => onProductClick({
+            {displayedProducts.map((product) => {
+              const productWithOffer: Product = filters.selectedOfferDetails
+                ? {
                     ...product,
-                    appliedOffer: filters.selectedOfferDetails ? {
+                    appliedOffer: {
                       name: filters.selectedOfferDetails.name,
                       type: filters.selectedOfferDetails.type,
                       value: filters.selectedOfferDetails.value
-                    } : undefined
-                  })}
-                >
-                  <ProductImageSlider
-                    images={
-                      product.images && product.images.length > 0
-                        ? product.images.map(sanitizeImageUrl)
-                        : [sanitizeImageUrl(product.image)]
                     }
-                    name={product.name}
-                    interval={2500}
+                  }
+                : product
+
+              return (
+                <motion.div
+                  key={product.id}
+                  variants={fadeInUp}
+                >
+                  <ProductCard
+                    product={productWithOffer}
+                    onProductClick={onProductClick}
+                    onAddToCart={onAddToCart}
                   />
-                  
-                  <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-
-                  {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
-                    <span className="absolute bottom-3 left-3 right-3 md:bottom-auto md:top-3 md:left-3 md:right-auto text-center md:text-left bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-xl md:rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50">
-                      {product.name.toLowerCase().includes('combo') ? '✨ COMBO' : `📦 PACK OF ${product.unitsPerPack}`}
-                    </span>
-                  ) : null}
-
-                  {product.discount && (
-                    <span className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg z-20">
-                      {product.discount}% OFF
-                    </span>
-                  )}
-
-                  <div className="hidden md:flex absolute bottom-0 left-0 right-0 p-4 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20 flex-col justify-end h-full pointer-events-none">
-                    <div className="pointer-events-auto">
-                      <p className="text-[10px] font-bold text-brand-purple mb-1 uppercase tracking-wider bg-white/90 dark:bg-black/80 inline-block px-2 py-0.5 rounded-full backdrop-blur-sm">
-                        {product.category}
-                      </p>
-                      
-                      <h3 
-                        className="text-sm font-bold text-white leading-snug line-clamp-2 mb-2 drop-shadow-md"
-                        title={product.name}
-                      >
-                        {product.name}
-                      </h3>
-
-                      <div className="flex items-end justify-between gap-2">
-                        <div className="flex flex-col">
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-lg font-extrabold text-white">₹{formatPrice(product.price)}</span>
-                            {product.originalPrice && (
-                              <span className="text-xs text-white/60 line-through font-medium">₹{formatPrice(product.originalPrice)}</span>
-                            )}
-                          </div>
-                        </div>
-                        
-                        {(product.rating || 0) > 0 && (
-                          <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm px-1.5 py-0.5 rounded-md">
-                            <span className="text-yellow-400 text-xs">★</span>
-                            <span className="text-[10px] font-bold text-white">{product.rating}</span>
-                            <span className="text-[9px] text-white/60">({product.reviews})</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Desktop Hover Buttons */}
-                      <div className="flex gap-2 mt-3">
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onProductClick({
-                              ...product,
-                              appliedOffer: filters.selectedOfferDetails ? {
-                                name: filters.selectedOfferDetails.name,
-                                type: filters.selectedOfferDetails.type,
-                                value: filters.selectedOfferDetails.value
-                              } : undefined
-                            })
-                          }}
-                          className="flex-1 flex items-center justify-center gap-2 bg-white text-brand-purple hover:bg-gray-50 py-2 rounded-xl text-xs font-bold transition-all duration-300 shadow-lg"
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                          Details
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onAddToCart(product)
-                          }}
-                          className="flex-1 flex items-center justify-center gap-2 bg-brand-purple text-white hover:bg-brand-purple/90 py-2 rounded-xl text-xs font-bold transition-all duration-300 shadow-lg"
-                        >
-                          <ShoppingBag className="w-3.5 h-3.5" />
-                          Add
-                        </button>
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3 md:hidden">
-                  <div className="mb-2">
-                    <p className="text-[10px] font-medium text-brand-purple mb-1 uppercase tracking-wider opacity-80">{product.category}</p>
-                    <h3 
-                      className="text-sm font-bold text-foreground leading-snug line-clamp-2 cursor-pointer"
-                      onClick={() => onProductClick(product)}
-                      title={product.name}
-                    >
-                      {product.name}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-end justify-between gap-2">
-                    <div className="flex flex-col">
-                      <span className="text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {(product.rating || 0) > 0 ? (
-                        <>
-                          <div className="flex text-brand-purple text-xs">
-                            {"★".repeat(Math.round(product.rating || 0))}
-                            <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
-                          </div>
-                          <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
-                        </>
-                      ) : (
-                        <div className="flex text-foreground/30 text-xs font-medium">
-                          0 ★
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onAddToCart(product)
-                    }}
-                    className="w-full mt-2 py-2 bg-brand-purple text-white text-xs font-bold rounded-lg hover:bg-brand-purple/90 transition-colors active:scale-95"
-                  >
-                    Add to Cart
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              )
+            })}
           </motion.div>
         )}
         {hasMore && (
