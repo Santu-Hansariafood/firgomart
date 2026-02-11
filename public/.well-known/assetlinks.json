@@ -1,11 +1,26 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.firgomart.app",
       "sha256_cert_fingerprints": [
         "8E:3F:68:DE:1F:73:53:F8:59:DB:F2:C4:52:3C:37:5C:F5:07:A0:1C:A2:95:2D:CB:26:25:CF:83:E8:9B:23:19"
+      ]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.firgomart.twa",
+      "sha256_cert_fingerprints": [
+        "F8:07:3A:C5:F8:EA:5E:81:69:9F:36:8B:BE:2F:C0:49:76:71:CE:F0:FF:85:7A:4D:E1:69:AD:15:8D:55:DC:1A"
       ]
     }
   }
