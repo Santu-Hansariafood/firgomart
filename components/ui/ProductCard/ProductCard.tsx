@@ -1,7 +1,8 @@
-'use client'
+"use client"
 
 import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
+import { useSession } from 'next-auth/react'
 import { Product } from '@/types/product'
 import { sanitizeImageUrl, formatPrice } from '@/utils/productUtils'
 import { Share2, Heart } from 'lucide-react'
@@ -22,6 +23,8 @@ const fadeInUp = {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false }) => {
+  const { data: session } = useSession()
+
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation()
     const url = `${window.location.origin}/product/${product._id || product.id}`
@@ -44,9 +47,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
     }
   }
 
-  const handleWishlist = (e: React.MouseEvent) => {
+  const handleWishlist = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    toast.success('Added to wishlist')
+    if (!session?.user) {
+      toast.error('Please login to save products')
+      return
+    }
+
+    try {
+      const res = await fetch('/api/user/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product._id || product.id })
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        toast.success(data.added ? 'Added to wishlist' : 'Removed from wishlist')
+      } else {
+        toast.error(data?.error || 'Failed to update wishlist')
+      }
+    } catch {
+      toast.error('Failed to update wishlist')
+    }
   }
 
   return (
