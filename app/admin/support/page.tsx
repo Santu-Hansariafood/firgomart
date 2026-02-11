@@ -119,6 +119,25 @@ export default function Page() {
     } catch {}
   }
 
+  const replyToTicket = async (id: string) => {
+    const text = window.prompt("Reply message") || ""
+    if (!text) return
+    try {
+      const res = await fetch(`/api/admin/support/${id}/reply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      })
+      if (!res.ok) {
+        window.alert("Failed to send reply")
+      } else {
+        window.alert("Reply sent")
+      }
+    } catch {
+      window.alert("Failed to send reply")
+    }
+  }
+
   const addNote = async (id: string) => {
     const text = window.prompt("Add note") || ""
     if (!text) return
@@ -194,8 +213,23 @@ export default function Page() {
                 </select>
               ) },
               { key: "priority", label: "Priority" },
-              { key: "notesCount", label: "Notes", render: (r) => (
-                <button onClick={() => addNote(r.id)} className="px-2 py-1 rounded border">Add Note ({r.notesCount || 0})</button>
+              { key: "notesCount", label: "Notes / Reply", render: (r) => (
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => addNote(r.id)}
+                    className="px-2 py-1 rounded border text-xs"
+                  >
+                    Add Note ({r.notesCount || 0})
+                  </button>
+                  {r.buyerEmail && (
+                    <button
+                      onClick={() => replyToTicket(r.id)}
+                      className="px-2 py-1 rounded border text-xs bg-brand-purple/5 text-brand-purple"
+                    >
+                      Reply by Email
+                    </button>
+                  )}
+                </div>
               ) },
               { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
             ]}
