@@ -13,7 +13,7 @@ export default function GlobalError({
   useEffect(() => {
     console.error("Global Error:", error);
   }, [error]);
-
+  
   const handleClearAndReload = () => {
     try {
       document.cookie.split(";").forEach((c) => {
