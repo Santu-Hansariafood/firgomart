@@ -36,7 +36,8 @@ const Navbar: React.FC = () => {
     user,
     isAuthenticated,
     locationLoading,
-    deliverToState
+    deliverToState,
+    fullLocation
   } = state
 
   const {
@@ -131,6 +132,7 @@ const Navbar: React.FC = () => {
           isAuthenticated={isAuthenticated}
           locationLoading={locationLoading}
           deliverToState={deliverToState}
+          fullLocation={fullLocation}
           setShowLocationModal={setShowLocationModal}
           setShowLoginModal={setShowLoginModal}
         />

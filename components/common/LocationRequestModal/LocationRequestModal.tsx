@@ -71,10 +71,10 @@ export default function LocationRequestModal({
                 <MapPin className="w-8 h-8" />
               </div>
               
-              <h3 className="text-xl font-bold font-heading">Set Delivery Location</h3>
+              <h3 className="text-xl font-bold font-heading">Set Current Location</h3>
               
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                To see products available for delivery in your area and accurate shipping times.
+                Pinpoint your current location for accurate delivery availability and shipping times.
               </p>
 
               <div className="w-full space-y-3 pt-2">

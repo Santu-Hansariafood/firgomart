@@ -4,6 +4,7 @@ interface MobileLocationProps {
   isAuthenticated: boolean
   locationLoading: boolean
   deliverToState: string
+  fullLocation: string
   setShowLocationModal: (show: boolean) => void
   setShowLoginModal: (show: boolean) => void
 }
@@ -12,13 +13,14 @@ const MobileLocation = ({
   isAuthenticated,
   locationLoading,
   deliverToState,
+  fullLocation,
   setShowLocationModal,
   setShowLoginModal
 }: MobileLocationProps) => {
   return (
-    <div className="md:hidden w-full bg-gradient-to-r from-brand-purple to-brand-red text-white">
+    <div className="md:hidden w-full bg-gradient-to-r from-brand-purple/90 to-brand-red/90 text-white backdrop-blur-md">
       <button 
-        className="w-full max-w-7xl mx-auto px-3 py-2 flex items-center gap-2 text-xs sm:text-sm font-medium"
+        className="w-full max-w-7xl mx-auto px-4 py-2.5 flex items-center gap-2.5 text-xs sm:text-sm font-medium"
         onClick={() => {
           if (!isAuthenticated) {
             setShowLoginModal(true)
@@ -27,12 +29,16 @@ const MobileLocation = ({
           setShowLocationModal(true)
         }}
       >
-        <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/90" />
-        <span className="opacity-90">Deliver to:</span>
-        <span className="font-bold truncate max-w-[200px]">
-          {locationLoading ? "Locating..." : (deliverToState || "Select Location")}
-        </span>
-        <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white/80 ml-auto sm:ml-1" />
+        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-white/20">
+          <MapPin className="w-3.5 h-3.5 text-white" />
+        </div>
+        <div className="flex flex-col items-start overflow-hidden">
+          <span className="text-[10px] uppercase tracking-wider font-bold opacity-80 leading-none mb-1">Current Location</span>
+          <span className="font-bold truncate max-w-[250px] leading-none">
+            {locationLoading ? "Fetching pinpoint..." : (fullLocation || deliverToState || "Select Location")}
+          </span>
+        </div>
+        <ChevronDown className="w-3.5 h-3.5 text-white/80 ml-auto" />
       </button>
     </div>
   )

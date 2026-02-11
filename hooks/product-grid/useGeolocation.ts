@@ -8,15 +8,32 @@ export function useGeolocation() {
       return ''
     }
   })
+  const [fullLocation, setFullLocation] = useState<string>(() => {
+    try {
+      return typeof window !== 'undefined' ? localStorage.getItem('fullLocation') || '' : ''
+    } catch {
+      return ''
+    }
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const save = useCallback((s: string | undefined, country?: string | undefined) => {
+  const save = useCallback((s: string | undefined, country?: string | undefined, full?: string | undefined) => {
     const valid = typeof s === 'string' && s.trim().length > 0
     const inIndia = typeof country === 'string' ? country.trim().toLowerCase() === 'india' : true
+    
     if (valid && inIndia) {
       setDeliverToState(s!.trim())
       try { localStorage.setItem('deliverToState', s!.trim()) } catch {}
+      
+      if (full) {
+        setFullLocation(full.trim())
+        try { localStorage.setItem('fullLocation', full.trim()) } catch {}
+      } else {
+        // Fallback if full is not provided
+        setFullLocation(s!.trim())
+        try { localStorage.setItem('fullLocation', s!.trim()) } catch {}
+      }
     }
   }, [])
 
@@ -28,8 +45,10 @@ export function useGeolocation() {
         const r = await fetch('https://ipapi.co/json/')
         const j = await r.json()
         const state = j?.region || ''
+        const city = j?.city || ''
         const country = j?.country_name || ''
-        save(state, country)
+        const full = city ? `${city}, ${state}` : state
+        save(state, country, full)
       } catch {}
     }
     autoLocate()
@@ -51,9 +70,26 @@ export function useGeolocation() {
               const lon = pos.coords.longitude
               const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`)
               const data = await res.json()
+              
               const state = data?.principalSubdivision || ''
+              const city = data?.city || data?.locality || ''
               const country = data?.countryName || ''
-              save(state, country)
+              
+              let granularLocality = city
+              if (data?.localityInfo?.informative) {
+                const subLocality = data.localityInfo.informative.find(
+                  (info: any) => info.order > (data.localityInfo.administrative?.find((a: any) => a.name === city)?.order || 0)
+                )
+                if (subLocality) {
+                  granularLocality = subLocality.name
+                }
+              }
+
+              const full = granularLocality && granularLocality !== state 
+                ? `${granularLocality}, ${state}` 
+                : state
+              
+              save(state, country, full)
               resolve()
             } catch (e) {
               reject(e)
@@ -63,7 +99,7 @@ export function useGeolocation() {
             setError(err.message)
             reject(err)
           },
-          { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 600000 }
         )
       })
     } catch (err: any) {
@@ -75,8 +111,8 @@ export function useGeolocation() {
   }, [save])
 
   const updateLocation = useCallback((state: string) => {
-    save(state, 'India')
+    save(state, 'India', state)
   }, [save])
 
-  return { deliverToState, requestLocation, loading, error, updateLocation }
+  return { deliverToState, fullLocation, requestLocation, loading, error, updateLocation }
 }
