@@ -26,6 +26,101 @@ import { useOrderSummary } from '@/hooks/checkout/useOrderSummary'
 import { useDeliveryValidation } from '@/hooks/checkout/useDeliveryValidation'
 import { usePayment } from '@/hooks/checkout/usePayment'
 
+type PaymentProvider = 'cashfree' | 'razorpay'
+
+const usePaymentGatewayMeta = (paymentMethod: PaymentProvider) => {
+  const label = paymentMethod === 'razorpay' ? 'Razorpay' : 'Cashfree'
+  return { label }
+}
+
+const useCheckoutDerivedState = (cartItems: CartItem[], paymentMethod: PaymentProvider) => {
+  const validItems = cartItems.filter(item => (item.stock ?? 0) > 0)
+  const gatewayMeta = usePaymentGatewayMeta(paymentMethod)
+  const indianStates = countryData.countries.find(c => c.country === "India")?.states || []
+  const availableCountries = ["India", "United States", "United Kingdom", "Canada", "Australia", "Other"]
+  return { validItems, gatewayMeta, indianStates, availableCountries }
+}
+
+interface PaymentGatewayOptionsProps {
+  paymentMethod: PaymentProvider
+  setPaymentMethod: (method: PaymentProvider) => void
+}
+
+const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
+  paymentMethod,
+  setPaymentMethod,
+}) => {
+  return (
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
+      <motion.button
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        type="button"
+        onClick={() => setPaymentMethod('cashfree')}
+        className={`p-4 sm:p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-center ${
+          paymentMethod === 'cashfree'
+            ? 'border-brand-purple bg-brand-purple/5 ring-1 ring-brand-purple shadow-lg shadow-brand-purple/10'
+            : 'border-gray-200 dark:border-zinc-700 hover:border-brand-purple/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
+        }`}
+      >
+        {paymentMethod === 'cashfree' && (
+          <div className="absolute top-3 right-3 text-brand-purple">
+            <CheckCircle2 className="w-5 h-5" />
+          </div>
+        )}
+        <div
+          className={`w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center transition-colors ${
+            paymentMethod === 'cashfree' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
+          }`}
+        >
+          <Image
+            src="/logo/cashfree.svg"
+            alt="Cashfree"
+            width={48}
+            height={48}
+            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+          />
+        </div>
+        <span className="sr-only">Cashfree</span>
+      </motion.button>
+
+      <motion.button
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        type="button"
+        onClick={() => setPaymentMethod('razorpay')}
+        className={`p-4 sm:p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-center ${
+          paymentMethod === 'razorpay'
+            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/10 ring-1 ring-blue-600 shadow-lg shadow-blue-600/10'
+            : 'border-gray-200 dark:border-zinc-700 hover:border-blue-400/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
+        }`}
+      >
+        {paymentMethod === 'razorpay' && (
+          <div className="absolute top-3 right-3 text-blue-600">
+            <CheckCircle2 className="w-5 h-5" />
+          </div>
+        )}
+        <div
+          className={`w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center transition-colors ${
+            paymentMethod === 'razorpay' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
+          }`}
+        >
+          <Image
+            src="/logo/razorpay.svg"
+            alt="Razorpay"
+            width={48}
+            height={48}
+            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+          />
+        </div>
+        <span className="sr-only">Razorpay</span>
+      </motion.button>
+    </div>
+  )
+}
+
 const Rupee: React.FC<{ className?: string }> = ({ className }) => (
   <span className={className} style={{ fontFamily: 'system-ui, "Segoe UI Symbol", "Noto Sans", "Arial Unicode MS", sans-serif' }}>
     {"\u20B9"}
@@ -80,9 +175,12 @@ const Checkout: React.FC<CheckoutProps> = ({
     router
   } = usePayment({ cartItems, formData, total, onRemoveItem })
 
-  const validItems = cartItems.filter(item => (item.stock ?? 0) > 0)
-  const indianStates = countryData.countries.find(c => c.country === "India")?.states || []
-  const availableCountries = ["India", "United States", "United Kingdom", "Canada", "Australia", "Other"]
+  const {
+    validItems,
+    gatewayMeta,
+    indianStates,
+    availableCountries
+  } = useCheckoutDerivedState(cartItems, paymentMethod as PaymentProvider)
 
   if (orderPlaced) {
     return (
@@ -452,83 +550,14 @@ const Checkout: React.FC<CheckoutProps> = ({
                        Payment Method
                     </h2>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        type="button"
-                        onClick={() => setPaymentMethod('cashfree')}
-                        className={`p-4 sm:p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-left ${
-                          paymentMethod === 'cashfree'
-                            ? 'border-brand-purple bg-brand-purple/5 ring-1 ring-brand-purple shadow-lg shadow-brand-purple/10'
-                            : 'border-gray-200 dark:border-zinc-700 hover:border-brand-purple/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                        }`}
-                      >
-                        {paymentMethod === 'cashfree' && (
-                           <div className="absolute top-3 right-3 text-brand-purple">
-                             <CheckCircle2 className="w-5 h-5" />
-                           </div>
-                        )}
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                          paymentMethod === 'cashfree' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
-                        }`}>
-                          <Image
-                            src="/logo/cashfree.svg"
-                            alt="Cashfree"
-                            width={48}
-                            height={48}
-                            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
-                          />
-                        </div>
-                        <p className={`font-bold text-base sm:text-lg mb-1 ${paymentMethod === 'cashfree' ? 'text-brand-purple' : 'text-[var(--foreground)]'}`}>
-                          Cashfree
-                        </p>
-                        <p className="text-[10px] sm:text-xs text-[var(--foreground)]/60">
-                          Cards, UPI, NetBanking, Wallets
-                        </p>
-                      </motion.button>
-
-                      <motion.button
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        type="button"
-                        onClick={() => setPaymentMethod('razorpay')}
-                        className={`p-4 sm:p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-left ${
-                          paymentMethod === 'razorpay'
-                            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/10 ring-1 ring-blue-600 shadow-lg shadow-blue-600/10'
-                            : 'border-gray-200 dark:border-zinc-700 hover:border-blue-400/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
-                        }`}
-                      >
-                         {paymentMethod === 'razorpay' && (
-                           <div className="absolute top-3 right-3 text-blue-600">
-                             <CheckCircle2 className="w-5 h-5" />
-                           </div>
-                        )}
-                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                          paymentMethod === 'razorpay' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
-                        }`}>
-                          <Image
-                            src="/logo/razorpay.svg"
-                            alt="Razorpay"
-                            width={48}
-                            height={48}
-                            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
-                          />
-                        </div>
-                        <p className={`font-bold text-base sm:text-lg mb-1 ${paymentMethod === 'razorpay' ? 'text-blue-600' : 'text-[var(--foreground)]'}`}>
-                          Razorpay
-                        </p>
-                        <p className="text-[10px] sm:text-xs text-[var(--foreground)]/60">
-                          Secure Payment Gateway
-                        </p>
-                      </motion.button>
-                    </div>
+                    <PaymentGatewayOptions
+                      paymentMethod={paymentMethod as PaymentProvider}
+                      setPaymentMethod={setPaymentMethod as (method: PaymentProvider) => void}
+                    />
 
                     <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-2xl p-4 sm:p-6 text-center border border-gray-100 dark:border-zinc-700">
                        <p className="text-xs sm:text-sm text-[var(--foreground)]/70 mb-2">
-                         You will be redirected to the secure payment gateway to complete your purchase of
+                         You will be redirected to the secure {gatewayMeta.label} payment gateway to complete your purchase of
                        </p>
                        <p className="text-2xl sm:text-3xl font-bold text-brand-purple font-heading">
                          <Rupee />{total.toFixed(2)}
