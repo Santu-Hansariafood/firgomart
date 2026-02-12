@@ -57,7 +57,7 @@ const ProductImageGallery = memo(({
             )}
             {((typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo')) && (
               <span className="bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg shadow-violet-500/20 border border-violet-200/50 dark:border-violet-500/50">
-                {product.name.toLowerCase().includes('combo') ? '✨ COMBO OFFER' : `📦 PACK OF ${product.unitsPerPack}`}
+                {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
               </span>
             )}
           </div>
