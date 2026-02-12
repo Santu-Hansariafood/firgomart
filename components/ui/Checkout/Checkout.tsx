@@ -69,13 +69,13 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
             <CheckCircle2 className="w-4 h-4" />
           </div>
         )}
-        <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center bg-white dark:bg-zinc-900">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-900">
           <Image
             src="/logo/cashfree.svg"
             alt="Cashfree"
-            width={48}
-            height={48}
-            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+            width={72}
+            height={72}
+            className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
           />
         </div>
         <span className="sr-only">Cashfree</span>
@@ -98,13 +98,13 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
             <CheckCircle2 className="w-4 h-4" />
           </div>
         )}
-        <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center bg-white dark:bg-zinc-900">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-900">
           <Image
             src="/logo/razorpay.svg"
             alt="Razorpay"
-            width={48}
-            height={48}
-            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+            width={72}
+            height={72}
+            className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
           />
         </div>
         <span className="sr-only">Razorpay</span>
