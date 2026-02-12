@@ -58,22 +58,18 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
         transition={{ delay: 0.1 }}
         type="button"
         onClick={() => setPaymentMethod('cashfree')}
-        className={`p-4 sm:p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-center ${
+        className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center ${
           paymentMethod === 'cashfree'
-            ? 'border-brand-purple bg-brand-purple/5 ring-1 ring-brand-purple shadow-lg shadow-brand-purple/10'
-            : 'border-gray-200 dark:border-zinc-700 hover:border-brand-purple/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
+            ? 'bg-white shadow-md shadow-brand-purple/15 scale-[1.02]'
+            : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01]'
         }`}
       >
         {paymentMethod === 'cashfree' && (
-          <div className="absolute top-3 right-3 text-brand-purple">
-            <CheckCircle2 className="w-5 h-5" />
+          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-brand-purple text-white flex items-center justify-center shadow-md">
+            <CheckCircle2 className="w-4 h-4" />
           </div>
         )}
-        <div
-          className={`w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center transition-colors ${
-            paymentMethod === 'cashfree' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
-          }`}
-        >
+        <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center bg-white dark:bg-zinc-900">
           <Image
             src="/logo/cashfree.svg"
             alt="Cashfree"
@@ -91,22 +87,18 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
         transition={{ delay: 0.2 }}
         type="button"
         onClick={() => setPaymentMethod('razorpay')}
-        className={`p-4 sm:p-5 border-2 rounded-2xl transition-all relative overflow-hidden group text-center ${
+        className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center ${
           paymentMethod === 'razorpay'
-            ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/10 ring-1 ring-blue-600 shadow-lg shadow-blue-600/10'
-            : 'border-gray-200 dark:border-zinc-700 hover:border-blue-400/50 hover:bg-gray-50 dark:hover:bg-zinc-800'
+            ? 'bg-white shadow-md shadow-blue-600/15 scale-[1.02]'
+            : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01]'
         }`}
       >
         {paymentMethod === 'razorpay' && (
-          <div className="absolute top-3 right-3 text-blue-600">
-            <CheckCircle2 className="w-5 h-5" />
+          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-md">
+            <CheckCircle2 className="w-4 h-4" />
           </div>
         )}
-        <div
-          className={`w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center transition-colors ${
-            paymentMethod === 'razorpay' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
-          }`}
-        >
+        <div className="w-10 h-10 sm:w-12 sm:h-12 mx-auto rounded-xl flex items-center justify-center bg-white dark:bg-zinc-900">
           <Image
             src="/logo/razorpay.svg"
             alt="Razorpay"
