@@ -8,6 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const routes = [
     '',
+    '/grocery',
+    '/new-arrivals',
+    '/seller',
     '/blog',
     '/about',
     '/careers',
@@ -44,7 +47,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     } else {
       const conn = await connectDB()
       const Product = getProductModel(conn)
-      const products = await Product.find({}, '_id updatedAt').lean()
+      const products = await Product.find(
+        { status: { $nin: ['draft', 'inactive'] } },
+        '_id updatedAt'
+      ).lean()
       
       productRoutes = products.map((product: any) => ({
         url: `${baseUrl}/product/${product._id}`,

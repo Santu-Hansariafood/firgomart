@@ -7,6 +7,9 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext/CartContext';
 import BeautifulLoader from '@/components/common/Loader/BeautifulLoader';
 
+const GOOGLE_ADS_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || 'AW-17932697360';
+
 function StatusContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('id');
@@ -62,6 +65,26 @@ function StatusContent() {
 
     checkStatus();
   }, [orderId, cfOrderId, clearCart]);
+
+  useEffect(() => {
+    if (status !== 'success' || !order) return;
+    if (typeof window === 'undefined') return;
+    const gtag =
+      (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+    if (!gtag) return;
+    const label = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_LABEL;
+    const sendTo = label
+      ? `${GOOGLE_ADS_ID}/${label}`
+      : GOOGLE_ADS_ID;
+    const amount = Number(order.amount || 0);
+    const transactionId = String(order.orderNumber || order._id || '');
+    gtag('event', 'conversion', {
+      send_to: sendTo,
+      value: isNaN(amount) ? 0 : amount,
+      currency: 'INR',
+      transaction_id: transactionId,
+    });
+  }, [status, order]);
 
   if (status === 'loading') {
     return (

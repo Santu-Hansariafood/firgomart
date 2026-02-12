@@ -12,6 +12,9 @@ import { Suspense } from "react";
 import categoriesData from "@/data/categories.json";
 import { Toaster } from "react-hot-toast";
 
+const GOOGLE_ADS_ID =
+  process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || "AW-17932697360";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -148,7 +151,7 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} antialiased`}
       >
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=AW-17932697360"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
           strategy="afterInteractive"
         />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -157,7 +160,7 @@ export default function RootLayout({
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
 
-            gtag('config', 'AW-17932697360');            `}
+            gtag('config', '${GOOGLE_ADS_ID}');            `}
         </Script>
         <Script
           id="firgomart-schema"
