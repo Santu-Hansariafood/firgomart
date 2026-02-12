@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 import {
   CreditCard,
   MapPin,
-  CheckCircle,
   Plus,
-  Edit2,
   ChevronRight,
   ShieldCheck,
   Truck,
@@ -182,16 +181,14 @@ const Checkout: React.FC<CheckoutProps> = ({
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          {/* Main Content Form */}
-          <div className="lg:col-span-8">
+        <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+          <div className="lg:col-span-8 order-2 lg:order-1">
             <motion.div
               variants={fadeInUp}
               initial="hidden"
               animate="show"
               className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-sm overflow-hidden"
             >
-              {/* Step Header for Mobile */}
               <div className="md:hidden p-3 sm:p-4 bg-gray-50 dark:bg-white/5 border-b border-gray-100 dark:border-zinc-800 flex items-center justify-between">
                 <span className="font-bold text-[var(--foreground)] text-sm sm:text-base">
                   {step === 1 ? 'Shipping Address' : 'Payment Method'}
@@ -259,6 +256,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       </div>
                     )}
 
+                    {(((user as any)?.addresses?.length ?? 0) === 0) && (
                     <div>
                       <h2 className="text-lg sm:text-xl font-heading font-bold text-[color:var(--foreground)] mb-4 sm:mb-6 flex items-center gap-2">
                         <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
@@ -400,6 +398,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                         </div>
                       </div>
                     </div>
+                    )}
 
                     <button
                       type="submit"
@@ -472,9 +471,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                            </div>
                         )}
                         <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                          paymentMethod === 'cashfree' ? 'bg-brand-purple text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500'
+                          paymentMethod === 'cashfree' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
                         }`}>
-                          <CreditCard className="w-5 h-5 sm:w-6 sm:h-6" />
+                          <Image
+                            src="/logo/cashfree.svg"
+                            alt="Cashfree"
+                            width={48}
+                            height={48}
+                            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                          />
                         </div>
                         <p className={`font-bold text-base sm:text-lg mb-1 ${paymentMethod === 'cashfree' ? 'text-brand-purple' : 'text-[var(--foreground)]'}`}>
                           Cashfree
@@ -502,9 +507,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                            </div>
                         )}
                         <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                          paymentMethod === 'razorpay' ? 'bg-blue-600 text-white' : 'bg-gray-100 dark:bg-zinc-800 text-gray-500'
+                          paymentMethod === 'razorpay' ? 'bg-white' : 'bg-gray-100 dark:bg-zinc-800'
                         }`}>
-                          <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6" />
+                          <Image
+                            src="/logo/razorpay.svg"
+                            alt="Razorpay"
+                            width={48}
+                            height={48}
+                            className="w-8 h-8 sm:w-10 sm:h-10 object-contain"
+                          />
                         </div>
                         <p className={`font-bold text-base sm:text-lg mb-1 ${paymentMethod === 'razorpay' ? 'text-blue-600' : 'text-[var(--foreground)]'}`}>
                           Razorpay
@@ -561,12 +572,12 @@ const Checkout: React.FC<CheckoutProps> = ({
           </div>
 
           {/* Order Summary Sidebar */}
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 order-1 lg:order-2">
             <motion.div
               variants={fadeInUp}
               initial="hidden"
               animate="show"
-              className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-4 sm:p-6 lg:sticky lg:top-24 shadow-sm"
+              className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl p-3 sm:p-6 mb-6 lg:mb-0 lg:sticky lg:top-24 shadow-sm"
             >
               <h2 className="text-lg sm:text-xl font-heading font-bold text-[var(--foreground)] mb-4 sm:mb-6 flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
