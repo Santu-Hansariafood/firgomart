@@ -50,7 +50,6 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
         .then(res => res.json())
         .then(data => {
             if (data.history) {
-                // Map API data to Product interface if needed, but assuming structure matches roughly
                 const mapped = data.history.map((p: any) => ({
                     id: p._id || p.id,
                     name: p.name,

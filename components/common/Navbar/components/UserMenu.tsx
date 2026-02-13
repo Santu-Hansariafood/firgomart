@@ -3,6 +3,7 @@ import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { User, Truck, Heart, LogOut } from "lucide-react"
 import { SellerInfo } from "@/hooks/useNavbar"
+import { useEffect, useRef } from "react"
 
 interface UserMenuProps {
   user: any
@@ -21,8 +22,26 @@ const UserMenu = ({
   setShowUserMenu,
   handleLogout
 }: UserMenuProps) => {
+  const menuRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!showUserMenu) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!menuRef.current) return
+      if (!menuRef.current.contains(event.target as Node)) {
+        setShowUserMenu(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showUserMenu, setShowUserMenu])
+
   return (
-    <div className="relative ml-1">
+    <div ref={menuRef} className="relative ml-1">
       <button
         onClick={() => setShowUserMenu(!showUserMenu)}
         className="flex items-center gap-2 p-1 pr-2 rounded-full hover:bg-foreground/5 transition-all border border-transparent hover:border-foreground/10"
