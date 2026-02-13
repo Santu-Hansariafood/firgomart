@@ -127,9 +127,9 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
                         FirgoMart Product
                     </span>
 
-                    {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
+                    {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 ? (
                         <span className="absolute top-8 left-2 bg-purple-600 text-white text-[9px] sm:text-[10px] font-bold px-2 py-1 rounded-full shadow-lg z-10 animate-pulse">
-                        {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
+                        {`PACK OF ${product.unitsPerPack}`}
                         </span>
                     ) : null}
 

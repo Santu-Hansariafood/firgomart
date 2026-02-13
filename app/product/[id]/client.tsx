@@ -308,9 +308,9 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                   </div>
                 )}
                 
-                {((typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo')) && (
+                {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 && (
                   <div className="absolute top-12 left-2 bg-purple-600 text-white text-xs sm:text-sm font-bold px-2 py-1 rounded-lg shadow-lg z-10 animate-pulse">
-                    {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
+                    {`PACK OF ${product.unitsPerPack}`}
                   </div>
                 )}
 
@@ -396,9 +396,9 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                       </span>
                     </>
                   )}
-                  {((typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo')) && (
+                  {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 && (
                     <span className="ml-2 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                      {product.name.toLowerCase().includes('combo') ? 'Combo Offer' : `Pack of ${product.unitsPerPack}`}
+                      {`Pack of ${product.unitsPerPack}`}
                     </span>
                   )}
                 </div>

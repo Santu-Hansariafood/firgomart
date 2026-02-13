@@ -190,9 +190,9 @@ export default function WishlistPage() {
                     <Trash2 className="w-4 h-4" />
                   </button>
 
-                  {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
+                  {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 ? (
                     <span className="absolute bottom-3 left-3 right-3 text-center bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-xl shadow-lg z-10 border border-violet-200/50 dark:border-violet-500/50 shadow-violet-500/10">
-                      {product.name.toLowerCase().includes('combo') ? 'COMBO OFFER' : `PACK OF ${product.unitsPerPack}`}
+                      {`PACK OF ${product.unitsPerPack}`}
                     </span>
                   ) : null}
 
