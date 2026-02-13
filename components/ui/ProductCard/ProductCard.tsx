@@ -113,9 +113,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
         
         <div className="hidden md:block absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
-        {(typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1) || product.name.toLowerCase().includes('combo') ? (
+        {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 ? (
           <span className={`absolute bottom-3 left-3 right-3 md:bottom-auto md:left-3 md:right-auto text-center md:text-left bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1.5 rounded-xl md:rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50 ${product.discount ? 'md:top-12' : 'md:top-3'}`}>
-            {product.name.toLowerCase().includes('combo') ? 'COMBO' : `PACK OF ${product.unitsPerPack}`}
+            {`PACK OF ${product.unitsPerPack}`}
           </span>
         ) : null}
 
