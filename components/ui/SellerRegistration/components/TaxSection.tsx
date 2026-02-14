@@ -220,7 +220,7 @@ export const TaxSection: React.FC<TaxSectionProps> = ({
                 You can apply for GST registration online through the official government portal.
               </p>
               <a 
-                href="https://services.gst.gov.in/services/login" 
+                href="https://reg.gst.gov.in/registration/generateuid" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"

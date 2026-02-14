@@ -9,18 +9,18 @@ export async function POST(request: Request) {
     const data = await verifyGST(gstNumber)
     
     const result = {
-        valid: data.valid,
-        gstin: gstNumber,
-        legal_name_of_business: data.data?.legal_name || data.legal_name || "",
-        trade_name: data.data?.trade_name || data.trade_name || "",
-        gstin_status: data.data?.gstin_status || data.status || "Active",
-        taxpayer_type: data.data?.taxpayer_type || "Regular",
-        center_jurisdiction: data.data?.center_jurisdiction || "",
-        state_jurisdiction: data.data?.state_jurisdiction || "",
-        date_of_registration: data.data?.date_of_registration || "",
-        principal_place_of_business: data.data?.principal_place_of_business || "",
-        nature_of_business_activity: data.data?.nature_of_business || [],
-        message: "GST Number Verified Successfully",
+      valid: data.valid,
+      gstin: data.GSTIN || gstNumber,
+      legal_name_of_business: data.legal_name_of_business || "",
+      trade_name: data.trade_name_of_business || "",
+      gstin_status: data.gst_in_status || "Active",
+      taxpayer_type: data.taxpayer_type || "Regular",
+      center_jurisdiction: data.center_jurisdiction || "",
+      state_jurisdiction: data.state_jurisdiction || "",
+      date_of_registration: data.date_of_registration || "",
+      principal_place_of_business: data.principal_place_address || "",
+      nature_of_business_activity: data.nature_of_business_activities || [],
+      message: data.message || "GST Number Verified Successfully",
     }
     
     return NextResponse.json(result)

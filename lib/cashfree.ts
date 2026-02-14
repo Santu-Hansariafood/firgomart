@@ -89,75 +89,35 @@ export async function getCashfreeOrder(orderId: string) {
 
 export async function verifyGST(gstNumber: string) {
   const host = getHost()
-  
-  const endpoints = [
-    `${host}/verification/gstin`,
-    `${host}/verification/v2/gstin`,
-    "https://api.cashfree.com/verification/gstin"
-  ]
+  const url = `${host}/verification/gstin`
 
-  let lastError: any;
+  console.log(`[Cashfree] Verifying GST ${gstNumber} at ${url}`)
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-client-id": cashfreeConfig.appId,
+      "x-client-secret": cashfreeConfig.secretKey,
+    },
+    body: JSON.stringify({
+      GSTIN: gstNumber,
+    }),
+  })
 
-  for (const url of endpoints) {
+  if (!res.ok) {
+    let message = "Failed to verify GST"
     try {
-        console.log(`[Cashfree] Verifying GST ${gstNumber} at ${url}`)
-        const res = await fetch(url, {
-            method: "POST",
-            headers: {
-            "Content-Type": "application/json",
-            "x-client-id": cashfreeConfig.appId,
-            "x-client-secret": cashfreeConfig.secretKey,
-            },
-            body: JSON.stringify({ gstin: gstNumber }),
-        })
-
-        if (res.ok) {
-            return await res.json()
-        }
-        
-        if (res.status === 404) {
-            console.log(`[Cashfree] 404 at ${url}, trying next endpoint...`)
-            continue
-        }
-
-        let message = "Failed to verify GST"
-        try {
-            const data = await res.json()
-            message = data?.message || data?.error || JSON.stringify(data)
-        } catch {
-            try {
-                message = await res.text()
-            } catch {}
-        }
-        throw new Error(`[${res.status}] ${message}`)
-
-    } catch (e) {
-        lastError = e
-        if (e instanceof Error && e.message.includes("[404]")) {
-            continue;
-             }
-        console.warn(`[Cashfree] Error at ${url}:`, e)
+      const data = await res.json()
+      message = data?.message || data?.error || JSON.stringify(data)
+    } catch {
+      try {
+        message = await res.text()
+      } catch {}
     }
+    throw new Error(`[${res.status}] ${message}`)
   }
 
-  console.warn("All Cashfree GST endpoints failed. Falling back to Mock Data.");
-  
-  return {
-      valid: true,
-      message: "GSTIN Exists (Mock Fallback - API Failed)",
-      data: {
-          legal_name: "Verified Business Legal Name",
-          trade_name: "Verified Business Trade Name",
-          gstin_status: "Active",
-          taxpayer_type: "Regular",
-          center_jurisdiction: "Range-1",
-          state_jurisdiction: "Ward-1",
-          date_of_registration: "2023-01-01",
-          principal_place_of_business: "123, Verified Street, Business District, State - 123456",
-          nature_of_business: ["Retail Business", "Wholesale Business"],
-          gstin: gstNumber
-      }
-  };
+  return res.json()
 }
 
 export async function verifyBankAccount(params: { bankAccount: string, ifsc: string, name: string, phone: string }) {
