@@ -88,21 +88,36 @@ export async function getCashfreeOrder(orderId: string) {
 }
 
 export async function verifyGST(gstNumber: string) {
-  const host = getHost()
-  const url = `${host}/verification/gstin`
+  const primaryHost = getHost()
+  const url = `${primaryHost}/verification/gstin`
 
-  console.log(`[Cashfree] Verifying GST ${gstNumber} at ${url}`)
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-client-id": cashfreeConfig.appId,
-      "x-client-secret": cashfreeConfig.secretKey,
-    },
-    body: JSON.stringify({
-      GSTIN: gstNumber,
-    }),
-  })
+  const headers = {
+    "Content-Type": "application/json",
+    "x-client-id": cashfreeConfig.appId,
+    "x-client-secret": cashfreeConfig.secretKey,
+  }
+
+  const payload = {
+    GSTIN: gstNumber,
+  }
+
+  async function doRequest(targetUrl: string) {
+    console.log(`[Cashfree] Verifying GST ${gstNumber} at ${targetUrl}`)
+    const res = await fetch(targetUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    })
+    return res
+  }
+
+  let res = await doRequest(url)
+
+  if (res.status === 404 && cashfreeConfig.mode === "production") {
+    const sandboxUrl = `https://sandbox.cashfree.com/verification/gstin`
+    console.log(`[Cashfree] 404 on production GST endpoint, trying sandbox at ${sandboxUrl}`)
+    res = await doRequest(sandboxUrl)
+  }
 
   if (!res.ok) {
     let message = "Failed to verify GST"
