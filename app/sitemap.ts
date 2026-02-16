@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next'
 import { connectDB } from '@/lib/db/db'
 import { getProductModel } from '@/lib/models/Product'
 import categoriesData from '@/data/categories.json'
+import { getProductSlug } from '@/utils/productUtils'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://firgomart.com'
@@ -10,6 +11,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '',
     '/grocery',
     '/new-arrivals',
+    '/trending-products',
+    '/download-app',
+    '/enquiry',
+    '/track-order',
     '/seller',
     '/blog',
     '/about',
@@ -23,6 +28,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/returns',
     '/privacy-policy',
     '/terms',
+    '/affiliate-program',
+    '/cookie-policy',
+    '/disclaimer',
     '/site-map',
   ]
 
@@ -49,15 +57,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const Product = getProductModel(conn)
       const products = await Product.find(
         { status: { $nin: ['draft', 'inactive'] } },
-        '_id updatedAt'
+        '_id updatedAt name'
       ).lean()
-      
-      productRoutes = products.map((product: any) => ({
-        url: `${baseUrl}/product/${product._id}`,
-        lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
-        changeFrequency: 'daily' as const,
-        priority: 0.7,
-      }))
+
+      productRoutes = products.map((product: any) => {
+        const slug = getProductSlug(product.name, product._id.toString())
+        return {
+          url: `${baseUrl}/product/${slug}`,
+          lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
+          changeFrequency: 'daily' as const,
+          priority: 0.7,
+        }
+      })
     }
   } catch (error) {
     console.warn('Sitemap generation failed (likely DB connection issue during build), returning static routes only.')

@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import ProductGrid from '@/components/ui/ProductGrid/ProductGrid'
+import { getProductPath } from '@/utils/productUtils'
 
 interface CategoryClientProps {
   categoryName: string
@@ -13,7 +14,7 @@ export default function CategoryClient({ categoryName }: CategoryClientProps) {
   const { addToCart, setShowCart } = useCart()
 
   const handleProductClick = (product: any) => {
-    router.push(`/product/${product.id || product._id}`)
+    router.push(getProductPath(product.name, product.id || product._id))
   }
 
   const handleAddToCart = (product: any) => {

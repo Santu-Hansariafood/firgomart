@@ -71,3 +71,17 @@ export const getMaxQuantity = (price: number): number => {
   if (price < 2000) return 2
   return 1
 }
+
+export const getProductSlug = (name: string, id: string | number) => {
+  const base = String(name || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  const suffix = String(id)
+  return base ? `${base}-${suffix}` : suffix
+}
+
+export const getProductPath = (name: string, id: string | number) => {
+  return `/product/${getProductSlug(name, id)}`
+}

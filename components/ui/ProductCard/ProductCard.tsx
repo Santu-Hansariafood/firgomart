@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { useSession } from 'next-auth/react'
 import { Product } from '@/types/product'
-import { sanitizeImageUrl, formatPrice } from '@/utils/productUtils'
+import { sanitizeImageUrl, formatPrice, getProductPath } from '@/utils/productUtils'
 import { Share2, Heart } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -28,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation()
-    const url = `${window.location.origin}/product/${product._id || product.id}`
+    const url = `${window.location.origin}${getProductPath(product.name, product._id || product.id)}`
     
     if (navigator.share) {
       navigator.share({

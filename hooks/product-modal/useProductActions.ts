@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Product } from '@/types/product'
+import { getProductPath } from '@/utils/productUtils'
 
 interface UseProductActionsProps {
   product: Product
@@ -24,7 +25,7 @@ export function useProductActions({
 
   const handleShare = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation()
-    const url = `${window.location.origin}/product/${product.id}`
+    const url = `${window.location.origin}${getProductPath(product.name, product.id)}`
     const shareData = {
       title: product.name,
       text: `Check out ${product.name} on FirgoMart!`,

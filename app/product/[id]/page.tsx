@@ -3,10 +3,20 @@ import { connectDB } from '@/lib/db/db'
 import { getProductModel } from '@/lib/models/Product'
 import ProductPageClient from './client'
 import { notFound } from 'next/navigation'
+import { getProductSlug } from '@/utils/productUtils'
 
 type Props = {
   params: Promise<{ id: string }>
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+function getProductIdFromParam(rawId: string) {
+  const parts = rawId.split('-')
+  const last = parts[parts.length - 1] || rawId
+  if (/^[0-9a-fA-F]{24}$/.test(last)) {
+    return last
+  }
+  return rawId
 }
 
 async function getProduct(id: string) {
@@ -33,8 +43,8 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { id } = await params
-  const product = await getProduct(id)
+  const { id: rawId } = await params
+  const product = await getProduct(getProductIdFromParam(rawId))
 
   if (!product) {
     return {
@@ -47,6 +57,9 @@ export async function generateMetadata(
     ? product.images
     : (product.image ? [product.image] : [])
 
+  const canonicalSlug = getProductSlug(product.name, product.id)
+  const canonicalUrl = `https://firgomart.com/product/${canonicalSlug}`
+
   return {
     title: `${product.name} | FirgoMart`,
     description: product.description?.slice(0, 160) || `Buy ${product.name} at FirgoMart. Best prices and quality assurance.`,
@@ -54,7 +67,7 @@ export async function generateMetadata(
       title: `${product.name} | FirgoMart`,
       description: product.description?.slice(0, 160),
       images: [...productImages, ...previousImages],
-      url: `https://firgomart.com/product/${product.id}`,
+      url: canonicalUrl,
       type: 'website',
     },
     twitter: {
@@ -64,14 +77,14 @@ export async function generateMetadata(
       images: productImages,
     },
     alternates: {
-      canonical: `https://firgomart.com/product/${product.id}`,
+      canonical: canonicalUrl,
     },
   }
 }
 
 export default async function ProductPage({ params }: Props) {
-  const { id } = await params
-  const product = await getProduct(id)
+  const { id: rawId } = await params
+  const product = await getProduct(getProductIdFromParam(rawId))
 
   if (!product) {
     notFound()

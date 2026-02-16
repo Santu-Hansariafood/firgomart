@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
+import { getProductPath } from '@/utils/productUtils'
 
 interface Advertisement {
   _id: string
@@ -69,7 +70,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
         window.open(ad.linkId, '_blank')
         break
       case 'product':
-        router.push(`/product/${ad.linkId}`)
+        router.push(getProductPath(ad.title, ad.linkId))
         break
       case 'category':
         router.push(`/category/${ad.linkId}`)

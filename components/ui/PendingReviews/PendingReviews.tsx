@@ -6,6 +6,7 @@ import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import { useSession } from 'next-auth/react'
+import { getProductPath } from '@/utils/productUtils'
 
 export default function PendingReviews() {
   const { data: session } = useSession()
@@ -39,8 +40,7 @@ export default function PendingReviews() {
   }, [session])
 
   const handleProductClick = (product: Product) => {
-    // Navigate to product page where user can review
-    router.push(`/product/${product._id || product.id}`)
+    router.push(getProductPath(product.name, product._id || product.id))
   }
 
   const handleAddToCart = (product: Product) => {

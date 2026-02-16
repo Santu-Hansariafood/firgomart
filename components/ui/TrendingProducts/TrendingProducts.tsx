@@ -6,6 +6,7 @@ import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import { ArrowRight } from 'lucide-react'
+import { getProductPath } from '@/utils/productUtils'
 
 interface TrendingProductsProps {
   onProductClick?: (product: Product) => void
@@ -41,7 +42,7 @@ export default function TrendingProducts({ onProductClick }: TrendingProductsPro
       onProductClick(product)
       return
     }
-    router.push(`/product/${product._id || product.id}`)
+    router.push(getProductPath(product.name, product._id || product.id))
   }
 
   const handleAddToCart = (product: Product) => {
