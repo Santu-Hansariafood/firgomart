@@ -3,41 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ShoppingCart, X, Filter, ChevronRight, Gift, ShoppingBag, ArrowLeft, Tag, Clock, Percent } from 'lucide-react'
-import Image from 'next/image'
+import { ShoppingCart, X, Filter, ChevronRight, Gift, ArrowLeft, Tag, Clock, Percent } from 'lucide-react'
 import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
 import SidebarFilters from './SidebarFilters'
 import { useCart } from '@/context/CartContext/CartContext'
 import { DropdownItem } from '@/components/ui/ProductGrid/ProductFilters'
-
-interface Product {
-  id: string | number
-  name: string
-  image: string
-  images?: string[]
-  category: string
-  subcategory?: string
-  price: number
-  originalPrice?: number
-  discount?: number
-  rating?: number
-  brand?: string
-  colors?: string[]
-  sizes?: string[]
-  about?: string
-  additionalInfo?: string
-  description?: string
-  reviews?: number
-  stock?: number
-  unitsPerPack?: number
-  isAdminProduct?: boolean
-  hsnCode?: string
-  appliedOffer?: {
-    name: string
-    type: string
-    value?: string | number
-  }
-}
+import { Product } from '@/types/product'
+import ProductCard from '@/components/ui/ProductCard/ProductCard'
+import ProductModal from '@/components/ui/ProductModal/ProductModal'
 
 interface OffersOverlayProps {
   isOpen: boolean
@@ -62,12 +35,16 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
   
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
 
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+
   const router = useRouter()
   const category = '' 
   
   const productsPerPage = 24
   const observerTarget = useRef<HTMLDivElement | null>(null)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+
+  const { addToCart, setShowCart } = useCart()
 
   // Fetch Offers
   useEffect(() => {
@@ -135,6 +112,7 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
       
       return list.map((p: any) => ({
         id: p._id || p.id,
+        _id: p._id || p.id,
         name: p.name,
         image: Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || '',
         images: p.images,
@@ -230,8 +208,12 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
   }, [loadMore, isOpen, selectedOffer])
 
   const handleProductClick = (product: Product) => {
-    onClose()
-    router.push(`/product/${product.id}`)
+    setSelectedProduct(product)
+  }
+
+  const handleAddToCart = (product: Product) => {
+    addToCart({ ...product, quantity: 1 })
+    setShowCart(true)
   }
 
   const handleClearFilters = () => {
@@ -437,74 +419,17 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                             </div>
 
                             {displayedProducts.length > 0 ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+                              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                                 {displayedProducts.map((product) => (
-                                    <motion.div
-                                    key={product.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    className="group bg-background rounded-2xl overflow-hidden border border-foreground/5 hover:border-brand-purple/20 hover:shadow-xl hover:shadow-brand-purple/5 transition-all duration-300"
-                                    >
-                                    <div 
-                                        className="relative aspect-[4/5] overflow-hidden bg-gray-50 dark:bg-gray-900/50 cursor-pointer"
-                                        onClick={() => handleProductClick(product)}
-                                    >
-                                        {product.image ? (
-                                            <Image 
-                                            src={product.image} 
-                                            alt={product.name}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-foreground/20">
-                                            <ShoppingBag className="w-8 h-8" />
-                                            </div>
-                                        )}
-                                        
-                                        <div className="absolute top-2 left-2 flex flex-col gap-1">
-                                            {product.discount && product.discount > 0 && (
-                                            <span className="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
-                                                {product.discount}% OFF
-                                            </span>
-                                            )}
-                                        </div>
-
-                                        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/60 to-transparent">
-                                            <button className="w-full py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded-lg shadow-lg hover:bg-gray-100 transition-colors">
-                                            Quick View
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-4">
-                                        <h3 
-                                            className="font-medium text-foreground/90 text-sm mb-1 truncate cursor-pointer hover:text-brand-purple transition-colors"
-                                            onClick={() => handleProductClick(product)}
-                                        >
-                                            {product.name}
-                                        </h3>
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <span className="font-bold text-lg">₹{new Intl.NumberFormat('en-IN').format(product.price)}</span>
-                                            {product.originalPrice && product.originalPrice > product.price && (
-                                            <span className="text-xs text-foreground/40 line-through">₹{new Intl.NumberFormat('en-IN').format(product.originalPrice)}</span>
-                                            )}
-                                        </div>
-                                        {product.rating && (
-                                            <div className="flex items-center gap-1 mb-3">
-                                            <div className="flex text-brand-purple text-xs">
-                                                {"★".repeat(Math.round(product.rating))}
-                                                <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating))}</span>
-                                            </div>
-                                            <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    </motion.div>
+                                  <div key={product.id}>
+                                    <ProductCard
+                                      product={product}
+                                      onProductClick={handleProductClick}
+                                      onAddToCart={handleAddToCart}
+                                    />
+                                  </div>
                                 ))}
-                            </div>
+                              </div>
                             ) : (
                             <div className="flex flex-col items-center justify-center py-20 text-center">
                                 <div className="w-20 h-20 bg-foreground/5 rounded-full flex items-center justify-center mb-4">
@@ -585,6 +510,17 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                     </>
                 )}
             </AnimatePresence>
+
+            {selectedProduct && (
+              <ProductModal
+                product={selectedProduct}
+                onClose={() => setSelectedProduct(null)}
+                onAddToCart={(p) => {
+                  addToCart({ ...p, quantity: p.quantity || 1 })
+                  setShowCart(true)
+                }}
+              />
+            )}
 
           </motion.div>
         </>
