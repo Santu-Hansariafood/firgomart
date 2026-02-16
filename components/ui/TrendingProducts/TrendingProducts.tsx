@@ -7,7 +7,11 @@ import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import { ArrowRight } from 'lucide-react'
 
-export default function TrendingProducts() {
+interface TrendingProductsProps {
+  onProductClick?: (product: Product) => void
+}
+
+export default function TrendingProducts({ onProductClick }: TrendingProductsProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -33,6 +37,10 @@ export default function TrendingProducts() {
   }, [])
 
   const handleProductClick = (product: Product) => {
+    if (onProductClick) {
+      onProductClick(product)
+      return
+    }
     router.push(`/product/${product._id || product.id}`)
   }
 

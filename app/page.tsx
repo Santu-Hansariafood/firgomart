@@ -56,9 +56,9 @@ function HomeContent() {
             </div>
 
             <PendingReviews />
-            <NewArrivals />
-            <TrendingProducts />
-            <SellerProducts />
+            <NewArrivals onProductClick={setSelectedProduct} />
+            <TrendingProducts onProductClick={setSelectedProduct} />
+            <SellerProducts onProductClick={setSelectedProduct} />
           </Suspense>
         )}
         <ProductGrid

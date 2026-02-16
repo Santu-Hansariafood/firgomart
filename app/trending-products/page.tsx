@@ -38,7 +38,7 @@
    return (
      <div className="bg-gradient-to-b from-[#7800c8]/5 via-white to-[#f00000]/5 dark:bg-none min-h-screen">
        <Suspense fallback={<Loading />}>
-         <TrendingProducts />
+         <TrendingProducts onProductClick={setSelectedProduct} />
          <ProductGrid
            onProductClick={setSelectedProduct}
            onAddToCart={handleAddToCart}
@@ -68,4 +68,3 @@
      </div>
    );
  }
-
