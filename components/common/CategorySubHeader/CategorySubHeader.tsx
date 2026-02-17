@@ -49,7 +49,7 @@ const CategorySubHeader: React.FC = () => {
   if (hide) return null
 
   return (
-    <div className="relative z-30 bg-[var(--background)] border-b border-[var(--foreground)/10] mt-2 sm:mt-3">
+    <div className="relative z-30 bg-[var(--background)] border-[var(--foreground)/10] mt-2 sm:mt-3">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2">
         <div
           className="
