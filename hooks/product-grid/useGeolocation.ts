@@ -78,24 +78,10 @@ export function useGeolocation() {
               const country = data?.countryName || ''
               const postal = data?.postcode || data?.postalCode || ''
               
-              let granularLocality = city
-              if (data?.localityInfo?.informative) {
-                const subLocality = data.localityInfo.informative.find(
-                  (info: any) => info.order > (data.localityInfo.administrative?.find((a: any) => a.name === city)?.order || 0)
-                )
-                if (subLocality) {
-                  granularLocality = subLocality.name
-                }
-              }
-
-              let full = granularLocality && granularLocality !== state 
-                ? `${granularLocality}, ${state}` 
-                : state
+              let full = city ? `${city}, ${state}` : state
 
               if (postal) {
-                full = granularLocality && granularLocality !== state 
-                  ? `${granularLocality}, ${state} ${postal}` 
-                  : `${state} ${postal}`
+                full = city ? `${city}, ${state} ${postal}` : `${state} ${postal}`
               }
               
               save(state, country, full)
