@@ -72,16 +72,22 @@ export default function SellerProducts({ onProductClick }: SellerProductsProps) 
       </div>
       
       {loading ? (
-        <div className="flex gap-4 overflow-hidden">
+        <div className="flex gap-3 overflow-hidden">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px] aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />
+            <div
+              key={i}
+              className="min-w-[140px] w-[140px] sm:min-w-[170px] sm:w-[170px] md:min-w-[220px] md:w-[220px] aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse"
+            />
           ))}
         </div>
       ) : (
-        <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex overflow-x-auto gap-3 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {products.map((product) => (
-            <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
-              <ProductCard 
+            <div
+              key={product._id || product.id}
+              className="min-w-[140px] w-[140px] sm:min-w-[170px] sm:w-[170px] md:min-w-[220px] md:w-[220px]"
+            >
+              <ProductCard
                 product={product}
                 onProductClick={handleProductClick}
                 onAddToCart={handleAddToCart}
