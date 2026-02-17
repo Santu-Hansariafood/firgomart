@@ -30,14 +30,12 @@ export function useGeolocation() {
         setFullLocation(full.trim())
         try { localStorage.setItem('fullLocation', full.trim()) } catch {}
       } else {
-        // Fallback if full is not provided
         setFullLocation(s!.trim())
         try { localStorage.setItem('fullLocation', s!.trim()) } catch {}
       }
     }
   }, [])
 
-  // Only run IP-based geolocation automatically if no state is set
   useEffect(() => {
     const autoLocate = async () => {
       if (deliverToState) return
@@ -47,7 +45,11 @@ export function useGeolocation() {
         const state = j?.region || ''
         const city = j?.city || ''
         const country = j?.country_name || ''
-        const full = city ? `${city}, ${state}` : state
+        const postal = j?.postal || j?.postal_code || ''
+        let full = city ? `${city}, ${state}` : state
+        if (postal) {
+          full = city ? `${city}, ${state} ${postal}` : `${state} ${postal}`
+        }
         save(state, country, full)
       } catch {}
     }
@@ -74,6 +76,7 @@ export function useGeolocation() {
               const state = data?.principalSubdivision || ''
               const city = data?.city || data?.locality || ''
               const country = data?.countryName || ''
+              const postal = data?.postcode || data?.postalCode || ''
               
               let granularLocality = city
               if (data?.localityInfo?.informative) {
@@ -85,9 +88,15 @@ export function useGeolocation() {
                 }
               }
 
-              const full = granularLocality && granularLocality !== state 
+              let full = granularLocality && granularLocality !== state 
                 ? `${granularLocality}, ${state}` 
                 : state
+
+              if (postal) {
+                full = granularLocality && granularLocality !== state 
+                  ? `${granularLocality}, ${state} ${postal}` 
+                  : `${state} ${postal}`
+              }
               
               save(state, country, full)
               resolve()

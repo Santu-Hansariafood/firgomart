@@ -18,9 +18,9 @@ const MobileLocation = ({
   setShowLoginModal
 }: MobileLocationProps) => {
   return (
-    <div className="md:hidden w-full bg-gray-200 text-gray-600 shadow-sm">
+    <div className="md:hidden w-full bg-purple-100 text-gray-600 shadow-sm">
       <button 
-        className="w-full max-w-7xl mx-auto px-2 py-0.5 flex items-center justify-center gap-1 text-xs font-semibold tracking-wide"
+        className="w-full max-w-7xl mx-auto px-1 py-0.5 flex items-center justify-center gap-1 text-xs font-semibold tracking-wide"
         onClick={() => {
           if (!isAuthenticated) {
             setShowLoginModal(true)

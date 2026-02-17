@@ -23,17 +23,42 @@ export const AddressLocationSection: React.FC<AddressLocationSectionProps> = ({
   districts,
 }) => {
   const handleLocationDetected = (data: LocationData) => {
-    // Trigger state change to populate districts
+    let detectedDistrict = data.district
+
+    let availableDistricts: string[] = []
     if (data.state) {
-        handleStateChange(data.state);
+      availableDistricts = handleStateChange(data.state) || []
     }
 
-    setFormData(prev => ({
-        ...prev,
-        state: data.state,
-        district: data.district,
-        city: data.city,
-        pincode: data.pincode,
+    if (availableDistricts.length && detectedDistrict) {
+      const normalize = (s: string) =>
+        s.toLowerCase().replace(/district/g, '').replace(/\s+/g, ' ').trim()
+
+      const normDetected = normalize(detectedDistrict)
+
+      const exactMatch = availableDistricts.find(
+        (d) => normalize(d) === normDetected
+      )
+
+      const partialMatch =
+        exactMatch ||
+        availableDistricts.find(
+          (d) =>
+            normalize(d).includes(normDetected) ||
+            normDetected.includes(normalize(d))
+        )
+
+      if (partialMatch) {
+        detectedDistrict = partialMatch
+      }
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      state: data.state,
+      district: detectedDistrict || prev.district,
+      city: data.city,
+      pincode: data.pincode,
     }));
   };
 
