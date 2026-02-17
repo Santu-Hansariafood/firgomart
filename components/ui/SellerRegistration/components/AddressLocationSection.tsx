@@ -7,7 +7,7 @@ interface AddressLocationSectionProps {
   formData: SellerFormData;
   setFormData: React.Dispatch<React.SetStateAction<SellerFormData>>;
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  handleStateChange: (state: string) => void;
+  handleStateChange: (state: string) => string[];
   errors: Record<string, string>;
   states: string[];
   districts: string[];

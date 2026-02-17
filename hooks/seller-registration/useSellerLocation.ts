@@ -8,7 +8,7 @@ export const useSellerLocation = (country: string) => {
   })
   const [districts, setDistricts] = useState<string[]>([])
 
-  const handleStateChange = (selectedState: string) => {
+  const handleStateChange = (selectedState: string): string[] => {
     const countryObj = locationData.countries.find(
       (item) => item.country === country
     )
