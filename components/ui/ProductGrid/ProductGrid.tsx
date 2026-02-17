@@ -294,7 +294,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         )}
 
         {displayedProducts.length === 0 && loading ? (
-          <div className="grid grid-cols-2 min-[380px]:grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-4">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="bg-background rounded-2xl overflow-hidden shadow-sm border border-foreground/5 relative aspect-[4/5]">
                 <div className="absolute inset-0 bg-foreground/5 animate-pulse" />
@@ -331,7 +331,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="grid grid-cols-2 min-[380px]:grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-5 gap-2.5 sm:gap-3 lg:gap-4"
+            className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 lg:gap-4"
           >
             {displayedProducts.map((product) => {
               const productWithOffer: Product = filters.selectedOfferDetails

@@ -33,7 +33,6 @@ export default function FallbackImage({ src, alt, unoptimized, frameless, ...res
       alt={safeAlt}
       onError={() => setCur("/logo/firgomart.png")}
       unoptimized={unoptimized ?? true}
-      loading={(rest as Partial<ImageProps>).loading ?? "lazy"}
       sizes={finalSizes}
       {...rest}
       className={combinedClassName}
