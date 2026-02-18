@@ -28,9 +28,9 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
       title: 'Under ₹299',
       subtitle: 'Value Picks',
       icon: Zap,
-      color: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800',
-      iconBg: 'bg-white dark:bg-purple-900/20',
-      iconColor: 'text-purple-600 dark:text-purple-400',
+      color: 'bg-zinc-50 dark:bg-zinc-950/30 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800',
+      iconBg: 'bg-white dark:bg-zinc-900/20',
+      iconColor: 'text-zinc-700 dark:text-zinc-300',
       min: 200,
       max: 299
     },
