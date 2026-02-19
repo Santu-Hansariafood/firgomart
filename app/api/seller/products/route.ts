@@ -13,6 +13,9 @@ export async function POST(request: Request) {
       category,
       subcategory,
       price,
+      availableCountry,
+      currencyCode,
+      deliveryTimeDays,
       originalPrice,
       discount,
       stock,
@@ -96,6 +99,9 @@ export async function POST(request: Request) {
       createdByEmail,
       sellerState,
       sellerHasGST,
+      availableCountry,
+      currencyCode,
+      deliveryTimeDays: typeof deliveryTimeDays === "number" ? deliveryTimeDays : undefined,
     })
 
     return NextResponse.json({ product: doc.toObject() }, { status: 201 })
@@ -144,7 +150,10 @@ export async function PATCH(request: Request) {
     const id = String(body?.id || "")
     const stock = body?.stock !== undefined ? Number(body.stock) : undefined
     const price = body?.price !== undefined ? Number(body.price) : undefined
-    const discount = body?.discount !== undefined ? Number(body.discount) : undefined
+  const discount = body?.discount !== undefined ? Number(body.discount) : undefined
+  const availableCountry = body?.availableCountry !== undefined ? String(body.availableCountry).trim() : undefined
+  const currencyCode = body?.currencyCode !== undefined ? String(body.currencyCode).trim() : undefined
+  const deliveryTimeDays = body?.deliveryTimeDays !== undefined ? Number(body.deliveryTimeDays) : undefined
     const status = body?.status !== undefined ? String(body.status) : undefined
     const sellerEmail = String(body?.sellerEmail || "")
     if (!id) return NextResponse.json({ error: "id required" }, { status: 400 })
@@ -158,7 +167,10 @@ export async function PATCH(request: Request) {
     const update: any = {}
     if (stock !== undefined && Number.isFinite(stock)) update.stock = stock
     if (price !== undefined && Number.isFinite(price)) update.price = price
-    if (discount !== undefined && Number.isFinite(discount)) update.discount = discount
+  if (discount !== undefined && Number.isFinite(discount)) update.discount = discount
+  if (availableCountry !== undefined) update.availableCountry = availableCountry
+  if (currencyCode !== undefined) update.currencyCode = currencyCode
+  if (deliveryTimeDays !== undefined && Number.isFinite(deliveryTimeDays)) update.deliveryTimeDays = deliveryTimeDays
     if (status !== undefined) update.status = status
     if (body?.hsnCode !== undefined) update.hsnCode = String(body.hsnCode).trim()
     

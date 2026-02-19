@@ -8,6 +8,7 @@ export interface IBanner extends Document {
   section: string
   linkType: "product" | "category" | "external"
   linkId?: string
+  availableCountry?: string
   active: boolean
   order: number
   createdAt?: Date
@@ -23,6 +24,7 @@ const BannerSchema = new Schema<IBanner>(
     section: { type: String, default: "hero", index: true },
     linkType: { type: String, enum: ["product", "category", "external"], default: "product" },
     linkId: { type: String },
+    availableCountry: { type: String, index: true },
     active: { type: Boolean, default: true, index: true },
     order: { type: Number, default: 0, index: true },
   },

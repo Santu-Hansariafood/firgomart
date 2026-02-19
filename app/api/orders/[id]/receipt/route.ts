@@ -7,6 +7,7 @@ import { findSellerAcrossDBs } from "@/lib/models/Seller"
 import PDFDocument from "pdfkit"
 import fs from "fs"
 import path from "path"
+import { getCurrencyForCountry } from "@/utils/productUtils"
 
 type OrderItem = {
   name?: string;
@@ -31,6 +32,17 @@ type OrderLean = {
   tax?: number
   amount?: number
   pincode?: string
+}
+
+function getCountryCodeFromName(country?: string) {
+  const raw = (country || "").trim().toLowerCase()
+  if (!raw) return "IN"
+  if (raw === "in" || raw === "india") return "IN"
+  if (raw.includes("saudi")) return "SA"
+  if (raw.includes("united states") || raw === "usa" || raw === "us") return "US"
+  if (raw.includes("united arab emirates") || raw === "uae" || raw.includes("dubai")) return "AE"
+  if (raw.includes("qatar")) return "QA"
+  return "IN"
 }
 
 function amountInWords(amount: number): string {
@@ -79,6 +91,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       findById: (id: string) => { lean: () => Promise<OrderLean | null> }
     }).findById(id).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    const countryCode = getCountryCodeFromName(doc.country)
+    const { symbol: currencySymbol } = getCurrencyForCountry(countryCode)
     let sellerBusiness = ""
     let sellerGST = ""
     let sellerState: string | undefined = undefined
@@ -182,8 +196,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         }
         
         pdf.text(String(qty), colQty, y)
-        pdf.text(`₹${price.toFixed(2)}`, colPrice, y)
-        pdf.text(`₹${amt.toFixed(2)}`, colAmt, y)
+        pdf.text(`${currencySymbol}${price.toFixed(2)}`, colPrice, y)
+        pdf.text(`${currencySymbol}${amt.toFixed(2)}`, colAmt, y)
         
         const textHeight = pdf.heightOfString(String(it.name || "") + extraInfo + offerText, { width: 260 })
         y += Math.max(textHeight, 18) + 4
@@ -218,19 +232,19 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       }
 
       pdf.fontSize(12).fillColor("#111827").text("Subtotal", colPrice, y + 10)
-      pdf.text(`₹${subtotalVal.toFixed(2)}`, colAmt, y + 10)
+      pdf.text(`${currencySymbol}${subtotalVal.toFixed(2)}`, colAmt, y + 10)
       if (igst > 0) {
         pdf.text(`IGST`, colPrice, y + 28)
-        pdf.text(`₹${igst.toFixed(2)}`, colAmt, y + 28)
+        pdf.text(`${currencySymbol}${igst.toFixed(2)}`, colAmt, y + 28)
       } else {
         pdf.text(`CGST`, colPrice, y + 28)
-        pdf.text(`₹${cgst.toFixed(2)}`, colAmt, y + 28)
+        pdf.text(`${currencySymbol}${cgst.toFixed(2)}`, colAmt, y + 28)
         pdf.text(`SGST`, colPrice, y + 46)
-        pdf.text(`₹${sgst.toFixed(2)}`, colAmt, y + 46)
+        pdf.text(`${currencySymbol}${sgst.toFixed(2)}`, colAmt, y + 46)
       }
       const baseY = y + (igst > 0 ? 46 : 64)
       pdf.font("Helvetica-Bold").text("Total", colPrice, baseY + 18)
-      pdf.text(`₹${grand.toFixed(2)}`, colAmt, baseY + 18)
+      pdf.text(`${currencySymbol}${grand.toFixed(2)}`, colAmt, baseY + 18)
       pdf.moveDown(0.2)
       pdf.fontSize(11).fillColor("#111827").text(`Amount in words: ${amountInWords(grand)}`, 50, pdf.y)
       pdf.moveDown(0.2)
@@ -271,7 +285,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       }
     }
     
-    const qrString = encodeURIComponent(`Order: ${doc.orderNumber || ""}; Status: ${doc.status || ""}; Total: ₹${grand.toFixed(2)}; Email: ${doc.buyerEmail || ""}`)
+    const qrString = encodeURIComponent(`Order: ${doc.orderNumber || ""}; Status: ${doc.status || ""}; Total: ${currencySymbol}${grand.toFixed(2)}; Email: ${doc.buyerEmail || ""}`)
     const amountWordsText = amountInWords(grand)
     const html = `
 <!DOCTYPE html>
@@ -355,7 +369,7 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
             }
           }
           
-          return `<tr><td><div>${it.name}${extraInfo ? `<span class="muted" style="font-size:12px;">${extraInfo}</span>` : ""}</div>${offerHtml}</td><td>${qty}</td><td>₹${price.toFixed(2)}</td><td>₹${amt.toFixed(2)}</td></tr>`
+          return `<tr><td><div>${it.name}${extraInfo ? `<span class="muted" style="font-size:12px;">${extraInfo}</span>` : ""}</div>${offerHtml}</td><td>${qty}</td><td>${currencySymbol}${price.toFixed(2)}</td><td>${currencySymbol}${amt.toFixed(2)}</td></tr>`
         }).join("")}
       </tbody>
     </table>
@@ -363,12 +377,12 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
   <div class="box">
     <table>
       <tbody>
-        <tr><td>Subtotal</td><td style="text-align:right;">₹${subtotalVal.toFixed(2)}</td></tr>
+        <tr><td>Subtotal</td><td style="text-align:right;">${currencySymbol}${subtotalVal.toFixed(2)}</td></tr>
         ${igst > 0
-          ? `<tr><td>IGST</td><td style="text-align:right;">₹${igst.toFixed(2)}</td></tr>`
-          : `<tr><td>CGST</td><td style="text-align:right;">₹${cgst.toFixed(2)}</td></tr>
-             <tr><td>SGST</td><td style="text-align:right;">₹${sgst.toFixed(2)}</td></tr>`}
-        <tr><td class="total">Total</td><td class="total" style="text-align:right;">₹${grand.toFixed(2)}</td></tr>
+          ? `<tr><td>IGST</td><td style="text-align:right;">${currencySymbol}${igst.toFixed(2)}</td></tr>`
+          : `<tr><td>CGST</td><td style="text-align:right;">${currencySymbol}${cgst.toFixed(2)}</td></tr>
+             <tr><td>SGST</td><td style="text-align:right;">${currencySymbol}${sgst.toFixed(2)}</td></tr>`}
+        <tr><td class="total">Total</td><td class="total" style="text-align:right;">${currencySymbol}${grand.toFixed(2)}</td></tr>
       </tbody>
     </table>
   </div>

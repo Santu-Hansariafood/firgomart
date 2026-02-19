@@ -8,6 +8,20 @@ export function useGeolocation() {
       return ''
     }
   })
+  const [countryCode, setCountryCode] = useState<string>(() => {
+    try {
+      return typeof window !== 'undefined' ? localStorage.getItem('countryCode') || 'IN' : 'IN'
+    } catch {
+      return 'IN'
+    }
+  })
+  const [countryName, setCountryName] = useState<string>(() => {
+    try {
+      return typeof window !== 'undefined' ? localStorage.getItem('countryName') || '' : ''
+    } catch {
+      return ''
+    }
+  })
   const [fullLocation, setFullLocation] = useState<string>(() => {
     try {
       return typeof window !== 'undefined' ? localStorage.getItem('fullLocation') || '' : ''
@@ -20,12 +34,31 @@ export function useGeolocation() {
 
   const save = useCallback((s: string | undefined, country?: string | undefined, full?: string | undefined) => {
     const valid = typeof s === 'string' && s.trim().length > 0
-    const inIndia = typeof country === 'string' ? country.trim().toLowerCase() === 'india' : true
-    
+    const countryNameRaw = (country || '').trim()
+    const countryLower = countryNameRaw.toLowerCase()
+
+    let detectedCode = 'IN'
+    if (countryLower.includes('saudi')) detectedCode = 'SA'
+    else if (countryLower.includes('united states') || countryLower === 'usa' || countryLower === 'us') detectedCode = 'US'
+    else if (countryLower.includes('united arab emirates') || countryLower === 'uae') detectedCode = 'AE'
+    else if (countryLower.includes('qatar')) detectedCode = 'QA'
+    else if (countryLower.includes('india')) detectedCode = 'IN'
+
+    setCountryCode(detectedCode)
+    setCountryName(countryNameRaw || detectedCode)
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('countryCode', detectedCode)
+        localStorage.setItem('countryName', countryNameRaw || detectedCode)
+      }
+    } catch {}
+
+    const inIndia = countryLower ? countryLower === 'india' : true
+
     if (valid && inIndia) {
       setDeliverToState(s!.trim())
       try { localStorage.setItem('deliverToState', s!.trim()) } catch {}
-      
+
       if (full) {
         setFullLocation(full.trim())
         try { localStorage.setItem('fullLocation', full.trim()) } catch {}
@@ -109,5 +142,5 @@ export function useGeolocation() {
     save(state, 'India', state)
   }, [save])
 
-  return { deliverToState, fullLocation, requestLocation, loading, error, updateLocation }
+  return { deliverToState, fullLocation, countryCode, countryName, requestLocation, loading, error, updateLocation }
 }

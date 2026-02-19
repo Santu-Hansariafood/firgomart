@@ -25,6 +25,7 @@ type Offer = {
   active: boolean
   expiryDate?: string
   order: number
+  availableCountry?: string
 }
 
 const containerVariants = {
@@ -66,6 +67,7 @@ export default function MarketingClient() {
     subcategory: string
     products: string
     value: string
+    availableCountry: string
     active: boolean
     expiryDate: string
     order: number
@@ -77,12 +79,12 @@ export default function MarketingClient() {
     subcategory: "",
     products: "",
     value: "",
+    availableCountry: "",
     active: true,
     expiryDate: "",
     order: 0
   })
 
-  // Banner Form Data
   const [bannerFormData, setBannerFormData] = useState<{
     title: string
     description: string
@@ -91,6 +93,7 @@ export default function MarketingClient() {
     section: string
     linkType: "product" | "category" | "external"
     linkId: string
+    availableCountry: string
     active: boolean
     order: number
   }>({
@@ -101,6 +104,7 @@ export default function MarketingClient() {
     section: "hero",
     linkType: "product",
     linkId: "",
+    availableCountry: "",
     active: true,
     order: 0
   })
@@ -158,6 +162,7 @@ export default function MarketingClient() {
       subcategory: "",
       products: "",
       value: "",
+      availableCountry: "",
       active: true,
       expiryDate: "",
       order: 0
@@ -176,6 +181,7 @@ export default function MarketingClient() {
       subcategory: offer.subcategory || "",
       products: (offer.products || []).join(", "),
       value: String(offer.value || ""),
+      availableCountry: offer.availableCountry || "",
       active: offer.active,
       expiryDate: offer.expiryDate ? new Date(offer.expiryDate).toISOString().split('T')[0] : "",
       order: offer.order || 0
@@ -301,6 +307,7 @@ export default function MarketingClient() {
       section: "hero",
       linkType: "product",
       linkId: "",
+      availableCountry: "",
       active: true,
       order: 0
     })
@@ -318,6 +325,7 @@ export default function MarketingClient() {
       section: banner.section || "hero",
       linkType: banner.linkType,
       linkId: banner.linkId || "",
+      availableCountry: banner.availableCountry || "",
       active: banner.active,
       order: banner.order || 0
     })
@@ -579,6 +587,22 @@ export default function MarketingClient() {
               </div>
 
               <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-gray-700">Available Country</label>
+                <select
+                  value={formData.availableCountry}
+                  onChange={e => setFormData({ ...formData, availableCountry: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none appearance-none cursor-pointer"
+                >
+                  <option value="">All Countries</option>
+                  <option value="IN">India</option>
+                  <option value="SA">Saudi Arabia</option>
+                  <option value="US">United States</option>
+                  <option value="AE">United Arab Emirates</option>
+                  <option value="QA">Qatar</option>
+                </select>
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-gray-700">Expiry Date</label>
                 <input
                   type="date"
@@ -667,6 +691,20 @@ export default function MarketingClient() {
                     onChange={e => setBannerFormData({...bannerFormData, buttonText: e.target.value})}
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
                     placeholder="Shop Now"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-sm font-semibold text-gray-700">Target Country (optional)</label>
+                  <input
+                    type="text"
+                    value={bannerFormData.availableCountry}
+                    onChange={e => setBannerFormData({
+                      ...bannerFormData,
+                      availableCountry: e.target.value.toUpperCase()
+                    })}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                    placeholder="e.g. IN, SA, US"
                   />
                 </div>
 

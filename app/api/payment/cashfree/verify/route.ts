@@ -8,6 +8,7 @@ import { getCashfreeOrder } from "@/lib/cashfree"
 import { hasShiprocketCredentials, createShiprocketShipment } from "@/lib/shiprocket"
 import type { ClientSession } from "mongoose"
 import nodemailer from "nodemailer"
+import { getCurrencyForCountry } from "@/utils/productUtils"
 
 function createTransport() {
   const host = process.env.SMTP_HOST
@@ -26,6 +27,17 @@ function createTransport() {
   })
 }
 
+function getCountryCodeFromName(country?: string) {
+  const raw = (country || "").trim().toLowerCase()
+  if (!raw) return "IN"
+  if (raw === "in" || raw === "india") return "IN"
+  if (raw.includes("saudi")) return "SA"
+  if (raw.includes("united states") || raw === "usa" || raw === "us") return "US"
+  if (raw.includes("united arab emirates") || raw === "uae" || raw.includes("dubai")) return "AE"
+  if (raw.includes("qatar")) return "QA"
+  return "IN"
+}
+
 async function sendOrderConfirmationEmail(order: any) {
   const buyerEmail = String(order?.buyerEmail || "").trim()
   if (!buyerEmail) return
@@ -36,7 +48,8 @@ async function sendOrderConfirmationEmail(order: any) {
   const logoUrl = process.env.NEXT_PUBLIC_LOGO_URL || (appUrl ? `${appUrl}/logo.png` : "")
   const subject = `FirgoMart | Order confirmed ${order.orderNumber || ""}`.trim()
   const items = Array.isArray(order.items) ? order.items : []
-  const currency = "₹"
+  const countryCode = getCountryCodeFromName(order?.country)
+  const { symbol: currency } = getCurrencyForCountry(countryCode)
   const amountNum = Number(order.amount || 0)
   const amountFormatted = `${currency}${amountNum.toFixed(2)}`
   const rows = items

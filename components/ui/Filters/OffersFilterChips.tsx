@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Tag, Check } from 'lucide-react'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 export type Offer = { 
   id: string
@@ -23,13 +24,16 @@ type Props = {
 export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
   const [offers, setOffers] = useState<Offer[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const { countryCode } = useGeolocation()
 
   useEffect(() => {
     let mounted = true
     const load = async () => {
       setLoading(true)
       try {
-        const res = await fetch('/api/offers', { cache: 'no-store' })
+        const params = new URLSearchParams()
+        if (countryCode) params.set('country', countryCode)
+        const res = await fetch(`/api/offers?${params.toString()}`, { cache: 'no-store' })
         const data = await res.json()
         const list = Array.isArray(data.offers) ? data.offers : []
         const now = new Date()
@@ -43,7 +47,7 @@ export default function OffersFilterChips({ selectedOffer, onChange }: Props) {
     }
     load()
     return () => { mounted = false }
-  }, [])
+  }, [countryCode])
 
   if (offers.length === 0 && !loading) return null
 

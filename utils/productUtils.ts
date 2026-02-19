@@ -66,6 +66,35 @@ export const formatPrice = (price: number) => {
   return new Intl.NumberFormat('en-IN').format(price)
 }
 
+export type CountryConfig = {
+  code: string
+  name: string
+  currencyCode: string
+  currencySymbol: string
+}
+
+export const SUPPORTED_COUNTRIES: CountryConfig[] = [
+  { code: 'IN', name: 'India', currencyCode: 'INR', currencySymbol: '₹' },
+  { code: 'SA', name: 'Saudi Arabia', currencyCode: 'SAR', currencySymbol: 'SAR' },
+  { code: 'US', name: 'United States', currencyCode: 'USD', currencySymbol: '$' },
+  { code: 'AE', name: 'United Arab Emirates', currencyCode: 'AED', currencySymbol: 'AED' },
+  { code: 'QA', name: 'Qatar', currencyCode: 'QAR', currencySymbol: 'QAR' },
+  { code: 'AE-DU', name: 'Dubai', currencyCode: 'AED', currencySymbol: 'AED' },
+]
+
+export const getCountryByCode = (code?: string) => {
+  if (!code) return undefined
+  return SUPPORTED_COUNTRIES.find(c => c.code === code)
+}
+
+export const getCurrencyForCountry = (code?: string) => {
+  const country = getCountryByCode(code) || SUPPORTED_COUNTRIES[0]
+  return {
+    code: country.currencyCode,
+    symbol: country.currencySymbol,
+  }
+}
+
 export const getMaxQuantity = (price: number): number => {
   if (price < 1000) return 3
   if (price < 2000) return 2

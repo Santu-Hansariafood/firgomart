@@ -109,6 +109,9 @@ export async function GET(request: Request) {
       hsnCode: p.hsnCode,
       gstNumber: p.gstNumber,
       images: p.images || [],
+      availableCountry: p.availableCountry,
+      currencyCode: p.currencyCode,
+      deliveryTimeDays: p.deliveryTimeDays,
     }))
     return NextResponse.json({ products: safe, total })
   } catch (err: any) {
@@ -153,6 +156,8 @@ export async function POST(request: Request) {
     const category = String(body?.category || "").trim()
     const subcategory = String(body?.subcategory || "").trim()
     const price = Number(body?.price)
+    const availableCountry = String(body?.availableCountry || "").trim()
+    const currencyCode = String(body?.currencyCode || "").trim()
     const originalPrice = body?.originalPrice ? Number(body.originalPrice) : undefined
     const discount = body?.discount ? Number(body.discount) : 0
     const stock = Number(body?.stock ?? 0)
@@ -168,6 +173,7 @@ export async function POST(request: Request) {
     const additionalInfo = String(body?.additionalInfo || "").trim()
     const description = String(body?.description || "").trim()
     const unitsPerPack = body?.unitsPerPack ? Number(body.unitsPerPack) : 1
+    const deliveryTimeDays = body?.deliveryTimeDays ? Number(body.deliveryTimeDays) : undefined
 
     const height = body?.height ? Number(body.height) : undefined
     const width = body?.width ? Number(body.width) : undefined
@@ -190,6 +196,7 @@ export async function POST(request: Request) {
       category,
       subcategory,
       price,
+      currencyCode: currencyCode || undefined,
       originalPrice,
       discount,
       stock,
@@ -214,6 +221,8 @@ export async function POST(request: Request) {
       weightUnit,
       hsnCode,
       gstNumber,
+      availableCountry: availableCountry || undefined,
+      deliveryTimeDays: deliveryTimeDays || undefined,
     })
     return NextResponse.json({ product: { id: doc._id?.toString?.() || String(doc._id) } }, { status: 201 })
   } catch (err: any) {

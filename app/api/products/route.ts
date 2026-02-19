@@ -17,6 +17,7 @@ export async function GET(request: Request) {
     const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
     const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
     const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
+    const countryParam = (url.searchParams.get("country") || "").trim().toUpperCase()
     const categoryParam = (url.searchParams.get("category") || "").trim()
     const subcategoryParam = (url.searchParams.get("subcategory") || "").trim()
     const search = (url.searchParams.get("search") || "").trim()
@@ -55,6 +56,10 @@ export async function GET(request: Request) {
     }
     if (sizeParam) {
       conditions.push({ sizes: { $in: [new RegExp(`^${sizeParam}$`, "i")] } })
+    }
+
+    if (countryParam) {
+      conditions.push({ availableCountry: countryParam })
     }
 
     if (!createdByEmail && !adminOnly && !search) {

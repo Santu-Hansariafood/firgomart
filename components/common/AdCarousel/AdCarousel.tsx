@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { getProductPath } from '@/utils/productUtils'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface Advertisement {
   _id: string
@@ -14,6 +15,7 @@ interface Advertisement {
   buttonText: string
   image: string
   section?: string
+  availableCountry?: string
   linkType?: string
   linkId?: string
 }
@@ -24,6 +26,7 @@ interface AdCarouselProps {
 
 const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
   const router = useRouter()
+  const { countryCode } = useGeolocation()
   const [current, setCurrent] = useState<number>(0)
   const [banners, setBanners] = useState<Advertisement[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,8 +38,15 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
         if (res.ok) {
           const data = await res.json()
           if (data.banners && data.banners.length > 0) {
-            // Filter by section
-            const filtered = data.banners.filter((b: Advertisement) => (b.section || "hero") === section)
+            const country = (countryCode || '').toUpperCase()
+            const filtered = data.banners.filter((b: Advertisement) => {
+              const sectionMatch = (b.section || "hero") === section
+              if (!sectionMatch) return false
+              const bannerCountry = (b.availableCountry || '').toUpperCase()
+              if (!bannerCountry) return true
+              if (!country) return false
+              return bannerCountry === country
+            })
             setBanners(filtered)
           }
         }
@@ -47,7 +57,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
       }
     }
     fetchBanners()
-  }, [section])
+  }, [section, countryCode])
 
   useEffect(() => {
     if (banners.length === 0) return

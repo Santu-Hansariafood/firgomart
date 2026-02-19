@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import { ArrowRight } from 'lucide-react'
 import { getProductPath } from '@/utils/productUtils'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface SellerProductsProps {
   onProductClick?: (product: Product) => void
@@ -17,11 +18,13 @@ export default function SellerProducts({ onProductClick }: SellerProductsProps) 
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { addToCart, setShowCart } = useCart()
+  const { countryCode } = useGeolocation()
 
   useEffect(() => {
     async function fetchSellerProducts() {
       try {
-        const res = await fetch('/api/products?sortBy=-createdAt&limit=10&sellerOnly=true')
+        const countryParam = countryCode ? `&country=${encodeURIComponent(countryCode)}` : ''
+        const res = await fetch(`/api/products?sortBy=-createdAt&limit=10&sellerOnly=true${countryParam}`)
         const data = await res.json()
         const mappedProducts = (data.products || []).map((p: any) => ({
           ...p,
@@ -35,7 +38,7 @@ export default function SellerProducts({ onProductClick }: SellerProductsProps) 
       }
     }
     fetchSellerProducts()
-  }, [])
+  }, [countryCode])
 
   const handleProductClick = (product: Product) => {
     if (onProductClick) {

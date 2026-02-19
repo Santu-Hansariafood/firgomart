@@ -33,6 +33,7 @@ interface UseProductDataProps {
   category: string
   subcategory: string
   deliverToState: string
+  countryCode: string
   sortBy: string
   minPrice: string
   maxPrice: string
@@ -48,7 +49,7 @@ interface UseProductDataProps {
 }
 
 export function useProductData({
-  search, category, subcategory, deliverToState, sortBy,
+  search, category, subcategory, deliverToState, countryCode, sortBy,
   minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails,
   page, setPage, newArrivals, adminOnly, sellerOnly
 }: UseProductDataProps) {
@@ -69,6 +70,7 @@ export function useProductData({
   const fetchPage = useCallback(async (pageNum: number) => {
     try {
       const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
+      const countryParam = countryCode ? `&country=${encodeURIComponent(countryCode)}` : ''
       
       const shouldDefaultToAdmin = !deliverToState && !search && !sellerOnly && adminOnly !== false
       
@@ -85,7 +87,7 @@ export function useProductData({
       const offerParam = selectedOffer ? `&offer=${encodeURIComponent(selectedOffer)}` : ''
       const newArrivalsParam = newArrivals ? '&newArrivals=true' : ''
       
-      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${adminParam}${sellerParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}${newArrivalsParam}`)
+      const res = await fetch(`/api/products?limit=${productsPerPage}&page=${pageNum}${stateParam}${countryParam}${adminParam}${sellerParam}${searchParam}${categoryParam}${subcategoryParam}${sortParam}${priceParam}${ratingParam}${sizeParam}${offerParam}${newArrivalsParam}`)
       
       if (!res.ok) return []
       const data = await res.json()
@@ -125,7 +127,7 @@ export function useProductData({
     } catch {
       return []
     }
-  }, [deliverToState, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, newArrivals, adminOnly, sellerOnly])
+  }, [deliverToState, countryCode, search, category, subcategory, sortBy, minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, newArrivals, adminOnly, sellerOnly])
 
   useEffect(() => {
     const loadInitial = async () => {

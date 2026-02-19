@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Tag, Sparkles, Gift, Zap, Star, ShoppingBag } from 'lucide-react'
+import { getCurrencyForCountry } from '@/utils/productUtils'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface PriceCategoryBannerProps {
   onSelectCategory: (min: number, max: number, type?: string) => void
@@ -10,11 +12,13 @@ interface PriceCategoryBannerProps {
 
 export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryBannerProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const { countryCode } = useGeolocation()
+  const currency = getCurrencyForCountry(countryCode)
 
   const categories = [
     {
       id: 'under-199',
-      title: 'Under ₹199',
+      title: `Under ${currency.symbol}199`,
       subtitle: 'Budget Buys',
       icon: Tag,
       color: 'bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
@@ -25,7 +29,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
     },
     {
       id: 'under-299',
-      title: 'Under ₹299',
+      title: `Under ${currency.symbol}299`,
       subtitle: 'Value Picks',
       icon: Zap,
       color: 'bg-zinc-50 dark:bg-zinc-950/30 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800',
@@ -36,7 +40,7 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
     },
     {
       id: 'under-399',
-      title: 'Under ₹399',
+      title: `Under ${currency.symbol}399`,
       subtitle: 'Best Sellers',
       icon: Star,
       color: 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800',
@@ -47,37 +51,37 @@ export default function PriceCategoryBanner({ onSelectCategory }: PriceCategoryB
     },
     {
       id: 'under-499',
-      title: 'Under ₹499',
+      title: `Under ${currency.symbol}499`,
       subtitle: 'Trending Now',
       icon: ShoppingBag,
-      color: 'bg-zinc-50 dark:bg-zinc-950/30 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800',
-      iconBg: 'bg-white dark:bg-zinc-900/20',
-      iconColor: 'text-zinc-700 dark:text-zinc-300',
+      color: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800',
+      iconBg: 'bg-white dark:bg-purple-900/20',
+      iconColor: 'text-purple-600 dark:text-purple-400',
       min: 400,
       max: 499
     },
     {
-    id: 'under-599',
-    title: 'Under ₹599',
-    subtitle: 'customer Choice',
-    icon: Zap,
-    color: 'bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800',
-    iconBg: 'bg-white dark:bg-teal-900/20',
-    iconColor: 'text-teal-600 dark:text-teal-400',
-    min: 500,
-    max: 599
-  },
-  {
-    id: 'under-699',
-    title: 'Under ₹699',
-    subtitle: 'Premium Picks',
-    icon: Star,
-    color: 'bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
-    iconBg: 'bg-white dark:bg-slate-800/40',
-    iconColor: 'text-slate-700 dark:text-slate-300',
-    min: 600,
-    max: 699
-  },
+      id: 'under-599',
+      title: `Under ${currency.symbol}599`,
+      subtitle: 'customer Choice',
+      icon: Zap,
+      color: 'bg-teal-50 dark:bg-teal-950/30 text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800',
+      iconBg: 'bg-white dark:bg-teal-900/20',
+      iconColor: 'text-teal-600 dark:text-teal-400',
+      min: 500,
+      max: 599
+    },
+    {
+      id: 'under-699',
+      title: `Under ${currency.symbol}699`,
+      subtitle: 'Premium Picks',
+      icon: Star,
+      color: 'bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+      iconBg: 'bg-white dark:bg-slate-800/40',
+      iconColor: 'text-slate-700 dark:text-slate-300',
+      min: 600,
+      max: 699
+    },
     {
       id: 'special-price',
       title: 'Special Price',

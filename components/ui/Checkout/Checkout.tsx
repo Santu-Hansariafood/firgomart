@@ -25,6 +25,8 @@ import { useCheckoutForm } from '@/hooks/checkout/useCheckoutForm'
 import { useOrderSummary } from '@/hooks/checkout/useOrderSummary'
 import { useDeliveryValidation } from '@/hooks/checkout/useDeliveryValidation'
 import { usePayment } from '@/hooks/checkout/usePayment'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
+import { getCurrencyForCountry } from '@/utils/productUtils'
 
 type PaymentProvider = 'cashfree' | 'razorpay'
 
@@ -113,11 +115,21 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
   )
 }
 
-const Rupee: React.FC<{ className?: string }> = ({ className }) => (
-  <span className={className} style={{ fontFamily: 'system-ui, "Segoe UI Symbol", "Noto Sans", "Arial Unicode MS", sans-serif' }}>
-    {"\u20B9"}
-  </span>
-)
+const Rupee: React.FC<{ className?: string }> = ({ className }) => {
+  const { countryCode } = useGeolocation()
+  const currency = getCurrencyForCountry(countryCode)
+  return (
+    <span
+      className={className}
+      style={{
+        fontFamily:
+          'system-ui, "Segoe UI Symbol", "Noto Sans", "Arial Unicode MS", sans-serif'
+      }}
+    >
+      {currency.symbol}
+    </span>
+  )
+}
 
 interface CheckoutProps {
   cartItems: CartItem[]

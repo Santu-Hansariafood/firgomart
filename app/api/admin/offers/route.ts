@@ -72,6 +72,7 @@ export async function POST(request: Request) {
     const active = body?.active !== undefined ? !!body.active : true
     const expiryDate = body?.expiryDate ? new Date(body.expiryDate) : undefined
     const order = typeof body?.order === "number" ? body.order : 0
+    const availableCountry = body?.availableCountry ? String(body.availableCountry).trim() : undefined
     if (!key || !name || !type) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
 
     const conn = await connectDB()
@@ -87,6 +88,7 @@ export async function POST(request: Request) {
       active,
       expiryDate,
       order,
+      availableCountry,
       createdByEmail: auth.adminEmail || undefined,
     })
     return NextResponse.json({ offer: doc.toObject() }, { status: 201 })
@@ -115,6 +117,7 @@ export async function PUT(request: Request) {
     if (body?.active !== undefined) update.active = !!body.active
     if (body?.expiryDate !== undefined) update.expiryDate = body.expiryDate ? new Date(body.expiryDate) : null
     if (typeof body?.order === "number") update.order = body.order
+    if (typeof body?.availableCountry === "string") update.availableCountry = String(body.availableCountry).trim()
     if (!Object.keys(update).length) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
 
     const conn = await connectDB()
@@ -145,4 +148,3 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

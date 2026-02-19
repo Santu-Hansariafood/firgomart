@@ -10,6 +10,7 @@ import dynamic from "next/dynamic"
 import FallbackImage from "@/components/common/Image/FallbackImage"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import toast from "react-hot-toast"
+import { SUPPORTED_COUNTRIES, getCurrencyForCountry } from "@/utils/productUtils"
 
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
@@ -24,6 +25,7 @@ type ProductItem = {
   category?: string
   subcategory?: string
   price: number
+  currencyCode?: string
   originalPrice?: number
   stock?: number
   sellerState?: string
@@ -47,6 +49,8 @@ type ProductItem = {
   weightUnit?: string
   hsnCode?: string
   gstNumber?: string
+  availableCountry?: string
+  deliveryTimeDays?: number
 }
 
 const gstStateMap: Record<string, string> = {
@@ -102,11 +106,12 @@ export default function Page() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   
-  // Form States
   const [formName, setFormName] = useState("")
   const [formCategory, setFormCategory] = useState("")
   const [formSubcategory, setFormSubcategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
+  const [formAvailableCountry, setFormAvailableCountry] = useState("IN")
+  const [formDeliveryTimeDays, setFormDeliveryTimeDays] = useState("")
   const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
   const [formUnitsPerPack, setFormUnitsPerPack] = useState("1")
@@ -132,6 +137,13 @@ export default function Page() {
   const [formWeightUnit, setFormWeightUnit] = useState("kg")
 
   const colorOptions: DropdownItem[] = (colorsData as any).colors
+  const countryOptions: DropdownItem[] = SUPPORTED_COUNTRIES.map((c) => ({ id: c.code, label: c.name }))
+  const onFormCountryChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) {
+      setFormAvailableCountry(String(v.id))
+    }
+  }
+  const currentCurrency = getCurrencyForCountry(formAvailableCountry)
   
   const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
       const createNumSizes = (start: number, end: number) => {
@@ -281,6 +293,8 @@ export default function Page() {
       setFormCategory(product.category || "")
       setFormSubcategory((product as any).subcategory || "")
       setFormPrice(String(product.price))
+      setFormAvailableCountry(product.availableCountry || "IN")
+      setFormDeliveryTimeDays(product.deliveryTimeDays ? String(product.deliveryTimeDays) : "")
       setFormOriginalPrice(String(product.originalPrice || ""))
       setFormStock(String(product.stock || 0))
       setFormUnitsPerPack(String((product as any).unitsPerPack || 1))
@@ -315,6 +329,8 @@ export default function Page() {
       setFormCategory("")
       setFormSubcategory("")
       setFormPrice("")
+      setFormAvailableCountry("IN")
+      setFormDeliveryTimeDays("")
       setFormOriginalPrice("")
       setFormStock("")
       setFormUnitsPerPack("1")
@@ -436,6 +452,8 @@ export default function Page() {
       category: formCategory.trim(),
       subcategory: formSubcategory.trim(),
       price,
+      availableCountry: formAvailableCountry,
+      currencyCode: currentCurrency.code,
       originalPrice,
       discount,
       stock: Number(formStock || 0),
@@ -460,7 +478,8 @@ export default function Page() {
       hsnCode: formHSNCode.trim(),
       gstNumber: formGSTNumber.trim(),
       sellerEmail: sellerEmail, // Required for seller API
-      id: editingId // Include ID for updates if API expects it in body
+      id: editingId, // Include ID for updates if API expects it in body
+      deliveryTimeDays: formDeliveryTimeDays ? Number(formDeliveryTimeDays) : undefined,
     }
 
     try {
@@ -579,7 +598,11 @@ export default function Page() {
                     ) },
                     { key: "name", label: "Name", sortable: true },
                     { key: "category", label: "Category", sortable: true },
-                    { key: "price", label: "Price", sortable: true, render: (r) => `₹${r.price}` },
+                    { key: "price", label: "Price", sortable: true, render: (r) => {
+                      const country = typeof (r as any).availableCountry === "string" ? (r as any).availableCountry : "IN"
+                      const c = getCurrencyForCountry(country)
+                      return `${c.symbol}${r.price}`
+                    } },
                     { key: "stock", label: "Stock", sortable: true },
                     { key: "brand", label: "Brand" },
                     { key: "sellerState", label: "State", sortable: true },
@@ -637,7 +660,9 @@ export default function Page() {
                             <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Original" />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              Selling Price ({currentCurrency.symbol})
+                            </label>
                             <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Sale" />
                           </div>
                           <div>
@@ -650,6 +675,26 @@ export default function Page() {
                             <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
                             <input type="number" min={1} value={formUnitsPerPack} onChange={e => setFormUnitsPerPack(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Units per product (e.g., 1 or 2)" />
                             <p className="text-xs text-gray-500 mt-1">Enter how many units are in this product listing.</p>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Available Country</label>
+                            <CommonDropdown
+                              options={countryOptions}
+                              selected={formAvailableCountry ? { id: formAvailableCountry, label: SUPPORTED_COUNTRIES.find(c => c.code === formAvailableCountry)?.name || formAvailableCountry } : null}
+                              onChange={onFormCountryChange}
+                              placeholder="Select Country"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Time (days)</label>
+                            <input
+                              type="number"
+                              min={1}
+                              value={formDeliveryTimeDays}
+                              onChange={e => setFormDeliveryTimeDays(e.target.value)}
+                              className="w-full px-3 py-2 border rounded-lg"
+                              placeholder="e.g. 3"
+                            />
                           </div>
                         </div>
                         <div>

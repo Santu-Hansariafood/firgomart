@@ -80,7 +80,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
       variants={fadeInUp}
       className="group relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-900/50 h-full"
     >
-      <div className="absolute top-3 right-3 z-30 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute top-3 right-3 z-30 flex flex-col gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
         <button
           onClick={handleWishlist}
           className="p-2 bg-white/90 dark:bg-black/80 rounded-full shadow-lg hover:scale-110 transition-transform text-gray-600 dark:text-gray-300 hover:text-red-500 dark:hover:text-red-500"

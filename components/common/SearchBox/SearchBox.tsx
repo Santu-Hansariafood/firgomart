@@ -5,6 +5,7 @@ import { Search, Mic, MicOff, X } from "lucide-react";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useGeolocation } from "@/hooks/product-grid/useGeolocation";
 
 interface SearchBoxProps {
   value: string;
@@ -32,6 +33,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
+  const { countryCode } = useGeolocation();
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -73,8 +75,9 @@ const SearchBox: React.FC<SearchBoxProps> = ({
 
     const timer = setTimeout(async () => {
       try {
+        const countryParam = countryCode ? `&country=${encodeURIComponent(countryCode)}` : "";
         const res = await fetch(
-          `/api/products?search=${encodeURIComponent(value)}&limit=5`
+          `/api/products?search=${encodeURIComponent(value)}&limit=5${countryParam}`
         );
         if (res.ok) {
           const data = await res.json();
@@ -89,7 +92,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [value, enableSuggestions]);
+  }, [value, enableSuggestions, countryCode]);
 
   useEffect(() => {
     if (!value || value.trim().length === 0) return;

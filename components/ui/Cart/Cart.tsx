@@ -8,7 +8,8 @@ import React from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { CartItem } from '@/types/checkout'
 import { useCartSummary } from '@/hooks/cart/useCartSummary'
-import { getMaxQuantity } from '@/utils/productUtils'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
+import { getMaxQuantity, getCurrencyForCountry } from '@/utils/productUtils'
 
 interface CartProps {
   items: CartItem[]
@@ -21,6 +22,8 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
   const router = useRouter()
   const { isAuthenticated } = useAuth()
   const { orderSummary } = useCartSummary(items)
+  const { countryCode } = useGeolocation()
+  const currency = getCurrencyForCountry(countryCode)
 
   const localTotal = items.reduce((sum, item) => {
     if ((item.stock ?? 0) <= 0) return sum
@@ -152,10 +155,14 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                       <div className="mt-2 flex items-end justify-between">
                         <div className="flex flex-col">
                           <div className="flex items-baseline space-x-2">
-                            <span className="text-lg font-bold text-[color:var(--foreground)]">₹{item.price}</span>
+                            <span className="text-lg font-bold text-[color:var(--foreground)]">
+                              {currency.symbol}
+                              {item.price}
+                            </span>
                             {item.originalPrice && item.originalPrice > item.price && (
                               <span className="text-xs text-[var(--foreground)/40] line-through">
-                                ₹{item.originalPrice}
+                                {currency.symbol}
+                                {item.originalPrice}
                               </span>
                             )}
                           </div>
@@ -201,18 +208,28 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-[var(--foreground)/60]">Subtotal</span>
-                    <span className="font-medium text-[var(--foreground)]">₹{finalSubtotal.toFixed(2)}</span>
+                    <span className="font-medium text-[var(--foreground)]">
+                      {currency.symbol}
+                      {finalSubtotal.toFixed(2)}
+                    </span>
                   </div>
                   {taxAmount > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-[var(--foreground)/60]">{taxLabel}</span>
-                      <span className="font-medium text-[var(--foreground)]">₹{taxAmount.toFixed(2)}</span>
+                      <span className="font-medium text-[var(--foreground)]">
+                        {currency.symbol}
+                        {taxAmount.toFixed(2)}
+                      </span>
                     </div>
                   )}
                   {savings > 0 && (
                     <div className="flex justify-between text-sm text-green-600 bg-green-50 dark:bg-green-900/10 px-2 py-1 rounded">
                       <span>Total Savings</span>
-                      <span className="font-bold">-₹{savings.toFixed(2)}</span>
+                      <span className="font-bold">
+                        -
+                        {currency.symbol}
+                        {savings.toFixed(2)}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm">
@@ -222,7 +239,8 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                   <div className="pt-3 mt-1 border-t border-[var(--foreground)/10] flex justify-between items-end">
                     <span className="font-heading font-bold text-[color:var(--foreground)] text-lg">Total Amount</span>
                     <span className="font-sans font-extrabold text-[color:var(--foreground)] text-2xl">
-                        {"\u20B9"}{finalTotal.toFixed(2)}
+                      {currency.symbol}
+                      {finalTotal.toFixed(2)}
                     </span>
                   </div>
                 </div>

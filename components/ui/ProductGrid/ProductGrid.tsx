@@ -55,7 +55,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   const category = initialCategory || (searchParams.get('category') || '').trim()
   const subcategory = (searchParams.get('subcategory') || '').trim()
 
-  const { deliverToState } = useGeolocation()
+  const { deliverToState, countryCode } = useGeolocation()
   
   const [internalPage, setInternalPage] = useState<number>(1)
   const internalFilters = useProductFilters(setInternalPage)
@@ -74,6 +74,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
     category, 
     subcategory, 
     deliverToState, 
+    countryCode,
     page,
     setPage,
     ...filters,
@@ -151,7 +152,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             </div>
           )}
           {!hideFilters && (
-            <div className="w-full md:w-auto z-10">
+            <div className="hidden md:block w-full md:w-auto z-10">
               <FilterControls
                 isFilterOpen={filters.isFilterOpen}
                 setIsFilterOpen={filters.setIsFilterOpen}
@@ -220,7 +221,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         )}
 
         {!hideFilters && (
-          <div className="mb-10">
+          <div className="hidden md:block mb-10">
             <OffersFilterChips
               selectedOffer={filters.selectedOffer || undefined}
               onChange={(next, offer) => { 
@@ -233,7 +234,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         )}
 
         {!hideFilters && filters.isFilterOpen && (
-          <div className="mb-8">
+          <div className="hidden md:block mb-8">
             <FilterPanel
               activeFilterTab={filters.activeFilterTab}
               minPrice={filters.minPrice}

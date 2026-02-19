@@ -9,7 +9,7 @@ import FallbackImage from '@/components/common/Image/FallbackImage'
 import Script from 'next/script'
 import { useCart } from '@/context/CartContext/CartContext'
 import toast from 'react-hot-toast'
-import { getMaxQuantity } from '@/utils/productUtils'
+import { getMaxQuantity, getCurrencyForCountry } from '@/utils/productUtils'
 
 interface Product {
   id: string | number
@@ -38,6 +38,9 @@ interface Product {
   hsnCode?: string
   selectedSize?: string
   selectedColor?: string
+  availableCountry?: string
+  currencyCode?: string
+  deliveryTimeDays?: number
   appliedOffer?: {
     name: string
     type: string
@@ -77,7 +80,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const [submittingReview, setSubmittingReview] = useState(false)
   
   const [reviewEligibility, setReviewEligibility] = useState<{ canReview: boolean; reason?: string; returnPeriodEnds?: string } | null>(null)
-  
+  const currency = getCurrencyForCountry(product.availableCountry)
   const [isSaved, setIsSaved] = useState(false)
   const [saving, setSaving] = useState(false)
 
@@ -388,11 +391,11 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                 </div>
                 
                 <div className="flex items-baseline space-x-3 mb-2">
-                  <span className="text-2xl sm:text-3xl font-bold">₹{currentPrice}</span>
+                  <span className="text-2xl sm:text-3xl font-bold">{currency.symbol}{currentPrice}</span>
                   {(product.originalPrice || hasOffer) && (
                     <>
                       <span className="text-xl text-red-500 line-through">
-                        ₹{product.originalPrice || product.price}
+                        {currency.symbol}{product.originalPrice || product.price}
                       </span>
                     </>
                   )}

@@ -7,6 +7,7 @@ import { ShoppingCart, X, Filter, ChevronRight, Gift, ArrowLeft, Tag, Clock, Per
 import OffersFilterChips, { Offer } from '@/components/ui/Filters/OffersFilterChips'
 import SidebarFilters from './SidebarFilters'
 import { useCart } from '@/context/CartContext/CartContext'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 import { DropdownItem } from '@/components/ui/ProductGrid/ProductFilters'
 import { Product } from '@/types/product'
 import ProductCard from '@/components/ui/ProductCard/ProductCard'
@@ -45,12 +46,14 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
 
   const { addToCart, setShowCart } = useCart()
+  const { countryCode } = useGeolocation()
 
-  // Fetch Offers
   useEffect(() => {
     const loadOffers = async () => {
       try {
-        const res = await fetch('/api/offers', { cache: 'no-store' })
+        const params = new URLSearchParams()
+        if (countryCode) params.set('country', countryCode)
+        const res = await fetch(`/api/offers?${params.toString()}`, { cache: 'no-store' })
         const data = await res.json()
         const list = Array.isArray(data.offers) ? data.offers : []
         const now = new Date()
@@ -59,10 +62,9 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
         setOffers([])
       }
     }
-    if (isOpen) loadOffers()
-  }, [isOpen])
+    loadOffers()
+  }, [countryCode])
 
-  // Helper: Get Sizes
   const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
     const createNumSizes = (start: number, end: number) => {
       const arr: DropdownItem[] = []
@@ -104,6 +106,7 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
       if (selectedSize) params.set('size', selectedSize)
       if (selectedOffer) params.set('offer', selectedOffer)
       if (sortBy) params.set('sortBy', sortBy)
+      if (countryCode) params.set('country', countryCode)
       
       const res = await fetch(`/api/products?${params.toString()}`)
       if (!res.ok) return []
@@ -142,9 +145,8 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
     } catch {
       return []
     }
-  }, [minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, sortBy])
+  }, [minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, sortBy, countryCode])
 
-  // Load Products when Offer Selected
   useEffect(() => {
     if (isOpen && selectedOffer) {
       const loadInitial = async () => {
@@ -162,7 +164,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
     }
   }, [isOpen, selectedOffer, fetchPage]) // Only re-run when offer changes
 
-  // Reload when filters change (only if offer selected)
   useEffect(() => {
     if (!isOpen || !selectedOffer) return
     const reload = async () => {
@@ -174,12 +175,7 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
       setHasMore(first.length === productsPerPage)
       setLoading(false)
     }
-    // Skip initial load (handled above) by checking if we have products? 
-    // Actually, simple way: if filters are defaults, skip? No.
-    // We'll let this run, but we need to avoid double fetch with the effect above.
-    // The effect above runs on `selectedOffer` change.
-    // This effect runs on `minPrice`, etc.
-  }, [minPrice, maxPrice, minRating, selectedSize, sortBy]) 
+    }, [minPrice, maxPrice, minRating, selectedSize, sortBy]) 
 
   const loadMore = useCallback(() => {
     if (loading || !hasMore || !isOpen || !selectedOffer) return
@@ -286,7 +282,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     
                     {!selectedOffer ? (
-                      // Offers Grid View
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {offers.map((offer) => (
                           <motion.button
@@ -370,12 +365,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                         <main className="flex-1">
                             <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                 <div className="lg:hidden flex items-center gap-2">
-                                <button 
-                                    onClick={() => setIsMobileFilterOpen(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-foreground/5 rounded-full font-medium text-sm hover:bg-foreground/10 transition-colors"
-                                >
-                                    <Filter className="w-4 h-4" /> Filters
-                                </button>
                                 <span className="text-xs text-foreground/50">{displayedProducts.length} Items</span>
                                 </div>
 
@@ -458,58 +447,7 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                 </div>
             </div>
 
-            {/* Mobile Filter Drawer */}
-            <AnimatePresence>
-                {isMobileFilterOpen && selectedOffer && (
-                    <>
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setIsMobileFilterOpen(false)}
-                        className="absolute inset-0 bg-black/40 backdrop-blur-sm z-[110]"
-                    />
-                    <motion.div
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        exit={{ y: "100%" }}
-                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="absolute bottom-0 left-0 right-0 h-[85vh] bg-background rounded-t-3xl shadow-2xl z-[120] flex flex-col border-t border-white/10"
-                    >
-                        <div className="p-4 border-b border-foreground/5 flex items-center justify-between">
-                            <h3 className="font-bold text-lg">Filters</h3>
-                            <button 
-                                onClick={() => setIsMobileFilterOpen(false)}
-                                className="p-2 hover:bg-foreground/5 rounded-full"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-                        <div className="flex-1 overflow-y-auto p-6">
-                            <SidebarFilters 
-                                minPrice={minPrice} setMinPrice={setMinPrice}
-                                maxPrice={maxPrice} setMaxPrice={setMaxPrice}
-                                minRating={minRating} setMinRating={setMinRating}
-                                selectedSize={selectedSize} setSelectedSize={setSelectedSize}
-                                setPage={setPage}
-                                onClearFilters={handleClearFilters}
-                                category={category}
-                                getSizeOptionsForCategory={getSizeOptionsForCategory}
-                                allSizes={allSizes}
-                            />
-                        </div>
-                        <div className="p-4 border-t border-foreground/5">
-                            <button 
-                                onClick={() => setIsMobileFilterOpen(false)}
-                                className="w-full py-3 bg-brand-purple text-white font-bold rounded-xl shadow-lg shadow-brand-purple/20 active:scale-95 transition-all"
-                            >
-                                Apply Filters
-                            </button>
-                        </div>
-                    </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+            {/* Mobile filters are disabled for this overlay */}
 
             {selectedProduct && (
               <ProductModal

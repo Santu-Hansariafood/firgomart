@@ -51,7 +51,7 @@ export function useProductMetadata({ product }: UseProductMetadataProps) {
     const imageUrls = images.map((src) => String(src))
     const offers = {
       '@type': 'Offer',
-      priceCurrency: 'INR',
+      priceCurrency: typeof product.currencyCode === 'string' && product.currencyCode ? product.currencyCode : 'INR',
       price: Number(product.price || 0),
       availability: (product.stock ?? 0) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       url: typeof window !== 'undefined' ? window.location.href : 'https://firgomart.com',

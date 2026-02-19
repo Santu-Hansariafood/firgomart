@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import { ArrowRight } from 'lucide-react'
 import { getProductPath } from '@/utils/productUtils'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface TrendingProductsProps {
   onProductClick?: (product: Product) => void
@@ -17,11 +18,13 @@ export default function TrendingProducts({ onProductClick }: TrendingProductsPro
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { addToCart, setShowCart } = useCart()
+  const { countryCode } = useGeolocation()
 
   useEffect(() => {
     async function fetchTrending() {
       try {
-        const res = await fetch('/api/products?sortBy=rating&limit=10')
+        const countryParam = countryCode ? `&country=${encodeURIComponent(countryCode)}` : ''
+        const res = await fetch(`/api/products?sortBy=rating&limit=10${countryParam}`)
         const data = await res.json()
         const mappedProducts = (data.products || []).map((p: any) => ({
           ...p,
@@ -35,7 +38,7 @@ export default function TrendingProducts({ onProductClick }: TrendingProductsPro
       }
     }
     fetchTrending()
-  }, [])
+  }, [countryCode])
 
   const handleProductClick = (product: Product) => {
     if (onProductClick) {

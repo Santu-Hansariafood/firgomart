@@ -7,7 +7,8 @@ import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag, Gift, ShieldCheck } from "
 import FallbackImage from "@/components/common/Image/FallbackImage";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getMaxQuantity } from "@/utils/productUtils";
+import { useGeolocation } from "@/hooks/product-grid/useGeolocation";
+import { getMaxQuantity, getCurrencyForCountry } from "@/utils/productUtils";
 
 const CartPage = () => {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -15,6 +16,8 @@ const CartPage = () => {
   const router = useRouter();
   const [summary, setSummary] = useState({ subtotal: 0, tax: 0, deliveryFee: 0, total: 0 });
   const [loadingSummary, setLoadingSummary] = useState(true);
+  const { countryCode } = useGeolocation();
+  const currency = getCurrencyForCountry(countryCode);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -162,9 +165,15 @@ const CartPage = () => {
                   
                   <div className="flex items-end justify-between mt-4">
                     <div>
-                      <p className="text-xl sm:text-2xl font-bold text-[color:var(--foreground)]">₹{item.price}</p>
+                      <p className="text-xl sm:text-2xl font-bold text-[color:var(--foreground)]">
+                        {currency.symbol}
+                        {item.price}
+                      </p>
                       {item.originalPrice && item.originalPrice > item.price && (
-                        <p className="text-sm text-[var(--foreground)/40] line-through">₹{item.originalPrice}</p>
+                        <p className="text-sm text-[var(--foreground)/40] line-through">
+                          {currency.symbol}
+                          {item.originalPrice}
+                        </p>
                       )}
                     </div>
                     
@@ -199,32 +208,49 @@ const CartPage = () => {
               <div className="space-y-3 text-sm text-[color:var(--foreground)]/80">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-medium text-[color:var(--foreground)]">₹{subtotal.toFixed(2)}</span>
+                  <span className="font-medium text-[color:var(--foreground)]">
+                    {currency.symbol}
+                    {subtotal.toFixed(2)}
+                  </span>
                 </div>
                 
                 {summary.tax > 0 && (
                   <div className="flex justify-between">
                     <span>GST (Tax)</span>
-                    <span className="font-medium text-[color:var(--foreground)]">₹{summary.tax.toFixed(2)}</span>
+                    <span className="font-medium text-[color:var(--foreground)]">
+                      {currency.symbol}
+                      {summary.tax.toFixed(2)}
+                    </span>
                   </div>
                 )}
                 
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
-                  <span className="font-bold text-green-600">{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</span>
+                  <span className="font-bold text-green-600">
+                    {deliveryFee === 0 ? "FREE" : `${currency.symbol}${deliveryFee}`}
+                  </span>
                 </div>
 
                 <div className="flex justify-between text-green-600 dark:text-green-400">
                   <span>Platform Fees</span>
-                  <span className="font-medium">FREE (₹0)</span>
+                  <span className="font-medium">
+                    FREE ({currency.symbol}
+                    0)
+                  </span>
                 </div>
                 <div className="flex justify-between text-green-600 dark:text-green-400">
                   <span>Packaging Fees</span>
-                  <span className="font-medium">FREE (₹0)</span>
+                  <span className="font-medium">
+                    FREE ({currency.symbol}
+                    0)
+                  </span>
                 </div>
                 <div className="border-t border-[var(--foreground)/10] pt-4 mt-2 flex justify-between items-end">
                   <span className="font-bold text-base text-[color:var(--foreground)]">Total Amount</span>
-                  <span className="font-sans font-extrabold text-2xl text-[color:var(--foreground)]">₹{total.toFixed(2)}</span>
+                  <span className="font-sans font-extrabold text-2xl text-[color:var(--foreground)]">
+                    {currency.symbol}
+                    {total.toFixed(2)}
+                  </span>
                 </div>
               </div>
               

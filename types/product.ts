@@ -7,6 +7,7 @@ export interface Product {
   category: string
   subcategory?: string
   price: number
+  currencyCode?: string
   originalPrice?: number
   discount?: number
   rating?: number
@@ -19,6 +20,8 @@ export interface Product {
   reviews?: number
   stock?: number
   unitsPerPack?: number
+  availableCountry?: string
+  deliveryTimeDays?: number
   isAdminProduct?: boolean
   hsnCode?: string
   weight?: string | number

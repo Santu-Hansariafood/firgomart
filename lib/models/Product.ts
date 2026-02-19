@@ -7,6 +7,7 @@ export interface IProduct extends Document {
   category: string
   subcategory?: string
   price: number
+  currencyCode?: string
   originalPrice?: number
   discount?: number
   height?: number
@@ -35,6 +36,8 @@ export interface IProduct extends Document {
   sizes: string[]
   about?: string
   additionalInfo?: string
+   availableCountry?: string
+   deliveryTimeDays?: number
   unitsPerPack: number
   createdAt?: Date
   updatedAt?: Date
@@ -48,6 +51,7 @@ const ProductSchema = new Schema<IProduct>(
     category: { type: String, index: true },
     subcategory: { type: String, index: true },
     price: { type: Number, required: true },
+    currencyCode: { type: String },
     originalPrice: { type: Number },
     discount: { type: Number },
     height: { type: Number },
@@ -76,6 +80,8 @@ const ProductSchema = new Schema<IProduct>(
     sizes: { type: [String], default: [] },
     about: { type: String },
     additionalInfo: { type: String },
+    availableCountry: { type: String },
+    deliveryTimeDays: { type: Number },
     unitsPerPack: { type: Number, default: 1 },
   },
   { timestamps: true }

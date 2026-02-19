@@ -6,6 +6,18 @@ import { findSellerAcrossDBs } from "@/lib/models/Seller"
 import PDFDocument from "pdfkit"
 import fs from "fs"
 import path from "path"
+import { getCurrencyForCountry } from "@/utils/productUtils"
+
+function getCountryCodeFromName(country?: string) {
+  const raw = (country || "").trim().toLowerCase()
+  if (!raw) return "IN"
+  if (raw === "in" || raw === "india") return "IN"
+  if (raw.includes("saudi")) return "SA"
+  if (raw.includes("united states") || raw === "usa" || raw === "us") return "US"
+  if (raw.includes("united arab emirates") || raw === "uae" || raw.includes("dubai")) return "AE"
+  if (raw.includes("qatar")) return "QA"
+  return "IN"
+}
 
 export async function GET(request: Request, ctx: { params: Promise<{ id: string }> }) {
   try {
@@ -19,6 +31,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     const Product = getProductModel(conn)
     const doc = await (Order as any).findById(id).lean()
     if (!doc) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    const countryCode = getCountryCodeFromName(doc.country)
+    const { symbol: currencySymbol } = getCurrencyForCountry(countryCode)
 
     // Seller isolation logic
     if (!sellerEmail) return NextResponse.json({ error: "Seller email required" }, { status: 400 })
@@ -92,8 +106,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         const amt = qty * price
         pdf.text(String(it.name || ""), colItem, y, { width: 260 })
         pdf.text(String(qty), colQty, y)
-        pdf.text(`₹${price.toFixed(2)}`, colPrice, y)
-        pdf.text(`₹${amt.toFixed(2)}`, colAmt, y)
+        pdf.text(`${currencySymbol}${price.toFixed(2)}`, colPrice, y)
+        pdf.text(`${currencySymbol}${amt.toFixed(2)}`, colAmt, y)
         y += 18
       }
       pdf.moveTo(startX, y + 2).lineTo(pdf.page.width - 50, y + 2).stroke("#e5e7eb")
@@ -139,18 +153,18 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       }
 
       pdf.fontSize(12).fillColor("#111827").text("Subtotal", colPrice, y + 10)
-      pdf.text(`₹${sum.toFixed(2)}`, colAmt, y + 10)
+      pdf.text(`${currencySymbol}${sum.toFixed(2)}`, colAmt, y + 10)
       if (igst > 0) {
         pdf.text("IGST", colPrice, y + 28)
-        pdf.text(`₹${igst.toFixed(2)}`, colAmt, y + 28)
+        pdf.text(`${currencySymbol}${igst.toFixed(2)}`, colAmt, y + 28)
       } else {
         pdf.text("CGST", colPrice, y + 28)
-        pdf.text(`₹${cgst.toFixed(2)}`, colAmt, y + 28)
+        pdf.text(`${currencySymbol}${cgst.toFixed(2)}`, colAmt, y + 28)
         pdf.text("SGST", colPrice, y + 46)
-        pdf.text(`₹${sgst.toFixed(2)}`, colAmt, y + 46)
+        pdf.text(`${currencySymbol}${sgst.toFixed(2)}`, colAmt, y + 46)
       }
       pdf.font("Helvetica-Bold").text("Total", colPrice, y + (igst > 0 ? 46 : 64))
-      pdf.text(`₹${grand.toFixed(2)}`, colAmt, y + (igst > 0 ? 46 : 64))
+      pdf.text(`${currencySymbol}${grand.toFixed(2)}`, colAmt, y + (igst > 0 ? 46 : 64))
       pdf.end()
       await done
       const buf = Buffer.concat(chunks)

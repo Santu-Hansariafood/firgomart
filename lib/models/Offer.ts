@@ -11,6 +11,7 @@ export interface IOffer extends Document {
   active: boolean
   expiryDate?: Date
   order?: number
+  availableCountry?: string
   createdByEmail?: string
   createdAt?: Date
   updatedAt?: Date
@@ -28,6 +29,7 @@ const OfferSchema = new Schema<IOffer>(
     active: { type: Boolean, default: true, index: true },
     expiryDate: { type: Date },
     order: { type: Number, default: 0, index: true },
+    availableCountry: { type: String, index: true },
     createdByEmail: { type: String, index: true },
   },
   { timestamps: true }

@@ -1,9 +1,10 @@
 'use client'
 
-import React, { memo } from 'react'
+import React, { memo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Gift, Truck, ShieldCheck, CheckCircle2 } from 'lucide-react'
 import { Product } from '@/types/product'
+import { getCurrencyForCountry } from '@/utils/productUtils'
 
 interface ProductInfoProps {
   product: Product
@@ -28,6 +29,14 @@ const ProductInfo = memo(({
   handleBuyNow,
   maxQty
 }: ProductInfoProps) => {
+  const currency = getCurrencyForCountry(product.availableCountry)
+  const [showDeliveryDetails, setShowDeliveryDetails] = useState(false)
+
+  const estimatedDeliveryDate =
+    typeof product.deliveryTimeDays === 'number' && product.deliveryTimeDays > 0
+      ? new Date(Date.now() + product.deliveryTimeDays * 24 * 60 * 60 * 1000)
+      : null
+
   return (
     <div className="flex flex-col h-full">
       <div className="mb-6">
@@ -49,10 +58,10 @@ const ProductInfo = memo(({
       </div>
 
       <div className="flex items-end gap-3 mb-6 p-4 rounded-2xl bg-foreground/5 border border-foreground/5 dark:bg-white/5 dark:border-white/10">
-        <span className="text-3xl sm:text-4xl font-extrabold text-foreground dark:text-white">₹{product.price}</span>
+        <span className="text-3xl sm:text-4xl font-extrabold text-foreground dark:text-white">{currency.symbol}{product.price}</span>
         {product.originalPrice && (
           <span className="text-lg text-foreground/40 dark:text-white/40 line-through mb-1.5 font-medium">
-            ₹{product.originalPrice}
+            {currency.symbol}{product.originalPrice}
           </span>
         )}
         {product.discount && (
@@ -181,12 +190,20 @@ const ProductInfo = memo(({
           </div>
           <span className="text-[10px] font-bold uppercase text-foreground/60">Secure Payment</span>
         </div>
-        <div className="flex flex-col items-center text-center gap-2">
+        <button
+          type="button"
+          onClick={() => setShowDeliveryDetails((prev) => !prev)}
+          className="flex flex-col items-center text-center gap-2 focus:outline-none"
+        >
           <div className="p-2 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full">
             <Truck className="w-5 h-5" />
           </div>
-          <span className="text-[10px] font-bold uppercase text-foreground/60">Fast Delivery</span>
-        </div>
+          <span className="text-[10px] font-bold uppercase text-foreground/60">
+            {typeof product.deliveryTimeDays === 'number' && product.deliveryTimeDays > 0
+              ? `Delivery in ${product.deliveryTimeDays} days`
+              : 'Fast Delivery'}
+          </span>
+        </button>
         <div className="flex flex-col items-center text-center gap-2">
           <div className="p-2 bg-brand-purple/10 text-brand-purple dark:text-violet-300 rounded-full">
             <CheckCircle2 className="w-5 h-5" />
@@ -194,6 +211,36 @@ const ProductInfo = memo(({
           <span className="text-[10px] font-bold uppercase text-foreground/60">Quality Check</span>
         </div>
       </div>
+
+      {showDeliveryDetails && (
+        <div className="mt-4 p-4 rounded-2xl bg-foreground/5 border border-foreground/10 text-xs text-foreground/80">
+          <div className="flex items-center justify-between mb-1">
+            <span className="font-semibold tracking-wide uppercase">Expected Delivery</span>
+            <button
+              type="button"
+              onClick={() => setShowDeliveryDetails(false)}
+              className="text-foreground/50 hover:text-foreground text-[10px] font-medium"
+            >
+              Close
+            </button>
+          </div>
+          {estimatedDeliveryDate ? (
+            <p>
+              Order now to get it by{" "}
+              {estimatedDeliveryDate.toLocaleDateString(undefined, {
+                weekday: "short",
+                day: "numeric",
+                month: "short",
+              })}
+              {" "}({product.deliveryTimeDays} days).
+            </p>
+          ) : (
+            <p>
+              Delivery timelines depend on your location and courier partner. Exact date will be shown at checkout.
+            </p>
+          )}
+        </div>
+      )}
     </div>
   )
 })
