@@ -59,7 +59,13 @@ export async function GET(request: Request) {
     }
 
     if (countryParam) {
-      conditions.push({ availableCountry: countryParam })
+      conditions.push({
+        $or: [
+          { availableCountry: countryParam },
+          { availableCountry: { $exists: false } },
+          { availableCountry: "" },
+        ],
+      })
     }
 
     if (!createdByEmail && !adminOnly && !search) {
