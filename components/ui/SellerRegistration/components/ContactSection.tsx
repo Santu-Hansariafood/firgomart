@@ -115,7 +115,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({
             onChange={handleChange}
             onBlur={() => checkExists('phone', formData.phone)}
             required
-            pattern="[0-9]{10}"
+            pattern="[6-9][0-9]{9}"
             className={`w-full pl-11 pr-4 py-3.5 bg-[var(--background)] border rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-purple/20 transition-all duration-200 ${
               errors.phone 
                 ? 'border-red-500 focus:border-red-500' 

@@ -25,7 +25,7 @@ export const useSellerRegistration = () => {
     businessLogo: null,
   });
 
-  const { states, districts, setDistricts, handleStateChange } = useSellerLocation(formData.country);
+  const { states, districts, handleStateChange } = useSellerLocation(formData.country);
   
   const { 
     uploadingLogo, bankDocSrc, setBankDocSrc, croppingBankDoc, setCroppingBankDoc, 
@@ -130,8 +130,15 @@ export const useSellerRegistration = () => {
     if (name === "bankIfsc" && val.length === 11) {
       handleVerifyIfsc(val);
     }
-    if (name === "pincode" || name === "aadhaar" || name === "phone") {
+    if (name === "pincode" || name === "aadhaar") {
       val = val.replace(/\D/g, "");
+    }
+    if (name === "phone") {
+      val = val.replace(/\D/g, "");
+      val = val.replace(/^0+/, "");
+      if (val.length > 10) {
+        val = val.slice(0, 10);
+      }
     }
     if (name === "email") {
       val = val.trim();

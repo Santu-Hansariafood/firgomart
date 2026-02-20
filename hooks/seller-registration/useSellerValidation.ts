@@ -48,24 +48,27 @@ export const useSellerValidation = () => {
   }
 
   const validateField = (n: string, v: string) => {
+    const value = v.trim()
     if (n === 'email')
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : 'Invalid email format'
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? '' : 'Invalid email format'
     if (n === 'pincode')
-      return /^\d{6}$/.test(v) ? '' : 'Pincode must be 6 digits'
+      return /^\d{6}$/.test(value) ? '' : 'Pincode must be 6 digits'
     if (n === 'aadhaar')
-      return /^\d{12}$/.test(v) ? '' : 'Aadhaar must be 12 digits'
+      return /^\d{12}$/.test(value) ? '' : 'Aadhaar must be 12 digits'
+    if (n === 'phone')
+      return /^[6-9]\d{9}$/.test(value) ? '' : 'Enter a valid 10-digit mobile number'
     if (n === 'panNumber')
-      return /^[A-Z]{5}\d{4}[A-Z]$/.test(v) ? '' : 'Invalid PAN format'
+      return /^[A-Z]{5}\d{4}[A-Z]$/.test(value) ? '' : 'Invalid PAN format'
     if (n === 'gstNumber')
-      return /^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/.test(v)
+      return /^\d{2}[A-Z]{5}\d{4}[A-Z][A-Z0-9]Z[A-Z0-9]$/.test(value)
         ? ''
         : 'Invalid GST format'
     if (n === 'bankIfsc')
-      return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v) ? '' : 'Invalid IFSC format'
+      return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(value) ? '' : 'Invalid IFSC format'
     if (n === 'ownerName')
-      return /^[A-Za-z ]{2,}$/.test(v) ? '' : 'Enter a valid name'
+      return /^[A-Za-z ]{2,}$/.test(value) ? '' : 'Enter a valid name'
     if (n === 'businessName')
-      return /^[-&.A-Za-z0-9 ]{2,}$/.test(v)
+      return /^[-&.A-Za-z0-9 ]{2,}$/.test(value)
         ? ''
         : 'Enter a valid business name'
     return ''

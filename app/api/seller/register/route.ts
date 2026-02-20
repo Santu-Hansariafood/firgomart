@@ -45,9 +45,12 @@ export async function POST(request: Request) {
 
     const normalizedEmail = String(email).trim().toLowerCase()
     const normalizedPhone = String(phone).replace(/\D/g, "")
+    if (!/^[6-9]\d{9}$/.test(normalizedPhone)) {
+      return NextResponse.json({ error: "Invalid phone number" }, { status: 400 })
+    }
     const otpConn = await connectDB()
     const EmailOtp = getEmailOtpModel(otpConn)
-    const otpDoc = await (EmailOtp as any).findOne({ email: normalizedEmail, purpose: "seller-register" })
+    const otpDoc = await EmailOtp.findOne({ email: normalizedEmail, purpose: "seller-register" })
     const otpValid =
       otpDoc &&
       otpDoc.verified === true &&
@@ -56,7 +59,6 @@ export async function POST(request: Request) {
     if (!otpValid) {
       return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
     }
-
     const existingByEmail = await findSellerAcrossDBs({ email: normalizedEmail }, { lean: true })
     if (existingByEmail) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 })
@@ -67,7 +69,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
     }
 
-    let targetCountry = (country || "IN") as string
+    const targetCountry = (country || "IN") as string
     let targetLocation = location as string | undefined
     if (targetCountry === "IN" && !targetLocation) {
       const key = (state || "").toLowerCase()
@@ -100,7 +102,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const doc = await (Seller as any).create({
+    const doc = await Seller.create({
       businessName,
       ownerName,
       email: normalizedEmail,
@@ -134,7 +136,8 @@ export async function POST(request: Request) {
       businessLogoUrl: doc.businessLogoUrl,
     }
     return NextResponse.json({ seller: safe }, { status: 201 })
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "unknown"
+    return NextResponse.json({ error: "Server error", reason: message }, { status: 500 })
   }
 }

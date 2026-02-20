@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
 import { getUserModel } from "@/lib/models/User"
+import type { Connection } from "mongoose"
 
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
@@ -50,7 +51,7 @@ export async function GET(request: Request) {
     const sortBy = (url.searchParams.get("sortBy") || "createdAt").trim()
     const sortOrder = (url.searchParams.get("sortOrder") || "desc").trim().toLowerCase() === "asc" ? 1 : -1
 
-    const conns: any[] = []
+    const conns: Connection[] = []
     const pushConn = async (c?: string, l?: string) => {
       try { conns.push(await connectDB(c, l)) } catch {}
     }
@@ -68,11 +69,11 @@ export async function GET(request: Request) {
       await pushConn("EU")
     }
 
-    const items: any[] = []
+    const items: Record<string, unknown>[] = []
     const counts: number[] = []
     for (const conn of conns) {
       const User = getUserModel(conn)
-      const q: any = {}
+      const q: Record<string, unknown> = {}
       if (state) q.state = { $regex: new RegExp(`^${state}$`, "i") }
       if (search) {
         const r = new RegExp(search, "i")
@@ -85,24 +86,25 @@ export async function GET(request: Request) {
           { country: r },
         ]
       }
-      const part = await (User as any).find(q).lean()
-      const cnt = await (User as any).countDocuments(q)
+      const part = await User.find(q).lean()
+      const cnt = await User.countDocuments(q)
       items.push(...part)
       counts.push(cnt)
     }
     items.sort((a, b) => {
-      const av = a[sortBy]
-      const bv = b[sortBy]
+      const av = a[sortBy] as string | number | Date | undefined
+      const bv = b[sortBy] as string | number | Date | undefined
       if (av === bv) return 0
       if (av === undefined) return 1 * sortOrder
       if (bv === undefined) return -1 * sortOrder
       return av > bv ? sortOrder : -sortOrder
     })
 
-    const uniqueItems: any[] = []
+    const uniqueItems: Record<string, unknown>[] = []
     const seenEmails = new Set<string>()
     for (const item of items) {
-      const email = (item.email || "").toLowerCase().trim()
+      const u = item as { email?: string }
+      const email = (u.email || "").toLowerCase().trim()
       if (email) {
         if (!seenEmails.has(email)) {
           seenEmails.add(email)
@@ -116,22 +118,39 @@ export async function GET(request: Request) {
     const total = uniqueItems.length
     const start = (page - 1) * limit
     const pageItems = uniqueItems.slice(start, start + limit)
-    const safe = pageItems.map((u: any) => ({
-      id: u._id?.toString?.() || String(u._id),
-      name: u.name,
-      email: u.email,
-      mobile: u.mobile,
-      address: u.address,
-      city: u.city,
-      state: u.state,
-      pincode: u.pincode,
-      dateOfBirth: u.dateOfBirth,
-      gender: u.gender,
-      country: u.country,
-      createdAt: u.createdAt,
-    }))
+    const safe = pageItems.map((u) => {
+      const user = u as {
+        _id?: { toString(): string } | string
+        name?: string
+        email?: string
+        mobile?: string
+        address?: string
+        city?: string
+        state?: string
+        pincode?: string
+        dateOfBirth?: string
+        gender?: string
+        country?: string
+        createdAt?: string
+      }
+      return {
+        id: typeof user._id === "object" && user._id && "toString" in user._id ? user._id.toString() : String(user._id),
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
+        dateOfBirth: user.dateOfBirth,
+        gender: user.gender,
+        country: user.country,
+        createdAt: user.createdAt,
+      }
+    })
     return NextResponse.json({ buyers: safe, total })
-  } catch (err: any) {
-    return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "unknown"
+    return NextResponse.json({ error: "Server error", reason: message }, { status: 500 })
   }
 }

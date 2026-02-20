@@ -1181,39 +1181,6 @@
       ]
     },
     {
-      "country": "United Arab Emirates",
-      "states": [
-        {
-          "state": "Abu Dhabi",
-          "districts": ["Abu Dhabi City", "Al Ain", "Madinat Zayed"]
-        },
-        {
-          "state": "Dubai",
-          "districts": ["Deira", "Bur Dubai", "Jumeirah"]
-        },
-        {
-          "state": "Sharjah",
-          "districts": ["Sharjah City", "Khor Fakkan", "Kalba"]
-        },
-        {
-          "state": "Ajman",
-          "districts": ["Ajman City", "Masfout", "Manama"]
-        },
-        {
-          "state": "Umm Al Quwain",
-          "districts": ["Umm Al Quwain City"]
-        },
-        {
-          "state": "Ras Al Khaimah",
-          "districts": ["RAK City", "Al Hamra", "Digdaga"]
-        },
-        {
-          "state": "Fujairah",
-          "districts": ["Fujairah City", "Dibba", "Masafi"]
-        }
-      ]
-    },
-    {
       "country": "Qatar",
       "states": [
         {

@@ -79,6 +79,10 @@ export default function Page() {
   const [sortKey, setSortKey] = useState<string | null>("createdAt")
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc")
 
+  const [editingBuyer, setEditingBuyer] = useState<Buyer | null>(null)
+  const [editForm, setEditForm] = useState<Partial<Buyer> | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+
   const loadBuyers = async () => {
     setLoading(true)
     try {
@@ -116,6 +120,92 @@ export default function Page() {
     loadBuyers()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allowed, page, selectedCountry, selectedState, search, sortKey, sortOrder])
+
+  const adminEmailHeader = (session?.user?.email || authUser?.email || "").trim()
+
+  const openEdit = (buyer: Buyer) => {
+    setEditingBuyer(buyer)
+    setEditForm({
+      id: buyer.id,
+      name: buyer.name || "",
+      mobile: buyer.mobile || "",
+      address: buyer.address || "",
+      city: buyer.city || "",
+      state: buyer.state || "",
+      pincode: buyer.pincode || "",
+      country: buyer.country || "",
+      dateOfBirth: buyer.dateOfBirth || "",
+      gender: buyer.gender || "",
+    })
+  }
+
+  const handleDelete = async (buyer: Buyer) => {
+    if (!buyer.id) return
+    if (typeof window !== "undefined") {
+      const ok = window.confirm(`Delete buyer ${buyer.email}?`)
+      if (!ok) return
+    }
+    setActionLoading(true)
+    try {
+      const res = await fetch(`/api/admin/buyers/${buyer.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmailHeader ? { "x-admin-email": adminEmailHeader } : {}),
+        },
+      })
+      if (res.ok) {
+        await loadBuyers()
+      }
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleEditChange = (field: keyof Buyer, value: string) => {
+    if (!editForm) return
+    setEditForm({ ...editForm, [field]: value })
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editForm || !editingBuyer) return
+    const id = editingBuyer.id
+    if (!id) return
+    setActionLoading(true)
+    try {
+      const payload = {
+        name: (editForm.name || "").trim(),
+        mobile: (editForm.mobile || "").trim(),
+        address: (editForm.address || "").trim(),
+        city: (editForm.city || "").trim(),
+        state: (editForm.state || "").trim(),
+        pincode: (editForm.pincode || "").trim(),
+        country: (editForm.country || "").trim(),
+        dateOfBirth: (editForm.dateOfBirth || "").trim(),
+        gender: (editForm.gender || "").trim(),
+      }
+      const res = await fetch(`/api/admin/buyers/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(adminEmailHeader ? { "x-admin-email": adminEmailHeader } : {}),
+        },
+        body: JSON.stringify(payload),
+      })
+      if (res.ok) {
+        setEditingBuyer(null)
+        setEditForm(null)
+        await loadBuyers()
+      }
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const closeEdit = () => {
+    setEditingBuyer(null)
+    setEditForm(null)
+  }
 
   return (
     <Suspense fallback={<Loading />}>
@@ -176,6 +266,25 @@ export default function Page() {
                 { key: "state", label: "State", sortable: true },
                 { key: "country", label: "Country", sortable: true },
                 { key: "createdAt", label: "Registered", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleString() : "" },
+                { key: "actions", label: "Actions", render: (r) => (
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-xs rounded bg-blue-600 text-white hover:bg-blue-700"
+                      onClick={() => openEdit(r as Buyer)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-xs rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
+                      disabled={actionLoading}
+                      onClick={() => handleDelete(r as Buyer)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ) },
               ]}
               data={buyers}
               sortOrder={sortOrder}
@@ -192,6 +301,105 @@ export default function Page() {
             onPageChange={(p) => setPage(p)}
           />
         </div>
+        {editingBuyer && editForm && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg space-y-4">
+              <h2 className="text-lg font-semibold mb-2">Edit Buyer</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium mb-1">Name</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.name || ""}
+                    onChange={(e) => handleEditChange("name", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Mobile</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.mobile || ""}
+                    onChange={(e) => handleEditChange("mobile", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">City</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.city || ""}
+                    onChange={(e) => handleEditChange("city", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">State</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.state || ""}
+                    onChange={(e) => handleEditChange("state", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Pincode</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.pincode || ""}
+                    onChange={(e) => handleEditChange("pincode", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Country</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.country || ""}
+                    onChange={(e) => handleEditChange("country", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Date of Birth</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.dateOfBirth || ""}
+                    onChange={(e) => handleEditChange("dateOfBirth", e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Gender</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.gender || ""}
+                    onChange={(e) => handleEditChange("gender", e.target.value)}
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-xs font-medium mb-1">Address</label>
+                  <input
+                    className="w-full border rounded px-2 py-1 text-sm"
+                    value={editForm.address || ""}
+                    onChange={(e) => handleEditChange("address", e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-3 py-1.5 text-sm rounded border border-gray-300"
+                  onClick={closeEdit}
+                  disabled={actionLoading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                  onClick={handleSaveEdit}
+                  disabled={actionLoading}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     )}
     </Suspense>

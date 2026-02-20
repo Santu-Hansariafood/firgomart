@@ -1,6 +1,39 @@
 import { Connection, Schema, Model } from "mongoose"
 
-const SellerSchema = new Schema(
+type SellerDoc = {
+  businessName: string
+  ownerName: string
+  email: string
+  phone: string
+  address?: string
+  country?: string
+  state?: string
+  district?: string
+  city?: string
+  pincode?: string
+  gstNumber?: string
+  panNumber?: string
+  aadhaar?: string
+  hasGST: boolean
+  businessLogoUrl?: string
+  documentUrls: string[]
+  bankAccount?: string
+  bankIfsc?: string
+  bankName?: string
+  bankBranch?: string
+  bankDocumentUrl?: string
+  status: string
+  reviewNotes?: string
+  rejectionReason?: string
+  reviewedBy?: string
+  reviewedAt?: Date
+  loginOtp?: string
+  loginOtpExpires?: Date
+  createdAt?: Date
+  updatedAt?: Date
+}
+
+const SellerSchema = new Schema<SellerDoc>(
   {
     businessName: { type: String, required: true },
     ownerName: { type: String, required: true },
@@ -34,10 +67,10 @@ const SellerSchema = new Schema(
   { timestamps: true }
 )
 
-export function getSellerModel(conn: Connection) {
-  const models = conn.models as Record<string, Model<unknown>>
-  const existing = models.Seller as Model<unknown> | undefined
-  return existing ?? conn.model("Seller", SellerSchema)
+export function getSellerModel(conn: Connection): Model<SellerDoc> {
+  const models = conn.models as Record<string, Model<SellerDoc>>
+  const existing = models.Seller
+  return existing ?? conn.model<SellerDoc>("Seller", SellerSchema)
 }
 
 export async function findSellerAcrossDBs(
@@ -64,8 +97,8 @@ export async function findSellerAcrossDBs(
     if (Object.keys(query).length === 0) continue
 
     const doc = options?.lean
-      ? await (Seller as any).findOne(query).lean()
-      : await (Seller as any).findOne(query)
+      ? await Seller.findOne(query).lean()
+      : await Seller.findOne(query)
     if (doc) return { conn, Seller, seller: doc }
   }
   return null

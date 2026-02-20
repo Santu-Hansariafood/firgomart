@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
 
   description:
-    "FirgoMart is a global e-commerce platform offering fashion, beauty, footwear, jewellery, home essentials and daily-use products. Fast international delivery from India to Saudi Arabia, Dubai, Qatar, USA & more.",
+    "FirgoMart is a global e-commerce platform offering fashion, beauty, footwear, jewellery, home essentials and daily-use products. Fast international delivery from India to Saudi Arabia, United Arab Emirates (Dubai), Qatar and the United States.",
 
   keywords: [
     "FirgoMart",
@@ -35,10 +35,16 @@ export const metadata: Metadata = {
     "beauty products",
     "jewellery online",
     "home essentials",
-    "India to Saudi delivery",
+    "India",
+    "Saudi Arabia",
+    "United Arab Emirates",
+    "Qatar",
+    "United States",
+    "India to Saudi Arabia delivery",
+    "India to United Arab Emirates shopping",
     "India to Dubai shopping",
-    "India to Qatar",
-    "India to USA",
+    "India to Qatar delivery",
+    "India to United States delivery",
     ...(((categoriesData as { categories: Array<{ name: string; subcategories?: string[] }> }).categories || []).flatMap((c) => {
       const subs = Array.isArray(c.subcategories) ? c.subcategories : [];
       return [c.name, ...subs];

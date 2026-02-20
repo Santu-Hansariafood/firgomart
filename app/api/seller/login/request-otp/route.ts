@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     if (!result) {
       return NextResponse.json({ error: "Seller not found" }, { status: 404 })
     }
-    const s = result.seller as SellerDoc
+    const s = result.seller as unknown as SellerDoc
     const approved = String(s.status || "").toLowerCase() === "approved"
     if (!approved) {
       return NextResponse.json({ error: "Seller not approved" }, { status: 403 })
