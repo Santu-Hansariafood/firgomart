@@ -7,7 +7,14 @@ export async function GET() {
     const conn = await connectDB()
     const Team = getTeamModel(conn)
     const teams = await Team.find({}).sort({ order: 1, createdAt: -1 }).lean()
-    return NextResponse.json({ teams })
+    return NextResponse.json(
+      { teams },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    )
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch teams" }, { status: 500 })
   }

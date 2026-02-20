@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     }
 
     if (email) {
-      const cross = await findUserAcrossDBs(email)
+      const cross = await findUserAcrossDBs(email, { lean: true })
       if (cross) {
         return NextResponse.json(
           { error: "Email already registered", redirectTo: "/login" },
@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     if (mobile) {
-      const crossMobile = await findUserAcrossDBs({ mobile })
+      const crossMobile = await findUserAcrossDBs({ mobile }, { lean: true })
       if (crossMobile) {
         return NextResponse.json(
           { error: "Phone number already registered" },

@@ -57,12 +57,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Email not verified by OTP" }, { status: 403 })
     }
 
-    const existingByEmail = await findSellerAcrossDBs({ email: normalizedEmail })
+    const existingByEmail = await findSellerAcrossDBs({ email: normalizedEmail }, { lean: true })
     if (existingByEmail) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 })
     }
 
-    const existingByPhone = await findSellerAcrossDBs({ phone: normalizedPhone })
+    const existingByPhone = await findSellerAcrossDBs({ phone: normalizedPhone }, { lean: true })
     if (existingByPhone) {
       return NextResponse.json({ error: "Phone already registered" }, { status: 409 })
     }
@@ -87,14 +87,14 @@ export async function POST(request: Request) {
     const Seller = getSellerModel(conn)
 
     if (gstNumber) {
-      const existingByGst = await findSellerAcrossDBs({ gstNumber: String(gstNumber).trim().toUpperCase() })
+      const existingByGst = await findSellerAcrossDBs({ gstNumber: String(gstNumber).trim().toUpperCase() }, { lean: true })
       if (existingByGst) {
         return NextResponse.json({ error: "GST Number already registered" }, { status: 409 })
       }
     }
 
     if (panNumber) {
-      const existingByPan = await findSellerAcrossDBs({ panNumber: String(panNumber).trim().toUpperCase() })
+      const existingByPan = await findSellerAcrossDBs({ panNumber: String(panNumber).trim().toUpperCase() }, { lean: true })
       if (existingByPan) {
         return NextResponse.json({ error: "PAN Number already registered" }, { status: 409 })
       }

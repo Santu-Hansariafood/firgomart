@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const existingSeller = await findSellerAcrossDBs({ email: normalized });
+    const existingSeller = await findSellerAcrossDBs({ email: normalized }, { lean: true });
     if (existingSeller) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 });
     }

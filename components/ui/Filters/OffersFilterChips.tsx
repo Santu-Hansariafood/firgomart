@@ -14,6 +14,8 @@ export type Offer = {
   expiryDate?: string
   category?: string
   subcategory?: string
+  backgroundClassName?: string
+  isFestive?: boolean
 }
 
 type Props = {

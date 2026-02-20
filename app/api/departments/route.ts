@@ -7,7 +7,14 @@ export async function GET() {
     const conn = await connectDB()
     const Department = getDepartmentModel(conn)
     const departments = await Department.find({}).sort({ order: 1 }).lean()
-    return NextResponse.json({ departments })
+    return NextResponse.json(
+      { departments },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    )
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch departments" }, { status: 500 })
   }

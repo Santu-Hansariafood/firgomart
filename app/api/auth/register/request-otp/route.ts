@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
       return NextResponse.json({ error: "Invalid email format" }, { status: 400 })
     }
-    const existingUser = await findUserAcrossDBs(normalized)
+    const existingUser = await findUserAcrossDBs(normalized, { lean: true })
     if (existingUser) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 })
     }
@@ -83,4 +83,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Server error", reason }, { status: 500 })
   }
 }
-

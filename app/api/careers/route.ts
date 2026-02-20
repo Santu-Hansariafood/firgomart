@@ -7,7 +7,14 @@ export async function GET() {
     const conn = await connectDB()
     const Career = getCareerModel(conn)
     const careers = await Career.find({ isActive: true }).sort({ createdAt: -1 }).lean()
-    return NextResponse.json({ careers })
+    return NextResponse.json(
+      { careers },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    )
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch careers" }, { status: 500 })
   }

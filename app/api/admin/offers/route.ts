@@ -73,6 +73,8 @@ export async function POST(request: Request) {
     const expiryDate = body?.expiryDate ? new Date(body.expiryDate) : undefined
     const order = typeof body?.order === "number" ? body.order : 0
     const availableCountry = body?.availableCountry ? String(body.availableCountry).trim() : undefined
+    const backgroundClassName = body?.backgroundClassName ? String(body.backgroundClassName).trim() : undefined
+    const isFestive = !!body?.isFestive
     if (!key || !name || !type) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
 
     const conn = await connectDB()
@@ -89,6 +91,8 @@ export async function POST(request: Request) {
       expiryDate,
       order,
       availableCountry,
+      backgroundClassName,
+      isFestive,
       createdByEmail: auth.adminEmail || undefined,
     })
     return NextResponse.json({ offer: doc.toObject() }, { status: 201 })
@@ -118,6 +122,8 @@ export async function PUT(request: Request) {
     if (body?.expiryDate !== undefined) update.expiryDate = body.expiryDate ? new Date(body.expiryDate) : null
     if (typeof body?.order === "number") update.order = body.order
     if (typeof body?.availableCountry === "string") update.availableCountry = String(body.availableCountry).trim()
+    if (typeof body?.backgroundClassName === "string") update.backgroundClassName = String(body.backgroundClassName).trim()
+    if (body?.isFestive !== undefined) update.isFestive = !!body.isFestive
     if (!Object.keys(update).length) return NextResponse.json({ error: "Invalid payload" }, { status: 400 })
 
     const conn = await connectDB()

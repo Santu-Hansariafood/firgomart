@@ -1,1281 +1,1308 @@
 {
-    "countries": [
+  "countries": [
+    {
+      "country": "India",
+      "states": [
         {
-            "country": "India",
-            "states": [
-                {
-                    "state": "Andaman and Nicobar Islands",
-                    "districts": [
-                        "North and Middle Andaman",
-                        "South Andaman",
-                        "Nicobar"
-                    ]
-                },
-                {
-                    "state": "Andhra Pradesh",
-                    "districts": [
-                        "Alluri Sitharama Raju",
-                        "Anakapalli",
-                        "Anantapur",
-                        "Annamayya",
-                        "Bapatla",
-                        "Chittoor",
-                        "Dr. B. R. Ambedkar Konaseema",
-                        "East Godavari",
-                        "Eluru",
-                        "Guntur",
-                        "Kakinada",
-                        "Krishna",
-                        "Kurnool",
-                        "Nandyal",
-                        "NTR",
-                        "Palnadu",
-                        "Parvathipuram Manyam",
-                        "Prakasam",
-                        "Sri Potti Sriramulu Nellore",
-                        "Srikakulam",
-                        "Sri Sathya Sai",
-                        "Tirupati",
-                        "Visakhapatnam",
-                        "Vizianagaram",
-                        "West Godavari",
-                        "YSR",
-                        "Polavaram",
-                        "Markapuram",
-                        "Madanapalle"
-                    ]
-                },
-                {
-                    "state": "Arunachal Pradesh",
-                    "districts": [
-                        "Anjaw",
-                        "Bichom",
-                        "Changlang",
-                        "Dibang Valley",
-                        "East Kameng",
-                        "East Siang",
-                        "Kamle",
-                        "Kra Daadi",
-                        "Kurung Kumey",
-                        "Keyi Panyor",
-                        "Lepa-Rada",
-                        "Lohit",
-                        "Longding",
-                        "Lower Dibang Valley",
-                        "Lower Siang",
-                        "Lower Subansiri",
-                        "Namsai",
-                        "Pakke-Kessang",
-                        "Papum Pare",
-                        "Shi-Yomi",
-                        "Siang",
-                        "Tawang",
-                        "Tirap",
-                        "Upper Siang",
-                        "Upper Subansiri",
-                        "West Kameng",
-                        "West Siang"
-                    ]
-                },
-                {
-                    "state": "Assam",
-                    "districts": [
-                        "Baksa",
-                        "Barpeta",
-                        "Biswanath",
-                        "Bongaigaon",
-                        "Cachar",
-                        "Charaideo",
-                        "Chirang",
-                        "Darrang",
-                        "Dhemaji",
-                        "Dhubri",
-                        "Dibrugarh",
-                        "Dima Hasao",
-                        "Goalpara",
-                        "Golaghat",
-                        "Hailakandi",
-                        "Hojai",
-                        "Jorhat",
-                        "Kamrup",
-                        "Kamrup Metropolitan",
-                        "Karbi Anglong",
-                        "Karimganj",
-                        "Kokrajhar",
-                        "Lakhimpur",
-                        "Majuli",
-                        "Morigaon",
-                        "Nagaon",
-                        "Nalbari",
-                        "Sivasagar",
-                        "Sonitpur",
-                        "South Salmara-Mankachar",
-                        "Tamulpur",
-                        "Tinsukia",
-                        "Udalguri",
-                        "West Karbi Anglong"
-                    ]
-                },
-                {
-                    "state": "Bihar",
-                    "districts": [
-                        "Araria",
-                        "Arwal",
-                        "Aurangabad",
-                        "Banka",
-                        "Begusarai",
-                        "Bhagalpur",
-                        "Bhojpur",
-                        "Buxar",
-                        "Darbhanga",
-                        "East Champaran",
-                        "Gaya",
-                        "Gopalganj",
-                        "Jamui",
-                        "Jehanabad",
-                        "Kaimur",
-                        "Katihar",
-                        "Khagaria",
-                        "Kishanganj",
-                        "Lakhisarai",
-                        "Madhepura",
-                        "Madhubani",
-                        "Munger",
-                        "Muzaffarpur",
-                        "Nalanda",
-                        "Nawada",
-                        "Patna",
-                        "Purnia",
-                        "Rohtas",
-                        "Saharsa",
-                        "Samastipur",
-                        "Saran",
-                        "Sheikhpura",
-                        "Sheohar",
-                        "Sitamarhi",
-                        "Siwan",
-                        "Supaul",
-                        "Vaishali",
-                        "West Champaran"
-                    ]
-                },
-                {
-                    "state": "Chandigarh",
-                    "districts": [
-                        "Chandigarh"
-                    ]
-                },
-                {
-                    "state": "Chhattisgarh",
-                    "districts": [
-                        "Balod",
-                        "Baloda Bazar",
-                        "Balrampur",
-                        "Bastar",
-                        "Bemetara",
-                        "Bijapur",
-                        "Bilaspur",
-                        "Dantewada",
-                        "Dhamtari",
-                        "Durg",
-                        "Gariaband",
-                        "Gaurela-Pendra-Marwahi",
-                        "Janjgir-Champa",
-                        "Jashpur",
-                        "Kabirdham",
-                        "Kanker",
-                        "Kondagaon",
-                        "Korba",
-                        "Koriya",
-                        "Mahasamund",
-                        "Mungeli",
-                        "Narayanpur",
-                        "Raigarh",
-                        "Raipur",
-                        "Rajnandgaon",
-                        "Sarangarh-Bilaigarh",
-                        "Sakti",
-                        "Sukma",
-                        "Surguja",
-                        "Khairagarh-Chhuikhadan-Gandai"
-                    ]
-                },
-                {
-                    "state": "Dadra and Nagar Haveli and Daman and Diu",
-                    "districts": [
-                        "Daman",
-                        "Diu",
-                        "Dadra and Nagar Haveli"
-                    ]
-                },
-                {
-                    "state": "Delhi",
-                    "districts": [
-                        "New Delhi",
-                        "Central",
-                        "East",
-                        "North",
-                        "North East",
-                        "North West",
-                        "South",
-                        "South East",
-                        "South West",
-                        "West",
-                        "Old Delhi",
-                        "Central North",
-                        "Outer North"
-                    ]
-                },
-                {
-                    "state": "Goa",
-                    "districts": [
-                        "North Goa",
-                        "South Goa"
-                    ]
-                },
-                {
-                    "state": "Gujarat",
-                    "districts": [
-                        "Ahmedabad",
-                        "Amreli",
-                        "Anand",
-                        "Aravalli",
-                        "Banaskantha",
-                        "Bharuch",
-                        "Bhavnagar",
-                        "Botad",
-                        "Chhota Udepur",
-                        "Dahod",
-                        "Dang",
-                        "Devbhumi Dwarka",
-                        "Gandhinagar",
-                        "Gir Somnath",
-                        "Jamnagar",
-                        "Junagadh",
-                        "Kheda",
-                        "Kutch",
-                        "Mahisagar",
-                        "Mehsana",
-                        "Morbi",
-                        "Narmada",
-                        "Navsari",
-                        "Panchmahal",
-                        "Patan",
-                        "Porbandar",
-                        "Rajkot",
-                        "Sabarkantha",
-                        "Surat",
-                        "Surendranagar",
-                        "Tapi",
-                        "Vadodara",
-                        "Valsad"
-                    ]
-                },
-                {
-                    "state": "Haryana",
-                    "districts": [
-                        "Ambala",
-                        "Bhiwani",
-                        "Charkhi Dadri",
-                        "Faridabad",
-                        "Fatehabad",
-                        "Gurugram",
-                        "Hisar",
-                        "Jhajjar",
-                        "Jind",
-                        "Kaithal",
-                        "Karnal",
-                        "Kurukshetra",
-                        "Mahendragarh",
-                        "Nuh",
-                        "Palwal",
-                        "Panchkula",
-                        "Panipat",
-                        "Rewari",
-                        "Rohtak",
-                        "Sirsa",
-                        "Sonipat",
-                        "Yamunanagar"
-                    ]
-                },
-                {
-                    "state": "Himachal Pradesh",
-                    "districts": [
-                        "Bilaspur",
-                        "Chamba",
-                        "Hamirpur",
-                        "Kangra",
-                        "Kinnaur",
-                        "Kullu",
-                        "Lahaul and Spiti",
-                        "Mandi",
-                        "Shimla",
-                        "Sirmaur",
-                        "Solan",
-                        "Una"
-                    ]
-                },
-                {
-                    "state": "Jammu and Kashmir",
-                    "districts": [
-                        "Anantnag",
-                        "Bandipora",
-                        "Baramulla",
-                        "Budgam",
-                        "Doda",
-                        "Ganderbal",
-                        "Jammu",
-                        "Kathua",
-                        "Kishtwar",
-                        "Kulgam",
-                        "Kupwara",
-                        "Poonch",
-                        "Pulwama",
-                        "Rajouri",
-                        "Ramban",
-                        "Reasi",
-                        "Samba",
-                        "Shopian",
-                        "Srinagar",
-                        "Udhampur"
-                    ]
-                },
-                {
-                    "state": "Jharkhand",
-                    "districts": [
-                        "Bokaro",
-                        "Chatra",
-                        "Deoghar",
-                        "Dhanbad",
-                        "Dumka",
-                        "East Singhbhum",
-                        "Garhwa",
-                        "Giridih",
-                        "Godda",
-                        "Gumla",
-                        "Hazaribagh",
-                        "Jamtara",
-                        "Khunti",
-                        "Koderma",
-                        "Latehar",
-                        "Lohardaga",
-                        "Pakur",
-                        "Palamu",
-                        "Ramgarh",
-                        "Ranchi",
-                        "Sahibganj",
-                        "Seraikela Kharsawan",
-                        "Simdega",
-                        "West Singhbhum"
-                    ]
-                },
-                {
-                    "state": "Karnataka",
-                    "districts": [
-                        "Bagalkot",
-                        "Ballari",
-                        "Belagavi",
-                        "Bengaluru Rural",
-                        "Bengaluru Urban",
-                        "Bidar",
-                        "Chamarajanagar",
-                        "Chikkaballapur",
-                        "Chikkamagaluru",
-                        "Chitradurga",
-                        "Dakshina Kannada",
-                        "Davanagere",
-                        "Dharwad",
-                        "Gadag",
-                        "Hassan",
-                        "Haveri",
-                        "Kalaburagi",
-                        "Kodagu",
-                        "Kolar",
-                        "Koppal",
-                        "Mandya",
-                        "Mysuru",
-                        "Raichur",
-                        "Ramanagara",
-                        "Shivamogga",
-                        "Tumakuru",
-                        "Udupi",
-                        "Uttara Kannada",
-                        "Vijayanagara",
-                        "Vijayapura",
-                        "Yadgir"
-                    ]
-                },
-                {
-                    "state": "Kerala",
-                    "districts": [
-                        "Alappuzha",
-                        "Ernakulam",
-                        "Idukki",
-                        "Kannur",
-                        "Kasaragod",
-                        "Kollam",
-                        "Kottayam",
-                        "Kozhikode",
-                        "Malappuram",
-                        "Palakkad",
-                        "Pathanamthitta",
-                        "Thiruvananthapuram",
-                        "Thrissur",
-                        "Wayanad"
-                    ]
-                },
-                {
-                    "state": "Ladakh",
-                    "districts": [
-                        "Leh",
-                        "Kargil",
-                        "Drass",
-                        "Zanskar",
-                        "Sham",
-                        "Nubra",
-                        "Changthang"
-                    ]
-                },
-                {
-                    "state": "Lakshadweep",
-                    "districts": [
-                        "Lakshadweep"
-                    ]
-                },
-                {
-                    "state": "Madhya Pradesh",
-                    "districts": [
-                        "Agar Malwa",
-                        "Alirajpur",
-                        "Anuppur",
-                        "Ashoknagar",
-                        "Balaghat",
-                        "Barwani",
-                        "Betul",
-                        "Bhind",
-                        "Bhopal",
-                        "Burhanpur",
-                        "Chhatarpur",
-                        "Chhindwara",
-                        "Damoh",
-                        "Datia",
-                        "Dewas",
-                        "Dhar",
-                        "Dindori",
-                        "Guna",
-                        "Gwalior",
-                        "Harda",
-                        "Hoshangabad",
-                        "Indore",
-                        "Jabalpur",
-                        "Jhabua",
-                        "Katni",
-                        "Khandwa",
-                        "Khargone",
-                        "Mandla",
-                        "Mandsaur",
-                        "Morena",
-                        "Narsinghpur",
-                        "Neemuch",
-                        "Niwari",
-                        "Panna",
-                        "Raisen",
-                        "Rajgarh",
-                        "Ratlam",
-                        "Rewa",
-                        "Sagar",
-                        "Satna",
-                        "Sehore",
-                        "Seoni",
-                        "Shahdol",
-                        "Shajapur",
-                        "Sheopur",
-                        "Shivpuri",
-                        "Sidhi",
-                        "Singrauli",
-                        "Tikamgarh",
-                        "Ujjain",
-                        "Umaria",
-                        "Vidisha",
-                        "Mauganj",
-                        "Maihar",
-                        "Chachoura",
-                        "Pandhurna"
-                    ]
-                },
-                {
-                    "state": "Maharashtra",
-                    "districts": [
-                        "Ahmednagar",
-                        "Akola",
-                        "Amravati",
-                        "Aurangabad",
-                        "Beed",
-                        "Bhandara",
-                        "Buldhana",
-                        "Chandrapur",
-                        "Dhule",
-                        "Gadchiroli",
-                        "Gondia",
-                        "Hingoli",
-                        "Jalgaon",
-                        "Jalna",
-                        "Kolhapur",
-                        "Latur",
-                        "Mumbai City",
-                        "Mumbai Suburban",
-                        "Nagpur",
-                        "Nanded",
-                        "Nandurbar",
-                        "Nashik",
-                        "Osmanabad",
-                        "Palghar",
-                        "Parbhani",
-                        "Pune",
-                        "Raigad",
-                        "Ratnagiri",
-                        "Sangli",
-                        "Satara",
-                        "Sindhudurg",
-                        "Solapur",
-                        "Thane",
-                        "Wardha",
-                        "Washim",
-                        "Yavatmal"
-                    ]
-                },
-                {
-                    "state": "Manipur",
-                    "districts": [
-                        "Bishnupur",
-                        "Chandel",
-                        "Churachandpur",
-                        "Imphal East",
-                        "Imphal West",
-                        "Jiribam",
-                        "Kakching",
-                        "Kamjong",
-                        "Kangpokpi",
-                        "Noney",
-                        "Pherzawl",
-                        "Senapati",
-                        "Tamenglong",
-                        "Tengnoupal",
-                        "Thoubal",
-                        "Ukhrul"
-                    ]
-                },
-                {
-                    "state": "Meghalaya",
-                    "districts": [
-                        "East Garo Hills",
-                        "East Jaintia Hills",
-                        "East Khasi Hills",
-                        "Eastern West Khasi Hills",
-                        "North Garo Hills",
-                        "Ri Bhoi",
-                        "South Garo Hills",
-                        "South West Garo Hills",
-                        "South West Khasi Hills",
-                        "West Garo Hills",
-                        "West Jaintia Hills",
-                        "West Khasi Hills"
-                    ]
-                },
-                {
-                    "state": "Mizoram",
-                    "districts": [
-                        "Aizawl",
-                        "Champhai",
-                        "Hnahthial",
-                        "Khawzawl",
-                        "Kolasib",
-                        "Lawngtlai",
-                        "Lunglei",
-                        "Mamit",
-                        "Saiha",
-                        "Saitual",
-                        "Serchhip"
-                    ]
-                },
-                {
-                    "state": "Nagaland",
-                    "districts": [
-                        "Chümoukedima",
-                        "Dimapur",
-                        "Kiphire",
-                        "Kohima",
-                        "Longleng",
-                        "Mokokchung",
-                        "Mon",
-                        "Niuland",
-                        "Noklak",
-                        "Peren",
-                        "Phek",
-                        "Shamator",
-                        "Tseminyü",
-                        "Tuensang",
-                        "Wokha",
-                        "Zunheboto"
-                    ]
-                },
-                {
-                    "state": "Odisha",
-                    "districts": [
-                        "Angul",
-                        "Balangir",
-                        "Balasore",
-                        "Bargarh",
-                        "Bhadrak",
-                        "Boudh",
-                        "Cuttack",
-                        "Deogarh",
-                        "Dhenkanal",
-                        "Gajapati",
-                        "Ganjam",
-                        "Jagatsinghpur",
-                        "Jajpur",
-                        "Jharsuguda",
-                        "Kalahandi",
-                        "Kandhamal",
-                        "Kendrapara",
-                        "Kendujhar",
-                        "Khordha",
-                        "Koraput",
-                        "Malkangiri",
-                        "Mayurbhanj",
-                        "Nabarangpur",
-                        "Nayagarh",
-                        "Nuapada",
-                        "Puri",
-                        "Rayagada",
-                        "Sambalpur",
-                        "Subarnapur",
-                        "Sundargarh"
-                    ]
-                },
-                {
-                    "state": "Puducherry",
-                    "districts": [
-                        "Karaikal",
-                        "Mahe",
-                        "Puducherry",
-                        "Yanam"
-                    ]
-                },
-                {
-                    "state": "Punjab",
-                    "districts": [
-                        "Amritsar",
-                        "Barnala",
-                        "Bathinda",
-                        "Faridkot",
-                        "Fatehgarh Sahib",
-                        "Fazilka",
-                        "Ferozepur",
-                        "Gurdaspur",
-                        "Hoshiarpur",
-                        "Jalandhar",
-                        "Kapurthala",
-                        "Ludhiana",
-                        "Malerkotla",
-                        "Mansa",
-                        "Moga",
-                        "Muktsar",
-                        "Pathankot",
-                        "Patiala",
-                        "Rupnagar",
-                        "Sahibzada Ajit Singh Nagar (Mohali)",
-                        "Sangrur",
-                        "Shahid Bhagat Singh Nagar (Nawanshahr)",
-                        "Sri Muktsar Sahib",
-                        "Tarn Taran"
-                    ]
-                },
-                {
-                    "state": "Rajasthan",
-                    "districts": [
-                        "Ajmer",
-                        "Alwar",
-                        "Anupgarh",
-                        "Balotra",
-                        "Banswara",
-                        "Baran",
-                        "Barmer",
-                        "Beawar",
-                        "Bharatpur",
-                        "Bhilwara",
-                        "Bikaner",
-                        "Bundi",
-                        "Chittorgarh",
-                        "Churu",
-                        "Dausa",
-                        "Deeg",
-                        "Dholpur",
-                        "Didwana-Kuchaman",
-                        "Dudu",
-                        "Dungarpur",
-                        "Gangapur City",
-                        "Hanumangarh",
-                        "Jaipur",
-                        "Jaipur Rural",
-                        "Jaisalmer",
-                        "Jalore",
-                        "Jhalawar",
-                        "Jhunjhunu",
-                        "Jodhpur",
-                        "Jodhpur Rural",
-                        "Kekri",
-                        "Karauli",
-                        "Khairthal-Tijara",
-                        "Kota",
-                        "Kotputli-Behror",
-                        "Nagaur",
-                        "Neem Ka Thana",
-                        "Pali",
-                        "Phalodi",
-                        "Pratapgarh",
-                        "Rajsamand",
-                        "Salumbar",
-                        "Sanchore",
-                        "Sawai Madhopur",
-                        "Shahpura",
-                        "Sikar",
-                        "Sirohi",
-                        "Sri Ganganagar",
-                        "Tonk",
-                        "Udaipur"
-                    ]
-                },
-                {
-                    "state": "Sikkim",
-                    "districts": [
-                        "Gangtok",
-                        "Gyalshing",
-                        "Pakyong",
-                        "Namchi",
-                        "Soreng",
-                        "Mangan"
-                    ]
-                },
-                {
-                    "state": "Tamil Nadu",
-                    "districts": [
-                        "Ariyalur",
-                        "Chengalpattu",
-                        "Chennai",
-                        "Coimbatore",
-                        "Cuddalore",
-                        "Dharmapuri",
-                        "Dindigul",
-                        "Erode",
-                        "Kallakurichi",
-                        "Kancheepuram",
-                        "Kanyakumari",
-                        "Karur",
-                        "Krishnagiri",
-                        "Madurai",
-                        "Mayiladuthurai",
-                        "Nagapattinam",
-                        "Namakkal",
-                        "Nilgiris",
-                        "Perambalur",
-                        "Pudukkottai",
-                        "Ramanathapuram",
-                        "Ranipet",
-                        "Salem",
-                        "Sivaganga",
-                        "Tenkasi",
-                        "Thanjavur",
-                        "Theni",
-                        "Thoothukudi",
-                        "Tiruchirappalli",
-                        "Tirunelveli",
-                        "Tirupathur",
-                        "Tiruppur",
-                        "Tiruvallur",
-                        "Tiruvannamalai",
-                        "Tiruvarur",
-                        "Vellore",
-                        "Viluppuram",
-                        "Virudhunagar"
-                    ]
-                },
-                {
-                    "state": "Telangana",
-                    "districts": [
-                        "Adilabad",
-                        "Bhadradri Kothagudem",
-                        "Hanamkonda",
-                        "Hyderabad",
-                        "Jagtial",
-                        "Jangaon",
-                        "Jayashankar Bhupalpally",
-                        "Jogulamba Gadwal",
-                        "Kamareddy",
-                        "Karimnagar",
-                        "Khammam",
-                        "Kumuram Bheem",
-                        "Mahabubabad",
-                        "Mahabubnagar",
-                        "Mancherial",
-                        "Medak",
-                        "Medchal–Malkajgiri",
-                        "Mulugu",
-                        "Nagarkurnool",
-                        "Nalgonda",
-                        "Narayanpet",
-                        "Nirmal",
-                        "Nizamabad",
-                        "Peddapalli",
-                        "Rajanna Sircilla",
-                        "Rangareddy",
-                        "Sangareddy",
-                        "Siddipet",
-                        "Suryapet",
-                        "Vikarabad",
-                        "Wanaparthy",
-                        "Warangal",
-                        "Yadadri Bhuvanagiri"
-                    ]
-                },
-                {
-                    "state": "Tripura",
-                    "districts": [
-                        "Dhalai",
-                        "Gomati",
-                        "Khowai",
-                        "North Tripura",
-                        "Sepahijala",
-                        "South Tripura",
-                        "Unakoti",
-                        "West Tripura"
-                    ]
-                },
-                {
-                    "state": "Uttar Pradesh",
-                    "districts": [
-                        "Agra",
-                        "Aligarh",
-                        "Ambedkar Nagar",
-                        "Amethi",
-                        "Amroha",
-                        "Auraiya",
-                        "Ayodhya",
-                        "Azamgarh",
-                        "Baghpat",
-                        "Bahraich",
-                        "Ballia",
-                        "Balrampur",
-                        "Banda",
-                        "Barabanki",
-                        "Bareilly",
-                        "Basti",
-                        "Bhadohi",
-                        "Bijnor",
-                        "Budaun",
-                        "Bulandshahr",
-                        "Chandauli",
-                        "Chitrakoot",
-                        "Deoria",
-                        "Etah",
-                        "Etawah",
-                        "Farrukhabad",
-                        "Fatehpur",
-                        "Firozabad",
-                        "Gautam Buddha Nagar",
-                        "Ghaziabad",
-                        "Ghazipur",
-                        "Gonda",
-                        "Gorakhpur",
-                        "Hamirpur",
-                        "Hapur",
-                        "Hardoi",
-                        "Hathras",
-                        "Jalaun",
-                        "Jaunpur",
-                        "Jhansi",
-                        "Kannauj",
-                        "Kanpur Dehat",
-                        "Kanpur Nagar",
-                        "Kasganj",
-                        "Kaushambi",
-                        "Kushinagar",
-                        "Lakhimpur Kheri",
-                        "Lalitpur",
-                        "Lucknow",
-                        "Maharajganj",
-                        "Mahoba",
-                        "Mainpuri",
-                        "Mathura",
-                        "Mau",
-                        "Meerut",
-                        "Mirzapur",
-                        "Moradabad",
-                        "Muzaffarnagar",
-                        "Pilibhit",
-                        "Pratapgarh",
-                        "Prayagraj",
-                        "Raebareli",
-                        "Rampur",
-                        "Saharanpur",
-                        "Sambhal",
-                        "Sant Kabir Nagar",
-                        "Shahjahanpur",
-                        "Shamli",
-                        "Shravasti",
-                        "Siddharthnagar",
-                        "Sitapur",
-                        "Sonbhadra",
-                        "Sultanpur",
-                        "Unnao",
-                        "Varanasi"
-                    ]
-                },
-                {
-                    "state": "Uttarakhand",
-                    "districts": [
-                        "Almora",
-                        "Bageshwar",
-                        "Chamoli",
-                        "Champawat",
-                        "Dehradun",
-                        "Haridwar",
-                        "Nainital",
-                        "Pauri Garhwal",
-                        "Pithoragarh",
-                        "Rudraprayag",
-                        "Tehri Garhwal",
-                        "Udham Singh Nagar",
-                        "Uttarkashi"
-                    ]
-                },
-                {
-                    "state": "West Bengal",
-                    "districts": [
-                        "Alipurduar",
-                        "Bankura",
-                        "Birbhum",
-                        "Cooch Behar",
-                        "Dakshin Dinajpur",
-                        "Darjeeling",
-                        "Hooghly",
-                        "Howrah",
-                        "Jalpaiguri",
-                        "Jhargram",
-                        "Kalimpong",
-                        "Kolkata",
-                        "Malda",
-                        "Murshidabad",
-                        "Nadia",
-                        "North 24 Parganas",
-                        "Paschim Bardhaman",
-                        "Paschim Medinipur",
-                        "Purba Bardhaman",
-                        "Purba Medinipur",
-                        "Purulia",
-                        "South 24 Parganas",
-                        "Uttar Dinajpur"
-                    ]
-                }
-            ]
+          "state": "Andaman and Nicobar Islands",
+          "districts": ["North and Middle Andaman", "South Andaman", "Nicobar"]
         },
         {
-            "country": "Saudi Arabia",
-            "states": [
-                {
-                    "state": "Riyadh",
-                    "districts": [
-                        "Riyadh",
-                        "Diriyah",
-                        "Al-Kharj",
-                        "Al-Duwadimi",
-                        "Al-Majma'ah",
-                        "Al-Quway'iyah",
-                        "Wadi ad-Dawasir",
-                        "Al-Aflaj",
-                        "Al-Zulfi",
-                        "Shaqra",
-                        "Houtat Bani Tamim",
-                        "Afif",
-                        "Al-Sulaiyil",
-                        "Dhurma",
-                        "Al-Muzahmiyya",
-                        "Ruma",
-                        "Thadig",
-                        "Huraymila",
-                        "Al-Hariq",
-                        "Al-Ghat",
-                        "Al-Khardj",
-                        "Marat"
-                    ]
-                },
-                {
-                    "state": "Makkah",
-                    "districts": [
-                        "Makkah",
-                        "Jeddah",
-                        "Ta'if",
-                        "Al-Qunfudhah",
-                        "Al-Lith",
-                        "Rabigh",
-                        "Khulays",
-                        "Al-Khurma",
-                        "Turbah",
-                        "Ranyah",
-                        "Al-Kamil",
-                        "Al-Muwayh",
-                        "Maysan",
-                        "Adham",
-                        "Al-Ardiyat",
-                        "Bahrah"
-                    ]
-                },
-                {
-                    "state": "Madinah",
-                    "districts": [
-                        "Madinah",
-                        "Yanbu",
-                        "Al-`Ula",
-                        "Mahd adh Dhahab",
-                        "Badr",
-                        "Khaybar",
-                        "Al Hinakiyah",
-                        "Wadi Al-Far'"
-                    ]
-                },
-                {
-                    "state": "Eastern Province",
-                    "districts": [
-                        "Dammam",
-                        "Al-Ahsa",
-                        "Al-Khobar",
-                        "Al-Qatif",
-                        "Al-Jubail",
-                        "Hafar al-Batin",
-                        "Al-Khafji",
-                        "Ras Tanura",
-                        "Abqaiq",
-                        "Al-Nairyah",
-                        "Al-Qaryat al-Ulya",
-                        "Al-Olaya Village"
-                    ]
-                },
-                {
-                    "state": "Al-Qassim",
-                    "districts": [
-                        "Buraydah",
-                        "Unayzah",
-                        "Ar Rass",
-                        "Al Mithnab",
-                        "Al Bukayriyah",
-                        "Al-Badayea",
-                        "Al Asyah",
-                        "Al Nabhanyah",
-                        "Uyun AlJiwa",
-                        "Riyadh Al Khabra",
-                        "Al Shimasiyah"
-                    ]
-                },
-                {
-                    "state": "Ha'il",
-                    "districts": [
-                        "Ha'il",
-                        "Baq'a",
-                        "Al-Ghazalah",
-                        "Al-Shanan",
-                        "Al-Sumayrah",
-                        "Mawqaq",
-                        "Al-Hait",
-                        "Al-Sulaymi",
-                        "Al-Shamli"
-                    ]
-                },
-                {
-                    "state": "Tabuk",
-                    "districts": [
-                        "Tabuk",
-                        "Al-Wajh",
-                        "Duba",
-                        "Tayma",
-                        "Umluj",
-                        "Haql",
-                        "Al-Bad'"
-                    ]
-                },
-                {
-                    "state": "Northern Borders",
-                    "districts": [
-                        "Arar",
-                        "Rafha",
-                        "Turaif",
-                        "Al-Uwayqilah"
-                    ]
-                },
-                {
-                    "state": "Jazan",
-                    "districts": [
-                        "Jazan",
-                        "Sabya",
-                        "Abu `Arish",
-                        "Samtah",
-                        "Al-Dayer",
-                        "Al-Darb",
-                        "Ahad Al-Masarihah",
-                        "Damad",
-                        "Al-Ardah",
-                        "Al-Hurrath",
-                        "Farsan",
-                        "Al-Reeth",
-                        "Baish",
-                        "Dhamad"
-                    ]
-                },
-                {
-                    "state": "Najran",
-                    "districts": [
-                        "Najran",
-                        "Sharurah",
-                        "Hubuna",
-                        "Badr Al-Janub",
-                        "Yadamah",
-                        "Thar",
-                        "Khubash",
-                        "Al-Kharkhir"
-                    ]
-                },
-                {
-                    "state": "Al-Baha",
-                    "districts": [
-                        "Al-Baha",
-                        "Baljurshi",
-                        "Al-Mandaq",
-                        "Al-Mikhwah",
-                        "Al-Aqiq",
-                        "Qilwah",
-                        "Al-Qara",
-                        "Al-Hajrah",
-                        "Bani Hassan",
-                        "Ghamid Az-Zinad"
-                    ]
-                },
-                {
-                    "state": "Al-Jawf",
-                    "districts": [
-                        "Sakakah",
-                        "Al-Qurayyat",
-                        "Dumat al-Jandal",
-                        "Tubarjal"
-                    ]
-                },
-                {
-                    "state": "Asir",
-                    "districts": [
-                        "Abha",
-                        "Khamis Mushait",
-                        "Bisha",
-                        "Al-Namas",
-                        "Muhayil Asir",
-                        "Ahad Rifaydah",
-                        "Tathlith",
-                        "Sarat Abidah",
-                        "Rijal Alma",
-                        "Bariq",
-                        "Al-Majardah",
-                        "Tandahah",
-                        "Balqarn",
-                        "Mahayil"
-                    ]
-                }
-            ]
+          "state": "Andhra Pradesh",
+          "districts": [
+            "Alluri Sitharama Raju",
+            "Anakapalli",
+            "Anantapur",
+            "Annamayya",
+            "Bapatla",
+            "Chittoor",
+            "Dr. B. R. Ambedkar Konaseema",
+            "East Godavari",
+            "Eluru",
+            "Guntur",
+            "Kakinada",
+            "Krishna",
+            "Kurnool",
+            "Nandyal",
+            "NTR",
+            "Palnadu",
+            "Parvathipuram Manyam",
+            "Prakasam",
+            "Sri Potti Sriramulu Nellore",
+            "Srikakulam",
+            "Sri Sathya Sai",
+            "Tirupati",
+            "Visakhapatnam",
+            "Vizianagaram",
+            "West Godavari",
+            "YSR",
+            "Polavaram",
+            "Markapuram",
+            "Madanapalle"
+          ]
         },
         {
-            "country": "United States",
-            "states": [
-                {
-                    "state": "California",
-                    "districts": [
-                        "Los Angeles County",
-                        "San Diego County",
-                        "Orange County"
-                    ]
-                },
-                {
-                    "state": "Texas",
-                    "districts": [
-                        "Harris County",
-                        "Dallas County",
-                        "Tarrant County"
-                    ]
-                },
-                {
-                    "state": "New York",
-                    "districts": [
-                        "New York County",
-                        "Kings County",
-                        "Queens County"
-                    ]
-                }
-            ]
+          "state": "Arunachal Pradesh",
+          "districts": [
+            "Anjaw",
+            "Bichom",
+            "Changlang",
+            "Dibang Valley",
+            "East Kameng",
+            "East Siang",
+            "Kamle",
+            "Kra Daadi",
+            "Kurung Kumey",
+            "Keyi Panyor",
+            "Lepa-Rada",
+            "Lohit",
+            "Longding",
+            "Lower Dibang Valley",
+            "Lower Siang",
+            "Lower Subansiri",
+            "Namsai",
+            "Pakke-Kessang",
+            "Papum Pare",
+            "Shi-Yomi",
+            "Siang",
+            "Tawang",
+            "Tirap",
+            "Upper Siang",
+            "Upper Subansiri",
+            "West Kameng",
+            "West Siang"
+          ]
         },
         {
-            "country": "United Arab Emirates",
-            "states": [
-                {
-                    "state": "Abu Dhabi",
-                    "districts": [
-                        "Abu Dhabi City",
-                        "Al Ain",
-                        "Madinat Zayed"
-                    ]
-                },
-                {
-                    "state": "Dubai",
-                    "districts": [
-                        "Deira",
-                        "Bur Dubai",
-                        "Jumeirah"
-                    ]
-                },
-                {
-                    "state": "Sharjah",
-                    "districts": [
-                        "Sharjah City",
-                        "Khor Fakkan",
-                        "Kalba"
-                    ]
-                },
-                {
-                    "state": "Ajman",
-                    "districts": [
-                        "Ajman City",
-                        "Masfout",
-                        "Manama"
-                    ]
-                },
-                {
-                    "state": "Umm Al Quwain",
-                    "districts": [
-                        "Umm Al Quwain City"
-                    ]
-                },
-                {
-                    "state": "Ras Al Khaimah",
-                    "districts": [
-                        "RAK City",
-                        "Al Hamra",
-                        "Digdaga"
-                    ]
-                },
-                {
-                    "state": "Fujairah",
-                    "districts": [
-                        "Fujairah City",
-                        "Dibba",
-                        "Masafi"
-                    ]
-                }
-            ]
+          "state": "Assam",
+          "districts": [
+            "Baksa",
+            "Barpeta",
+            "Biswanath",
+            "Bongaigaon",
+            "Cachar",
+            "Charaideo",
+            "Chirang",
+            "Darrang",
+            "Dhemaji",
+            "Dhubri",
+            "Dibrugarh",
+            "Dima Hasao",
+            "Goalpara",
+            "Golaghat",
+            "Hailakandi",
+            "Hojai",
+            "Jorhat",
+            "Kamrup",
+            "Kamrup Metropolitan",
+            "Karbi Anglong",
+            "Karimganj",
+            "Kokrajhar",
+            "Lakhimpur",
+            "Majuli",
+            "Morigaon",
+            "Nagaon",
+            "Nalbari",
+            "Sivasagar",
+            "Sonitpur",
+            "South Salmara-Mankachar",
+            "Tamulpur",
+            "Tinsukia",
+            "Udalguri",
+            "West Karbi Anglong"
+          ]
+        },
+        {
+          "state": "Bihar",
+          "districts": [
+            "Araria",
+            "Arwal",
+            "Aurangabad",
+            "Banka",
+            "Begusarai",
+            "Bhagalpur",
+            "Bhojpur",
+            "Buxar",
+            "Darbhanga",
+            "East Champaran",
+            "Gaya",
+            "Gopalganj",
+            "Jamui",
+            "Jehanabad",
+            "Kaimur",
+            "Katihar",
+            "Khagaria",
+            "Kishanganj",
+            "Lakhisarai",
+            "Madhepura",
+            "Madhubani",
+            "Munger",
+            "Muzaffarpur",
+            "Nalanda",
+            "Nawada",
+            "Patna",
+            "Purnia",
+            "Rohtas",
+            "Saharsa",
+            "Samastipur",
+            "Saran",
+            "Sheikhpura",
+            "Sheohar",
+            "Sitamarhi",
+            "Siwan",
+            "Supaul",
+            "Vaishali",
+            "West Champaran"
+          ]
+        },
+        {
+          "state": "Chandigarh",
+          "districts": ["Chandigarh"]
+        },
+        {
+          "state": "Chhattisgarh",
+          "districts": [
+            "Balod",
+            "Baloda Bazar",
+            "Balrampur",
+            "Bastar",
+            "Bemetara",
+            "Bijapur",
+            "Bilaspur",
+            "Dantewada",
+            "Dhamtari",
+            "Durg",
+            "Gariaband",
+            "Gaurela-Pendra-Marwahi",
+            "Janjgir-Champa",
+            "Jashpur",
+            "Kabirdham",
+            "Kanker",
+            "Kondagaon",
+            "Korba",
+            "Koriya",
+            "Mahasamund",
+            "Mungeli",
+            "Narayanpur",
+            "Raigarh",
+            "Raipur",
+            "Rajnandgaon",
+            "Sarangarh-Bilaigarh",
+            "Sakti",
+            "Sukma",
+            "Surguja",
+            "Khairagarh-Chhuikhadan-Gandai"
+          ]
+        },
+        {
+          "state": "Dadra and Nagar Haveli and Daman and Diu",
+          "districts": ["Daman", "Diu", "Dadra and Nagar Haveli"]
+        },
+        {
+          "state": "Delhi",
+          "districts": [
+            "New Delhi",
+            "Central",
+            "East",
+            "North",
+            "North East",
+            "North West",
+            "South",
+            "South East",
+            "South West",
+            "West",
+            "Old Delhi",
+            "Central North",
+            "Outer North"
+          ]
+        },
+        {
+          "state": "Goa",
+          "districts": ["North Goa", "South Goa"]
+        },
+        {
+          "state": "Gujarat",
+          "districts": [
+            "Ahmedabad",
+            "Amreli",
+            "Anand",
+            "Aravalli",
+            "Banaskantha",
+            "Bharuch",
+            "Bhavnagar",
+            "Botad",
+            "Chhota Udepur",
+            "Dahod",
+            "Dang",
+            "Devbhumi Dwarka",
+            "Gandhinagar",
+            "Gir Somnath",
+            "Jamnagar",
+            "Junagadh",
+            "Kheda",
+            "Kutch",
+            "Mahisagar",
+            "Mehsana",
+            "Morbi",
+            "Narmada",
+            "Navsari",
+            "Panchmahal",
+            "Patan",
+            "Porbandar",
+            "Rajkot",
+            "Sabarkantha",
+            "Surat",
+            "Surendranagar",
+            "Tapi",
+            "Vadodara",
+            "Valsad"
+          ]
+        },
+        {
+          "state": "Haryana",
+          "districts": [
+            "Ambala",
+            "Bhiwani",
+            "Charkhi Dadri",
+            "Faridabad",
+            "Fatehabad",
+            "Gurugram",
+            "Hisar",
+            "Jhajjar",
+            "Jind",
+            "Kaithal",
+            "Karnal",
+            "Kurukshetra",
+            "Mahendragarh",
+            "Nuh",
+            "Palwal",
+            "Panchkula",
+            "Panipat",
+            "Rewari",
+            "Rohtak",
+            "Sirsa",
+            "Sonipat",
+            "Yamunanagar"
+          ]
+        },
+        {
+          "state": "Himachal Pradesh",
+          "districts": [
+            "Bilaspur",
+            "Chamba",
+            "Hamirpur",
+            "Kangra",
+            "Kinnaur",
+            "Kullu",
+            "Lahaul and Spiti",
+            "Mandi",
+            "Shimla",
+            "Sirmaur",
+            "Solan",
+            "Una"
+          ]
+        },
+        {
+          "state": "Jammu and Kashmir",
+          "districts": [
+            "Anantnag",
+            "Bandipora",
+            "Baramulla",
+            "Budgam",
+            "Doda",
+            "Ganderbal",
+            "Jammu",
+            "Kathua",
+            "Kishtwar",
+            "Kulgam",
+            "Kupwara",
+            "Poonch",
+            "Pulwama",
+            "Rajouri",
+            "Ramban",
+            "Reasi",
+            "Samba",
+            "Shopian",
+            "Srinagar",
+            "Udhampur"
+          ]
+        },
+        {
+          "state": "Jharkhand",
+          "districts": [
+            "Bokaro",
+            "Chatra",
+            "Deoghar",
+            "Dhanbad",
+            "Dumka",
+            "East Singhbhum",
+            "Garhwa",
+            "Giridih",
+            "Godda",
+            "Gumla",
+            "Hazaribagh",
+            "Jamtara",
+            "Khunti",
+            "Koderma",
+            "Latehar",
+            "Lohardaga",
+            "Pakur",
+            "Palamu",
+            "Ramgarh",
+            "Ranchi",
+            "Sahibganj",
+            "Seraikela Kharsawan",
+            "Simdega",
+            "West Singhbhum"
+          ]
+        },
+        {
+          "state": "Karnataka",
+          "districts": [
+            "Bagalkot",
+            "Ballari",
+            "Belagavi",
+            "Bengaluru Rural",
+            "Bengaluru Urban",
+            "Bidar",
+            "Chamarajanagar",
+            "Chikkaballapur",
+            "Chikkamagaluru",
+            "Chitradurga",
+            "Dakshina Kannada",
+            "Davanagere",
+            "Dharwad",
+            "Gadag",
+            "Hassan",
+            "Haveri",
+            "Kalaburagi",
+            "Kodagu",
+            "Kolar",
+            "Koppal",
+            "Mandya",
+            "Mysuru",
+            "Raichur",
+            "Ramanagara",
+            "Shivamogga",
+            "Tumakuru",
+            "Udupi",
+            "Uttara Kannada",
+            "Vijayanagara",
+            "Vijayapura",
+            "Yadgir"
+          ]
+        },
+        {
+          "state": "Kerala",
+          "districts": [
+            "Alappuzha",
+            "Ernakulam",
+            "Idukki",
+            "Kannur",
+            "Kasaragod",
+            "Kollam",
+            "Kottayam",
+            "Kozhikode",
+            "Malappuram",
+            "Palakkad",
+            "Pathanamthitta",
+            "Thiruvananthapuram",
+            "Thrissur",
+            "Wayanad"
+          ]
+        },
+        {
+          "state": "Ladakh",
+          "districts": [
+            "Leh",
+            "Kargil",
+            "Drass",
+            "Zanskar",
+            "Sham",
+            "Nubra",
+            "Changthang"
+          ]
+        },
+        {
+          "state": "Lakshadweep",
+          "districts": ["Lakshadweep"]
+        },
+        {
+          "state": "Madhya Pradesh",
+          "districts": [
+            "Agar Malwa",
+            "Alirajpur",
+            "Anuppur",
+            "Ashoknagar",
+            "Balaghat",
+            "Barwani",
+            "Betul",
+            "Bhind",
+            "Bhopal",
+            "Burhanpur",
+            "Chhatarpur",
+            "Chhindwara",
+            "Damoh",
+            "Datia",
+            "Dewas",
+            "Dhar",
+            "Dindori",
+            "Guna",
+            "Gwalior",
+            "Harda",
+            "Hoshangabad",
+            "Indore",
+            "Jabalpur",
+            "Jhabua",
+            "Katni",
+            "Khandwa",
+            "Khargone",
+            "Mandla",
+            "Mandsaur",
+            "Morena",
+            "Narsinghpur",
+            "Neemuch",
+            "Niwari",
+            "Panna",
+            "Raisen",
+            "Rajgarh",
+            "Ratlam",
+            "Rewa",
+            "Sagar",
+            "Satna",
+            "Sehore",
+            "Seoni",
+            "Shahdol",
+            "Shajapur",
+            "Sheopur",
+            "Shivpuri",
+            "Sidhi",
+            "Singrauli",
+            "Tikamgarh",
+            "Ujjain",
+            "Umaria",
+            "Vidisha",
+            "Mauganj",
+            "Maihar",
+            "Chachoura",
+            "Pandhurna"
+          ]
+        },
+        {
+          "state": "Maharashtra",
+          "districts": [
+            "Ahmednagar",
+            "Akola",
+            "Amravati",
+            "Aurangabad",
+            "Beed",
+            "Bhandara",
+            "Buldhana",
+            "Chandrapur",
+            "Dhule",
+            "Gadchiroli",
+            "Gondia",
+            "Hingoli",
+            "Jalgaon",
+            "Jalna",
+            "Kolhapur",
+            "Latur",
+            "Mumbai City",
+            "Mumbai Suburban",
+            "Nagpur",
+            "Nanded",
+            "Nandurbar",
+            "Nashik",
+            "Osmanabad",
+            "Palghar",
+            "Parbhani",
+            "Pune",
+            "Raigad",
+            "Ratnagiri",
+            "Sangli",
+            "Satara",
+            "Sindhudurg",
+            "Solapur",
+            "Thane",
+            "Wardha",
+            "Washim",
+            "Yavatmal"
+          ]
+        },
+        {
+          "state": "Manipur",
+          "districts": [
+            "Bishnupur",
+            "Chandel",
+            "Churachandpur",
+            "Imphal East",
+            "Imphal West",
+            "Jiribam",
+            "Kakching",
+            "Kamjong",
+            "Kangpokpi",
+            "Noney",
+            "Pherzawl",
+            "Senapati",
+            "Tamenglong",
+            "Tengnoupal",
+            "Thoubal",
+            "Ukhrul"
+          ]
+        },
+        {
+          "state": "Meghalaya",
+          "districts": [
+            "East Garo Hills",
+            "East Jaintia Hills",
+            "East Khasi Hills",
+            "Eastern West Khasi Hills",
+            "North Garo Hills",
+            "Ri Bhoi",
+            "South Garo Hills",
+            "South West Garo Hills",
+            "South West Khasi Hills",
+            "West Garo Hills",
+            "West Jaintia Hills",
+            "West Khasi Hills"
+          ]
+        },
+        {
+          "state": "Mizoram",
+          "districts": [
+            "Aizawl",
+            "Champhai",
+            "Hnahthial",
+            "Khawzawl",
+            "Kolasib",
+            "Lawngtlai",
+            "Lunglei",
+            "Mamit",
+            "Saiha",
+            "Saitual",
+            "Serchhip"
+          ]
+        },
+        {
+          "state": "Nagaland",
+          "districts": [
+            "Chümoukedima",
+            "Dimapur",
+            "Kiphire",
+            "Kohima",
+            "Longleng",
+            "Mokokchung",
+            "Mon",
+            "Niuland",
+            "Noklak",
+            "Peren",
+            "Phek",
+            "Shamator",
+            "Tseminyü",
+            "Tuensang",
+            "Wokha",
+            "Zunheboto"
+          ]
+        },
+        {
+          "state": "Odisha",
+          "districts": [
+            "Angul",
+            "Balangir",
+            "Balasore",
+            "Bargarh",
+            "Bhadrak",
+            "Boudh",
+            "Cuttack",
+            "Deogarh",
+            "Dhenkanal",
+            "Gajapati",
+            "Ganjam",
+            "Jagatsinghpur",
+            "Jajpur",
+            "Jharsuguda",
+            "Kalahandi",
+            "Kandhamal",
+            "Kendrapara",
+            "Kendujhar",
+            "Khordha",
+            "Koraput",
+            "Malkangiri",
+            "Mayurbhanj",
+            "Nabarangpur",
+            "Nayagarh",
+            "Nuapada",
+            "Puri",
+            "Rayagada",
+            "Sambalpur",
+            "Subarnapur",
+            "Sundargarh"
+          ]
+        },
+        {
+          "state": "Puducherry",
+          "districts": ["Karaikal", "Mahe", "Puducherry", "Yanam"]
+        },
+        {
+          "state": "Punjab",
+          "districts": [
+            "Amritsar",
+            "Barnala",
+            "Bathinda",
+            "Faridkot",
+            "Fatehgarh Sahib",
+            "Fazilka",
+            "Ferozepur",
+            "Gurdaspur",
+            "Hoshiarpur",
+            "Jalandhar",
+            "Kapurthala",
+            "Ludhiana",
+            "Malerkotla",
+            "Mansa",
+            "Moga",
+            "Muktsar",
+            "Pathankot",
+            "Patiala",
+            "Rupnagar",
+            "Sahibzada Ajit Singh Nagar (Mohali)",
+            "Sangrur",
+            "Shahid Bhagat Singh Nagar (Nawanshahr)",
+            "Sri Muktsar Sahib",
+            "Tarn Taran"
+          ]
+        },
+        {
+          "state": "Rajasthan",
+          "districts": [
+            "Ajmer",
+            "Alwar",
+            "Anupgarh",
+            "Balotra",
+            "Banswara",
+            "Baran",
+            "Barmer",
+            "Beawar",
+            "Bharatpur",
+            "Bhilwara",
+            "Bikaner",
+            "Bundi",
+            "Chittorgarh",
+            "Churu",
+            "Dausa",
+            "Deeg",
+            "Dholpur",
+            "Didwana-Kuchaman",
+            "Dudu",
+            "Dungarpur",
+            "Gangapur City",
+            "Hanumangarh",
+            "Jaipur",
+            "Jaipur Rural",
+            "Jaisalmer",
+            "Jalore",
+            "Jhalawar",
+            "Jhunjhunu",
+            "Jodhpur",
+            "Jodhpur Rural",
+            "Kekri",
+            "Karauli",
+            "Khairthal-Tijara",
+            "Kota",
+            "Kotputli-Behror",
+            "Nagaur",
+            "Neem Ka Thana",
+            "Pali",
+            "Phalodi",
+            "Pratapgarh",
+            "Rajsamand",
+            "Salumbar",
+            "Sanchore",
+            "Sawai Madhopur",
+            "Shahpura",
+            "Sikar",
+            "Sirohi",
+            "Sri Ganganagar",
+            "Tonk",
+            "Udaipur"
+          ]
+        },
+        {
+          "state": "Sikkim",
+          "districts": [
+            "Gangtok",
+            "Gyalshing",
+            "Pakyong",
+            "Namchi",
+            "Soreng",
+            "Mangan"
+          ]
+        },
+        {
+          "state": "Tamil Nadu",
+          "districts": [
+            "Ariyalur",
+            "Chengalpattu",
+            "Chennai",
+            "Coimbatore",
+            "Cuddalore",
+            "Dharmapuri",
+            "Dindigul",
+            "Erode",
+            "Kallakurichi",
+            "Kancheepuram",
+            "Kanyakumari",
+            "Karur",
+            "Krishnagiri",
+            "Madurai",
+            "Mayiladuthurai",
+            "Nagapattinam",
+            "Namakkal",
+            "Nilgiris",
+            "Perambalur",
+            "Pudukkottai",
+            "Ramanathapuram",
+            "Ranipet",
+            "Salem",
+            "Sivaganga",
+            "Tenkasi",
+            "Thanjavur",
+            "Theni",
+            "Thoothukudi",
+            "Tiruchirappalli",
+            "Tirunelveli",
+            "Tirupathur",
+            "Tiruppur",
+            "Tiruvallur",
+            "Tiruvannamalai",
+            "Tiruvarur",
+            "Vellore",
+            "Viluppuram",
+            "Virudhunagar"
+          ]
+        },
+        {
+          "state": "Telangana",
+          "districts": [
+            "Adilabad",
+            "Bhadradri Kothagudem",
+            "Hanamkonda",
+            "Hyderabad",
+            "Jagtial",
+            "Jangaon",
+            "Jayashankar Bhupalpally",
+            "Jogulamba Gadwal",
+            "Kamareddy",
+            "Karimnagar",
+            "Khammam",
+            "Kumuram Bheem",
+            "Mahabubabad",
+            "Mahabubnagar",
+            "Mancherial",
+            "Medak",
+            "Medchal–Malkajgiri",
+            "Mulugu",
+            "Nagarkurnool",
+            "Nalgonda",
+            "Narayanpet",
+            "Nirmal",
+            "Nizamabad",
+            "Peddapalli",
+            "Rajanna Sircilla",
+            "Rangareddy",
+            "Sangareddy",
+            "Siddipet",
+            "Suryapet",
+            "Vikarabad",
+            "Wanaparthy",
+            "Warangal",
+            "Yadadri Bhuvanagiri"
+          ]
+        },
+        {
+          "state": "Tripura",
+          "districts": [
+            "Dhalai",
+            "Gomati",
+            "Khowai",
+            "North Tripura",
+            "Sepahijala",
+            "South Tripura",
+            "Unakoti",
+            "West Tripura"
+          ]
+        },
+        {
+          "state": "Uttar Pradesh",
+          "districts": [
+            "Agra",
+            "Aligarh",
+            "Ambedkar Nagar",
+            "Amethi",
+            "Amroha",
+            "Auraiya",
+            "Ayodhya",
+            "Azamgarh",
+            "Baghpat",
+            "Bahraich",
+            "Ballia",
+            "Balrampur",
+            "Banda",
+            "Barabanki",
+            "Bareilly",
+            "Basti",
+            "Bhadohi",
+            "Bijnor",
+            "Budaun",
+            "Bulandshahr",
+            "Chandauli",
+            "Chitrakoot",
+            "Deoria",
+            "Etah",
+            "Etawah",
+            "Farrukhabad",
+            "Fatehpur",
+            "Firozabad",
+            "Gautam Buddha Nagar",
+            "Ghaziabad",
+            "Ghazipur",
+            "Gonda",
+            "Gorakhpur",
+            "Hamirpur",
+            "Hapur",
+            "Hardoi",
+            "Hathras",
+            "Jalaun",
+            "Jaunpur",
+            "Jhansi",
+            "Kannauj",
+            "Kanpur Dehat",
+            "Kanpur Nagar",
+            "Kasganj",
+            "Kaushambi",
+            "Kushinagar",
+            "Lakhimpur Kheri",
+            "Lalitpur",
+            "Lucknow",
+            "Maharajganj",
+            "Mahoba",
+            "Mainpuri",
+            "Mathura",
+            "Mau",
+            "Meerut",
+            "Mirzapur",
+            "Moradabad",
+            "Muzaffarnagar",
+            "Pilibhit",
+            "Pratapgarh",
+            "Prayagraj",
+            "Raebareli",
+            "Rampur",
+            "Saharanpur",
+            "Sambhal",
+            "Sant Kabir Nagar",
+            "Shahjahanpur",
+            "Shamli",
+            "Shravasti",
+            "Siddharthnagar",
+            "Sitapur",
+            "Sonbhadra",
+            "Sultanpur",
+            "Unnao",
+            "Varanasi"
+          ]
+        },
+        {
+          "state": "Uttarakhand",
+          "districts": [
+            "Almora",
+            "Bageshwar",
+            "Chamoli",
+            "Champawat",
+            "Dehradun",
+            "Haridwar",
+            "Nainital",
+            "Pauri Garhwal",
+            "Pithoragarh",
+            "Rudraprayag",
+            "Tehri Garhwal",
+            "Udham Singh Nagar",
+            "Uttarkashi"
+          ]
+        },
+        {
+          "state": "West Bengal",
+          "districts": [
+            "Alipurduar",
+            "Bankura",
+            "Birbhum",
+            "Cooch Behar",
+            "Dakshin Dinajpur",
+            "Darjeeling",
+            "Hooghly",
+            "Howrah",
+            "Jalpaiguri",
+            "Jhargram",
+            "Kalimpong",
+            "Kolkata",
+            "Malda",
+            "Murshidabad",
+            "Nadia",
+            "North 24 Parganas",
+            "Paschim Bardhaman",
+            "Paschim Medinipur",
+            "Purba Bardhaman",
+            "Purba Medinipur",
+            "Purulia",
+            "South 24 Parganas",
+            "Uttar Dinajpur"
+          ]
         }
-    ]
+      ]
+    },
+    {
+      "country": "Saudi Arabia",
+      "states": [
+        {
+          "state": "Riyadh",
+          "districts": [
+            "Riyadh",
+            "Diriyah",
+            "Al-Kharj",
+            "Al-Duwadimi",
+            "Al-Majma'ah",
+            "Al-Quway'iyah",
+            "Wadi ad-Dawasir",
+            "Al-Aflaj",
+            "Al-Zulfi",
+            "Shaqra",
+            "Houtat Bani Tamim",
+            "Afif",
+            "Al-Sulaiyil",
+            "Dhurma",
+            "Al-Muzahmiyya",
+            "Ruma",
+            "Thadig",
+            "Huraymila",
+            "Al-Hariq",
+            "Al-Ghat",
+            "Al-Khardj",
+            "Marat"
+          ]
+        },
+        {
+          "state": "Makkah",
+          "districts": [
+            "Makkah",
+            "Jeddah",
+            "Ta'if",
+            "Al-Qunfudhah",
+            "Al-Lith",
+            "Rabigh",
+            "Khulays",
+            "Al-Khurma",
+            "Turbah",
+            "Ranyah",
+            "Al-Kamil",
+            "Al-Muwayh",
+            "Maysan",
+            "Adham",
+            "Al-Ardiyat",
+            "Bahrah"
+          ]
+        },
+        {
+          "state": "Madinah",
+          "districts": [
+            "Madinah",
+            "Yanbu",
+            "Al-`Ula",
+            "Mahd adh Dhahab",
+            "Badr",
+            "Khaybar",
+            "Al Hinakiyah",
+            "Wadi Al-Far'"
+          ]
+        },
+        {
+          "state": "Eastern Province",
+          "districts": [
+            "Dammam",
+            "Al-Ahsa",
+            "Al-Khobar",
+            "Al-Qatif",
+            "Al-Jubail",
+            "Hafar al-Batin",
+            "Al-Khafji",
+            "Ras Tanura",
+            "Abqaiq",
+            "Al-Nairyah",
+            "Al-Qaryat al-Ulya",
+            "Al-Olaya Village"
+          ]
+        },
+        {
+          "state": "Al-Qassim",
+          "districts": [
+            "Buraydah",
+            "Unayzah",
+            "Ar Rass",
+            "Al Mithnab",
+            "Al Bukayriyah",
+            "Al-Badayea",
+            "Al Asyah",
+            "Al Nabhanyah",
+            "Uyun AlJiwa",
+            "Riyadh Al Khabra",
+            "Al Shimasiyah"
+          ]
+        },
+        {
+          "state": "Ha'il",
+          "districts": [
+            "Ha'il",
+            "Baq'a",
+            "Al-Ghazalah",
+            "Al-Shanan",
+            "Al-Sumayrah",
+            "Mawqaq",
+            "Al-Hait",
+            "Al-Sulaymi",
+            "Al-Shamli"
+          ]
+        },
+        {
+          "state": "Tabuk",
+          "districts": [
+            "Tabuk",
+            "Al-Wajh",
+            "Duba",
+            "Tayma",
+            "Umluj",
+            "Haql",
+            "Al-Bad'"
+          ]
+        },
+        {
+          "state": "Northern Borders",
+          "districts": ["Arar", "Rafha", "Turaif", "Al-Uwayqilah"]
+        },
+        {
+          "state": "Jazan",
+          "districts": [
+            "Jazan",
+            "Sabya",
+            "Abu `Arish",
+            "Samtah",
+            "Al-Dayer",
+            "Al-Darb",
+            "Ahad Al-Masarihah",
+            "Damad",
+            "Al-Ardah",
+            "Al-Hurrath",
+            "Farsan",
+            "Al-Reeth",
+            "Baish",
+            "Dhamad"
+          ]
+        },
+        {
+          "state": "Najran",
+          "districts": [
+            "Najran",
+            "Sharurah",
+            "Hubuna",
+            "Badr Al-Janub",
+            "Yadamah",
+            "Thar",
+            "Khubash",
+            "Al-Kharkhir"
+          ]
+        },
+        {
+          "state": "Al-Baha",
+          "districts": [
+            "Al-Baha",
+            "Baljurshi",
+            "Al-Mandaq",
+            "Al-Mikhwah",
+            "Al-Aqiq",
+            "Qilwah",
+            "Al-Qara",
+            "Al-Hajrah",
+            "Bani Hassan",
+            "Ghamid Az-Zinad"
+          ]
+        },
+        {
+          "state": "Al-Jawf",
+          "districts": ["Sakakah", "Al-Qurayyat", "Dumat al-Jandal", "Tubarjal"]
+        },
+        {
+          "state": "Asir",
+          "districts": [
+            "Abha",
+            "Khamis Mushait",
+            "Bisha",
+            "Al-Namas",
+            "Muhayil Asir",
+            "Ahad Rifaydah",
+            "Tathlith",
+            "Sarat Abidah",
+            "Rijal Alma",
+            "Bariq",
+            "Al-Majardah",
+            "Tandahah",
+            "Balqarn",
+            "Mahayil"
+          ]
+        }
+      ]
+    },
+    {
+      "country": "United States",
+      "states": [
+        {
+          "state": "California",
+          "districts": [
+            "Los Angeles County",
+            "San Diego County",
+            "Orange County"
+          ]
+        },
+        {
+          "state": "Texas",
+          "districts": ["Harris County", "Dallas County", "Tarrant County"]
+        },
+        {
+          "state": "New York",
+          "districts": ["New York County", "Kings County", "Queens County"]
+        }
+      ]
+    },
+    {
+      "country": "United Arab Emirates",
+      "states": [
+        {
+          "state": "Abu Dhabi",
+          "districts": ["Abu Dhabi City", "Al Ain", "Madinat Zayed"]
+        },
+        {
+          "state": "Dubai",
+          "districts": ["Deira", "Bur Dubai", "Jumeirah"]
+        },
+        {
+          "state": "Sharjah",
+          "districts": ["Sharjah City", "Khor Fakkan", "Kalba"]
+        },
+        {
+          "state": "Ajman",
+          "districts": ["Ajman City", "Masfout", "Manama"]
+        },
+        {
+          "state": "Umm Al Quwain",
+          "districts": ["Umm Al Quwain City"]
+        },
+        {
+          "state": "Ras Al Khaimah",
+          "districts": ["RAK City", "Al Hamra", "Digdaga"]
+        },
+        {
+          "state": "Fujairah",
+          "districts": ["Fujairah City", "Dibba", "Masafi"]
+        }
+      ]
+    },
+    {
+      "country": "Qatar",
+      "states": [
+        {
+          "state": "Doha",
+          "districts": [
+            "West Bay",
+            "Al Sadd",
+            "Al Dafna",
+            "The Pearl",
+            "Musherib",
+            "Al Muntazah"
+          ]
+        },
+        {
+          "state": "Al Rayyan",
+          "districts": [
+            "Education City",
+            "Al Gharrafa",
+            "Old Al Rayyan",
+            "New Al Rayyan"
+          ]
+        },
+        {
+          "state": "Al Wakrah",
+          "districts": ["Al Wakrah City", "Mesaieed", "Al Wukair"]
+        },
+        {
+          "state": "Al Khor",
+          "districts": ["Al Khor City", "Al Thakhira"]
+        },
+        {
+          "state": "Umm Salal",
+          "districts": ["Umm Salal Mohammed", "Umm Salal Ali"]
+        }
+      ]
+    },
+    {
+      "country": "United Arab Emirates",
+      "states": [
+        {
+          "state": "Abu Dhabi",
+          "districts": [
+            "Abu Dhabi City",
+            "Al Ain",
+            "Madinat Zayed",
+            "Khalifa City",
+            "Mohamed Bin Zayed City"
+          ]
+        },
+        {
+          "state": "Dubai",
+          "districts": [
+            "Deira",
+            "Bur Dubai",
+            "Jumeirah",
+            "Dubai Marina",
+            "Business Bay",
+            "Downtown Dubai",
+            "Al Barsha",
+            "International City"
+          ]
+        },
+        {
+          "state": "Sharjah",
+          "districts": [
+            "Al Majaz",
+            "Al Nahda",
+            "Al Qasimia",
+            "Muwaileh",
+            "Al Taawun"
+          ]
+        },
+        {
+          "state": "Ajman",
+          "districts": ["Ajman City", "Al Nuaimiya", "Al Rashidiya"]
+        },
+        {
+          "state": "Ras Al Khaimah",
+          "districts": ["RAK City", "Al Hamra", "Al Nakheel"]
+        },
+        {
+          "state": "Fujairah",
+          "districts": ["Fujairah City", "Dibba Al Fujairah"]
+        },
+        {
+          "state": "Umm Al Quwain",
+          "districts": ["UAQ City", "Al Salamah"]
+        }
+      ]
+    }
+  ]
 }

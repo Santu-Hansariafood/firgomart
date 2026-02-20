@@ -16,7 +16,14 @@ export async function GET(request: Request) {
     }
 
     const blogs = await Blog.find({ isPublished: true }).sort({ publishedAt: -1 }).lean()
-    return NextResponse.json({ blogs })
+    return NextResponse.json(
+      { blogs },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    )
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch blogs" }, { status: 500 })
   }

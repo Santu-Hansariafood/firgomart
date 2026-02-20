@@ -13,6 +13,8 @@ export interface IOffer extends Document {
   order?: number
   availableCountry?: string
   createdByEmail?: string
+  backgroundClassName?: string
+  isFestive?: boolean
   createdAt?: Date
   updatedAt?: Date
 }
@@ -31,6 +33,8 @@ const OfferSchema = new Schema<IOffer>(
     order: { type: Number, default: 0, index: true },
     availableCountry: { type: String, index: true },
     createdByEmail: { type: String, index: true },
+    backgroundClassName: { type: String },
+    isFestive: { type: Boolean, default: false, index: true },
   },
   { timestamps: true }
 )

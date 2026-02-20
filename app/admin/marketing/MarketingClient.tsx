@@ -26,6 +26,8 @@ type Offer = {
   expiryDate?: string
   order: number
   availableCountry?: string
+  backgroundClassName?: string
+  isFestive?: boolean
 }
 
 const containerVariants = {
@@ -71,6 +73,8 @@ export default function MarketingClient() {
     active: boolean
     expiryDate: string
     order: number
+    backgroundClassName: string
+    isFestive: boolean
   }>({
     key: "",
     name: "",
@@ -82,7 +86,9 @@ export default function MarketingClient() {
     availableCountry: "",
     active: true,
     expiryDate: "",
-    order: 0
+    order: 0,
+    backgroundClassName: "",
+    isFestive: false,
   })
 
   const [bannerFormData, setBannerFormData] = useState<{
@@ -165,7 +171,9 @@ export default function MarketingClient() {
       availableCountry: "",
       active: true,
       expiryDate: "",
-      order: 0
+      order: 0,
+      backgroundClassName: "",
+      isFestive: false,
     })
     setEditingId(null)
     setIsEditing(false)
@@ -184,7 +192,9 @@ export default function MarketingClient() {
       availableCountry: offer.availableCountry || "",
       active: offer.active,
       expiryDate: offer.expiryDate ? new Date(offer.expiryDate).toISOString().split('T')[0] : "",
-      order: offer.order || 0
+      order: offer.order || 0,
+      backgroundClassName: offer.backgroundClassName || "",
+      isFestive: !!offer.isFestive,
     })
     setEditingId(offer._id)
     setIsEditing(true)
@@ -613,6 +623,18 @@ export default function MarketingClient() {
               </div>
 
               <div className="space-y-1.5">
+                <label className="text-sm font-semibold text-gray-700">Festive Background Class</label>
+                <input
+                  type="text"
+                  value={formData.backgroundClassName}
+                  onChange={e => setFormData({ ...formData, backgroundClassName: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                  placeholder="Tailwind classes for festive background"
+                />
+                <p className="text-xs text-gray-400">Used for Festive section background on homepage.</p>
+              </div>
+
+              <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-gray-700">Sort Order</label>
                 <input
                   type="number"
@@ -622,7 +644,20 @@ export default function MarketingClient() {
                 />
               </div>
 
-              <div className="pt-2">
+              <div className="pt-2 space-y-3">
+                <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.isFestive ? 'bg-amber-500 border-amber-500' : 'bg-white border-gray-300'}`}>
+                    {formData.isFestive && <Check className="w-3.5 h-3.5 text-white" />}
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={formData.isFestive}
+                    onChange={e => setFormData({ ...formData, isFestive: e.target.checked })}
+                    className="hidden"
+                  />
+                  <span className="text-sm font-medium text-gray-700">Mark as Festive Offer</span>
+                </label>
+
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
                   <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.active ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
                     {formData.active && <Check className="w-3.5 h-3.5 text-white" />}

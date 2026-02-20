@@ -17,6 +17,7 @@ const TrendingProducts = dynamic(() => import("@/components/ui/TrendingProducts/
 const SellerProducts = dynamic(() => import("@/components/ui/SellerProducts/SellerProducts"));
 const MarqueeBanner = dynamic(() => import("@/components/ui/MarqueeBanner/MarqueeBanner"));
 const PriceCategoryBanner = dynamic(() => import("@/components/ui/PriceCategoryBanner/PriceCategoryBanner"));
+const FestiveProducts = dynamic(() => import("@/components/ui/FestiveProducts/FestiveProducts"));
 
 export default function Page() {
   return (
@@ -57,6 +58,7 @@ function HomeContent() {
 
             <PendingReviews />
             <NewArrivals onProductClick={setSelectedProduct} />
+            <FestiveProducts onProductClick={setSelectedProduct} />
             <TrendingProducts onProductClick={setSelectedProduct} />
             <SellerProducts onProductClick={setSelectedProduct} />
           </Suspense>

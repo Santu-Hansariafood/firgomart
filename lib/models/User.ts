@@ -38,7 +38,10 @@ export function getUserModel(conn: Connection) {
   return conn.models.User || conn.model("User", UserSchema)
 }
 
-export async function findUserAcrossDBs(identifier: string | { email?: string, mobile?: string }) {
+export async function findUserAcrossDBs(
+  identifier: string | { email?: string, mobile?: string },
+  options?: { lean?: boolean }
+) {
   const query: Record<string, string> = {}
   if (typeof identifier === "string") {
     if (/^\d{10}$/.test(identifier)) {
@@ -73,7 +76,9 @@ export async function findUserAcrossDBs(identifier: string | { email?: string, m
   }
   for (const conn of conns) {
     const User = getUserModel(conn)
-    const user = await User.findOne(query)
+    const user = options?.lean
+      ? await (User as any).findOne(query).lean()
+      : await User.findOne(query)
     if (user) return { conn, User, user }
   }
   return null

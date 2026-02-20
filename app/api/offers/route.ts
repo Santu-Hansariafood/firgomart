@@ -33,8 +33,17 @@ export async function GET(request: Request) {
       expiryDate: o.expiryDate,
       category: o.category,
       subcategory: o.subcategory,
+      backgroundClassName: o.backgroundClassName,
+      isFestive: !!o.isFestive,
     }))
-    return NextResponse.json({ offers })
+    return NextResponse.json(
+      { offers },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    )
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }

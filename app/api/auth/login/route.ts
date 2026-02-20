@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     if (!email || !password) {
       return NextResponse.json({ error: "Missing credentials" }, { status: 400 })
     }
-    const result = await findUserAcrossDBs(email)
+    const result = await findUserAcrossDBs(email, { lean: true })
     if (!result) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
