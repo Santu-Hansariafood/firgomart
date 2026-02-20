@@ -37,7 +37,8 @@ const Navbar: React.FC = () => {
     isAuthenticated,
     locationLoading,
     deliverToState,
-    fullLocation
+    fullLocation,
+    countryName
   } = state
 
   const {
@@ -176,6 +177,7 @@ const Navbar: React.FC = () => {
         onRequestLocation={handleRequestLocation}
         onManualLocation={handleManualLocation}
         loading={locationLoading}
+        countryName={countryName}
       />
       <BottomNav 
         onCartClick={() => setShowCart(true)} 

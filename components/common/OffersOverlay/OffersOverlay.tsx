@@ -244,7 +244,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed inset-4 md:inset-6 bg-background rounded-3xl shadow-2xl z-[100] overflow-hidden flex flex-col border border-white/10"
           >
-            {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-foreground/5 bg-background/80 backdrop-blur-md z-10">
               <div className="flex items-center gap-4">
                  {selectedOffer && (
@@ -274,7 +273,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
               </button>
             </div>
 
-            {/* Scrollable Content */}
             <div 
                 ref={scrollContainerRef}
                 className="flex-1 overflow-y-auto custom-scrollbar bg-background/50"
@@ -344,7 +342,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                         )}
                       </div>
                     ) : (
-                      // Product Grid View
                       <div className="flex flex-col lg:flex-row gap-8">
                         <aside className="hidden lg:block w-64 shrink-0">
                             <div className="sticky top-0 space-y-6">
@@ -446,8 +443,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                     )}
                 </div>
             </div>
-
-            {/* Mobile filters are disabled for this overlay */}
 
             {selectedProduct && (
               <ProductModal

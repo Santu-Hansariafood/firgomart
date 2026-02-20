@@ -48,7 +48,7 @@ export const useNavbar = () => {
   const { user, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const { cartItems, setShowCart } = useCart()
-  const { deliverToState, fullLocation, requestLocation, loading: locationLoading, updateLocation } = useGeolocation()
+  const { deliverToState, fullLocation, requestLocation, loading: locationLoading, updateLocation, countryName } = useGeolocation()
 
   const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0)
   const sellerInfo = (user?.sellerDetails || null) as SellerInfo | null
@@ -163,8 +163,8 @@ export const useNavbar = () => {
     setShowLocationModal(false)
   }
 
-  const handleManualLocation = (state: string) => {
-    updateLocation(state)
+  const handleManualLocation = (state: string, country: string) => {
+    updateLocation(state, country)
     setShowLocationModal(false)
   }
 
@@ -186,7 +186,8 @@ export const useNavbar = () => {
       isAuthenticated,
       locationLoading,
       deliverToState,
-      fullLocation
+      fullLocation,
+      countryName
     },
     actions: {
       setSearchQuery,

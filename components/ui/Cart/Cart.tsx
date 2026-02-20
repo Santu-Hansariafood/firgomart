@@ -70,7 +70,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
           exit={{ x: '100%' }}
           transition={{ type: 'tween', duration: 0.3 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--background)] text-[color:var(--foreground)] w-full md:w-96 h-[90vh] md:h-full md:max-h-screen flex flex-col shadow-2xl"
+          className="bg-[var(--background)] text-[color:var(--foreground)] w-full md:w-96 h-[90vh] md:h-full md:max-h-screen flex flex-col shadow-2xl pb-24 md:pb-0"
         >
           <div className="flex items-center justify-between p-5 border-b border-[var(--foreground)/10] bg-linear-to-r from-brand-purple/5 to-transparent">
             <div className="flex items-center space-x-3">

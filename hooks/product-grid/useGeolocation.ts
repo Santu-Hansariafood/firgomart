@@ -138,8 +138,8 @@ export function useGeolocation() {
     }
   }, [save])
 
-  const updateLocation = useCallback((state: string) => {
-    save(state, 'India', state)
+  const updateLocation = useCallback((state: string, country: string) => {
+    save(state, country, state)
   }, [save])
 
   return { deliverToState, fullLocation, countryCode, countryName, requestLocation, loading, error, updateLocation }

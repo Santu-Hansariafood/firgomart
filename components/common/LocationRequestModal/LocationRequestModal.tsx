@@ -9,8 +9,9 @@ interface LocationRequestModalProps {
   isOpen: boolean
   onClose: () => void
   onRequestLocation: () => Promise<void>
-  onManualLocation?: (state: string) => void
+  onManualLocation?: (state: string, country: string) => void
   loading: boolean
+  countryName?: string
 }
 
 export default function LocationRequestModal({ 
@@ -18,15 +19,22 @@ export default function LocationRequestModal({
   onClose, 
   onRequestLocation, 
   onManualLocation, 
-  loading 
+  loading,
+  countryName
 }: LocationRequestModalProps) {
   const [mode, setMode] = useState<'prompt' | 'manual'>('prompt')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const states = useMemo(() => {
-    const india = locationData.countries.find((c) => c.country === 'India')
-    return india ? india.states.map((s) => s.state).sort() : []
-  }, [])
+  const { selectedCountryName, states } = useMemo(() => {
+    const allCountries = (locationData as any).countries as { country: string; states?: { state: string }[] }[]
+    const normalized = (countryName || '').toLowerCase()
+    let chosen = allCountries.find((c) => c.country.toLowerCase() === normalized)
+    if (!chosen) {
+      chosen = allCountries.find((c) => c.country === 'India') || allCountries[0]
+    }
+    const stateNames = chosen?.states ? chosen.states.map((s) => s.state).sort() : []
+    return { selectedCountryName: chosen?.country || (countryName || ''), states: stateNames }
+  }, [countryName])
 
   const filteredStates = useMemo(() => {
     if (!searchTerm) return states
@@ -37,8 +45,8 @@ export default function LocationRequestModal({
 
   const handleManualSelect = (state: string) => {
     if (onManualLocation) {
-      onManualLocation(state)
-      setMode('prompt') // Reset for next time
+      onManualLocation(state, selectedCountryName)
+      setMode('prompt')
     }
   }
 

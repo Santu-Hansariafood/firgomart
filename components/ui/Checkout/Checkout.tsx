@@ -253,7 +253,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] pt-4 sm:pt-8 pb-16 sm:pb-20">
+    <div className="min-h-screen bg-[var(--background)] pt-4 sm:pt-8 pb-24 sm:pb-20">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="mb-6 sm:mb-8 flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-4">
@@ -263,7 +263,6 @@ const Checkout: React.FC<CheckoutProps> = ({
              <h1 className="text-xl sm:text-2xl font-bold font-heading text-[var(--foreground)]">Checkout</h1>
           </div>
           
-          {/* Progress Stepper */}
           <div className="hidden md:flex items-center space-x-4">
             <div className={`flex items-center gap-2 ${step >= 1 ? 'text-brand-purple font-medium' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${step >= 1 ? 'border-brand-purple bg-brand-purple text-white' : 'border-gray-300 text-gray-400'}`}>
@@ -604,7 +603,6 @@ const Checkout: React.FC<CheckoutProps> = ({
             </motion.div>
           </div>
 
-          {/* Order Summary Sidebar */}
           <div className="lg:col-span-4 order-1 lg:order-2">
             <motion.div
               variants={fadeInUp}
@@ -776,7 +774,6 @@ const Checkout: React.FC<CheckoutProps> = ({
         )}
       </div>
 
-      {/* Address Selection Modal */}
       <AnimatePresence>
         {showAddressModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">

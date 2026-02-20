@@ -154,37 +154,53 @@ export default function Page() {
   const currentCurrency = getCurrencyForCountry(formAvailableCountry)
   
   const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
-      const createNumSizes = (start: number, end: number) => {
-        const arr: DropdownItem[] = [];
-        for (let i = start; i <= end; i++) {
-          arr.push({ id: String(i), label: String(i) });
-        }
-        return arr;
-      };
+      const clothingSizes: DropdownItem[] = [
+        { id: "XS", label: "XS" },
+        { id: "S", label: "S" },
+        { id: "M", label: "M" },
+        { id: "L", label: "L" },
+        { id: "XL", label: "XL" },
+        { id: "XXL", label: "XXL" },
+        { id: "3XL", label: "3XL" },
+        { id: "Free Size", label: "Free Size" },
+      ]
 
-      let newSizes: DropdownItem[] = [];
-      if (cat === "Women's Fashion" || cat === "Men's Fashion" || cat === "Women's Footwear") {
-        newSizes = createNumSizes(4, 10);
-      } else if (cat === "Men's Footwear") {
-        newSizes = createNumSizes(4, 11);
-      } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen" || cat === "Mobiles & Accessories" || cat === "Jewellery & Accessories") {
-        newSizes = [];
+      const createNumSizes = (start: number, end: number) => {
+        const arr: DropdownItem[] = []
+        for (let i = start; i <= end; i++) {
+          arr.push({ id: String(i), label: String(i) })
+        }
+        return arr
+      }
+
+      let newSizes: DropdownItem[] = []
+
+      if (cat === "Women's Fashion" || cat === "Men's Fashion") {
+        newSizes = clothingSizes
+      } else if (cat === "Women's Footwear" || cat === "Men's Footwear") {
+        newSizes = createNumSizes(4, 10)
+      } else if (cat === "Home & Kitchen") {
+        newSizes = [
+          { id: "Free Size", label: "Free Size" },
+          { id: "cm", label: "cm" },
+          { id: "liter", label: "liter" },
+          { id: "kg", label: "kg" },
+        ]
+      } else if (
+        cat === "Beauty & Skincare" ||
+        cat === "Mobile & Electronics" ||
+        cat === "Fashion Accessories" ||
+        cat === "Fashion Jewellery"
+      ) {
+        newSizes = []
       } else {
-         newSizes = [
-            { id: "XS", label: "XS" },
-            { id: "S", label: "S" },
-            { id: "M", label: "M" },
-            { id: "L", label: "L" },
-            { id: "XL", label: "XL" },
-            { id: "XXL", label: "XXL" },
-            { id: "3XL", label: "3XL" },
-            { id: "Free Size", label: "Free Size" },
-         ];
+        newSizes = clothingSizes
       }
+
       if (newSizes.length > 0) {
-         newSizes.push({ id: "others", label: "Others" });
+        newSizes.push({ id: "others", label: "Others" })
       }
-      return newSizes;
+      return newSizes
   }
 
   const [sizeOptions, setSizeOptions] = useState<DropdownItem[]>([])
@@ -687,8 +703,16 @@ export default function Page() {
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">MRP</label>
-                            <input type="number" value={formOriginalPrice} onChange={e => setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Original" />
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                              MRP ({currentCurrency.symbol})
+                            </label>
+                            <input
+                              type="number"
+                              value={formOriginalPrice}
+                              onChange={e => setFormOriginalPrice(e.target.value)}
+                              className="w-full px-3 py-2 border rounded-lg"
+                              placeholder="Original"
+                            />
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -715,6 +739,9 @@ export default function Page() {
                               onChange={onFormCountryChange}
                               placeholder="Select Country"
                             />
+                            <p className="mt-1 text-xs text-gray-500">
+                              Currency: {currentCurrency.code} ({currentCurrency.symbol})
+                            </p>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Time (days)</label>

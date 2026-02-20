@@ -6,42 +6,50 @@ type JsonCategory = { name: string; subcategories?: string[] }
 export const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
 
 export const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
+  const clothingSizes: DropdownItem[] = [
+    { id: 'XS', label: 'XS' },
+    { id: 'S', label: 'S' },
+    { id: 'M', label: 'M' },
+    { id: 'L', label: 'L' },
+    { id: 'XL', label: 'XL' },
+    { id: 'XXL', label: 'XXL' },
+    { id: '3XL', label: '3XL' },
+    { id: 'Free Size', label: 'Free Size' },
+  ]
+
   const createNumSizes = (start: number, end: number) => {
     const arr: DropdownItem[] = []
     for (let i = start; i <= end; i++) arr.push({ id: String(i), label: String(i) })
     return arr
   }
-  let newSizes: DropdownItem[] = []
-  if (cat === "Women's Fashion" || cat === "Men's Fashion" || cat === "Women's Footwear") {
-    newSizes = createNumSizes(4, 10)
-    newSizes = [
-      { id: 'XS', label: 'XS' },
-      { id: 'S', label: 'S' },
-      { id: 'M', label: 'M' },
-      { id: 'L', label: 'L' },
-      { id: 'XL', label: 'XL' },
-      { id: 'XXL', label: 'XXL' },
-      { id: '3XL', label: '3XL' },
+
+  if (cat === "Women's Fashion" || cat === "Men's Fashion") {
+    return clothingSizes
+  }
+
+  if (cat === "Women's Footwear" || cat === "Men's Footwear") {
+    return createNumSizes(4, 10)
+  }
+
+  if (cat === "Home & Kitchen") {
+    return [
       { id: 'Free Size', label: 'Free Size' },
-      ...newSizes,
-    ]
-  } else if (cat === "Men's Footwear") {
-    newSizes = createNumSizes(4, 11)
-  } else if (cat === "Beauty & Skincare" || cat === "Home & Kitchen" || cat === "Mobiles & Accessories" || cat === "Jewellery & Accessories") {
-    newSizes = []
-  } else {
-    newSizes = [
-      { id: 'XS', label: 'XS' },
-      { id: 'S', label: 'S' },
-      { id: 'M', label: 'M' },
-      { id: 'L', label: 'L' },
-      { id: 'XL', label: 'XL' },
-      { id: 'XXL', label: 'XXL' },
-      { id: '3XL', label: '3XL' },
-      { id: 'Free Size', label: 'Free Size' },
+      { id: 'cm', label: 'cm' },
+      { id: 'liter', label: 'liter' },
+      { id: 'kg', label: 'kg' },
     ]
   }
-  return newSizes
+
+  if (
+    cat === "Beauty & Skincare" ||
+    cat === "Mobile & Electronics" ||
+    cat === "Fashion Accessories" ||
+    cat === "Fashion Jewellery"
+  ) {
+    return []
+  }
+
+  return clothingSizes
 }
 
 export const allSizes: DropdownItem[] = [

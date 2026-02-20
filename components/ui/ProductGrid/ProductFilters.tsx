@@ -173,8 +173,11 @@ export const FilterPanel = memo(function FilterPanel({
 }: FilterPanelProps) {
   const [mobileTab, setMobileTab] = useState<'price' | 'size' | 'rating'>('price')
 
+  const sizeOptions = category ? getSizeOptionsForCategory(category) : allSizes
+  const hasSize = sizeOptions.length > 0
+
   const MIN_PRICE_LIMIT = 0
-  const MAX_PRICE_LIMIT = 5000
+  const MAX_PRICE_LIMIT = category === "Mobile & Electronics" ? 200000 : 5000
   
   const currentMin = minPrice ? parseInt(minPrice) : MIN_PRICE_LIMIT
   const currentMax = maxPrice ? parseInt(maxPrice) : MAX_PRICE_LIMIT
@@ -193,6 +196,12 @@ export const FilterPanel = memo(function FilterPanel({
       }
     }
   }
+
+  useEffect(() => {
+    if (!hasSize && mobileTab === 'size') {
+      setMobileTab('price')
+    }
+  }, [hasSize, mobileTab])
 
   const minPercent = ((currentMin - MIN_PRICE_LIMIT) / (MAX_PRICE_LIMIT - MIN_PRICE_LIMIT)) * 100
   const maxPercent = ((currentMax - MIN_PRICE_LIMIT) / (MAX_PRICE_LIMIT - MIN_PRICE_LIMIT)) * 100
@@ -216,7 +225,7 @@ export const FilterPanel = memo(function FilterPanel({
         </div>
 
         <div className="flex md:hidden p-1 bg-foreground/5 rounded-xl mb-6 relative">
-          {(['price', 'size', 'rating'] as const).map((tab) => (
+          {(hasSize ? (['price', 'size', 'rating'] as const) : (['price', 'rating'] as const)).map((tab) => (
             <button
               key={tab}
               onClick={() => setMobileTab(tab)}
@@ -242,9 +251,9 @@ export const FilterPanel = memo(function FilterPanel({
             </div>
 
             <div className="relative h-2 w-full mt-2 mb-6">
-              <div className="absolute top-0eft-0 right-0 bobotgomf0o10 rounded-full"></div>
+              <div className="absolute top-0 left-0 right-0 bottom-0 bg-foreground/10 rounded-full"></div>
               <div 
-                className="absolute top-0 bottom-0 bg-0nbo- omu0l"
+                className="absolute top-0 bottom-0 bg-brand-purple/30 rounded-full"
                 style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
               ></div>
 
@@ -254,7 +263,7 @@ export const FilterPanel = memo(function FilterPanel({
                 max={MAX_PRICE_LIMIT}
                 value={currentMin}
                 onChange={(e) => handlePriceRangeChange(e, 'min')}
-                className={`absolute top-0 left-0 w-full h-2 appearance-none bg-transpa2 pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-purple [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-brand-purple [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:cursor-pointer ${currentMin > (MAX_PRICE_LIMIT - 100) ? "z-50" : "z-30"}`}
+                className={`absolute top-0 left-0 w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-purple [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-brand-purple [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:cursor-pointer ${currentMin > (MAX_PRICE_LIMIT - 100) ? "z-50" : "z-30"}`}
               />
 
               <input
@@ -263,37 +272,39 @@ export const FilterPanel = memo(function FilterPanel({
                 max={MAX_PRICE_LIMIT}
                 value={currentMax}
                 onChange={(e) => handlePriceRangeChange(e, 'max')}
-                className="absolute top-0 left-0 w-full h-2 appearance-none bg-transparen2inter-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-purple [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-brand-purple [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:cursor-pointer z-40"
+                className="absolute top-0 left-0 w-full h-2 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-purple [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-brand-purple [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:cursor-pointer z-40"
               />
             </div>
           </div>
 
-          <div className={`space-y-3 ${mobileTab !== 'size' ? 'hidden md:block' : ''}`}>
-            <h4 className="text-sm font-semibold text-foreground/70 uppercase tracking-wider">Size</h4>
-            <div className="flex flex-wrap gap-2">
-              {(category ? getSizeOptionsForCategory(category) : allSizes).map((opt) => {
-                const val = String(opt.label)
-                const active = selectedSize === val
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => {
-                      setSelectedSize(active ? "" : val)
-                      setPage(1)
-                    }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border
-                      ${
-                        active
-                          ? "bg-brand-purple text-white border-brand-purple shadow-sm"
-                          : "bg-background/50 border-foreground/10 hover:border-brand-purple/50 text-foreground"
-                      }`}
-                  >
-                    {opt.label}
-                  </button>
-                )
-              })}
+          {hasSize && (
+            <div className={`space-y-3 ${mobileTab !== 'size' ? 'hidden md:block' : ''}`}>
+              <h4 className="text-sm font-semibold text-foreground/70 uppercase tracking-wider">Size</h4>
+              <div className="flex flex-wrap gap-2">
+                {sizeOptions.map((opt) => {
+                  const val = String(opt.label)
+                  const active = selectedSize === val
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        setSelectedSize(active ? "" : val)
+                        setPage(1)
+                      }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border
+                        ${
+                          active
+                            ? "bg-brand-purple text-white border-brand-purple shadow-sm"
+                            : "bg-background/50 border-foreground/10 hover:border-brand-purple/50 text-foreground"
+                        }`}
+                    >
+                      {opt.label}
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className={`space-y-3 ${mobileTab !== 'rating' ? 'hidden md:block' : ''}`}>
             <div className="flex items-center justify-between">
