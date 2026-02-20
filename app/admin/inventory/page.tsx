@@ -6,11 +6,13 @@ import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import dynamic from "next/dynamic"
 import FallbackImage from "@/components/common/Image/FallbackImage"
+import { SUPPORTED_COUNTRIES, getCurrencyForCountry } from "@/utils/productUtils"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
 const CommonPagination = dynamic(() => import("@/components/common/Pagination/CommonPagination"))
 const SearchBox = dynamic(() => import("@/components/common/SearchBox/SearchBox"))
 const BackButton = dynamic(() => import("@/components/common/BackButton/BackButton"))
+const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
 
 type InventoryRow = {
   id: string
@@ -23,7 +25,11 @@ type InventoryRow = {
   sellerHasGST?: boolean
   createdAt?: string
   productId?: string
+  availableCountry?: string
+  currencyCode?: string
 }
+
+type DropdownItem = { id: string | number; label: string }
 
 export default function Page() {
   const { data: session } = useSession()
@@ -47,6 +53,11 @@ export default function Page() {
   const [minStock, setMinStock] = useState<string>("")
   const [maxStock, setMaxStock] = useState<string>("")
   const [onlyMine, setOnlyMine] = useState(false)
+  const countryOptions: DropdownItem[] = SUPPORTED_COUNTRIES.map((c) => ({ id: c.code, label: c.name }))
+  const [selectedCountry, setSelectedCountry] = useState<DropdownItem | null>(null)
+  const onCountryChange = (v: DropdownItem | DropdownItem[]) => {
+    if (!Array.isArray(v)) setSelectedCountry(v)
+  }
 
   const loadInventory = async () => {
     setLoading(true)
@@ -61,6 +72,7 @@ export default function Page() {
       params.set("sortOrder", sortOrder)
       const email = (session?.user?.email || authUser?.email || "").trim()
       if (onlyMine && email) params.set("createdByEmail", email)
+      if (selectedCountry?.id) params.set("country", String(selectedCountry.id))
       const res = await fetch(`/api/admin/inventory?${params.toString()}`, {
         headers: {
           ...(email ? { "x-admin-email": email } : {}),
@@ -102,7 +114,7 @@ export default function Page() {
     if (!allowed) return
     loadInventory()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowed, page, minStock, maxStock, search, sortKey, sortOrder, onlyMine])
+  }, [allowed, page, minStock, maxStock, search, sortKey, sortOrder, onlyMine, selectedCountry])
 
   return (
     <Suspense fallback={<BeautifulLoader />}>
@@ -125,6 +137,15 @@ export default function Page() {
           </div>
           <div className="md:col-span-2">
             <SearchBox value={search} onChange={setSearch} placeholder="Search inventory" />
+          </div>
+          <div>
+            <CommonDropdown
+              label="Country"
+              options={countryOptions}
+              selected={selectedCountry}
+              onChange={onCountryChange}
+              placeholder="All countries"
+            />
           </div>
           <div className="col-span-1">
             <label className="inline-flex items-center gap-2 text-sm font-medium text-gray-600">
@@ -164,7 +185,17 @@ export default function Page() {
               { key: "productId", label: "Product ID" },
               { key: "name", label: "Product", sortable: true },
               { key: "category", label: "Category" },
-              { key: "price", label: "Price", sortable: true, render: (r) => `₹${Number(r.price || 0).toFixed(2)}` },
+              {
+                key: "price",
+                label: "Price",
+                sortable: true,
+                render: (r) => {
+                  const country = typeof (r as any).availableCountry === "string" ? (r as any).availableCountry : "IN"
+                  const c = getCurrencyForCountry(country)
+                  const value = Number(r.price || 0)
+                  return `${c.symbol}${value.toFixed(2)}`
+                },
+              },
               { key: "stock", label: "Stock", sortable: true, render: (r) => (
                 <div className="flex items-center gap-2">
                   <input

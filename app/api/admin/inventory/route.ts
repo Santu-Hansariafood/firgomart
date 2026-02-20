@@ -21,6 +21,8 @@ type ProductLean = {
   sellerHasGST?: boolean
   createdAt?: string
   createdByEmail?: string
+  availableCountry?: string
+  currencyCode?: string
 }
 
 export async function GET(request: Request) {
@@ -64,11 +66,13 @@ export async function GET(request: Request) {
     const sortBy = (url.searchParams.get("sortBy") || "createdAt").trim()
     const sortOrder = (url.searchParams.get("sortOrder") || "desc").trim().toLowerCase() === "asc" ? 1 : -1
     const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
+    const country = (url.searchParams.get("country") || "").trim().toUpperCase()
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
     const q: Record<string, unknown> = {}
     if (createdByEmail) q.createdByEmail = createdByEmail
+    if (country) q.availableCountry = country
     if (minStock !== null && minStock !== undefined) q.stock = { ...(q.stock || {}), $gte: Number(minStock) }
     if (maxStock !== null && maxStock !== undefined) q.stock = { ...(q.stock || {}), $lte: Number(maxStock) }
     if (search) {
@@ -98,6 +102,8 @@ export async function GET(request: Request) {
       sellerState: p.sellerState,
       sellerHasGST: p.sellerHasGST,
       createdAt: p.createdAt,
+      availableCountry: p.availableCountry,
+      currencyCode: p.currencyCode,
     }))
     return NextResponse.json({ inventory: safe, total })
   } catch (err: unknown) {
