@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ChevronDown, SlidersHorizontal, Star } from "lucide-react"
+import { ChevronDown, SlidersHorizontal, Star, IndianRupee, Maximize2 } from "lucide-react"
 import { useEffect, useRef, memo, useState } from "react"
 
 export type DropdownItem = {
@@ -214,8 +214,7 @@ export const FilterPanel = memo(function FilterPanel({
       className="relative z-[50] overflow-hidden"
     >
       <div className="rounded-3xl border border-foreground/10 bg-background/60 backdrop-blur-xl shadow-lg p-5 dark:bg-background/40">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-foreground">Filters</h3>
+        <div className="flex items-center justify-end mb-6">
           <button
             onClick={onClearFilters}
             className="text-xs font-semibold text-brand-purple hover:text-brand-purple/80 transition-colors px-3 py-1.5 rounded-full bg-brand-purple/10 hover:bg-brand-purple/20"
@@ -224,19 +223,22 @@ export const FilterPanel = memo(function FilterPanel({
           </button>
         </div>
 
-        <div className="flex md:hidden p-1 bg-foreground/5 rounded-xl mb-6 relative">
+        <div className="flex md:hidden items-center gap-2 overflow-x-auto scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] mb-6">
           {(hasSize ? (['price', 'size', 'rating'] as const) : (['price', 'rating'] as const)).map((tab) => (
             <button
               key={tab}
               onClick={() => setMobileTab(tab)}
-              className={`flex-1 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all z-10
+              className={`flex-none inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-full border whitespace-nowrap transition-all
                 ${
                   mobileTab === tab
-                    ? "bg-brand-purple text-white shadow-sm"
-                    : "text-foreground/50 hover:text-foreground/70"
+                    ? "bg-brand-purple text-white border-brand-purple shadow-sm"
+                    : "bg-background/80 border-foreground/10 text-foreground/70 hover:bg-foreground/5"
                 }`}
             >
-              {tab}
+              {tab === 'price' && <IndianRupee className="w-4 h-4" />}
+              {tab === 'size' && <Maximize2 className="w-4 h-4" />}
+              {tab === 'rating' && <Star className="w-4 h-4" />}
+              <span className="capitalize">{tab === 'price' ? 'Price' : tab === 'size' ? 'Size' : 'Rating'}</span>
             </button>
           ))}
         </div>

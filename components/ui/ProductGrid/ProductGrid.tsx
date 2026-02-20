@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Gift, ShoppingBag } from 'lucide-react'
+import { X, Gift, ShoppingBag, Tag } from 'lucide-react'
 import OffersFilterChips from '@/components/ui/Filters/OffersFilterChips'
 import { FilterControls, FilterPanel } from './ProductFilters'
 import { Product } from '@/types/product'
@@ -256,7 +256,18 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
         {category && subcategoryOptionsFor(category).length > 0 && (
           <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-            <div className="flex flex-wrap gap-3">
+            <div
+              className="
+                flex items-center gap-3
+                overflow-x-auto md:overflow-visible
+                scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none]
+                flex-nowrap md:flex-wrap
+                rounded-3xl border border-foreground/5
+                bg-gradient-to-r from-brand-purple/5 via-background/80 to-brand-red/5
+                px-3 py-3
+                shadow-sm shadow-brand-purple/10
+              "
+            >
               {subcategoryOptionsFor(category).map((opt, idx) => {
                 const active = subcategory === opt.label
                 return (
@@ -268,12 +279,13 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                       router.push(`/?${params.toString()}`, { scroll: false })
                       setPage(1)
                     }}
-                    className={`inline-flex items-center px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 transform active:scale-95 ${
+                    className={`flex-none inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 transform active:scale-95 ${
                       active
-                        ? 'bg-brand-purple text-white shadow-lg shadow-brand-purple/30 ring-2 ring-brand-purple ring-offset-2 ring-offset-background'
-                        : 'bg-background border border-foreground/10 text-foreground/70 hover:border-brand-purple/40 hover:text-brand-purple hover:shadow-md hover:-translate-y-0.5'
+                        ? 'bg-gradient-to-r from-brand-purple to-pink-500 text-white shadow-lg shadow-brand-purple/30 ring-2 ring-brand-purple ring-offset-2 ring-offset-background'
+                        : 'bg-background/80 border border-foreground/10 text-foreground/70 hover:bg-brand-purple/5 hover:border-brand-purple/40 hover:text-brand-purple hover:shadow-md hover:-translate-y-0.5'
                     }`}
                   >
+                    <Tag className="w-4 h-4" />
                     {opt.label}
                   </button>
                 )
@@ -285,7 +297,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                   router.push(`/?${params.toString()}`, { scroll: false })
                   setPage(1)
                 }}
-                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border text-sm font-medium bg-red-50 text-red-600 border-red-100 hover:bg-red-100 hover:border-red-200 transition-all duration-300"
+                className="flex-none inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full border text-sm font-medium bg-red-50/90 text-red-600 border-red-100 hover:bg-red-100 hover:border-red-200 shadow-sm hover:shadow-md transition-all duration-300 whitespace-nowrap"
               >
                 <X className="w-4 h-4" />
                 <span>Clear</span>
