@@ -96,7 +96,7 @@ export default function Page() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link href="/seller/orders" className="group border rounded-xl p-4 bg-white hover:bg-gray-50 transition-colors">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-blue-600/10 text-blue-600">
+              <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-brand-purple/10 text-brand-purple">
                 <Receipt className="w-6 h-6" />
               </div>
               <div>
@@ -152,7 +152,7 @@ export default function Page() {
             { key: "id", label: "Actions", render: (r) => (
               <button 
                 onClick={() => window.open(`/print/order/${r.id}`, "_blank")} 
-                className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                className="px-3 py-1 bg-brand-purple text-white rounded text-sm hover:bg-brand-purple/90 transition-colors"
               >
                 Print
               </button>

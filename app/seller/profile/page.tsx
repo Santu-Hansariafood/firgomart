@@ -214,7 +214,7 @@ export default function SellerProfilePage() {
                 <button
                   type="submit"
                   disabled={String(sellerInfo.status || "").toLowerCase() === "approved" || savingSeller}
-                  className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+                  className="px-4 py-2 bg-brand-purple text-white rounded disabled:opacity-50"
                 >
                   {savingSeller ? "Saving..." : "Save Changes"}
                 </button>
@@ -284,7 +284,7 @@ export default function SellerProfilePage() {
                 <input name="images" type="file" multiple accept="image/*" className="px-3 py-2 border rounded" />
               </div>
             </div>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg" disabled={creating}>
+            <button type="submit" className="px-4 py-2 bg-brand-purple text-white rounded-lg" disabled={creating}>
               {creating ? "Creating..." : "Create"}
             </button>
             {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
@@ -389,7 +389,7 @@ export default function SellerProfilePage() {
             {myProducts.length === 0 && <p className="text-sm text-gray-500">No products yet</p>}
           </div>
         <div className="mt-4">
-          <a href="/seller/inventory" className="text-blue-600 hover:underline">Go to Inventory Management</a>
+          <a href="/seller/inventory" className="text-brand-purple hover:underline">Go to Inventory Management</a>
         </div>
       </div>
 

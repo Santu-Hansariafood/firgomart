@@ -89,7 +89,7 @@ function StatusContent() {
   if (status === 'loading') {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-16 h-16 text-blue-600 animate-spin mb-4" />
+        <Loader2 className="w-16 h-16 text-brand-purple animate-spin mb-4" />
         <h2 className="text-xl font-semibold text-gray-900">Verifying Payment...</h2>
         <p className="text-gray-500 mt-2">Please do not close this window.</p>
       </div>
@@ -183,7 +183,7 @@ function StatusContent() {
               <Link href="/profile" className="px-6 py-3 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors font-medium text-center">
                 View My Orders
               </Link>
-              <Link href="/" className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-center">
+              <Link href="/" className="px-6 py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors font-medium text-center">
                 Continue Shopping
               </Link>
             </div>
@@ -201,7 +201,7 @@ function StatusContent() {
         {message || 'We could not confirm your payment. If money was deducted, it will be refunded automatically within 5-7 business days.'}
       </p>
       <div className="flex space-x-4">
-        <Link href="/checkout" className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        <Link href="/checkout" className="px-6 py-3 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors">
           Try Again
         </Link>
         <Link href="/" className="px-6 py-3 bg-gray-100 text-gray-900 rounded-lg hover:bg-gray-200 transition-colors">

@@ -567,7 +567,7 @@ export default function Page() {
       ) : (
         <div className="p-6 space-y-8">
           <BackButton className="mb-2" />
-          <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-4 rounded-xl flex items-center justify-between">
+          <div className="bg-gradient-to-r from-brand-purple to-brand-red p-4 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Package className="w-8 h-8 text-white" />
               <div>
@@ -577,7 +577,7 @@ export default function Page() {
             </div>
             <div className="flex items-center gap-4">
                <span className="text-2xl font-semibold text-white">{total} Items</span>
-               <button onClick={() => openModal()} className="bg-white text-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 font-medium hover:bg-blue-50">
+               <button onClick={() => openModal()} className="bg-white text-brand-purple px-4 py-2 rounded-lg flex items-center gap-2 font-medium hover:bg-brand-purple/10">
                  <Plus className="w-4 h-4" /> Add Product
                </button>
             </div>
@@ -652,7 +652,7 @@ export default function Page() {
                     { key: "createdAt", label: "Created", sortable: true, render: (r) => r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "" },
                     { key: "actions", label: "Actions", render: (r) => (
                         <div className="flex items-center gap-2">
-                            <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-blue-600">
+                            <button onClick={() => openModal(r as ProductItem)} className="p-1 hover:bg-gray-100 rounded text-brand-purple">
                                 <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => handleDelete((r as ProductItem).id)} className="p-1 hover:bg-red-50 rounded text-red-600">
@@ -964,7 +964,7 @@ export default function Page() {
                                                     <button onClick={() => removeImage(index)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm">
                                                         <X className="w-3 h-3" />
                                                     </button>
-                                                    <button onClick={() => startCrop(index)} className="absolute bottom-1 right-1 bg-blue-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm" title="Crop">
+                                                    <button onClick={() => startCrop(index)} className="absolute bottom-1 right-1 bg-brand-purple text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm" title="Crop">
                                                         <Crop className="w-3 h-3" />
                                                     </button>
                                                 </div>
@@ -989,7 +989,7 @@ export default function Page() {
                 </div>
                 <div className="p-6 border-t flex justify-end gap-3 bg-white z-10 sticky bottom-0">
                   <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium" disabled={isSubmitting}>Cancel</button>
-                  <button onClick={handleSave} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
+                  <button onClick={handleSave} className="px-6 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
                     {isSubmitting ? "Saving..." : (editingId ? "Update Product" : "Submit")}
                   </button>
                 </div>

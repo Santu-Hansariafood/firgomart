@@ -135,7 +135,7 @@ export default function Page() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => window.open(`/print/order/${r.id}`, "_blank")} 
-                    className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors"
+                    className="px-3 py-1 bg-brand-purple text-white rounded text-sm hover:bg-brand-purple/90 transition-colors"
                   >
                     Print Documents
                   </button>

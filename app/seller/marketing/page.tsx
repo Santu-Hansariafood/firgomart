@@ -80,7 +80,7 @@ export default function Page() {
           r.onload = () => setBannerData(String(r.result))
           r.readAsDataURL(f)
         }} />
-        <button onClick={uploadBanner} className="px-4 py-2 rounded bg-blue-600 text-white">Upload</button>
+        <button onClick={uploadBanner} className="px-4 py-2 rounded bg-brand-purple text-white">Upload</button>
       </div>
     </div>
     )}

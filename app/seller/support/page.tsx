@@ -51,7 +51,7 @@ export default function Page() {
         <h2 className="text-lg font-medium">Raise Ticket</h2>
         <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className="px-3 py-2 border rounded" />
         <textarea value={message} onChange={(e) => setMessage(e.target.value)} rows={4} placeholder="Message" className="px-3 py-2 border rounded"></textarea>
-        <button onClick={raise} className="px-4 py-2 rounded bg-blue-600 text-white">Submit</button>
+        <button onClick={raise} className="px-4 py-2 rounded bg-brand-purple text-white">Submit</button>
       </div>
 
       <div className="bg-white border rounded-xl p-4 space-y-3">

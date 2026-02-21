@@ -57,7 +57,7 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleEditDept(dept)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-colors"
                     >
                       <Edit size={18} />
                     </button>
@@ -109,7 +109,7 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleEditTeam(member)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-colors"
                     >
                       <Edit size={18} />
                     </button>
@@ -165,7 +165,7 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleEditBlog(blog)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-colors"
                     >
                       <Edit size={18} />
                     </button>
@@ -198,7 +198,7 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
                   className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                    <div className="w-10 h-10 rounded-lg bg-brand-purple/10 flex items-center justify-center text-brand-purple">
                       <Briefcase size={20} />
                     </div>
                     <div>
@@ -219,7 +219,7 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleEditCareer(career)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="p-2 text-brand-purple hover:bg-brand-purple/10 rounded-lg transition-colors"
                     >
                       <Edit size={18} />
                     </button>

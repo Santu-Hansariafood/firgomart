@@ -325,8 +325,8 @@ export default function AdminPageClient() {
                   <div className="text-sm text-gray-600">{s.email} • {s.phone}</div>
                 </div>
                 <button className="px-3 py-1 bg-green-600 text-white rounded" onClick={() => approveSeller(s._id)}>Approve</button>
-                <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => viewSellerDetails(s._id)}>Details</button>
-                <button className="px-3 py-1 bg-indigo-600 text-white rounded" onClick={() => viewSellerProducts(s)}>Products</button>
+                <button className="px-3 py-1 bg-brand-purple text-white rounded" onClick={() => viewSellerDetails(s._id)}>Details</button>
+                <button className="px-3 py-1 bg-brand-purple/10 text-brand-purple rounded" onClick={() => viewSellerProducts(s)}>Products</button>
               </div>
             ))}
           </div>
@@ -367,7 +367,7 @@ export default function AdminPageClient() {
                 <div className="font-medium">{p.name}</div>
                 <div className="text-sm">₹{p.price}</div>
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={() => startEditProduct(p)}>Edit</button>
+                  <button className="px-3 py-1 bg-brand-purple text-white rounded" onClick={() => startEditProduct(p)}>Edit</button>
                 </div>
               </div>
             ))}

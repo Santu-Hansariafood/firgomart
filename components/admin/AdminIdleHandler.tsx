@@ -103,7 +103,7 @@ export default function AdminIdleHandler() {
             setShowWarning(false)
             setCountdown(60)
           }}
-          className="w-full py-2.5 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors focus:ring-4 focus:ring-blue-200"
+          className="w-full py-2.5 px-4 bg-brand-purple text-white font-medium rounded-lg hover:bg-brand-purple/90 transition-colors focus:ring-4 focus:ring-brand-purple/30"
         >
           Stay Logged In
         </button>

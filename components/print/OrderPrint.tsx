@@ -86,7 +86,7 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
         <h1 className="text-2xl font-bold text-gray-800">Order Print Preview</h1>
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 bg-brand-purple text-white px-6 py-2 rounded-lg hover:bg-brand-purple/90 transition-colors"
         >
           <Printer size={20} />
           Print Documents

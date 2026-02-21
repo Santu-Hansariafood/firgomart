@@ -49,7 +49,7 @@ const CommonPagination: React.FC<CommonPaginationProps> = ({
           key={p}
           className={clsx(
             "px-3 py-1 rounded border",
-            p === currentPage ? "bg-blue-600 text-white border-blue-600" : "bg-[var(--background)] hover:bg-gray-100"
+            p === currentPage ? "bg-brand-purple text-white border-brand-purple" : "bg-[var(--background)] hover:bg-gray-100"
           )}
           onClick={() => onPageChange(p)}
         >

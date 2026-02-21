@@ -470,7 +470,7 @@ export default function Page() {
                   Cancel
                 </button>
                 <button
-                  className={`px-4 py-2 rounded-lg ${saving ? "bg-gray-300 text-gray-600" : "bg-blue-600 text-white hover:bg-blue-700"}`}
+                  className={`px-4 py-2 rounded-lg ${saving ? "bg-gray-300 text-gray-600" : "bg-brand-purple text-white hover:bg-brand-purple/90"}`}
                   onClick={() => saveDecision()}
                   disabled={saving || (decisionStatus === "rejected" && !decisionNote)}
                 >

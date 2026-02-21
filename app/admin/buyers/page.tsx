@@ -270,7 +270,7 @@ export default function Page() {
                   <div className="flex gap-2">
                     <button
                       type="button"
-                      className="px-2 py-1 text-xs rounded bg-blue-600 text-white hover:bg-blue-700"
+                      className="px-2 py-1 text-xs rounded bg-brand-purple text-white hover:bg-brand-purple/90"
                       onClick={() => openEdit(r as Buyer)}
                     >
                       Edit
@@ -390,7 +390,7 @@ export default function Page() {
                 </button>
                 <button
                   type="button"
-                  className="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                  className="px-3 py-1.5 text-sm rounded bg-brand-purple text-white hover:bg-brand-purple/90 disabled:opacity-60"
                   onClick={handleSaveEdit}
                   disabled={actionLoading}
                 >

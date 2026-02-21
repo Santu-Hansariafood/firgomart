@@ -91,12 +91,12 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
         onClick={() => setPaymentMethod('razorpay')}
         className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center ${
           paymentMethod === 'razorpay'
-            ? 'bg-white shadow-md shadow-blue-600/15 scale-[1.02]'
+            ? 'bg-white shadow-md shadow-brand-purple/20 scale-[1.02]'
             : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01]'
         }`}
       >
         {paymentMethod === 'razorpay' && (
-          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-md">
+          <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-brand-purple text-white flex items-center justify-center shadow-md">
             <CheckCircle2 className="w-4 h-4" />
           </div>
         )}

@@ -48,7 +48,7 @@ export default function Page() {
           <span>Has GST</span>
         </div>
         <div className="md:col-span-2">
-          <button onClick={save} className="px-4 py-2 rounded bg-blue-600 text-white">Save</button>
+          <button onClick={save} className="px-4 py-2 rounded bg-brand-purple text-white">Save</button>
         </div>
       </div>
       <div className="bg-white border rounded-xl p-4">

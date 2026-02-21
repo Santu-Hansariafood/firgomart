@@ -987,7 +987,7 @@ export default function MarketingClient() {
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
                         <button
                           onClick={() => handleEdit(offer)}
-                          className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors hover:shadow-sm border border-transparent hover:border-blue-100"
+                          className="p-2.5 text-brand-purple hover:bg-brand-purple/10 rounded-xl transition-colors hover:shadow-sm border border-transparent hover:border-brand-purple/20"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -1046,7 +1046,7 @@ export default function MarketingClient() {
                       <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0">
                         <button
                           onClick={() => handleBannerEdit(banner)}
-                          className="p-2.5 text-blue-600 hover:bg-blue-50 rounded-xl transition-colors hover:shadow-sm border border-transparent hover:border-blue-100"
+                          className="p-2.5 text-brand-purple hover:bg-brand-purple/10 rounded-xl transition-colors hover:shadow-sm border border-transparent hover:border-brand-purple/20"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />

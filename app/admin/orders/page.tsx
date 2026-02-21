@@ -300,7 +300,7 @@ export default function Page() {
               />
               <button
                 type="button"
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90 transition-colors"
                 onClick={async () => {
                   const id = orderIdQuery.trim()
                   if (!id) { setSelectedOrder(null); return }
@@ -371,7 +371,7 @@ export default function Page() {
                                 <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
                               ))}
                             </select>
-                            {updatingIds.has(r.id) && <span className="absolute -top-4 left-0 text-[10px] text-blue-600 font-bold animate-pulse">Saving...</span>}
+                            {updatingIds.has(r.id) && <span className="absolute -top-4 left-0 text-[10px] text-brand-purple font-bold animate-pulse">Saving...</span>}
                           </div>
                           <div className="text-sm text-gray-600">{[r.city, r.state, r.country].filter(Boolean).join(", ")}</div>
                         </div>
@@ -399,7 +399,7 @@ export default function Page() {
                             <option key={String(s.id)} value={String(s.id)}>{s.label}</option>
                           ))}
                         </select>
-                        {updatingIds.has(r.id) && <span className="absolute -top-4 left-0 text-[10px] text-blue-600 font-bold animate-pulse">Saving...</span>}
+                        {updatingIds.has(r.id) && <span className="absolute -top-4 left-0 text-[10px] text-brand-purple font-bold animate-pulse">Saving...</span>}
                     </div>
                   ) },
                   { key: "city", label: "City" },
@@ -425,7 +425,7 @@ export default function Page() {
                         View
                       </button>
                       <button
-                        className="px-3 py-1 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                        className="px-3 py-1 rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90 transition-colors"
                         onClick={() => window.open(`/print/order/${r.id}`, "_blank")}
                       >
                         Print
@@ -713,7 +713,7 @@ export default function Page() {
                               />
                               <button
                                 onClick={addTracking}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                                className="px-4 py-2 bg-brand-purple text-white rounded-lg text-sm font-medium hover:bg-brand-purple/90 transition-colors"
                               >
                                 Add
                               </button>
@@ -732,7 +732,7 @@ export default function Page() {
                                      <div className="flex-1 min-w-0">
                                        <div className="font-medium text-sm text-gray-900">{t.number}</div>
                                        {t.url && (
-                                         <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 truncate flex items-center gap-1 hover:underline mt-0.5">
+                                         <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-purple truncate flex items-center gap-1 hover:underline mt-0.5">
                                            {t.url} <ExternalLink className="w-3 h-3" />
                                          </a>
                                        )}
