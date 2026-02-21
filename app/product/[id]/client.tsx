@@ -236,6 +236,12 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
     setSubmittingReview(false)
   }, [session, product.id, userRating, userComment, fetchReviews])
 
+  useEffect(() => {
+    if (activeTab === 'reviews') {
+      fetchReviews()
+    }
+  }, [activeTab, fetchReviews])
+
   const handleBuyNow = () => {
     if ((product.stock ?? 0) > 0) {
       if (!validateSelection()) return
@@ -610,11 +616,9 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                                  </div>
                              )}
 
-                             {loadingReviews ? (
+                            {loadingReviews ? (
                                  <div className="text-center py-8">Loading reviews...</div>
-                             ) : reviews.length === 0 ? (
-                                 <div className="text-center py-8 text-foreground/60">No reviews yet. Be the first to review!</div>
-                             ) : (
+                             ) : reviews.length > 0 && (
                                  <div className="space-y-4">
                                      {reviews.map((review) => (
                                          <div key={review._id} className="border-b border-foreground/20 pb-4 last:border-0">

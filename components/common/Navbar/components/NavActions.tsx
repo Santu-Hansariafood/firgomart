@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Gift, Store, Sun, Moon, ShoppingCart } from "lucide-react"
+import { Gift, Store, Sun, Moon, ShoppingCart, ShoppingBasket } from "lucide-react"
 import UserMenu from "./UserMenu"
 import { SellerInfo } from "@/hooks/useNavbar"
 
@@ -40,11 +40,20 @@ const NavActions = ({
     <div className="flex items-center gap-1 sm:gap-2">
       <button
         onClick={() => setShowOffers(true)}
-        className="hidden md:flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-brand-purple hover:bg-brand-purple/5 rounded-full transition-all"
+        className="hidden md:flex items-center justify-center p-2 text-foreground/70 hover:text-brand-purple hover:bg-brand-purple/5 rounded-full transition-all"
+        aria-label="Offers"
+        title="Offers"
       >
-        <Gift className="w-4 h-4" />
-        <span>Offers</span>
+        <Gift className="w-5 h-5" />
       </button>
+      <Link
+        href="/grocery"
+        className="hidden lg:flex items-center justify-center p-2 text-foreground/70 hover:text-brand-purple hover:bg-brand-purple/5 rounded-full transition-all"
+        aria-label="Grocery"
+        title="Grocery"
+      >
+        <ShoppingBasket className="w-5 h-5" />
+      </Link>
       <Link
         href="/seller-registration"
         className="hidden lg:flex items-center gap-2 px-4 py-2 text-sm font-medium text-foreground/70 hover:text-brand-purple hover:bg-brand-purple/5 rounded-full transition-all"
