@@ -1,9 +1,11 @@
 import { useState, useEffect, ChangeEvent } from 'react'
 import { useAuth } from '@/context/AuthContext'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 import { CheckoutFormData } from '@/types/checkout'
 
 export const useCheckoutForm = () => {
   const { user } = useAuth()
+  const { updateLocation } = useGeolocation()
   const [showAddressModal, setShowAddressModal] = useState<boolean>(false)
   const [formData, setFormData] = useState<CheckoutFormData>({
     fullName: '',
@@ -114,6 +116,13 @@ export const useCheckoutForm = () => {
       country: addr.country || 'India',
     }))
     setShowAddressModal(false)
+    try {
+      const st = addr.state || ''
+      const country = addr.country || 'India'
+      if (st || country) {
+        updateLocation(st, country)
+      }
+    } catch {}
   }
 
   const handleAddNewAddress = () => {

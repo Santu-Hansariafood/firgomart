@@ -134,6 +134,7 @@ const Navbar: React.FC = () => {
           locationLoading={locationLoading}
           deliverToState={deliverToState}
           fullLocation={fullLocation}
+          countryName={countryName}
           setShowLocationModal={setShowLocationModal}
           setShowLoginModal={setShowLoginModal}
         />

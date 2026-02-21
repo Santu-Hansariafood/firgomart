@@ -2,8 +2,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { MapPin, X, Navigation, Search, Map } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import locationData from '@/data/country.json'
+
+const allCountries = (locationData as any).countries as { country: string; states?: { state: string }[] }[]
 
 interface LocationRequestModalProps {
   isOpen: boolean
@@ -24,17 +26,33 @@ export default function LocationRequestModal({
 }: LocationRequestModalProps) {
   const [mode, setMode] = useState<'prompt' | 'manual'>('prompt')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCountry, setSelectedCountry] = useState<string>(() => {
+    const normalized = (countryName || '').toLowerCase()
+    const found = allCountries.find((c) => c.country.toLowerCase() === normalized)
+    if (found) return found.country
+    if (countryName) return countryName
+    const india = allCountries.find((c) => c.country === 'India')
+    return india?.country || (allCountries[0]?.country || '')
+  })
+
+  useEffect(() => {
+    if (!countryName) return
+    const normalized = countryName.toLowerCase()
+    const found = allCountries.find((c) => c.country.toLowerCase() === normalized)
+    if (found && found.country !== selectedCountry) {
+      setSelectedCountry(found.country)
+    }
+  }, [countryName, selectedCountry])
 
   const { selectedCountryName, states } = useMemo(() => {
-    const allCountries = (locationData as any).countries as { country: string; states?: { state: string }[] }[]
-    const normalized = (countryName || '').toLowerCase()
+    const normalized = selectedCountry.toLowerCase()
     let chosen = allCountries.find((c) => c.country.toLowerCase() === normalized)
     if (!chosen) {
       chosen = allCountries.find((c) => c.country === 'India') || allCountries[0]
     }
     const stateNames = chosen?.states ? chosen.states.map((s) => s.state).sort() : []
-    return { selectedCountryName: chosen?.country || (countryName || ''), states: stateNames }
-  }, [countryName])
+    return { selectedCountryName: chosen?.country || selectedCountry, states: stateNames }
+  }, [selectedCountry])
 
   const filteredStates = useMemo(() => {
     if (!searchTerm) return states
@@ -112,7 +130,22 @@ export default function LocationRequestModal({
             </div>
           ) : (
             <div className="flex flex-col h-full">
-               <h3 className="text-xl font-bold font-heading mb-4">Select State</h3>
+               <h3 className="text-xl font-bold font-heading mb-4">Select Location</h3>
+
+               <div className="mb-3">
+                 <select
+                   value={selectedCountry}
+                   onChange={(e) => setSelectedCountry(e.target.value)}
+                   className="w-full bg-foreground/5 border-none rounded-xl text-sm px-3 py-2 focus:ring-2 focus:ring-brand-purple/50 outline-none"
+                 >
+                   {allCountries.map((c) => (
+                     <option key={c.country} value={c.country}>
+                       {c.country}
+                     </option>
+                   ))}
+                 </select>
+               </div>
+
                <div className="relative mb-4">
                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                  <input

@@ -10,6 +10,7 @@ import Script from 'next/script'
 import { useCart } from '@/context/CartContext/CartContext'
 import toast from 'react-hot-toast'
 import { getMaxQuantity, getCurrencyForCountry } from '@/utils/productUtils'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface Product {
   id: string | number
@@ -80,7 +81,8 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const [submittingReview, setSubmittingReview] = useState(false)
   
   const [reviewEligibility, setReviewEligibility] = useState<{ canReview: boolean; reason?: string; returnPeriodEnds?: string } | null>(null)
-  const currency = getCurrencyForCountry(product.availableCountry)
+  const { countryCode } = useGeolocation()
+  const currency = getCurrencyForCountry(countryCode || product.availableCountry)
   const [isSaved, setIsSaved] = useState(false)
   const [saving, setSaving] = useState(false)
 

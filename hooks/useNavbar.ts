@@ -90,17 +90,13 @@ export const useNavbar = () => {
   }, [theme])
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && !deliverToState && isAuthenticated) {
-      const seen = sessionStorage.getItem('location_modal_seen')
-      if (!seen) {
-        const timer = setTimeout(() => {
-          setShowLocationModal(true)
-          sessionStorage.setItem('location_modal_seen', 'true')
-        }, 2000)
-        return () => clearTimeout(timer)
-      }
+    if (typeof window !== 'undefined' && !deliverToState) {
+      const timer = setTimeout(() => {
+        setShowLocationModal(true)
+      }, 1000)
+      return () => clearTimeout(timer)
     }
-  }, [deliverToState, isAuthenticated])
+  }, [deliverToState])
 
   const getInitials = (n?: string | null, e?: string | null) => {
     const name = String(n || "").trim()

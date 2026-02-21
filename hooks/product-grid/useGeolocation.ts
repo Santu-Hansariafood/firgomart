@@ -53,19 +53,14 @@ export function useGeolocation() {
       }
     } catch {}
 
-    const inIndia = countryLower ? countryLower === 'india' : true
+    if (valid) {
+      const stateVal = s!.trim()
+      setDeliverToState(stateVal)
+      try { localStorage.setItem('deliverToState', stateVal) } catch {}
 
-    if (valid && inIndia) {
-      setDeliverToState(s!.trim())
-      try { localStorage.setItem('deliverToState', s!.trim()) } catch {}
-
-      if (full) {
-        setFullLocation(full.trim())
-        try { localStorage.setItem('fullLocation', full.trim()) } catch {}
-      } else {
-        setFullLocation(s!.trim())
-        try { localStorage.setItem('fullLocation', s!.trim()) } catch {}
-      }
+      const loc = full && full.trim().length > 0 ? full.trim() : stateVal
+      setFullLocation(loc)
+      try { localStorage.setItem('fullLocation', loc) } catch {}
     }
   }, [])
 
@@ -139,7 +134,8 @@ export function useGeolocation() {
   }, [save])
 
   const updateLocation = useCallback((state: string, country: string) => {
-    save(state, country, state)
+    const full = [state, country].filter(Boolean).join(', ')
+    save(state, country, full)
   }, [save])
 
   return { deliverToState, fullLocation, countryCode, countryName, requestLocation, loading, error, updateLocation }

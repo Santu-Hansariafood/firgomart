@@ -5,6 +5,7 @@ interface MobileLocationProps {
   locationLoading: boolean
   deliverToState: string
   fullLocation: string
+  countryName: string
   setShowLocationModal: (show: boolean) => void
   setShowLoginModal: (show: boolean) => void
 }
@@ -14,6 +15,7 @@ const MobileLocation = ({
   locationLoading,
   deliverToState,
   fullLocation,
+  countryName,
   setShowLocationModal,
   setShowLoginModal
 }: MobileLocationProps) => {
@@ -31,7 +33,7 @@ const MobileLocation = ({
       >
         <MapPin className="w-3 h-3 shrink-0" />
         <span className="truncate max-w-[85vw]">
-          {locationLoading ? "Detecting Location..." : (fullLocation || deliverToState || "Select Delivery Location")}
+          {locationLoading ? "Detecting Location..." : (fullLocation || deliverToState || countryName || "Select Delivery Location")}
         </span>
         <ChevronDown className="w-3 h-3 shrink-0 opacity-70" />
       </button>
