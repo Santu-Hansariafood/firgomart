@@ -324,9 +324,9 @@ export default function AdminPageClient() {
                   <div className="font-medium">{s.businessName}</div>
                   <div className="text-sm text-gray-600">{s.email} • {s.phone}</div>
                 </div>
-                <button className="px-3 py-1 bg-green-600 text-white rounded" onClick={() => approveSeller(s._id)}>Approve</button>
-                <button className="px-3 py-1 bg-brand-purple text-white rounded" onClick={() => viewSellerDetails(s._id)}>Details</button>
-                <button className="px-3 py-1 bg-brand-purple/10 text-brand-purple rounded" onClick={() => viewSellerProducts(s)}>Products</button>
+                <button className="px-3 py-1 bg-brand-purple text-white rounded hover:bg-brand-purple/90" onClick={() => approveSeller(s._id)}>Approve</button>
+                <button className="px-3 py-1 bg-white border border-brand-purple text-brand-purple rounded hover:bg-brand-purple/5" onClick={() => viewSellerDetails(s._id)}>Details</button>
+                <button className="px-3 py-1 bg-brand-purple/10 text-brand-purple rounded hover:bg-brand-purple/20" onClick={() => viewSellerProducts(s)}>Products</button>
               </div>
             ))}
           </div>
@@ -356,7 +356,7 @@ export default function AdminPageClient() {
             }}
             placeholder="Filter by category"
           />
-          <button className="px-3 py-1 bg-gray-800 text-white rounded" onClick={() => setSelectedCategoryItem(null)}>Clear</button>
+          <button className="px-3 py-1 bg-white border border-brand-purple text-brand-purple rounded hover:bg-brand-purple/5" onClick={() => setSelectedCategoryItem(null)}>Clear</button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {products
@@ -387,8 +387,8 @@ export default function AdminPageClient() {
               <textarea className="w-full border rounded p-2" value={editDetails} onChange={e => setEditDetails(e.target.value)} />
             </label>
             <div className="flex gap-2 justify-end">
-              <button className="px-3 py-1 bg-gray-200 rounded" onClick={cancelEditProduct}>Cancel</button>
-              <button className="px-3 py-1 bg-green-600 text-white rounded" onClick={saveEditProduct}>Save</button>
+              <button className="px-3 py-1 bg-white border border-brand-purple text-brand-purple rounded hover:bg-brand-purple/5" onClick={cancelEditProduct}>Cancel</button>
+              <button className="px-3 py-1 bg-brand-purple text-white rounded hover:bg-brand-purple/90" onClick={saveEditProduct}>Save</button>
             </div>
           </div>
         </div>

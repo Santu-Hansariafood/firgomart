@@ -525,7 +525,7 @@ export default function Page() {
                   {selectedOrder.shipment?.labelUrl && (
                     <button
                       onClick={() => window.open(selectedOrder.shipment?.labelUrl, "_blank")}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-brand-purple text-white text-sm font-medium rounded-lg hover:bg-brand-purple/90 transition-colors shadow-sm"
                     >
                       <Printer className="w-4 h-4" />
                       Print Label
@@ -534,7 +534,7 @@ export default function Page() {
                   {selectedOrder.shipment?.invoiceUrl && (
                     <button
                       onClick={() => window.open(selectedOrder.shipment?.invoiceUrl, "_blank")}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-brand-purple text-brand-purple text-sm font-medium rounded-lg hover:bg-brand-purple/5 transition-colors shadow-sm"
                     >
                       <FileText className="w-4 h-4" />
                       Invoice
@@ -542,7 +542,7 @@ export default function Page() {
                   )}
                   <button
                     onClick={() => window.open(`/print/order/${selectedOrder.id}`, "_blank")}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-brand-purple/30 text-brand-purple/80 text-sm font-medium rounded-lg hover:bg-brand-purple/5 transition-colors shadow-sm"
                   >
                     <Printer className="w-4 h-4" />
                     Print Slip
@@ -759,13 +759,13 @@ export default function Page() {
               <div className="p-5 border-t bg-white flex justify-end gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
                  <button
                    onClick={() => setSelectedOrder(null)}
-                   className="px-5 py-2.5 border border-gray-300 bg-white text-gray-700 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors"
+                   className="px-5 py-2.5 border border-brand-purple bg-white text-brand-purple rounded-xl text-sm font-semibold hover:bg-brand-purple/5 transition-colors"
                  >
                    Close
                  </button>
                  <button
                    onClick={saveOrderChanges}
-                   className="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl text-sm font-semibold hover:bg-black shadow-lg shadow-gray-200 transform active:scale-95 transition-all"
+                   className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-purple text-white rounded-xl text-sm font-semibold hover:bg-brand-purple/90 shadow-lg shadow-brand-purple/30 transform active:scale-95 transition-all"
                  >
                    <Save className="w-4 h-4" />
                    Save Changes

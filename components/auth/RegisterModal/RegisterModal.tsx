@@ -455,7 +455,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                           type="button"
                           onClick={verifyEmailOtp}
                           disabled={emailOtpLoading || emailOtp.join('').length < 6}
-                          className="flex-1 px-6 py-2.5 text-sm font-medium rounded-xl bg-green-600/10 text-green-600 hover:bg-green-600 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-green-600/20"
+                          className="flex-1 px-6 py-2.5 text-sm font-medium rounded-xl bg-brand-purple/10 text-brand-purple hover:bg-brand-purple hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-brand-purple/20"
                         >
                           {emailOtpLoading ? 'Verifying...' : 'Verify OTP'}
                         </button>

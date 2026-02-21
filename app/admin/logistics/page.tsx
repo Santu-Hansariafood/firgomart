@@ -218,7 +218,7 @@ export default function Page() {
           >
             Add Pickup Location
           </button>
-          <button
+        <button
             onClick={async () => {
              try {
                const res = await fetch("/api/admin/shiprocket", {
@@ -232,8 +232,8 @@ export default function Page() {
              } catch (e: any) {
                toast.error(`Error: ${e.message}`)
              }
-          }}
-          className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+         }}
+          className="px-4 py-2 bg-brand-purple text-white text-sm font-medium rounded-lg hover:bg-brand-purple/90 transition-colors"
         >
           Test API Connection
         </button>
@@ -383,7 +383,7 @@ export default function Page() {
                 <div className="mt-6 flex justify-end gap-3">
                    <button 
                      onClick={() => setShowPickupModal(false)}
-                     className="px-4 py-2 border rounded hover:bg-gray-50"
+                     className="px-4 py-2 border border-brand-purple rounded bg-white hover:bg-brand-purple/5 text-brand-purple"
                    >
                      Cancel
                    </button>
@@ -406,7 +406,7 @@ export default function Page() {
                          toast.error(`Error: ${e.message}`)
                        }
                      }}
-                     className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+                     className="px-4 py-2 bg-brand-purple text-white rounded hover:bg-brand-purple/90"
                    >
                      Add Location
                    </button>

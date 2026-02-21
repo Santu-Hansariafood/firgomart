@@ -257,7 +257,7 @@ const CartPage = () => {
               <div className="mt-6 space-y-3">
                 <button
                   onClick={() => router.push("/checkout")}
-                  className="w-full py-4 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-xl font-bold shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 hover:from-brand-purple/90 hover:to-brand-red/90 transition-all active:scale-[0.98]"
+                  className="w-full py-4 bg-brand-purple text-white rounded-xl font-bold shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 hover:bg-brand-purple/90 transition-all active:scale-[0.98]"
                 >
                   Proceed to Checkout
                 </button>

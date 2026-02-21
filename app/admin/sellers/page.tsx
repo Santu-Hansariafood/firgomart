@@ -353,7 +353,7 @@ export default function Page() {
                 ) },
                 { key: "actions", label: "Actions", render: (r) => (
                   <button
-                    className="px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                    className="px-3 py-1 rounded bg-brand-purple text-white hover:bg-brand-purple/90"
                     onClick={() => openReview(r as Seller)}
                   >
                     Review
@@ -464,20 +464,20 @@ export default function Page() {
               </div>
               <div className="flex items-center justify-end gap-3">
                 <button
-                  className="px-4 py-2 rounded-lg border bg-white hover:bg-gray-50"
+                  className="px-4 py-2 rounded-lg border border-brand-purple bg-white hover:bg-brand-purple/5 text-brand-purple"
                   onClick={() => setSelectedSeller(null)}
                 >
                   Cancel
                 </button>
                 <button
-                  className={`px-4 py-2 rounded-lg ${saving ? "bg-gray-300 text-gray-600" : "bg-brand-purple text-white hover:bg-brand-purple/90"}`}
+                  className={`px-4 py-2 rounded-lg ${saving ? "bg-brand-purple/20 text-brand-purple/60" : "bg-brand-purple text-white hover:bg-brand-purple/90"}`}
                   onClick={() => saveDecision()}
                   disabled={saving || (decisionStatus === "rejected" && !decisionNote)}
                 >
                   Save
                 </button>
                 <button
-                  className="px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
+                  className="px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90"
                   onClick={() => saveDecision("approved")}
                   disabled={saving}
                 >

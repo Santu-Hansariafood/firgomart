@@ -659,7 +659,7 @@ export default function MarketingClient() {
                 </label>
 
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.active ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${formData.active ? 'bg-brand-purple border-brand-purple' : 'bg-white border-gray-300'}`}>
                     {formData.active && <Check className="w-3.5 h-3.5 text-white" />}
                   </div>
                   <input
@@ -675,7 +675,7 @@ export default function MarketingClient() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-indigo-600 text-white py-2.5 px-4 rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-indigo-600/20"
+                  className="flex-1 bg-brand-purple text-white py-2.5 px-4 rounded-xl hover:bg-brand-purple/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-brand-purple/30"
                 >
                   <Save className="w-4 h-4" />
                   {isEditing ? "Update Offer" : "Create Offer"}
@@ -684,7 +684,7 @@ export default function MarketingClient() {
                   <button
                     type="button"
                     onClick={resetForm}
-                    className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                    className="px-4 py-2.5 border border-brand-purple rounded-xl hover:bg-brand-purple/5 text-brand-purple font-medium transition-colors"
                   >
                     Cancel
                   </button>
@@ -867,7 +867,7 @@ export default function MarketingClient() {
 
               <div className="pt-2">
                 <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
-                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${bannerFormData.active ? 'bg-indigo-600 border-indigo-600' : 'bg-white border-gray-300'}`}>
+                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${bannerFormData.active ? 'bg-brand-purple border-brand-purple' : 'bg-white border-gray-300'}`}>
                     {bannerFormData.active && <Check className="w-3.5 h-3.5 text-white" />}
                   </div>
                   <input
@@ -883,7 +883,7 @@ export default function MarketingClient() {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 bg-indigo-600 text-white py-2.5 px-4 rounded-xl hover:bg-indigo-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-indigo-600/20"
+                  className="flex-1 bg-brand-purple text-white py-2.5 px-4 rounded-xl hover:bg-brand-purple/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 font-medium shadow-lg shadow-brand-purple/30"
                 >
                   <Save className="w-4 h-4" />
                   {isEditing ? "Update Banner" : "Create Banner"}
@@ -892,7 +892,7 @@ export default function MarketingClient() {
                   <button
                     type="button"
                     onClick={resetBannerForm}
-                    className="px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+                    className="px-4 py-2.5 border border-brand-purple rounded-xl hover:bg-brand-purple/5 text-brand-purple font-medium transition-colors"
                   >
                     Cancel
                   </button>

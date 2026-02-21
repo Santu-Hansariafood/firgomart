@@ -259,7 +259,7 @@ const Cart: React.FC<CartProps> = ({ items, onClose, onUpdateQuantity, onRemoveI
                       return stock < (item.quantity ?? 1)
                     })
                       ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed shadow-none'
-                      : 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90 shadow-brand-purple/25'
+                      : 'bg-brand-purple text-white hover:bg-brand-purple/90 shadow-brand-purple/25'
                   }`}
                 >
                   Proceed to Checkout
