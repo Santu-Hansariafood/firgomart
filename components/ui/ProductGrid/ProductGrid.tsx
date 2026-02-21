@@ -122,8 +122,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10">
-          {!search && (
+        <div className={`flex flex-col md:flex-row items-center justify-between gap-6 ${category ? 'mt-2 mb-4' : 'mb-10'}`}>
+          {!search && !category && (
             <div className="space-y-2 relative w-full md:w-auto flex flex-col items-center md:items-start text-center md:text-left">
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
                 <span className="text-brand-purple">
@@ -255,17 +255,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         )}
 
         {category && subcategoryOptionsFor(category).length > 0 && (
-          <div className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
+          <div className="mb-4 pb-3 border-b border-brand-purple/15">
+            <div className="h-1 w-full rounded-full bg-gradient-to-r from-brand-purple via-brand-red to-brand-purple opacity-70 mb-3" />
             <div
               className="
                 flex items-center gap-3
                 overflow-x-auto md:overflow-visible
                 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none]
                 flex-nowrap md:flex-wrap
-                rounded-3xl border border-foreground/5
-                bg-gradient-to-r from-brand-purple/5 via-background/80 to-brand-red/5
-                px-3 py-3
-                shadow-sm shadow-brand-purple/10
               "
             >
               {subcategoryOptionsFor(category).map((opt, idx) => {
