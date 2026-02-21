@@ -6,6 +6,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const slug = searchParams.get("slug")
+    const scope = searchParams.get("scope")
     const conn = await connectDB()
     const Blog = getBlogModel(conn)
     
@@ -15,7 +16,7 @@ export async function GET(request: Request) {
        return NextResponse.json({ blog })
     }
 
-    const blogs = await Blog.find({ isPublished: true }).sort({ publishedAt: -1 }).lean()
+    const blogs = await Blog.find(scope === "admin" ? {} : { isPublished: true }).sort({ publishedAt: -1 }).lean()
     return NextResponse.json(
       { blogs },
       {

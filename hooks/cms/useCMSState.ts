@@ -194,7 +194,7 @@ export function useCMSState(): CMSState {
       const [deptRes, teamRes, blogRes, careerRes] = await Promise.all([
         fetch('/api/departments', { cache: 'no-store' }),
         fetch('/api/teams', { cache: 'no-store' }),
-        fetch('/api/blogs', { cache: 'no-store' }),
+        fetch('/api/blogs?scope=admin', { cache: 'no-store' }),
         fetch('/api/careers', { cache: 'no-store' })
       ])
       const deptData = await deptRes.json()
