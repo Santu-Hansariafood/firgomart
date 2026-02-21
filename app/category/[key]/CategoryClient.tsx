@@ -23,7 +23,7 @@ export default function CategoryClient({ categoryName }: CategoryClientProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-12">
+    <div className="min-h-screen bg-background pt-12 pb-12">
       <div className="container mx-auto px-4 sm:px-6">
         <ProductGrid 
           initialCategory={categoryName}

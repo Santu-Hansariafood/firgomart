@@ -122,7 +122,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className={`flex flex-col md:flex-row items-center justify-between gap-6 ${category ? 'mt-2 mb-4' : 'mb-10'}`}>
+        <div className={`flex flex-col md:flex-row items-center justify-between gap-4 ${category ? 'mt-0 mb-2' : 'mb-8'}`}>
           {!search && !category && (
             <div className="space-y-2 relative w-full md:w-auto flex flex-col items-center md:items-start text-center md:text-left">
               <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
@@ -255,8 +255,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         )}
 
         {category && subcategoryOptionsFor(category).length > 0 && (
-          <div className="mb-4 pb-3 border-b border-brand-purple/15">
-            <div className="h-1 w-full rounded-full bg-gradient-to-r from-brand-purple via-brand-red to-brand-purple opacity-70 mb-3" />
+          <div className="mb-2 pb-1 border-b border-foreground/10">
             <div
               className="
                 flex items-center gap-3
