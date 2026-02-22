@@ -99,8 +99,8 @@ const Profile = () => {
       newErrors.email = "Invalid email format";
     if (formData.mobile && !/^[6-9]\d{9}$/.test(formData.mobile))
       newErrors.mobile = "Invalid mobile number";
-    if (formData.pincode && !/^\d{6}$/.test(formData.pincode))
-      newErrors.pincode = "Invalid pincode";
+    if (formData.pincode && !/^[A-Za-z0-9\s-]{3,10}$/.test(formData.pincode))
+      newErrors.pincode = "Invalid postal code";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
