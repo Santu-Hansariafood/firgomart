@@ -822,7 +822,7 @@ export default function Page() {
                               placeholder="Select Country"
                             />
                             <p className="mt-1 text-xs text-gray-500">
-                              Currency: {currentCurrency.code} ({currentCurrency.symbol})
+                              Currency: {currentCurrency.code} ({currentCurrency.symbol}) | HTML code: {currentCurrency.html}
                             </p>
                           </div>
                           <div>

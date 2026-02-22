@@ -19,6 +19,9 @@ import { connectDB } from "@/lib/db/db"
       resetOtpExpires: { type: Date },
       adminLoginOtp: { type: String },
       adminLoginOtpExpires: { type: Date },
+      lastLoginAt: { type: Date },
+      lastLoginIp: { type: String },
+      lastLoginUserAgent: { type: String },
       addresses: [{
         name: String,
         mobile: String,

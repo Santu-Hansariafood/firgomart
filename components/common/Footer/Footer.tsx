@@ -207,6 +207,7 @@ const Footer: React.FC = () => {
             <div className="flex flex-wrap justify-center gap-2 sm:gap-4 text-sm">
               {[
                 ["Privacy Policy", "/privacy-policy"],
+                ["Deletion & Erasure Policy", "/account-deletion-policy"],
                 ["Terms of Service", "/terms"],
                 ["Cookie Policy", "/cookie-policy"],
                 ["Sitemap", "/site-map"],

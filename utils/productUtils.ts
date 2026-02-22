@@ -79,15 +79,16 @@ export type CountryConfig = {
   name: string
   currencyCode: string
   currencySymbol: string
+  currencyHtml: string
 }
 
 export const SUPPORTED_COUNTRIES: CountryConfig[] = [
-  { code: 'IN', name: 'India', currencyCode: 'INR', currencySymbol: '₹' },
-  { code: 'SA', name: 'Saudi Arabia', currencyCode: 'SAR', currencySymbol: 'SAR' },
-  { code: 'US', name: 'United States', currencyCode: 'USD', currencySymbol: '$' },
-  { code: 'AE', name: 'United Arab Emirates', currencyCode: 'AED', currencySymbol: 'AED' },
-  { code: 'QA', name: 'Qatar', currencyCode: 'QAR', currencySymbol: 'QAR' },
-  { code: 'AE-DU', name: 'Dubai', currencyCode: 'AED', currencySymbol: 'AED' },
+  { code: 'IN', name: 'India', currencyCode: 'INR', currencySymbol: '₹', currencyHtml: '&#8377;' },
+  { code: 'SA', name: 'Saudi Arabia', currencyCode: 'SAR', currencySymbol: 'SAR', currencyHtml: '&#65020;' },
+  { code: 'US', name: 'United States', currencyCode: 'USD', currencySymbol: '$', currencyHtml: '&#36;' },
+  { code: 'AE', name: 'United Arab Emirates', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
+  { code: 'QA', name: 'Qatar', currencyCode: 'QAR', currencySymbol: 'QAR', currencyHtml: 'QAR' },
+  { code: 'AE-DU', name: 'Dubai', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
 ]
 
 export const getCountryByCode = (code?: string) => {
@@ -100,6 +101,7 @@ export const getCurrencyForCountry = (code?: string) => {
   return {
     code: country.currencyCode,
     symbol: country.currencySymbol,
+    html: country.currencyHtml,
   }
 }
 

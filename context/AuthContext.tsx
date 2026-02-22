@@ -36,6 +36,9 @@ interface User {
   state?: string
   pincode?: string
   sellerDetails?: SellerDetails
+  lastLoginAt?: string | Date | null
+  lastLoginIp?: string
+  lastLoginUserAgent?: string
 }
 
 interface AuthContextType {

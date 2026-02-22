@@ -699,6 +699,9 @@ export default function Page() {
                               onChange={onFormCountryChange}
                               placeholder="Select Country"
                             />
+                            <p className="mt-1 text-xs text-gray-500">
+                              Currency: {currentCurrency.code} ({currentCurrency.symbol}) | HTML code: {currentCurrency.html}
+                            </p>
                           </div>
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Time (days)</label>

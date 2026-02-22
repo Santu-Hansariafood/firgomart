@@ -18,6 +18,9 @@ interface UserData {
   city?: string;
   state?: string;
   pincode?: string;
+  lastLoginAt?: string | Date | null;
+  lastLoginIp?: string;
+   lastLoginUserAgent?: string;
   addresses?: Array<{
     name?: string;
     mobile?: string;
@@ -83,6 +86,40 @@ const Profile = () => {
     return ""
   }
   const initials = getInitials(user?.name, user?.email)
+  const lastLoginLabel = (() => {
+    const raw = formData.lastLoginAt || user?.lastLoginAt
+    if (!raw) return ""
+    const d = typeof raw === "string" ? new Date(raw) : raw
+    if (!(d instanceof Date) || isNaN(d.getTime())) return ""
+    return d.toLocaleString()
+  })()
+  const deviceLabel = (() => {
+    const ua = (user as any)?.lastLoginUserAgent || ""
+    if (!ua) return ""
+    const lower = ua.toLowerCase()
+    let os = ""
+    if (lower.includes("iphone") || lower.includes("ipad") || lower.includes("ios")) os = "iOS"
+    else if (lower.includes("android")) os = "Android"
+    else if (lower.includes("windows")) os = "Windows"
+    else if (lower.includes("mac os") || lower.includes("macintosh")) os = "macOS"
+    else if (lower.includes("linux")) os = "Linux"
+    let browser = ""
+    if (lower.includes("edg/") || lower.includes("edg ")) browser = "Edge"
+    else if (lower.includes("chrome/")) browser = "Chrome"
+    else if (lower.includes("safari/") && !lower.includes("chrome/")) browser = "Safari"
+    else if (lower.includes("firefox/")) browser = "Firefox"
+    const parts: string[] = []
+    if (browser) parts.push(browser)
+    if (os) parts.push(os)
+    if (parts.length === 0) return ""
+    return parts.join(" on ")
+  })()
+  const locationLabel = (() => {
+    const city = formData.city || user?.city
+    const state = formData.state || user?.state
+    const parts = [city, state].filter(Boolean)
+    return parts.join(", ")
+  })()
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -276,6 +313,26 @@ const Profile = () => {
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70">
                         <Phone className="w-3 h-3" />
                         {user.mobile}
+                      </span>
+                    )}
+                    {lastLoginLabel && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70">
+                        <span>Last login: {lastLoginLabel}</span>
+                      </span>
+                    )}
+                    {user.lastLoginIp && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70">
+                        <span>IP: {user.lastLoginIp}</span>
+                      </span>
+                    )}
+                    {deviceLabel && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70">
+                        <span>Device: {deviceLabel}</span>
+                      </span>
+                    )}
+                    {locationLabel && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-zinc-800 text-xs font-medium text-[var(--foreground)]/70">
+                        <span>Location: {locationLabel}</span>
                       </span>
                     )}
                   </div>

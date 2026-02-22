@@ -23,6 +23,9 @@ type MongooseUserDoc = {
     pincode?: string
     isDefault?: boolean
   }>
+  lastLoginAt?: Date
+  lastLoginIp?: string
+  lastLoginUserAgent?: string
   save: () => Promise<unknown>
 }
 
@@ -38,6 +41,9 @@ function toSafeUser(u: MongooseUserDoc) {
     state: u.state || "",
     pincode: u.pincode || "",
     addresses: u.addresses || [],
+    lastLoginAt: u.lastLoginAt || null,
+    lastLoginIp: u.lastLoginIp || "",
+    lastLoginUserAgent: u.lastLoginUserAgent || "",
   }
 }
 
