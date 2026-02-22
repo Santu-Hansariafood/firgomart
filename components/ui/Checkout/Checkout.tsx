@@ -7,6 +7,7 @@ import {
   CreditCard,
   MapPin,
   Plus,
+  Minus,
   ChevronRight,
   ShieldCheck,
   Truck,
@@ -26,7 +27,7 @@ import { useOrderSummary } from '@/hooks/checkout/useOrderSummary'
 import { useDeliveryValidation } from '@/hooks/checkout/useDeliveryValidation'
 import { usePayment } from '@/hooks/checkout/usePayment'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
-import { getCurrencyForCountry } from '@/utils/productUtils'
+import { getCurrencyForCountry, getMaxQuantity } from '@/utils/productUtils'
 
 type PaymentProvider = 'cashfree' | 'razorpay'
 
@@ -60,10 +61,10 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
         transition={{ delay: 0.1 }}
         type="button"
         onClick={() => setPaymentMethod('cashfree')}
-        className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center ${
+        className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center border ${
           paymentMethod === 'cashfree'
-            ? 'bg-white shadow-md shadow-brand-purple/15 scale-[1.02]'
-            : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01]'
+            ? 'bg-white shadow-md shadow-brand-purple/20 scale-[1.02] border-brand-purple/40 ring-2 ring-brand-purple/30'
+            : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01] border-gray-200 dark:border-zinc-800'
         }`}
       >
         {paymentMethod === 'cashfree' && (
@@ -71,13 +72,13 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
             <CheckCircle2 className="w-4 h-4" />
           </div>
         )}
-        <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-900">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-700 shadow-sm">
           <Image
             src="/logo/cashfree.svg"
             alt="Cashfree"
             width={72}
             height={72}
-            className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+            className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
           />
         </div>
         <span className="sr-only">Cashfree</span>
@@ -89,10 +90,10 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
         transition={{ delay: 0.2 }}
         type="button"
         onClick={() => setPaymentMethod('razorpay')}
-        className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center ${
+        className={`relative flex flex-col items-center justify-center rounded-2xl py-3 sm:py-4 transition-all text-center border ${
           paymentMethod === 'razorpay'
-            ? 'bg-white shadow-md shadow-brand-purple/20 scale-[1.02]'
-            : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01]'
+            ? 'bg-white shadow-md shadow-brand-purple/20 scale-[1.02] border-brand-purple/40 ring-2 ring-brand-purple/30'
+            : 'bg-gray-50 dark:bg-zinc-900 hover:bg-white hover:shadow-sm hover:scale-[1.01] border-gray-200 dark:border-zinc-800'
         }`}
       >
         {paymentMethod === 'razorpay' && (
@@ -100,13 +101,13 @@ const PaymentGatewayOptions: React.FC<PaymentGatewayOptionsProps> = ({
             <CheckCircle2 className="w-4 h-4" />
           </div>
         )}
-        <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-900">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-2xl flex items-center justify-center bg-white dark:bg-zinc-900 border border-gray-100 dark:border-zinc-700 shadow-sm">
           <Image
             src="/logo/razorpay.svg"
             alt="Razorpay"
             width={72}
             height={72}
-            className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
+            className="w-12 h-12 sm:w-14 sm:h-14 object-contain"
           />
         </div>
         <span className="sr-only">Razorpay</span>
@@ -560,7 +561,7 @@ const Checkout: React.FC<CheckoutProps> = ({
 
                     <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-2xl p-4 sm:p-6 text-center border border-gray-100 dark:border-zinc-700">
                        <p className="text-xs sm:text-sm text-[var(--foreground)]/70 mb-2">
-                         You will be redirected to the secure {gatewayMeta.label} payment gateway to complete your purchase of
+                         You will be redirected to our secure payment gateway to complete your purchase of
                        </p>
                        <p className="text-2xl sm:text-3xl font-bold text-brand-purple font-heading">
                          <Rupee />{total.toFixed(2)}
@@ -615,9 +616,16 @@ const Checkout: React.FC<CheckoutProps> = ({
                 Order Summary
               </h2>
 
-              <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 pt-2 custom-scrollbar">
                 {cartItems.map((item) => {
                   const summaryItem = orderSummary.items.find(si => String(si.productId) === String(item.id))
+                  const quantity = item.quantity ?? 1
+                  const stock = summaryItem?.stock ?? item.stock ?? 0
+                  const maxQty = getMaxQuantity(item.price)
+                  const effectiveMax = Math.min(maxQty, stock > 0 ? stock : maxQty)
+                  const isOutOfStock = stock <= 0
+                  const canIncrease = !!onUpdateQuantity && !isOutOfStock && quantity < effectiveMax
+
                   return (
                   <div key={item._uniqueId || item.id} className="flex gap-3 sm:gap-4 group">
                     <div className="relative shrink-0">
@@ -628,8 +636,8 @@ const Checkout: React.FC<CheckoutProps> = ({
                         height={72}
                         className="object-cover rounded-xl w-14 h-14 sm:w-[72px] sm:h-[72px] border border-gray-100 dark:border-zinc-800"
                       />
-                      <span className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-gray-900 text-white text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center shadow-md">
-                         {item.quantity ?? 1}
+                      <span className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-brand-purple text-white text-[10px] sm:text-xs font-bold rounded-full flex items-center justify-center shadow-md">
+                         {quantity}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -658,11 +666,46 @@ const Checkout: React.FC<CheckoutProps> = ({
                       </div>
 
                       <p className={`text-xs sm:text-sm font-bold ${ (item.stock ?? 0) <= 0 ? 'text-gray-400 line-through' : 'text-[var(--foreground)]' }`}>
-                        <Rupee />{(item.price * (item.quantity ?? 1)).toFixed(2)}
+                        <Rupee />{(item.price * quantity).toFixed(2)}
                       </p>
                       {(item.stock ?? 0) <= 0 && (
                         <span className="text-[10px] sm:text-xs text-red-600 font-bold">Out of Stock</span>
                       )}
+
+                      <div className="mt-2 inline-flex items-center bg-[var(--foreground)]/5 rounded-lg p-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!onUpdateQuantity) return
+                            const next = quantity - 1
+                            const id = item._uniqueId || item.id
+                            if (next <= 0) {
+                              onUpdateQuantity(id, 0)
+                            } else {
+                              onUpdateQuantity(id, next)
+                            }
+                          }}
+                          className="w-6 h-6 flex items-center justify-center rounded-md hover:bg-white dark:hover:bg-black/20 text-[var(--foreground)] transition-shadow shadow-sm"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="w-8 text-center text-xs sm:text-sm font-semibold text-[var(--foreground)]">
+                          {quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!onUpdateQuantity || !canIncrease) return
+                            const id = item._uniqueId || item.id
+                            const next = quantity + 1
+                            onUpdateQuantity(id, Math.min(effectiveMax, next))
+                          }}
+                          disabled={!canIncrease}
+                          className={`w-6 h-6 flex items-center justify-center rounded-md hover:bg-white dark:hover:bg-black/20 text-[var(--foreground)] transition-shadow shadow-sm ${!canIncrease ? 'opacity-30 cursor-not-allowed' : ''}`}
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )})}

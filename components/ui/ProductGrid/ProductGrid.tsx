@@ -260,9 +260,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             <div
               className="
                 flex items-center gap-3
-                overflow-x-auto
+                overflow-x-auto scroll-smooth
                 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none]
                 flex-nowrap
+                snap-x snap-mandatory
               "
             >
               {subcategoryOptionsFor(category).map((opt, idx) => {
@@ -276,7 +277,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                       router.push(`/?${params.toString()}`, { scroll: false })
                       setPage(1)
                     }}
-                    className={`flex-none inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 transform active:scale-95 ${
+                    className={`flex-none inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 transform active:scale-95 snap-center ${
                       active
                         ? 'bg-gradient-to-r from-brand-purple to-pink-500 text-white shadow-lg shadow-brand-purple/30 ring-2 ring-brand-purple ring-offset-2 ring-offset-background'
                         : 'bg-background/80 border border-foreground/10 text-foreground/70 hover:bg-brand-purple/5 hover:border-brand-purple/40 hover:text-brand-purple hover:shadow-md hover:-translate-y-0.5'
