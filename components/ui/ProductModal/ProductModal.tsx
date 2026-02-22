@@ -54,8 +54,10 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
     setUserComment,
     submittingReview,
     fetchReviews,
-    handleSubmitReview
-  } = useProductReviews({ productId: product.id })
+    handleSubmitReview,
+    reviewEligibility,
+    checkingEligibility
+  } = useProductReviews({ productId: product.id, enabled: activeTab === 'reviews' })
 
   const { isSaved, saving, toggleSave } = useProductWishlist({ productId: product.id })
   
@@ -171,6 +173,8 @@ const ProductModal: React.FC<ProductModalProps> = ({ product, onClose, onAddToCa
               submittingReview={submittingReview}
               handleSubmitReview={handleSubmitReview}
               session={session}
+              reviewEligibility={reviewEligibility}
+              checkingEligibility={checkingEligibility}
             />
 
           </div>

@@ -28,6 +28,8 @@ interface ProductTabsProps {
   submittingReview: boolean
   handleSubmitReview: () => void
   session: any
+  reviewEligibility?: { canReview: boolean; reason?: string; returnPeriodEnds?: string } | null
+  checkingEligibility?: boolean
 }
 
 const ProductTabs = memo(({
@@ -44,7 +46,9 @@ const ProductTabs = memo(({
   setUserComment,
   submittingReview,
   handleSubmitReview,
-  session
+  session,
+  reviewEligibility,
+  checkingEligibility
 }: ProductTabsProps) => {
   return (
     <div className="mt-8 sm:mt-12">
@@ -94,13 +98,35 @@ const ProductTabs = memo(({
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold">Customer Reviews ({reviews.length})</h3>
-              {session && !reviewFormOpen && (
-                <button
-                  onClick={() => setReviewFormOpen(true)}
-                  className="px-4 py-2 bg-foreground text-background rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
-                >
-                  Write a Review
-                </button>
+              {session ? (
+                checkingEligibility ? (
+                  <div className="text-xs text-foreground/60 px-3 py-1 bg-foreground/5 rounded-lg border border-foreground/10">
+                    Checking if you can review...
+                  </div>
+                ) : reviewEligibility?.canReview ? (
+                  !reviewFormOpen && (
+                    <button
+                      onClick={() => setReviewFormOpen(true)}
+                      className="px-4 py-2 bg-foreground text-background rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
+                    >
+                      Write a Review
+                    </button>
+                  )
+                ) : (
+                  <div className="text-xs sm:text-sm text-foreground/60 italic px-3 py-1 bg-foreground/5 rounded-lg border border-foreground/10 text-right">
+                    {reviewEligibility?.reason === 'Return period active'
+                      ? reviewEligibility?.returnPeriodEnds
+                        ? `Review available after ${new Date(reviewEligibility.returnPeriodEnds).toLocaleDateString()}`
+                        : 'Review available after return period ends'
+                      : reviewEligibility?.reason === 'Not delivered yet'
+                      ? 'Review available after delivery'
+                      : reviewEligibility?.reason === 'Already reviewed'
+                      ? 'You have already reviewed this product'
+                      : 'Purchase and receive this product to write a review'}
+                  </div>
+                )
+              ) : (
+                <p className="text-sm text-foreground/60">Log in to write a review</p>
               )}
             </div>
 
@@ -166,11 +192,7 @@ const ProductTabs = memo(({
                   </div>
                 ))}
               </div>
-            ) : (
-              <div className="text-center py-12 text-foreground/40">
-                No reviews yet. Be the first to review this product!
-              </div>
-            )}
+            ) : null}
           </motion.div>
         )}
       </div>

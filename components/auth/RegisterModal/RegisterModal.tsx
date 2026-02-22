@@ -134,6 +134,22 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
       newErrors.pincode = 'Invalid pincode'
     if (!formData.dateOfBirth)
       newErrors.dateOfBirth = 'Date of birth is required'
+    else {
+      const dob = new Date(formData.dateOfBirth)
+      if (isNaN(dob.getTime())) {
+        newErrors.dateOfBirth = 'Invalid date of birth'
+      } else {
+        const today = new Date()
+        let age = today.getFullYear() - dob.getFullYear()
+        const monthDiff = today.getMonth() - dob.getMonth()
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+          age--
+        }
+        if (age < 18) {
+          newErrors.dateOfBirth = 'You must be at least 18 years old'
+        }
+      }
+    }
     if (!formData.gender) newErrors.gender = 'Gender is required'
 
     setErrors(newErrors)

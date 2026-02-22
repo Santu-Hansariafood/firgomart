@@ -53,6 +53,10 @@ const Profile = () => {
     pincode: "",
     isDefault: false
   })
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteReason, setDeleteReason] = useState("")
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (user) {
@@ -175,9 +179,47 @@ const Profile = () => {
     updateUser({ addresses: updatedAddresses } as any)
   }
 
+  const isAdmin = String(user?.role || "").toLowerCase() === "admin";
+
   const handleLogout = () => {
-    logout();
-    router.push("/");
+    logout("/");
+  };
+
+  const handleDeleteAccount = () => {
+    if (isAdmin) return;
+    setDeleteReason("");
+    setDeleteError(null);
+    setShowDeleteDialog(true);
+  };
+
+  const handleConfirmDeleteAccount = async () => {
+    if (isAdmin || !deleteReason.trim()) return;
+    setDeleteLoading(true);
+    setDeleteError(null);
+    try {
+      const res = await fetch("/api/auth/delete-account", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: deleteReason }),
+      });
+      if (res.ok) {
+        logout("/");
+      } else {
+        let msg = "Failed to delete account";
+        try {
+          const data = await res.json();
+          if (data && typeof data.error === "string" && data.error) {
+            msg = data.error;
+          }
+        } catch {}
+        setDeleteError(msg);
+      }
+    } catch {
+      setDeleteError("Failed to delete account. Please try again.");
+    } finally {
+      setDeleteLoading(false);
+      setShowDeleteDialog(false);
+    }
   };
 
   if (!user) return null;
@@ -405,11 +447,19 @@ const Profile = () => {
 
                    <button
                     onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-red-400 dark:border-red-900/30 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-medium"
+                    className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-red-400 dark:border-red-900/30 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-medium mb-3"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Log Out</span>
                   </button>
+                  {!isAdmin && (
+                    <button
+                      onClick={handleDeleteAccount}
+                      className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-gray-300 dark:border-red-900/20 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all font-medium text-sm"
+                    >
+                      <span>Delete Account</span>
+                    </button>
+                  )}
                </div>
             </div>
 
@@ -555,6 +605,52 @@ const Profile = () => {
           </div>
         </motion.div>
       </div>
+      {showDeleteDialog && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-[var(--background)] text-[var(--foreground)] shadow-xl p-6">
+            <h3 className="text-lg font-heading font-bold mb-2">Delete Account</h3>
+            <p className="text-sm text-[var(--foreground)]/70 mb-3">
+              Your account and personal data will be permanently deleted after 7 days.
+            </p>
+            <p className="text-xs text-[var(--foreground)]/60 mb-3">
+              Please tell us why you want to delete your account:
+            </p>
+            <textarea
+              value={deleteReason}
+              onChange={e => setDeleteReason(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border rounded-xl text-sm bg-[var(--background)] border-[color:var(--foreground)]/15 mb-3"
+              placeholder="Reason for deleting your account"
+            />
+            {deleteError && (
+              <p className="text-xs text-red-500 mb-2">{deleteError}</p>
+            )}
+            <p className="text-xs text-[var(--foreground)]/60 mb-4">
+              We will send you an email confirming your request now, and another email once your account is deleted.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (deleteLoading) return;
+                  setShowDeleteDialog(false);
+                }}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-[var(--foreground)] hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteAccount}
+                disabled={!deleteReason.trim() || deleteLoading}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deleteLoading ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -40,16 +40,14 @@ export async function POST(request: Request) {
     const Product = getProductModel(conn)
     const Order = getOrderModel(conn)
 
-    // Check if user has purchased and received the product
-    const orders = await (Order as any).find({
+    const latestOrder = await (Order as any).findOne({
       buyerEmail: session.user.email,
       "items.productId": productId,
       status: "delivered",
       deliveredAt: { $exists: true }
     }).sort({ deliveredAt: -1 }).lean()
 
-    if (!orders || orders.length === 0) {
-      // Check if they have any order at all (pending/shipped) to give a better error
+    if (!latestOrder) {
       const anyOrder = await (Order as any).findOne({
         buyerEmail: session.user.email,
         "items.productId": productId
@@ -61,8 +59,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "You can only review products you have purchased." }, { status: 403 })
     }
 
-    // Check return period (7 days)
-    const latestOrder = orders[0]
     const deliveredDate = new Date(latestOrder.deliveredAt)
     const returnPeriodEnds = new Date(deliveredDate)
     returnPeriodEnds.setDate(returnPeriodEnds.getDate() + 7)

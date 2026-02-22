@@ -22,7 +22,6 @@ export async function GET(request: Request) {
     const Order = getOrderModel(conn)
     const Review = getReviewModel(conn)
 
-    // Check if already reviewed
     const existingReview = await (Review as any).findOne({
       productId,
       userId: session.user.email
@@ -32,28 +31,24 @@ export async function GET(request: Request) {
       return NextResponse.json({ canReview: false, reason: "Already reviewed", reviewId: existingReview._id })
     }
 
-    // Check orders
-    const orders = await (Order as any).find({
+    const latestOrder = await (Order as any).findOne({
       buyerEmail: session.user.email,
       "items.productId": productId,
       status: "delivered",
       deliveredAt: { $exists: true }
     }).sort({ deliveredAt: -1 }).lean()
 
-    if (!orders || orders.length === 0) {
-       // Check if purchased but not delivered
-       const anyOrder = await (Order as any).findOne({
+    if (!latestOrder) {
+      const anyOrder = await (Order as any).findOne({
         buyerEmail: session.user.email,
         "items.productId": productId
       }).lean()
-      
       if (anyOrder) {
-         return NextResponse.json({ canReview: false, reason: "Not delivered yet" })
+        return NextResponse.json({ canReview: false, reason: "Not delivered yet" })
       }
       return NextResponse.json({ canReview: false, reason: "Not purchased" })
     }
 
-    const latestOrder = orders[0]
     const deliveredDate = new Date(latestOrder.deliveredAt)
     const returnPeriodEnds = new Date(deliveredDate)
     returnPeriodEnds.setDate(returnPeriodEnds.getDate() + 7)

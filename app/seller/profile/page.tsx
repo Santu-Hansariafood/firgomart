@@ -36,7 +36,7 @@ type SellerInfo = {
 }
 
 export default function SellerProfilePage() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const name = user?.name || "Seller"
   const email = user?.email || ""
   const [creating, setCreating] = useState(false)
@@ -47,6 +47,49 @@ export default function SellerProfilePage() {
   const [sellerInfo, setSellerInfo] = useState<SellerInfo | null>(null)
   const [sellerInfoError, setSellerInfoError] = useState<string | null>(null)
   const [savingSeller, setSavingSeller] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [deleteReason, setDeleteReason] = useState("")
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+
+  const isAdmin = String(user?.role || "").toLowerCase() === "admin"
+
+  const handleDeleteAccount = () => {
+    if (isAdmin) return
+    setDeleteReason("")
+    setDeleteError(null)
+    setShowDeleteDialog(true)
+  }
+
+  const handleConfirmDeleteAccount = async () => {
+    if (isAdmin || !deleteReason.trim()) return
+    setDeleteLoading(true)
+    setDeleteError(null)
+    try {
+      const res = await fetch("/api/auth/delete-account", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: deleteReason }),
+      })
+      if (res.ok) {
+        logout("/")
+      } else {
+        let msg = "Failed to delete account"
+        try {
+          const data = await res.json()
+          if (data && typeof data.error === "string" && data.error) {
+            msg = data.error
+          }
+        } catch {}
+        setDeleteError(msg)
+      }
+    } catch {
+      setDeleteError("Failed to delete account. Please try again.")
+    } finally {
+      setDeleteLoading(false)
+      setShowDeleteDialog(false)
+    }
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -111,6 +154,17 @@ export default function SellerProfilePage() {
                 <p className="font-medium">Seller</p>
               </div>
             </div>
+            {!isAdmin && (
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  className="px-4 py-2 rounded-lg border border-red-400 text-red-600 hover:bg-red-50 text-sm font-medium"
+                >
+                  Delete Account
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -394,6 +448,52 @@ export default function SellerProfilePage() {
       </div>
 
       </div>
+      {showDeleteDialog && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white text-gray-900 shadow-xl p-6">
+            <h3 className="text-lg font-heading font-bold mb-2">Delete Account</h3>
+            <p className="text-sm text-gray-700 mb-3">
+              Your seller account and related data will be permanently deleted after 7 days.
+            </p>
+            <p className="text-xs text-gray-500 mb-3">
+              Please tell us why you want to delete your account:
+            </p>
+            <textarea
+              value={deleteReason}
+              onChange={e => setDeleteReason(e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border rounded-xl text-sm bg-white border-gray-200 mb-3"
+              placeholder="Reason for deleting your account"
+            />
+            {deleteError && (
+              <p className="text-xs text-red-500 mb-2">{deleteError}</p>
+            )}
+            <p className="text-xs text-gray-500 mb-4">
+              We will send you an email confirming your request now, and another email once your account is deleted.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (deleteLoading) return
+                  setShowDeleteDialog(false)
+                }}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-800 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteAccount}
+                disabled={!deleteReason.trim() || deleteLoading}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {deleteLoading ? "Deleting..." : "Confirm Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
