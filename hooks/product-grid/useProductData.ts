@@ -56,6 +56,7 @@ export function useProductData({
   const [displayedProducts, setDisplayedProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [hasMore, setHasMore] = useState<boolean>(true)
+  const [fallbackLabel, setFallbackLabel] = useState<string | null>(null)
   const productsPerPage = 24
 
   const shuffleArray = (array: Product[]) => {
@@ -65,6 +66,40 @@ export function useProductData({
       ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
     }
     return newArray
+  }
+
+  const mapApiProducts = (list: ApiProduct[]): Product[] => {
+    return list.map((p: ApiProduct) => ({
+      id: p._id || p.id,
+      name: p.name,
+      image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
+      images: Array.isArray(p.images) ? p.images : undefined,
+      category: p.category,
+      subcategory: p.subcategory,
+      price: p.price,
+      originalPrice: p.originalPrice,
+      discount: p.discount,
+      rating: p.rating,
+      brand: p.brand,
+      colors: p.colors,
+      sizes: p.sizes,
+      about: p.about,
+      additionalInfo: p.additionalInfo,
+      description: p.description,
+      reviews: p.reviews,
+      stock: p.stock,
+      unitsPerPack: p.unitsPerPack,
+      isAdminProduct: p.isAdminProduct,
+      hsnCode: p.hsnCode,
+      appliedOffer: (selectedOfferDetails && (
+        (!selectedOfferDetails.category || selectedOfferDetails.category === p.category) &&
+        (!selectedOfferDetails.subcategory || selectedOfferDetails.subcategory === p.subcategory)
+      )) ? {
+        name: selectedOfferDetails.name,
+        type: selectedOfferDetails.type,
+        value: selectedOfferDetails.value
+      } : undefined
+    })) as Product[]
   }
 
   const fetchPage = useCallback(async (pageNum: number) => {
@@ -92,38 +127,7 @@ export function useProductData({
       if (!res.ok) return []
       const data = await res.json()
       const list = Array.isArray(data.products) ? data.products : []
-      
-      return list.map((p: ApiProduct) => ({
-        id: p._id || p.id,
-        name: p.name,
-        image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
-        images: Array.isArray(p.images) ? p.images : undefined,
-        category: p.category,
-        subcategory: p.subcategory,
-        price: p.price,
-        originalPrice: p.originalPrice,
-        discount: p.discount,
-        rating: p.rating,
-        brand: p.brand,
-        colors: p.colors,
-        sizes: p.sizes,
-        about: p.about,
-        additionalInfo: p.additionalInfo,
-        description: p.description,
-        reviews: p.reviews,
-        stock: p.stock,
-        unitsPerPack: p.unitsPerPack,
-        isAdminProduct: p.isAdminProduct,
-        hsnCode: p.hsnCode,
-        appliedOffer: (selectedOfferDetails && (
-          (!selectedOfferDetails.category || selectedOfferDetails.category === p.category) &&
-          (!selectedOfferDetails.subcategory || selectedOfferDetails.subcategory === p.subcategory)
-        )) ? {
-          name: selectedOfferDetails.name,
-          type: selectedOfferDetails.type,
-          value: selectedOfferDetails.value
-        } : undefined
-      })) as Product[]
+      return mapApiProducts(list)
     } catch {
       return []
     }
@@ -132,6 +136,7 @@ export function useProductData({
   useEffect(() => {
     const loadInitial = async () => {
       setLoading(true)
+      setFallbackLabel(null)
       setDisplayedProducts([]) 
       const [first, second] = await Promise.all([fetchPage(1), fetchPage(2)])
       let initial = [...first, ...second]
@@ -139,7 +144,52 @@ export function useProductData({
       if (sortBy === 'relevance' && !search) {
         initial = shuffleArray(initial)
       }
-      
+
+      if (initial.length === 0) {
+        const stateParam = deliverToState ? `&deliverToState=${encodeURIComponent(deliverToState)}` : ''
+        const countryParam = countryCode ? `&country=${encodeURIComponent(countryCode)}` : ''
+        const shouldDefaultToAdmin = !deliverToState && !search && !sellerOnly && adminOnly !== false
+        const adminParam = (adminOnly || shouldDefaultToAdmin) ? `&adminOnly=true` : ''
+        const sellerParam = sellerOnly ? `&sellerOnly=true` : ''
+
+        let fallback: Product[] = []
+
+        if (category) {
+          try {
+            const resCat = await fetch(`/api/products?limit=${productsPerPage * 2}&page=1${stateParam}${countryParam}${adminParam}${sellerParam}&category=${encodeURIComponent(category)}`)
+            if (resCat.ok) {
+              const dataCat = await resCat.json()
+              const listCat = Array.isArray(dataCat.products) ? dataCat.products : []
+              fallback = mapApiProducts(listCat as ApiProduct[])
+            }
+          } catch {}
+
+          if (fallback.length > 0) {
+            initial = fallback
+            setFallbackLabel('Showing similar products in this category')
+          }
+        }
+
+        if (initial.length === 0) {
+          try {
+            const resAll = await fetch(`/api/products?limit=${productsPerPage * 2}&page=1${stateParam}${countryParam}${adminParam}${sellerParam}`)
+            if (resAll.ok) {
+              const dataAll = await resAll.json()
+              const listAll = Array.isArray(dataAll.products) ? dataAll.products : []
+              const allProducts = mapApiProducts(listAll as ApiProduct[])
+              if (allProducts.length > 0) {
+                initial = allProducts
+                setFallbackLabel('Showing similar products from all categories')
+              }
+            }
+          } catch {}
+        }
+
+        if (initial.length > 0) {
+          setHasMore(false)
+        }
+      }
+
       setDisplayedProducts(initial)
       setPage(2)
       setHasMore(second.length === productsPerPage)
@@ -169,6 +219,7 @@ export function useProductData({
     setPage,
     loading,
     hasMore,
-    loadMore
+    loadMore,
+    fallbackLabel
   }
 }

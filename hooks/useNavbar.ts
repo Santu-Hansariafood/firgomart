@@ -58,8 +58,6 @@ export const useNavbar = () => {
       const url = new URL(window.location.href)
       const paramsToRemove = [
         "search",
-        "category",
-        "subcategory",
         "minPrice",
         "maxPrice",
         "sort",

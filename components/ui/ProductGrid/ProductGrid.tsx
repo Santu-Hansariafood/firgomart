@@ -68,7 +68,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
     displayedProducts, 
     loading, 
     hasMore, 
-    loadMore 
+    loadMore,
+    fallbackLabel
   } = useProductData({
     search, 
     category, 
@@ -259,9 +260,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             <div
               className="
                 flex items-center gap-3
-                overflow-x-auto md:overflow-visible
+                overflow-x-auto
                 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none]
-                flex-nowrap md:flex-wrap
+                flex-nowrap
               "
             >
               {subcategoryOptionsFor(category).map((opt, idx) => {
@@ -299,6 +300,12 @@ const ProductGrid: React.FC<ProductGridProps> = ({
                 <span>Clear</span>
               </button>
             </div>
+          </div>
+        )}
+
+        {fallbackLabel && displayedProducts.length > 0 && (
+          <div className="mb-4 px-4 py-2 rounded-2xl bg-foreground/5 border border-foreground/10 text-xs sm:text-sm font-medium text-foreground/70 text-center">
+            {fallbackLabel}
           </div>
         )}
 

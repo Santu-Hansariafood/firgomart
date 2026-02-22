@@ -54,12 +54,15 @@ const CategorySubHeader: React.FC = () => {
         <div
           className="
             flex gap-4 sm:gap-6 items-center
-            justify-start sm:justify-center
-            overflow-x-auto snap-x snap-mandatory
+            justify-start
+            overflow-x-auto
+            snap-x snap-mandatory
             scrollbar-hide
             [-ms-overflow-style:none]
             [scrollbar-width:none]
             [&::-webkit-scrollbar]:hidden
+            flex-nowrap
+            px-2
           "
         >
           {categories.map((category, index) => {
@@ -111,7 +114,7 @@ const CategorySubHeader: React.FC = () => {
 
                   </div>
 
-                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[5.5rem] min-h-[2.4em]">
+                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[6.5rem] min-h-[2.4em]">
                     <span
                       className={`block ${
                         isActive

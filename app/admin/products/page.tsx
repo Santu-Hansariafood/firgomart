@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState, Suspense } from "react"
+import { useEffect, useMemo, useState, Suspense, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { useAuth } from "@/context/AuthContext"
 import categoriesData from "@/data/categories.json"
@@ -69,6 +69,112 @@ const gstStateMap: Record<string, string> = {
 }
 
 type DropdownItem = { id: string | number; label: string }
+
+function useAdminProductsLoader(args: {
+  session: any
+  authUser: any
+  allowed: boolean
+  page: number
+  pageSize: number
+  category: string
+  selectedState: DropdownItem | null
+  selectedGST: DropdownItem
+  search: string
+  sortKey: string | null
+  sortOrder: "asc" | "desc"
+  setProducts: (value: ProductItem[]) => void
+  setTotal: (value: number) => void
+  setLoading: (value: boolean) => void
+}) {
+  const {
+    session,
+    authUser,
+    allowed,
+    page,
+    pageSize,
+    category,
+    selectedState,
+    selectedGST,
+    search,
+    sortKey,
+    sortOrder,
+    setProducts,
+    setTotal,
+    setLoading
+  } = args
+
+  const loadProducts = useCallback(async () => {
+    setLoading(true)
+    try {
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const params = new URLSearchParams()
+      params.set("page", String(page))
+      params.set("limit", String(pageSize))
+      if (category) params.set("category", category)
+      if (selectedState?.id && String(selectedGST.id) !== "true") params.set("state", String(selectedState.id))
+      if (selectedGST?.id !== undefined && selectedGST.id !== "") params.set("hasGST", String(selectedGST.id))
+      if (search) params.set("search", search)
+      if (sortKey) params.set("sortBy", String(sortKey))
+      params.set("sortOrder", sortOrder)
+      const res = await fetch(`/api/admin/products?${params.toString()}`, {
+        headers: { ...(adminEmail ? { "x-admin-email": adminEmail } : {}) }
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setProducts(Array.isArray(data.products) ? data.products : [])
+        setTotal(Number(data.total || 0))
+      } else {
+        setProducts([])
+        setTotal(0)
+      }
+    } catch {
+      setProducts([])
+      setTotal(0)
+    }
+    setLoading(false)
+  }, [
+    session,
+    authUser,
+    page,
+    pageSize,
+    category,
+    selectedState,
+    selectedGST,
+    search,
+    sortKey,
+    sortOrder,
+    setProducts,
+    setTotal,
+    setLoading
+  ])
+
+  useEffect(() => {
+    if (!allowed) return
+    loadProducts()
+  }, [allowed, loadProducts])
+
+  return { loadProducts }
+}
+
+function useGstStateAutoFill(args: {
+  formGST: boolean
+  formGSTNumber: string
+  setFormSellerState: (value: string) => void
+}) {
+  const { formGST, formGSTNumber, setFormSellerState } = args
+
+  useEffect(() => {
+    if (formGST) setFormSellerState("")
+  }, [formGST, setFormSellerState])
+
+  useEffect(() => {
+    if (formGSTNumber.length >= 2) {
+      const code = formGSTNumber.substring(0, 2)
+      const state = gstStateMap[code]
+      if (state) setFormSellerState(state)
+    }
+  }, [formGSTNumber, setFormSellerState])
+}
 
 export default function Page() {
   const { data: session } = useSession()
@@ -175,7 +281,10 @@ export default function Page() {
 
       let newSizes: DropdownItem[] = []
 
-      if (cat === "Women's Fashion" || cat === "Men's Fashion") {
+      const catEntry = ((categoriesData as any).categories || []).find((c: any) => c.name === cat)
+      if (catEntry && Array.isArray(catEntry.ageGroup) && catEntry.ageGroup.length > 0) {
+        newSizes = catEntry.ageGroup.map((a: string) => ({ id: a, label: a }))
+      } else if (cat === "Women's Fashion" || cat === "Men's Fashion") {
         newSizes = clothingSizes
       } else if (cat === "Women's Footwear" || cat === "Men's Footwear") {
         newSizes = createNumSizes(4, 10)
@@ -260,55 +369,28 @@ export default function Page() {
     }
   }
   const onFormSellerStateChange = (v: DropdownItem | DropdownItem[]) => { if (!Array.isArray(v)) setFormSellerState(v.label) }
+  const { loadProducts } = useAdminProductsLoader({
+    session,
+    authUser,
+    allowed,
+    page,
+    pageSize,
+    category,
+    selectedState,
+    selectedGST,
+    search,
+    sortKey,
+    sortOrder,
+    setProducts,
+    setTotal,
+    setLoading
+  })
 
-  const loadProducts = async () => {
-    setLoading(true)
-    try {
-      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
-      const params = new URLSearchParams()
-      params.set("page", String(page))
-      params.set("limit", String(pageSize))
-      if (category) params.set("category", category)
-      if (selectedState?.id && String(selectedGST.id) !== "true") params.set("state", String(selectedState.id))
-      if (selectedGST?.id !== undefined && selectedGST.id !== "") params.set("hasGST", String(selectedGST.id))
-      if (search) params.set("search", search)
-      if (sortKey) params.set("sortBy", String(sortKey))
-      params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/products?${params.toString()}`, {
-        headers: { ...(adminEmail ? { "x-admin-email": adminEmail } : {}) },
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setProducts(Array.isArray(data.products) ? data.products : [])
-        setTotal(Number(data.total || 0))
-      } else {
-        setProducts([])
-        setTotal(0)
-      }
-    } catch {
-      setProducts([])
-      setTotal(0)
-    }
-    setLoading(false)
-  }
-
-  useEffect(() => {
-    if (!allowed) return
-    loadProducts()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowed, page, selectedState, selectedGST, search, sortKey, sortOrder, category])
-
-  useEffect(() => {
-    if (formGST) setFormSellerState("")
-  }, [formGST])
-
-  useEffect(() => {
-    if (formGSTNumber.length >= 2) {
-      const code = formGSTNumber.substring(0, 2)
-      const state = gstStateMap[code]
-      if (state) setFormSellerState(state)
-    }
-  }, [formGSTNumber])
+  useGstStateAutoFill({
+    formGST,
+    formGSTNumber,
+    setFormSellerState
+  })
 
   const openModal = (product?: ProductItem) => {
     if (product) {
