@@ -1,9 +1,9 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import BeautifulLoader from '@/components/common/Loader/BeautifulLoader'
-import AdminLogin from '@/components/ui/AdminLogin/AdminLogin'
 import { useCMSAuth } from '@/hooks/cms/useCMSAuth'
 import { useCMSState } from '@/hooks/cms/useCMSState'
 import { CMSTabs } from './CMSTabs'
@@ -11,11 +11,18 @@ import { CMSFormPanel } from './CMSFormPanel'
 import { CMSListPanel } from './CMSListPanel'
 
 export default function CMSPage() {
+  const router = useRouter()
   const { authLoading, allowed } = useCMSAuth()
   const state = useCMSState()
 
-  if (authLoading) return <BeautifulLoader />
-  if (!allowed) return <AdminLogin />
+  useEffect(() => {
+    if (!authLoading && !allowed) {
+      router.push('/admin-login?next=%2Fadmin%2Fcms')
+    }
+  }, [authLoading, allowed, router])
+
+  if (authLoading || (!allowed && typeof window === 'undefined')) return <BeautifulLoader />
+  if (!allowed) return <BeautifulLoader />
   if (state.loading) {
     return (
       <div className="flex justify-center p-12">
