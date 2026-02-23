@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Loading from "./loading";
 import { useProductFilters } from "@/hooks/product-grid/useProductFilters";
+import type { Product } from "@/types/product";
+import type { CartItem } from "@/types/checkout";
 
 const AdCarousel = dynamic(() => import("@/components/common/AdCarousel/AdCarousel"));
 const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
@@ -33,13 +35,13 @@ function HomeContent() {
     useCart();
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
-  const [selectedProduct, setSelectedProduct] = useState<unknown | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   
   const [page, setPage] = useState<number>(1);
   const filters = useProductFilters(setPage);
 
-  const handleAddToCart = (product: unknown) => {
-    addToCart(product);
+  const handleAddToCart = (product: Product) => {
+    addToCart(product as CartItem);
     setShowCart(true);
   };
 
