@@ -61,10 +61,10 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
           <span className="text-brand-purple">
-            FirgoMart
+            Recently
           </span>
           <span className="bg-clip-text text-red-500 ml-2">
-            Products (Recently Viewed)
+            Viewed
           </span>
         </h2>
       </div>
