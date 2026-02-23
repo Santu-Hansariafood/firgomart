@@ -66,8 +66,16 @@ const TeamsPage = () => {
         const deptData = await deptRes.json();
         const teamData = await teamRes.json();
 
-        if (deptData.departments) setDepartments(deptData.departments);
-        if (teamData.teams) setMembers(teamData.teams);
+        if (Array.isArray(deptData.departments)) {
+          setDepartments(deptData.departments);
+        } else {
+          setDepartments([]);
+        }
+        if (Array.isArray(teamData.teams)) {
+          setMembers(teamData.teams);
+        } else {
+          setMembers([]);
+        }
       } catch (error) {
         console.error("Failed to fetch data", error);
       } finally {
@@ -77,12 +85,15 @@ const TeamsPage = () => {
     fetchData();
   }, []);
 
+  const safeDepartments = Array.isArray(departments) ? departments : [];
+  const safeMembers = Array.isArray(members) ? members : [];
+
   const teamData: TeamData = {};
-  departments.forEach((dept) => {
+  safeDepartments.forEach((dept) => {
     teamData[dept.name] = {
       logo: dept.icon,
       description: dept.description,
-      members: members
+      members: safeMembers
         .filter((m) => m.department === dept.name)
         .map((m) => ({
           name: m.name,
@@ -146,7 +157,7 @@ const TeamsPage = () => {
              <div className="flex justify-center py-20"><BeautifulLoader /></div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {departments.map((dept, index) => (
+              {safeDepartments.map((dept, index) => (
                 <DepartmentCard 
                   key={dept._id} 
                   dept={dept} 

@@ -35,8 +35,10 @@ const BlogPage = () => {
       try {
         const res = await fetch("/api/blogs");
         const data = await res.json();
-        if (data.blogs) {
+        if (Array.isArray(data.blogs)) {
           setBlogs(data.blogs);
+        } else {
+          setBlogs([]);
         }
       } catch (error) {
         console.error("Failed to fetch blogs", error);
@@ -120,7 +122,7 @@ const BlogPage = () => {
               <div className="flex justify-center py-20">
                 <BeautifulLoader />
               </div>
-            ) : blogs.length > 0 ? (
+            ) : Array.isArray(blogs) && blogs.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {blogs.map((blog) => (
                   <BlogCard

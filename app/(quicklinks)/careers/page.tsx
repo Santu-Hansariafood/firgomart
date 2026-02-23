@@ -32,8 +32,10 @@ const CareersPage = () => {
       try {
         const res = await fetch("/api/careers");
         const data = await res.json();
-        if (data.careers) {
+        if (Array.isArray(data.careers)) {
           setCareers(data.careers);
+        } else {
+          setCareers([]);
         }
       } catch (error) {
         console.error("Failed to fetch careers", error);
@@ -148,7 +150,7 @@ const CareersPage = () => {
               <div className="flex justify-center py-12">
                 <BeautifulLoader />
               </div>
-            ) : careers.length > 0 ? (
+            ) : Array.isArray(careers) && careers.length > 0 ? (
               <div className="grid gap-6 max-w-4xl mx-auto">
                 {careers.map((career) => (
                   <JobCard
