@@ -14,6 +14,7 @@ export async function GET(request: Request) {
     const page = Math.max(1, Number(url.searchParams.get("page") || 1))
     const adminOnly = (url.searchParams.get("adminOnly") || "").toLowerCase() === "true"
     const sellerOnly = (url.searchParams.get("sellerOnly") || "").toLowerCase() === "true"
+    const comboOnly = (url.searchParams.get("comboOnly") || "").toLowerCase() === "true"
     const createdByEmail = (url.searchParams.get("createdByEmail") || "").trim()
     const deliverToStateRaw = (url.searchParams.get("deliverToState") || "").trim()
     const deliverToState = deliverToStateRaw ? deliverToStateRaw : ""
@@ -34,6 +35,17 @@ export async function GET(request: Request) {
     const Offer = getOfferModel(conn)
     
     const conditions: Record<string, unknown>[] = []
+
+    if (comboOnly) {
+      conditions.push({ isComboPack: true })
+    } else {
+      conditions.push({
+        $or: [
+          { isComboPack: { $ne: true } },
+          { isComboPack: { $exists: false } },
+        ],
+      })
+    }
 
     if (newArrivals) {
       const sevenDaysAgo = new Date()

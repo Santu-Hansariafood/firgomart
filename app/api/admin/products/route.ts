@@ -112,6 +112,9 @@ export async function GET(request: Request) {
       availableCountry: p.availableCountry,
       currencyCode: p.currencyCode,
       deliveryTimeDays: p.deliveryTimeDays,
+      isAdminProduct: p.isAdminProduct,
+      isComboPack: p.isComboPack,
+      comboItems: Array.isArray(p.comboItems) ? p.comboItems : [],
     }))
     return NextResponse.json({ products: safe, total })
   } catch (err: any) {
@@ -175,6 +178,15 @@ export async function POST(request: Request) {
     const unitsPerPack = body?.unitsPerPack ? Number(body.unitsPerPack) : 1
     const deliveryTimeDays = body?.deliveryTimeDays ? Number(body.deliveryTimeDays) : undefined
 
+    const isComboPack = body?.isComboPack === true
+    const comboItemsRaw = Array.isArray(body?.comboItems) ? body.comboItems : []
+    const comboItems = comboItemsRaw
+      .map((it: any) => ({
+        productId: String(it?.productId || "").trim(),
+        quantity: it?.quantity ? Number(it.quantity) : 1,
+      }))
+      .filter((it: { productId: string }) => it.productId)
+
     const height = body?.height ? Number(body.height) : undefined
     const width = body?.width ? Number(body.width) : undefined
     const length = body?.length ? Number(body.length) : undefined
@@ -225,6 +237,8 @@ export async function POST(request: Request) {
       gstNumber,
       availableCountry: availableCountryRaw,
       deliveryTimeDays: deliveryTimeDays || undefined,
+      isComboPack,
+      comboItems: comboItems.length > 0 ? comboItems : undefined,
     })
     return NextResponse.json({ product: { id: doc._id?.toString?.() || String(doc._id) } }, { status: 201 })
   } catch (err: any) {

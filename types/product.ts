@@ -23,6 +23,11 @@ export interface Product {
   availableCountry?: string
   deliveryTimeDays?: number
   isAdminProduct?: boolean
+  isComboPack?: boolean
+  comboItems?: {
+    productId: string
+    quantity: number
+  }[]
   hsnCode?: string
   weight?: string | number
   weightUnit?: string

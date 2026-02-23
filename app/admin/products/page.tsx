@@ -219,6 +219,8 @@ export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isComboPack, setIsComboPack] = useState(false)
+  const [comboItems, setComboItems] = useState<{ productId: string; quantity: string }[]>([])
   
   const [formName, setFormName] = useState("")
   const [formProductId, setFormProductId] = useState("")
@@ -426,6 +428,17 @@ export default function Page() {
       setFormHSNCode(product.hsnCode || "")
       setFormGSTNumber(product.gstNumber || "")
       setImages(product.images && product.images.length ? product.images : (product.image ? [product.image] : []))
+      const comboFlag = (product as any).isComboPack === true
+      setIsComboPack(comboFlag)
+      const comboRaw = Array.isArray((product as any).comboItems) ? (product as any).comboItems : []
+      setComboItems(
+        comboRaw.length > 0
+          ? comboRaw.map((it: any) => ({
+              productId: String(it?.productId || ""),
+              quantity: String(it?.quantity ?? "1"),
+            }))
+          : [{ productId: "", quantity: "1" }]
+      )
       
       setFormHeight(String(product.height || ""))
       setFormWidth(String(product.width || ""))
@@ -460,6 +473,8 @@ export default function Page() {
       setFormHSNCode("")
       setFormGSTNumber(process.env.NEXT_PUBLIC_ADMIN_GST_NUMBER || "")
       setImages([])
+      setIsComboPack(false)
+      setComboItems([{ productId: "", quantity: "1" }])
       
       setFormHeight("")
       setFormWidth("")
@@ -558,6 +573,13 @@ export default function Page() {
         ? Math.round(((originalPrice - price) / originalPrice) * 100) 
         : 0
 
+    const comboPayload = comboItems
+      .map(item => ({
+        productId: item.productId.trim(),
+        quantity: item.quantity ? Number(item.quantity) : 1,
+      }))
+      .filter(item => item.productId)
+
     const payload = {
       name: formName.trim(),
       productId: formProductId.trim(),
@@ -590,6 +612,8 @@ export default function Page() {
       hsnCode: formHSNCode.trim(),
       gstNumber: formGSTNumber.trim(),
       deliveryTimeDays: formDeliveryTimeDays ? Number(formDeliveryTimeDays) : undefined,
+      isComboPack,
+      comboItems: comboPayload,
     }
 
     try {
@@ -1069,7 +1093,77 @@ export default function Page() {
                         </div>
                     </div>
                 </div>
-                <div className="p-6 border-t flex justify-end gap-3 bg-white z-10 sticky bottom-0">
+            <div className="md:col-span-2 space-y-4 px-6 pb-2">
+              <h3 className="font-semibold text-gray-700">Combo Pack (optional)</h3>
+              <div className="flex items-center gap-2">
+                <input
+                  id="combo_pack_toggle"
+                  type="checkbox"
+                  checked={isComboPack}
+                  onChange={e => setIsComboPack(e.target.checked)}
+                />
+                <label htmlFor="combo_pack_toggle" className="text-sm font-medium text-gray-700">
+                  Treat this listing as a combo pack
+                </label>
+              </div>
+              {isComboPack && (
+                <div className="space-y-3">
+                  <p className="text-xs text-gray-500">
+                    Add one or more underlying products by their Product ID and quantity.
+                  </p>
+                  {comboItems.map((item, idx) => (
+                    <div key={idx} className="grid grid-cols-3 gap-2">
+                      <input
+                        value={item.productId}
+                        onChange={e => {
+                          const val = e.target.value
+                          setComboItems(prev =>
+                            prev.map((it, i) => (i === idx ? { ...it, productId: val } : it))
+                          )
+                        }}
+                        placeholder="Product ID"
+                        className="col-span-2 px-3 py-2 border rounded-lg text-sm"
+                      />
+                      <input
+                        type="number"
+                        min={1}
+                        value={item.quantity}
+                        onChange={e => {
+                          const val = e.target.value
+                          setComboItems(prev =>
+                            prev.map((it, i) => (i === idx ? { ...it, quantity: val } : it))
+                          )
+                        }}
+                        placeholder="Qty"
+                        className="px-3 py-2 border rounded-lg text-sm"
+                      />
+                    </div>
+                  ))}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setComboItems(prev => [...prev, { productId: "", quantity: "1" }])
+                      }
+                      className="px-3 py-1 text-sm bg-white border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/5"
+                    >
+                      Add product to combo
+                    </button>
+                    {comboItems.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => setComboItems(prev => prev.slice(0, -1))}
+                        className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
+                      >
+                        Remove last
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 border-t flex justify-end gap-3 bg-white z-10 sticky bottom-0">
                   <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium" disabled={isSubmitting}>Cancel</button>
                   <button onClick={handleSave} className="px-6 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
                     {isSubmitting ? "Saving..." : (editingId ? "Update Product" : "Submit")}
