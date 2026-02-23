@@ -2,8 +2,9 @@
 
 import type { MetadataRoute } from "next"
 
+const SITE_URL = "https://firgomart.com"
+
 export default async function robots(): Promise<MetadataRoute.Robots> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://firgomart.com"
   return {
     rules: [
       {
@@ -12,7 +13,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: ["/admin", "/admin/*", "/seller", "/seller/*", "/api", "/api/*"],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
+    sitemap: `${SITE_URL}/sitemap.xml`,
+    host: SITE_URL,
   }
 }

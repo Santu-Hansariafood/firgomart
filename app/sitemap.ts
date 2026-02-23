@@ -4,9 +4,10 @@ import { getProductModel } from '@/lib/models/Product'
 import categoriesData from '@/data/categories.json'
 import { getProductSlug } from '@/utils/productUtils'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://firgomart.com'
+const SITE_URL = 'https://firgomart.com'
 
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = SITE_URL
   const routes = [
     '',
     '/grocery',
