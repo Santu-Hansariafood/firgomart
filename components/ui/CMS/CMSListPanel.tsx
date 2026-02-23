@@ -24,19 +24,24 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
     handleDeleteCareer
   } = state
 
+  const departments = Array.isArray(safeDepartments) ? safeDepartments : []
+  const members = Array.isArray(safeMembers) ? safeMembers : []
+  const blogs = Array.isArray(safeBlogs) ? safeBlogs : []
+  const careers = Array.isArray(safeCareers) ? safeCareers : []
+
   return (
     <div className="lg:col-span-2 space-y-6">
       {activeTab === 'departments' && (
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <h3 className="font-semibold text-lg">Existing Departments</h3>
-            <span className="text-sm text-gray-500">{safeDepartments.length} total</span>
+            <span className="text-sm text-gray-500">{departments.length} total</span>
           </div>
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
-            {safeDepartments.length === 0 ? (
+            {departments.length === 0 ? (
               <div className="p-8 text-center text-gray-500">No departments found. Add one to get started.</div>
             ) : (
-              safeDepartments.map(dept => (
+              departments.map(dept => (
                 <div
                   key={dept._id}
                   className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
@@ -78,13 +83,13 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <h3 className="font-semibold text-lg">Team Members</h3>
-            <span className="text-sm text-gray-500">{safeMembers.length} total</span>
+            <span className="text-sm text-gray-500">{members.length} total</span>
           </div>
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
-            {safeMembers.length === 0 ? (
+            {members.length === 0 ? (
               <div className="p-8 text-center text-gray-500">No team members found.</div>
             ) : (
-              safeMembers.map(member => (
+              members.map(member => (
                 <div
                   key={member._id}
                   className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
@@ -130,13 +135,13 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <h3 className="font-semibold text-lg">Blog Posts</h3>
-            <span className="text-sm text-gray-500">{safeBlogs.length} total</span>
+            <span className="text-sm text-gray-500">{blogs.length} total</span>
           </div>
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
-            {safeBlogs.length === 0 ? (
+            {blogs.length === 0 ? (
               <div className="p-8 text-center text-gray-500">No blog posts found.</div>
             ) : (
-              safeBlogs.map(blog => (
+              blogs.map(blog => (
                 <div
                   key={blog._id}
                   className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
@@ -186,13 +191,13 @@ export function CMSListPanel({ state }: CMSListPanelProps) {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
           <div className="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
             <h3 className="font-semibold text-lg">Job Openings</h3>
-            <span className="text-sm text-gray-500">{safeCareers.length} total</span>
+            <span className="text-sm text-gray-500">{careers.length} total</span>
           </div>
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
-            {safeCareers.length === 0 ? (
+            {careers.length === 0 ? (
               <div className="p-8 text-center text-gray-500">No job openings found.</div>
             ) : (
-              safeCareers.map(career => (
+              careers.map(career => (
                 <div
                   key={career._id}
                   className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"

@@ -22,6 +22,8 @@ export function CMSFormPanel({ state }: CMSFormPanelProps) {
     resetForms
   } = state
 
+  const departments = Array.isArray(safeDepartments) ? safeDepartments : []
+
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 sticky top-8">
       <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -144,7 +146,7 @@ export function CMSFormPanel({ state }: CMSFormPanelProps) {
               required
             >
               <option value="">Select Department</option>
-              {safeDepartments.map(dept => (
+              {departments.map(dept => (
                 <option key={dept._id} value={dept.name}>
                   {dept.name}
                 </option>
@@ -473,7 +475,7 @@ export function CMSFormPanel({ state }: CMSFormPanelProps) {
                 required
               >
                 <option value="">Select Dept</option>
-                {safeDepartments.map(dept => (
+                {departments.map(dept => (
                   <option key={dept._id} value={dept.name}>
                     {dept.name}
                   </option>

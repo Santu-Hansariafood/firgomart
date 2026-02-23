@@ -32,11 +32,6 @@ const ProductInfo = memo(({
   const currency = getCurrencyForCountry(product.availableCountry)
   const [showDeliveryDetails, setShowDeliveryDetails] = useState(false)
 
-  const estimatedDeliveryDate =
-    typeof product.deliveryTimeDays === 'number' && product.deliveryTimeDays > 0
-      ? new Date(Date.now() + product.deliveryTimeDays * 24 * 60 * 60 * 1000)
-      : null
-
   return (
     <div className="flex flex-col h-full">
       <div className="mb-6">
@@ -224,15 +219,9 @@ const ProductInfo = memo(({
               Close
             </button>
           </div>
-          {estimatedDeliveryDate ? (
+          {typeof product.deliveryTimeDays === 'number' && product.deliveryTimeDays > 0 ? (
             <p>
-              Order now to get it by{" "}
-              {estimatedDeliveryDate.toLocaleDateString(undefined, {
-                weekday: "short",
-                day: "numeric",
-                month: "short",
-              })}
-              {" "}({product.deliveryTimeDays} days).
+              Typically delivered within {product.deliveryTimeDays} days to your location.
             </p>
           ) : (
             <p>
