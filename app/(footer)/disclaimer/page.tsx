@@ -1,4 +1,3 @@
-import React from "react";
 import { Metadata } from "next";
 import PolicyContent from "@/components/common/PolicyContent/PolicyContent";
 

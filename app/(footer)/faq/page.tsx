@@ -18,8 +18,6 @@ import {
   Globe,
   ChevronDown,
 } from "lucide-react";
-import { Suspense } from "react";
-import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import { useState } from "react";
 
 const INTERNATIONAL_FAQS = [
@@ -106,7 +104,6 @@ const FaqPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   return (
-    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
@@ -316,7 +313,6 @@ const FaqPage = () => {
         </motion.div>
       </div>
     </div>
-    </Suspense>
   );
 };
 

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
-import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 import { motion } from "framer-motion";
@@ -25,14 +24,12 @@ import {
   MapPin,
   AlertTriangle,
 } from "lucide-react";
-import { Suspense } from "react";
 
 const HelpPage = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   return (
-    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
@@ -437,7 +434,6 @@ const HelpPage = () => {
         </motion.div>
       </div>
     </div>
-    </Suspense>
   );
 };
 

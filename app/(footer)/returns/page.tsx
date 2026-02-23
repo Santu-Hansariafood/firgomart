@@ -2,8 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { Suspense, useEffect } from "react";
-import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
+import { useEffect } from "react";
 import policy from "@/data/returnsPolicy.json";
 
 import {
@@ -37,7 +36,6 @@ const ReturnsPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
   return (
-    <Suspense fallback={<BeautifulLoader />}>
       <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
         <section className="relative py-20 bg-brand-purple">
           <div className="max-w-7xl mx-auto px-4 text-center">
@@ -153,7 +151,6 @@ const ReturnsPage = () => {
           </div>
         </div>
       </div>
-    </Suspense>
   );
 };
 

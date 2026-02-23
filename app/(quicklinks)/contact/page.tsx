@@ -1,12 +1,10 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 const Title = dynamic(() => import("@/components/common/Title/Title"));
 const Paragraph = dynamic(() => import("@/components/common/Paragraph/Paragraph"));
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Clock, Globe, Send } from "lucide-react";
-import { Suspense, useState } from "react";
 
 const ContactPage = () => {
   useEffect(() => {
@@ -51,7 +49,6 @@ const ContactPage = () => {
   };
 
   return (
-    <Suspense fallback={<BeautifulLoader />}>
     <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
       <section className="relative py-20 bg-brand-purple overflow-hidden">
         <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-10" />
@@ -261,7 +258,6 @@ const ContactPage = () => {
         </div>
       </div>
     </div>
-    </Suspense>
   );
 };
 

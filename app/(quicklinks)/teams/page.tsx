@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader";
 import Title from "@/components/common/Title/Title";
 import Paragraph from "@/components/common/Paragraph/Paragraph";
@@ -111,7 +111,6 @@ const TeamsPage = () => {
   }, [activeTitle]);
 
   return (
-    <Suspense fallback={<BeautifulLoader />}>
       <div className="bg-[var(--background)] text-[color:var(--foreground)] min-h-screen">
         <section className="relative py-20 bg-brand-purple overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
@@ -165,7 +164,6 @@ const TeamsPage = () => {
           />
         </div>
       </div>
-    </Suspense>
   );
 };
 
