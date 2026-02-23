@@ -18,6 +18,7 @@ const SellerProducts = dynamic(() => import("@/components/ui/SellerProducts/Sell
 const MarqueeBanner = dynamic(() => import("@/components/ui/MarqueeBanner/MarqueeBanner"));
 const PriceCategoryBanner = dynamic(() => import("@/components/ui/PriceCategoryBanner/PriceCategoryBanner"));
 const FestiveProducts = dynamic(() => import("@/components/ui/FestiveProducts/FestiveProducts"));
+const RecentlyViewed = dynamic(() => import("@/components/ui/RecentlyViewed/RecentlyViewed"));
 
 export default function Page() {
   return (
@@ -32,12 +33,12 @@ function HomeContent() {
     useCart();
   const searchParams = useSearchParams();
   const search = searchParams.get('search');
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<unknown | null>(null);
   
   const [page, setPage] = useState<number>(1);
   const filters = useProductFilters(setPage);
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: unknown) => {
     addToCart(product);
     setShowCart(true);
   };
@@ -61,6 +62,10 @@ function HomeContent() {
             <FestiveProducts onProductClick={setSelectedProduct} />
             <TrendingProducts onProductClick={setSelectedProduct} />
             <SellerProducts onProductClick={setSelectedProduct} />
+            <RecentlyViewed
+              onProductClick={setSelectedProduct}
+              onAddToCart={handleAddToCart}
+            />
           </Suspense>
         )}
         <ProductGrid

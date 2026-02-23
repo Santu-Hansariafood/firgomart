@@ -45,41 +45,56 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
 
   useEffect(() => {
-    if (session?.user) {
-      fetch('/api/user/history')
-        .then(res => res.json())
-        .then(data => {
-            if (data.history) {
-                const mapped = data.history.map((p: any) => ({
-                    id: p._id || p.id,
-                    name: p.name,
-                    image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
-                    images: Array.isArray(p.images) ? p.images : undefined,
-                    category: p.category,
-                    subcategory: p.subcategory,
-                    price: p.price,
-                    originalPrice: p.originalPrice,
-                    discount: p.discount,
-                    rating: p.rating,
-                    brand: p.brand,
-                    colors: p.colors,
-                    sizes: p.sizes,
-                    about: p.about,
-                    additionalInfo: p.additionalInfo,
-                    description: p.description,
-                    reviews: p.reviews,
-                    stock: p.stock,
-                    unitsPerPack: p.unitsPerPack,
-                    isAdminProduct: p.isAdminProduct,
-                    hsnCode: p.hsnCode,
-                }))
-                setProducts(mapped)
-            }
-        })
-        .catch(() => {})
-        .finally(() => setLoading(false))
-    } else {
-        setLoading(false)
+    if (!session?.user) {
+      setLoading(false)
+      return
+    }
+
+    let cancelled = false
+
+    const load = async () => {
+      try {
+        const res = await fetch('/api/user/history')
+        const data = await res.json()
+        if (cancelled) return
+        if (Array.isArray(data.history)) {
+          const mapped = (data.history as (Product & { _id?: string | number })[]).map((p) => ({
+            id: p._id || p.id,
+            name: p.name,
+            image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
+            images: Array.isArray(p.images) ? p.images : undefined,
+            category: p.category,
+            subcategory: p.subcategory,
+            price: p.price,
+            originalPrice: p.originalPrice,
+            discount: p.discount,
+            rating: p.rating,
+            brand: p.brand,
+            colors: p.colors,
+            sizes: p.sizes,
+            about: p.about,
+            additionalInfo: p.additionalInfo,
+            description: p.description,
+            reviews: p.reviews,
+            stock: p.stock,
+            unitsPerPack: p.unitsPerPack,
+            isAdminProduct: p.isAdminProduct,
+            hsnCode: p.hsnCode,
+          }))
+          setProducts(mapped.slice(0, 15))
+        }
+      } catch {
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    load()
+
+    return () => {
+      cancelled = true
     }
   }, [session])
 
