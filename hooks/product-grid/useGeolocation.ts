@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 
+type SaveOptions = {
+  lockCountry?: boolean
+}
+
 export function useGeolocation() {
   const [deliverToState, setDeliverToState] = useState<string>(() => {
     try {
@@ -32,37 +36,72 @@ export function useGeolocation() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const save = useCallback((s: string | undefined, country?: string | undefined, full?: string | undefined) => {
-    const valid = typeof s === 'string' && s.trim().length > 0
-    const countryNameRaw = (country || '').trim()
-    const countryLower = countryNameRaw.toLowerCase()
+  const save = useCallback(
+    (s: string | undefined, country?: string | undefined, full?: string | undefined, options?: SaveOptions) => {
+      const valid = typeof s === 'string' && s.trim().length > 0
+      const lockCountry = !!options?.lockCountry
 
-    let detectedCode = 'IN'
-    if (countryLower.includes('saudi')) detectedCode = 'SA'
-    else if (countryLower.includes('united states') || countryLower === 'usa' || countryLower === 'us') detectedCode = 'US'
-    else if (countryLower.includes('united arab emirates') || countryLower === 'uae') detectedCode = 'AE'
-    else if (countryLower.includes('qatar')) detectedCode = 'QA'
-    else if (countryLower.includes('india')) detectedCode = 'IN'
+      let existingCode = countryCode
+      let existingName = countryName
+      try {
+        if (typeof window !== 'undefined') {
+          existingCode = localStorage.getItem('countryCode') || existingCode
+          existingName = localStorage.getItem('countryName') || existingName
+        }
+      } catch {}
 
-    setCountryCode(detectedCode)
-    setCountryName(countryNameRaw || detectedCode)
-    try {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('countryCode', detectedCode)
-        localStorage.setItem('countryName', countryNameRaw || detectedCode)
+      const countryNameRaw = (country || '').trim()
+      const countryLower = countryNameRaw.toLowerCase()
+
+      const mapCountry = () => {
+        let detectedCodeLocal = 'IN'
+        if (countryLower.includes('saudi')) detectedCodeLocal = 'SA'
+        else if (countryLower.includes('united states') || countryLower === 'usa' || countryLower === 'us') detectedCodeLocal = 'US'
+        else if (countryLower.includes('united arab emirates') || countryLower === 'uae') detectedCodeLocal = 'AE'
+        else if (countryLower.includes('qatar')) detectedCodeLocal = 'QA'
+        else if (countryLower.includes('india')) detectedCodeLocal = 'IN'
+        return detectedCodeLocal
       }
-    } catch {}
 
-    if (valid) {
-      const stateVal = s!.trim()
-      setDeliverToState(stateVal)
-      try { localStorage.setItem('deliverToState', stateVal) } catch {}
+      let nextCode = existingCode || 'IN'
+      let nextName = existingName
 
-      const loc = full && full.trim().length > 0 ? full.trim() : stateVal
-      setFullLocation(loc)
-      try { localStorage.setItem('fullLocation', loc) } catch {}
-    }
-  }, [])
+      if (!lockCountry || !existingCode) {
+        if (countryNameRaw) {
+          nextCode = mapCountry()
+          nextName = countryNameRaw || nextCode
+        }
+      }
+
+      setCountryCode(nextCode)
+      setCountryName(nextName || nextCode)
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('countryCode', nextCode)
+          localStorage.setItem('countryName', nextName || nextCode)
+        }
+      } catch {}
+
+      if (valid) {
+        const stateVal = s!.trim()
+        setDeliverToState(stateVal)
+        try {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('deliverToState', stateVal)
+          }
+        } catch {}
+
+        const loc = full && full.trim().length > 0 ? full.trim() : stateVal
+        setFullLocation(loc)
+        try {
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('fullLocation', loc)
+          }
+        } catch {}
+      }
+    },
+    [countryCode, countryName]
+  )
 
   useEffect(() => {
     const autoLocate = async () => {
@@ -78,7 +117,7 @@ export function useGeolocation() {
         if (postal) {
           full = city ? `${city}, ${state} ${postal}` : `${state} ${postal}`
         }
-        save(state, country, full)
+        save(state, country, full, { lockCountry: true })
       } catch {}
     }
     autoLocate()
@@ -112,7 +151,7 @@ export function useGeolocation() {
                 full = city ? `${city}, ${state} ${postal}` : `${state} ${postal}`
               }
               
-              save(state, country, full)
+              save(state, country, full, { lockCountry: true })
               resolve()
             } catch (e) {
               reject(e)
@@ -133,10 +172,13 @@ export function useGeolocation() {
     }
   }, [save])
 
-  const updateLocation = useCallback((state: string, country: string) => {
-    const full = [state, country].filter(Boolean).join(', ')
-    save(state, country, full)
-  }, [save])
+  const updateLocation = useCallback(
+    (state: string, country: string) => {
+      const full = [state, country].filter(Boolean).join(', ')
+      save(state, country, full, { lockCountry: false })
+    },
+    [save]
+  )
 
   return { deliverToState, fullLocation, countryCode, countryName, requestLocation, loading, error, updateLocation }
 }

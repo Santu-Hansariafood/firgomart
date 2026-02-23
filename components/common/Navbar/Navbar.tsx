@@ -63,7 +63,9 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <PromoBanner />
+      <div className="md:hidden">
+        <PromoBanner />
+      </div>
       <nav className="sticky top-0 z-50 bg-[radial-gradient(circle_at_top,_#fdf5ff_0,_#fafafa_55%,_#f3e6ff_100%)] dark:bg-[linear-gradient(to_right,_#050009,_#150028,_#2a0646)] border-b border-[var(--foreground)/10] shadow-lg transition-all duration-300 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20 gap-2 sm:gap-4">

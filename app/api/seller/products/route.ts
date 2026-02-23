@@ -42,8 +42,10 @@ export async function POST(request: Request) {
 
     const imgs: string[] = Array.isArray(images) ? images : []
     const primaryImage = String(image || (imgs[0] || ""))
-    if (!name || typeof price !== "number") {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+
+    const normalizedCountry = typeof availableCountry === "string" ? availableCountry.trim().toUpperCase() : ""
+    if (!name || typeof price !== "number" || !normalizedCountry) {
+      return NextResponse.json({ error: "name, price, image, availableCountry required" }, { status: 400 })
     }
 
     const createdByEmail = typeof sellerEmail === "string" && sellerEmail ? sellerEmail : undefined
@@ -99,7 +101,7 @@ export async function POST(request: Request) {
       createdByEmail,
       sellerState,
       sellerHasGST,
-      availableCountry,
+      availableCountry: normalizedCountry,
       currencyCode,
       deliveryTimeDays: typeof deliveryTimeDays === "number" ? deliveryTimeDays : undefined,
     })

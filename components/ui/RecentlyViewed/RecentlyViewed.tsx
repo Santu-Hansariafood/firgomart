@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import type { Product } from '@/types/product'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface RecentlyViewedProps {
   onProductClick: (product: Product) => void
@@ -14,6 +15,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
   const { data: session } = useSession()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const { countryCode } = useGeolocation()
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
 
@@ -27,7 +29,9 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
 
     const load = async () => {
       try {
-        const res = await fetch('/api/user/history')
+        const params = new URLSearchParams()
+        if (countryCode) params.set('country', countryCode)
+        const res = await fetch(`/api/user/history?${params.toString()}`)
         const data = await res.json()
         if (cancelled) return
         if (Array.isArray(data.history)) {
@@ -52,7 +56,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
     return () => {
       cancelled = true
     }
-  }, [session])
+  }, [session, countryCode])
 
   if (loading || products.length === 0) return null
 

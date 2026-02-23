@@ -5,11 +5,14 @@ import { findUserAcrossDBs } from "@/lib/models/User"
 import { connectDB } from "@/lib/db/db"
 import { getProductModel } from "@/lib/models/Product"
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     const email = session?.user?.email
     if (!email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const url = new URL(request.url)
+    const countryParam = (url.searchParams.get("country") || "").trim().toUpperCase()
 
     const result = await findUserAcrossDBs(email)
     if (!result?.user) return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -19,7 +22,13 @@ export async function GET() {
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
-    const products = await (Product as any).find({ _id: { $in: historyIds } }).lean()
+
+    const baseQuery: Record<string, unknown> = { _id: { $in: historyIds } }
+    if (countryParam) {
+      baseQuery.availableCountry = countryParam
+    }
+
+    const products = await (Product as any).find(baseQuery).lean()
 
     const productMap = new Map(products.map((p: any) => [String(p._id), p]))
     const sorted = historyIds.map((id: any) => productMap.get(String(id))).filter(Boolean)

@@ -156,7 +156,7 @@ export async function POST(request: Request) {
     const category = String(body?.category || "").trim()
     const subcategory = String(body?.subcategory || "").trim()
     const price = Number(body?.price)
-    const availableCountry = String(body?.availableCountry || "").trim()
+    const availableCountryRaw = String(body?.availableCountry || "").trim().toUpperCase()
     const currencyCode = String(body?.currencyCode || "").trim()
     const originalPrice = body?.originalPrice ? Number(body.originalPrice) : undefined
     const discount = body?.discount ? Number(body.discount) : 0
@@ -185,7 +185,9 @@ export async function POST(request: Request) {
     const hsnCode = String(body?.hsnCode || "").trim()
     const productId = String(body?.productId || "").trim()
 
-    if (!name || !price || !image) return NextResponse.json({ error: "name, price, image required" }, { status: 400 })
+    if (!name || !price || !image || !availableCountryRaw) {
+      return NextResponse.json({ error: "name, price, image, availableCountry required" }, { status: 400 })
+    }
 
     const conn = await connectDB()
     const Product = getProductModel(conn)
@@ -221,7 +223,7 @@ export async function POST(request: Request) {
       weightUnit,
       hsnCode,
       gstNumber,
-      availableCountry: availableCountry || undefined,
+      availableCountry: availableCountryRaw,
       deliveryTimeDays: deliveryTimeDays || undefined,
     })
     return NextResponse.json({ product: { id: doc._id?.toString?.() || String(doc._id) } }, { status: 201 })
