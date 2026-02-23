@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart } from 'lucide-react'
+import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart, Share2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
@@ -62,6 +62,64 @@ interface ProductPageClientProps {
   product: Product
 }
 
+type ReviewEligibility = { canReview: boolean; reason?: string; returnPeriodEnds?: string } | null
+
+type WishlistItem = { _id?: string | number; id?: string | number }
+
+function useProductUserState(productId: Product['id'], session: ReturnType<typeof useSession>['data']) {
+  const [reviewEligibility, setReviewEligibility] = useState<ReviewEligibility>(null)
+  const [isSaved, setIsSaved] = useState(false)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (!session?.user) return
+
+    fetch(`/api/reviews/eligibility?productId=${productId}`)
+      .then(res => res.json())
+      .then(data => setReviewEligibility(data))
+      .catch(() => {})
+
+    fetch('/api/user/history', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId }),
+    }).catch(() => {})
+
+    fetch('/api/user/wishlist')
+      .then(res => res.json())
+      .then(data => {
+        const list: WishlistItem[] = Array.isArray(data.wishlist) ? data.wishlist as WishlistItem[] : []
+        const exists = list.some((p: WishlistItem) => String(p._id ?? p.id) === String(productId))
+        setIsSaved(exists)
+      })
+      .catch(() => {})
+  }, [productId, session])
+
+  const toggleSave = async () => {
+    if (!session) {
+      toast.error('Please login to save products')
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await fetch('/api/user/wishlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        if (typeof data.added === 'boolean') setIsSaved(data.added)
+        else setIsSaved(prev => !prev)
+      }
+    } catch {
+    }
+    setSaving(false)
+  }
+
+  return { reviewEligibility, isSaved, saving, toggleSave }
+}
+
 const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const { data: session } = useSession()
   const { addToCart, showCart, setShowCart } = useCart()
@@ -79,58 +137,31 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const [userRating, setUserRating] = useState(5)
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
-  
-  const [reviewEligibility, setReviewEligibility] = useState<{ canReview: boolean; reason?: string; returnPeriodEnds?: string } | null>(null)
   const { countryCode } = useGeolocation()
   const currency = getCurrencyForCountry(countryCode || product.availableCountry)
-  const [isSaved, setIsSaved] = useState(false)
-  const [saving, setSaving] = useState(false)
+  const { reviewEligibility, isSaved, saving, toggleSave } = useProductUserState(product.id, session)
 
-  useEffect(() => {
-    if (session?.user) {
-      // Check review eligibility
-      fetch(`/api/reviews/eligibility?productId=${product.id}`)
-        .then(res => res.json())
-        .then(data => setReviewEligibility(data))
-        .catch(() => {})
-
-      fetch('/api/user/history', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId: product.id })
-      }).catch(() => {})
-
-      fetch('/api/user/wishlist')
-        .then(res => res.json())
-        .then(data => {
-          if (data.wishlist) {
-            const exists = data.wishlist.some((p: any) => String(p._id || p.id) === String(product.id))
-            setIsSaved(exists)
-          }
-        })
-        .catch(() => {})
-    }
-  }, [product.id, session])
-
-  const toggleSave = async () => {
-    if (!session) {
-      toast.error("Please login to save products")
-      return
-    }
-    setSaving(true)
+  const handleShare = () => {
     try {
-      const res = await fetch('/api/user/wishlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId: product.id })
-      })
-      const data = await res.json()
-      if (data.success) {
-        if (typeof data.added === 'boolean') setIsSaved(data.added)
-        else setIsSaved(!isSaved)
+      const url = typeof window !== 'undefined' ? window.location.href : ''
+      if (!url) return
+      if (navigator.share) {
+        navigator
+          .share({
+            title: product.name,
+            text: `Check out ${product.name} on FirgoMart!`,
+            url,
+          })
+          .catch(() => {})
+      } else if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard
+          .writeText(url)
+          .then(() => toast.success('Link copied to clipboard'))
+          .catch(() => toast.error('Failed to copy link'))
       }
-    } catch {}
-    setSaving(false)
+    } catch {
+      toast.error('Failed to share product')
+    }
   }
 
   const validateSelection = () => {
@@ -239,8 +270,15 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   }, [session, product.id, userRating, userComment, fetchReviews])
 
   useEffect(() => {
-    if (activeTab === 'reviews') {
-      fetchReviews()
+    if (activeTab !== 'reviews') return
+    let cancelled = false
+    const load = async () => {
+      await fetchReviews()
+      if (cancelled) return
+    }
+    load()
+    return () => {
+      cancelled = true
     }
   }, [activeTab, fetchReviews])
 
@@ -278,13 +316,21 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
           <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-foreground/10">
             <div className="flex items-center justify-between mb-4">
                <div />
-               <button
-                  onClick={toggleSave}
-                  disabled={saving}
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
-                >
-                  <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-foreground'}`} />
-                </button>
+               <div className="flex items-center gap-2">
+                 <button
+                   onClick={handleShare}
+                   className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
+                 >
+                   <Share2 className="w-5 h-5 text-foreground" />
+                 </button>
+                 <button
+                   onClick={toggleSave}
+                   disabled={saving}
+                   className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-foreground/10 transition-colors shrink-0"
+                 >
+                   <Heart className={`w-5 h-5 ${isSaved ? 'fill-red-500 text-red-500' : 'text-foreground'}`} />
+                 </button>
+               </div>
             </div>
 
             <Script
