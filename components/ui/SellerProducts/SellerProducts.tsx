@@ -8,6 +8,7 @@ import { useCart } from '@/context/CartContext/CartContext'
 import { ArrowRight } from 'lucide-react'
 import { getProductPath } from '@/utils/productUtils'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
+import SectionHeader from '@/components/common/SectionHeader/SectionHeader'
 
 interface SellerProductsProps {
   onProductClick?: (product: Product) => void
@@ -80,31 +81,26 @@ export default function SellerProducts({ onProductClick }: SellerProductsProps) 
 
   return (
     <section className="pt-0 pb-8 px-4 md:px-8 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
-          <span className="text-brand-purple">
-            Seller
-          </span>
-          <span className="bg-clip-text text-red-500 ml-2">
-            Products
-          </span>
-        </h2>
-      </div>
+      <SectionHeader
+        titlePrimary="Seller"
+        titleSecondary="Products"
+      />
       
       {loading ? (
         <div className="flex gap-4 overflow-hidden">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px] aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />
+            <div key={i} className="min-w-[50px] w-[50px] md:min-w-[240px] md:w-[240px] aspect-[4/5] bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />
           ))}
         </div>
       ) : (
         <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {products.map((product) => (
-            <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
+            <div key={product._id || product.id} className="min-w-[50px] w-[50px] md:min-w-[240px] md:w-[240px]">
               <ProductCard 
                 product={product}
                 onProductClick={handleProductClick}
                 onAddToCart={handleAddToCart}
+                compact
               />
             </div>
           ))}
@@ -125,11 +121,12 @@ export default function SellerProducts({ onProductClick }: SellerProductsProps) 
           </div>
           <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {comboProducts.map((product) => (
-              <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
+              <div key={product._id || product.id} className="min-w-[50px] w-[50px] md:min-w-[240px] md:w-[240px]">
                 <ProductCard 
                   product={product}
                   onProductClick={handleProductClick}
                   onAddToCart={handleAddToCart}
+                  compact
                 />
               </div>
             ))}

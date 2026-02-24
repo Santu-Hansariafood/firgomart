@@ -8,6 +8,7 @@ import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import { useCart } from '@/context/CartContext/CartContext'
 import { getProductPath } from '@/utils/productUtils'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
+import SectionHeader from '@/components/common/SectionHeader/SectionHeader'
 
 type Offer = {
   id: string
@@ -124,14 +125,18 @@ export default function FestiveProducts({ onProductClick, backgroundClassName }:
       <div className={`${containerBg} rounded-3xl p-5 md:p-7 shadow-sm border border-white/40 dark:border-white/5`}>
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
-              <span className="text-amber-700 dark:text-amber-300">
-                Festive
-              </span>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 ml-2">
-                Offers
-              </span>
-            </h2>
+            <SectionHeader
+              titlePrimary="Festive"
+              titleSecondary="Offers"
+              primaryClassName="text-amber-700 dark:text-amber-300"
+              secondaryClassName="bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-pink-500 to-orange-500"
+              showAction
+              actionLabel="View All Festive Deals"
+              actionHref="/festive-products"
+              actionIcon={<ArrowRight className="w-4 h-4" />}
+              hideActionOnMobile
+              containerClassName="mb-0"
+            />
             {festiveOffer && (
               <p className="mt-2 text-sm sm:text-base text-amber-900/80 dark:text-amber-100/80">
                 {festiveOffer.name}
@@ -144,12 +149,6 @@ export default function FestiveProducts({ onProductClick, backgroundClassName }:
               </p>
             )}
           </div>
-          <button
-            onClick={() => router.push('/festive-products')}
-            className="hidden sm:inline-flex items-center gap-2 text-amber-800 dark:text-amber-200 hover:underline font-medium"
-          >
-            View All Festive Deals <ArrowRight className="w-4 h-4" />
-          </button>
         </div>
 
         {loading ? (
@@ -157,18 +156,19 @@ export default function FestiveProducts({ onProductClick, backgroundClassName }:
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px] aspect-[4/5] bg-white/60 dark:bg-gray-800/60 rounded-2xl animate-pulse"
+                className="min-w-[50px] w-[50px] md:min-w-[240px] md:w-[240px] aspect-[4/5] bg-white/60 dark:bg-gray-800/60 rounded-2xl animate-pulse"
               />
             ))}
           </div>
         ) : (
           <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {products.map(product => (
-              <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
+              <div key={product._id || product.id} className="min-w-[50px] w-[50px] md:min-w-[240px] md:w-[240px]">
                 <ProductCard
                   product={product}
                   onProductClick={handleProductClick}
                   onAddToCart={handleAddToCart}
+                  compact
                 />
               </div>
             ))}

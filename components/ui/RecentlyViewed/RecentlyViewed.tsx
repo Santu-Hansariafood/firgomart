@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react'
 import ProductCard from '@/components/ui/ProductCard/ProductCard'
 import type { Product } from '@/types/product'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
+import SectionHeader from '@/components/common/SectionHeader/SectionHeader'
 
 interface RecentlyViewedProps {
   onProductClick: (product: Product) => void
@@ -65,33 +66,23 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
 
   return (
     <section className="pt-0 pb-10 px-4 md:px-8 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-extrabold tracking-tight">
-          <span className="text-brand-purple">
-            Recently
-          </span>
-          <span className="bg-clip-text text-red-500 ml-2">
-            Viewed
-          </span>
-        </h2>
-        {products.length > 15 && !showAll && (
-          <button
-            type="button"
-            onClick={() => setShowAll(true)}
-            className="text-sm font-medium text-brand-purple hover:text-brand-red transition-colors"
-          >
-            See all
-          </button>
-        )}
-      </div>
+      <SectionHeader
+        titlePrimary="Recently"
+        titleSecondary="Viewed"
+        showAction={products.length > 15 && !showAll}
+        actionLabel="See all"
+        onActionClick={() => setShowAll(true)}
+        actionClassName="text-sm font-medium text-brand-purple hover:text-brand-red transition-colors"
+      />
 
       <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {visibleProducts.map((product) => (
-          <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
+          <div key={product._id || product.id} className="min-w-[50px] w-[50px] md:min-w-[60px] md:w-[60px]">
             <ProductCard
               product={product}
               onProductClick={onProductClick}
               onAddToCart={onAddToCart}
+              compact
             />
           </div>
         ))}

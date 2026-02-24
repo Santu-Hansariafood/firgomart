@@ -16,6 +16,7 @@ interface ProductCardProps {
   onAddToCart?: (product: Product) => void
   priority?: boolean
   onWishlistToggle?: (product: Product, added: boolean) => void
+  compact?: boolean
 }
 
 const fadeInUp = {
@@ -23,7 +24,7 @@ const fadeInUp = {
   show: { opacity: 1, y: 0 }
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false, onWishlistToggle }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false, onWishlistToggle, compact = false }) => {
   const { data: session } = useSession()
 
   const handleShare = (e: React.MouseEvent) => {
@@ -172,54 +173,56 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
         </div>
       </div>
 
-      <div className="md:hidden p-3 flex flex-col gap-1.5">
-        <p className="text-[10px] font-bold text-brand-purple uppercase tracking-wider">
-          {product.category}
-        </p>
-        <div className="h-10">
-          <h3 
-            className="text-sm font-bold text-foreground leading-snug line-clamp-2 cursor-pointer"
-            onClick={() => onProductClick(product)}
-            title={product.name}
-          >
-            {product.name}
-          </h3>
-        </div>
+      {!compact && (
+        <div className="md:hidden p-3 flex flex-col gap-1.5">
+          <p className="text-[10px] font-bold text-brand-purple uppercase tracking-wider">
+            {product.category}
+          </p>
+          <div className="h-10">
+            <h3 
+              className="text-sm font-bold text-foreground leading-snug line-clamp-2 cursor-pointer"
+              onClick={() => onProductClick(product)}
+              title={product.name}
+            >
+              {product.name}
+            </h3>
+          </div>
 
-        <div className="flex items-end justify-between gap-2">
-          <div className="flex flex-col">
-            <span className="text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
-            {product.originalPrice && (
-              <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
-            )}
+          <div className="flex items-end justify-between gap-2">
+            <div className="flex flex-col">
+              <span className="text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
+              {product.originalPrice && (
+                <span className="text-xs text-foreground/40 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
+              )}
+            </div>
+            <div className="flex items-center gap-1">
+              {(product.rating || 0) > 0 ? (
+                <>
+                  <div className="flex text-brand-purple text-xs">
+                    {"★".repeat(Math.round(product.rating || 0))}
+                    <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
+                  </div>
+                  <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
+                </>
+              ) : (
+                <span className="text-[10px] text-foreground/40">No ratings</span>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            {(product.rating || 0) > 0 ? (
-              <>
-                <div className="flex text-brand-purple text-xs">
-                  {"★".repeat(Math.round(product.rating || 0))}
-                  <span className="text-gray-300">{"★".repeat(5 - Math.round(product.rating || 0))}</span>
-                </div>
-                <span className="text-[10px] text-foreground/40">({product.reviews || 0})</span>
-              </>
-            ) : (
-              <span className="text-[10px] text-foreground/40">No ratings</span>
-            )}
-          </div>
+          
+          {onAddToCart && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                onAddToCart(product)
+              }}
+              className="w-full mt-2 py-2 bg-brand-purple text-white text-xs font-bold rounded-lg hover:bg-brand-purple/90 transition-colors active:scale-95"
+            >
+              Add to Cart
+            </button>
+          )}
         </div>
-        
-        {onAddToCart && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation()
-              onAddToCart(product)
-            }}
-            className="w-full mt-2 py-2 bg-brand-purple text-white text-xs font-bold rounded-lg hover:bg-brand-purple/90 transition-colors active:scale-95"
-          >
-            Add to Cart
-          </button>
-        )}
-      </div>
+      )}
     </motion.div>
   )
 }
