@@ -77,12 +77,11 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
 
       <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {visibleProducts.map((product) => (
-          <div key={product._id || product.id} className="min-w-[50px] w-[50px] md:min-w-[60px] md:w-[60px]">
+          <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
             <ProductCard
               product={product}
               onProductClick={onProductClick}
               onAddToCart={onAddToCart}
-              compact
             />
           </div>
         ))}
