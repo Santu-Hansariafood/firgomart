@@ -88,6 +88,7 @@ export const SUPPORTED_COUNTRIES: CountryConfig[] = [
   { code: 'US', name: 'United States', currencyCode: 'USD', currencySymbol: '$', currencyHtml: '&#36;' },
   { code: 'AE', name: 'United Arab Emirates', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
   { code: 'QA', name: 'Qatar', currencyCode: 'QAR', currencySymbol: 'QAR', currencyHtml: 'QAR' },
+  { code: 'KW', name: 'Kuwait', currencyCode: 'KWD', currencySymbol: 'KWD', currencyHtml: 'KWD' },
   { code: 'AE-DU', name: 'Dubai', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
 ]
 

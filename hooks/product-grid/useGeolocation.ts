@@ -59,6 +59,7 @@ export function useGeolocation() {
         else if (countryLower.includes('united states') || countryLower === 'usa' || countryLower === 'us') detectedCodeLocal = 'US'
         else if (countryLower.includes('united arab emirates') || countryLower === 'uae') detectedCodeLocal = 'AE'
         else if (countryLower.includes('qatar')) detectedCodeLocal = 'QA'
+        else if (countryLower.includes('kuwait')) detectedCodeLocal = 'KW'
         else if (countryLower.includes('india')) detectedCodeLocal = 'IN'
         return detectedCodeLocal
       }
@@ -164,9 +165,10 @@ export function useGeolocation() {
           { enableHighAccuracy: true, timeout: 8000, maximumAge: 600000 }
         )
       })
-    } catch (err: any) {
+    } catch (err) {
       console.error("Geolocation failed", err)
-      setError(err.message || "Failed to get location")
+      const msg = err instanceof Error ? err.message : "Failed to get location"
+      setError(msg)
     } finally {
       setLoading(false)
     }

@@ -15,6 +15,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
   const { data: session } = useSession()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [showAll, setShowAll] = useState(false)
   const { countryCode } = useGeolocation()
 
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
@@ -41,7 +42,7 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
             image: sanitizeImageUrl(Array.isArray(p.images) && p.images.length > 0 ? p.images[0] : p.image || ''),
             images: Array.isArray(p.images) ? p.images : p.images,
           }))
-          setProducts(mapped.slice(0, 15))
+          setProducts(mapped)
         }
       } catch {
       } finally {
@@ -60,6 +61,8 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
 
   if (loading || products.length === 0) return null
 
+  const visibleProducts = showAll ? products : products.slice(0, 15)
+
   return (
     <section className="pt-0 pb-10 px-4 md:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
@@ -71,10 +74,19 @@ const RecentlyViewed: React.FC<RecentlyViewedProps> = ({ onProductClick, onAddTo
             Viewed
           </span>
         </h2>
+        {products.length > 15 && !showAll && (
+          <button
+            type="button"
+            onClick={() => setShowAll(true)}
+            className="text-sm font-medium text-brand-purple hover:text-brand-red transition-colors"
+          >
+            See all
+          </button>
+        )}
       </div>
 
       <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {products.map((product) => (
+        {visibleProducts.map((product) => (
           <div key={product._id || product.id} className="min-w-[200px] w-[200px] md:min-w-[240px] md:w-[240px]">
             <ProductCard
               product={product}

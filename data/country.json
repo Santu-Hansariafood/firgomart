@@ -1184,36 +1184,86 @@
       "country": "Qatar",
       "states": [
         {
-          "state": "Doha",
+          "state": "Ad Dawhah",
           "districts": [
-            "West Bay",
-            "Al Sadd",
+            "Doha",
+            "Al Bidda",
             "Al Dafna",
-            "The Pearl",
-            "Musherib",
-            "Al Muntazah"
+            "Onaiza",
+            "Ras Abu Aboud",
+            "Old Airport",
+            "Al Sadd",
+            "Al Waab",
+            "Madinat Khalifa"
           ]
         },
         {
           "state": "Al Rayyan",
           "districts": [
-            "Education City",
+            "Al Rayyan",
+            "Abu Hamour",
             "Al Gharrafa",
-            "Old Al Rayyan",
-            "New Al Rayyan"
+            "Al Luqta",
+            "Muaither",
+            "Al Sailiya",
+            "Education City"
           ]
         },
         {
           "state": "Al Wakrah",
-          "districts": ["Al Wakrah City", "Mesaieed", "Al Wukair"]
-        },
-        {
-          "state": "Al Khor",
-          "districts": ["Al Khor City", "Al Thakhira"]
+          "districts": [
+            "Al Wakrah",
+            "Mesaieed",
+            "Al Wukair",
+            "Al Mashaf",
+            "Ras Abu Fontas"
+          ]
         },
         {
           "state": "Umm Salal",
-          "districts": ["Umm Salal Mohammed", "Umm Salal Ali"]
+          "districts": [
+            "Umm Salal Muhammad",
+            "Umm Salal Ali",
+            "Al Kharaitiyat"
+          ]
+        },
+        {
+          "state": "Al Khor and Al Thakhira",
+          "districts": [
+            "Al Khor",
+            "Al Thakhira",
+            "Ras Laffan",
+            "Simaisma"
+          ]
+        },
+        {
+          "state": "Al Shamal",
+          "districts": [
+            "Madinat ash Shamal",
+            "Ar Ruways",
+            "Abu Dhalouf",
+            "Ain Sinan",
+            "Fuwayrit",
+            "Al Ghariyah"
+          ]
+        },
+        {
+          "state": "Al Daayen",
+          "districts": [
+            "Lusail",
+            "Umm Qarn",
+            "Wadi Al Banat",
+            "Leabaib"
+          ]
+        },
+        {
+          "state": "Al Shahaniya",
+          "districts": [
+            "Al Shahaniya",
+            "Dukhan",
+            "Al Utouriya",
+            "Al Jumailiya"
+          ]
         }
       ]
     },
