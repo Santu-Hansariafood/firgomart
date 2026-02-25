@@ -7,6 +7,7 @@ import { getSupportTicketModel } from "@/lib/models/SupportTicket"
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
   const allow = raw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
+  if (!allow.length && process.env.NODE_ENV !== "production") return !!email
   return !!(email && allow.includes(email.toLowerCase()))
 }
 
@@ -81,6 +82,7 @@ export async function GET(request: Request) {
       message: t.message,
       status: t.status,
       priority: t.priority,
+      notes: t.notes,
       notesCount: Array.isArray(t.notes) ? t.notes.length : 0,
       createdAt: t.createdAt,
     }))

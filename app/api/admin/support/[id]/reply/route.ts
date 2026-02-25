@@ -9,6 +9,7 @@ import { getCommonEmailTemplate } from "@/lib/email/templates"
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
   const allow = raw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
+  if (!allow.length && process.env.NODE_ENV !== "production") return !!email
   return !!(email && allow.includes(email.toLowerCase()))
 }
 

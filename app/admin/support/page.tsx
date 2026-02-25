@@ -271,6 +271,12 @@ export default function Page() {
             columns={[
               { key: "orderNumber", label: "Order", sortable: true },
               { key: "buyerEmail", label: "Email" },
+              { key: "name", label: "Contact Name", render: (r) => {
+                const row = r as any
+                const contactNote = Array.isArray(row.notes) ? row.notes.find((n: any) => n.text?.startsWith("Contact name: ")) : null
+                if (contactNote) return contactNote.text.replace("Contact name: ", "")
+                return "-"
+              }},
               { key: "source", label: "Type", render: (r) => {
                 const row = r as TicketRow
                 if (row.source === 'enquiry') return <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">Enquiry</span>
