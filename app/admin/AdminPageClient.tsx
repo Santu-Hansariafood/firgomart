@@ -49,6 +49,7 @@ export default function AdminPageClient() {
   const [approvedSellers, setApprovedSellers] = useState<Seller[]>([])
   const [products, setProducts] = useState<EditableProduct[]>([])
   const [loading, setLoading] = useState(false)
+  const [ticketCount, setTicketCount] = useState(0)
   const [, setSelectedSeller] = useState<Seller | null>(null)
   const [, setSellerProducts] = useState<Product[]>([])
   const [selectedSellerDetails, setSelectedSellerDetails] = useState<Seller | null>(null)
@@ -102,6 +103,9 @@ export default function AdminPageClient() {
         const pRes = await fetch("/api/products?limit=20&page=1&adminOnly=true")
         const pData = await pRes.json()
         if (pRes.ok) setProducts(pData.products || [])
+        const tRes = await fetch("/api/admin/support?status=open&limit=1")
+        const tData = await tRes.json()
+        if (tRes.ok) setTicketCount(tData.total || 0)
       } catch {}
       setLoading(false)
     }
@@ -249,7 +253,7 @@ export default function AdminPageClient() {
     { title: 'Logistics Management', icon: Truck, route: '/admin/logistics' },
     { title: 'Payments & Finance', icon: CreditCard, route: '/admin/finance' },
     { title: 'Marketing & Promotions', icon: Megaphone, route: '/admin/marketing' },
-    { title: 'Customer Support', icon: LifeBuoy, route: '/admin/support' },
+    { title: 'Enquiries & Support', icon: LifeBuoy, route: '/admin/support' },
     { title: 'CMS (Content Management)', icon: FileText, route: '/admin/cms' },
     { title: 'Security & Roles', icon: Shield, route: '/admin/security' },
     { title: 'Reports & Analytics', icon: PieChart, route: '/admin/reports' },
@@ -286,6 +290,10 @@ export default function AdminPageClient() {
           <div className="rounded-xl bg-white/10 px-4 py-3">
             <p className="text-sm text-white/80">Admin products</p>
             <p className="text-2xl font-semibold">{products.length}</p>
+          </div>
+          <div className="rounded-xl bg-white/10 px-4 py-3">
+            <p className="text-sm text-white/80">Open Enquiries</p>
+            <p className="text-2xl font-semibold">{ticketCount}</p>
           </div>
         </div>
       </div>

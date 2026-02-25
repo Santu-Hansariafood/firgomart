@@ -39,7 +39,14 @@ export async function POST(request: Request) {
     if (!buyerEmail || !subject || !message) return NextResponse.json({ error: "email, subject, message required" }, { status: 400 })
     const conn = await connectDB()
     const Ticket = getSupportTicketModel(conn)
-    const doc = await (Ticket as any).create({ buyerEmail, orderNumber, subject, message, status: "open" })
+    const doc = await (Ticket as any).create({ 
+      buyerEmail, 
+      orderNumber, 
+      subject, 
+      message, 
+      status: "open",
+      source: "seller"
+    })
     return NextResponse.json({ ticket: doc.toObject() }, { status: 201 })
   } catch (err: any) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
