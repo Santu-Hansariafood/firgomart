@@ -13,7 +13,10 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: ["/admin", "/admin/*", "/seller", "/seller/*", "/api", "/api/*"],
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: [
+      `${SITE_URL}/sitemap.xml`,
+      `${SITE_URL}/api/feeds/google`
+    ],
     host: SITE_URL,
   }
 }

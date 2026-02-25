@@ -202,26 +202,37 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
 
   const productSchema = (() => {
     const imageUrls = images.map((src) => String(src))
+    const productUrl = typeof window !== 'undefined' ? window.location.href : `https://firgomart.com/product/${product.id}`
     const offers = {
       '@type': 'Offer',
-      priceCurrency: 'INR',
-      price: Number(product.price || 0),
+      priceCurrency: product.currencyCode || 'INR',
+      price: Number(currentPrice || product.price || 0),
       availability: (product.stock ?? 0) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: typeof window !== 'undefined' ? window.location.href : 'https://firgomart.com',
+      url: productUrl,
+      itemCondition: 'https://schema.org/NewCondition',
+      priceValidUntil: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split('T')[0],
+      seller: {
+        '@type': 'Organization',
+        name: 'FirgoMart',
+        'identifier': '10617649724'
+      }
     }
     const aggregateRating = (typeof product.rating === 'number' && product.rating > 0)
       ? { '@type': 'AggregateRating', ratingValue: product.rating, reviewCount: Number(product.reviews || 0) }
       : undefined
+    
     return {
       '@context': 'https://schema.org',
       '@type': 'Product',
       name: product.name,
       image: imageUrls,
-      brand: product.brand ? { '@type': 'Brand', name: product.brand } : undefined,
+      brand: product.brand ? { '@type': 'Brand', name: product.brand } : { '@type': 'Brand', name: 'FirgoMart' },
       category: product.category,
       color: (product.colors || []).join(', '),
       size: (product.sizes || []).join(', '),
-      description: product.description || undefined,
+      description: product.description || product.about || `Buy ${product.name} online at FirgoMart.`,
+      sku: String(product.id),
+      mpn: String(product.id),
       offers,
       aggregateRating,
     }
