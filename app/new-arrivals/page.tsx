@@ -5,14 +5,14 @@ import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { useCart } from '@/context/CartContext/CartContext'
 
+import { getProductPath } from '@/utils/productUtils'
+
 const ProductGrid = dynamic(() => import('@/components/ui/ProductGrid/ProductGrid'))
-const ProductModal = dynamic(() => import('@/components/ui/ProductModal/ProductModal'))
 const Cart = dynamic(() => import('@/components/ui/Cart/Cart'))
 
 export default function NewArrivalsPage() {
   const router = useRouter()
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } = useCart()
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null)
 
   const handleAddToCart = (product: any) => {
     addToCart(product)
@@ -20,7 +20,7 @@ export default function NewArrivalsPage() {
   }
 
   const handleProductClick = (product: any) => {
-    setSelectedProduct(product)
+    router.push(getProductPath(product.name, product._id || product.id))
   }
 
   return (
@@ -35,14 +35,6 @@ export default function NewArrivalsPage() {
           newArrivals={true}
         />
       </div>
-
-      {selectedProduct && (
-        <ProductModal
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onAddToCart={handleAddToCart}
-        />
-      )}
 
       {showCart && (
         <Cart

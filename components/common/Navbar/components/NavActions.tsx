@@ -38,14 +38,14 @@ const NavActions = ({
 }: NavActionsProps) => {
   return (
     <div className="flex items-center gap-1 sm:gap-2">
-      <button
-        onClick={() => setShowOffers(true)}
+      <Link
+        href="/special-offers"
         className="hidden md:flex items-center justify-center p-2 text-foreground/70 hover:text-brand-purple hover:bg-brand-purple/5 rounded-full transition-all"
         aria-label="Offers"
         title="Offers"
       >
         <Gift className="w-5 h-5" />
-      </button>
+      </Link>
       <Link
         href="/grocery"
         className="hidden lg:flex items-center justify-center p-2 text-foreground/70 hover:text-brand-purple hover:bg-brand-purple/5 rounded-full transition-all"

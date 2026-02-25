@@ -6,12 +6,13 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Loading from "./loading";
 import { useProductFilters } from "@/hooks/product-grid/useProductFilters";
+import { useRouter } from "next/navigation";
+import { getProductPath } from "@/utils/productUtils";
 import type { Product } from "@/types/product";
 import type { CartItem } from "@/types/checkout";
 
 const AdCarousel = dynamic(() => import("@/components/common/AdCarousel/AdCarousel"));
 const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
-const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
 const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 const NewArrivals = dynamic(() => import("@/components/ui/NewArrivals/NewArrivals"));
 const PendingReviews = dynamic(() => import("@/components/ui/PendingReviews/PendingReviews"));
@@ -34,8 +35,8 @@ function HomeContent() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
     useCart();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const search = searchParams.get('search');
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   
   const [page, setPage] = useState<number>(1);
   const filters = useProductFilters(setPage);
@@ -43,6 +44,10 @@ function HomeContent() {
   const handleAddToCart = (product: Product) => {
     addToCart(product as CartItem);
     setShowCart(true);
+  };
+
+  const handleProductClick = (product: Product) => {
+    router.push(getProductPath(product.name, product._id || product.id));
   };
 
   return (
@@ -60,32 +65,24 @@ function HomeContent() {
             </div>
 
             <PendingReviews />
-            <NewArrivals onProductClick={setSelectedProduct} />
-            <FestiveProducts onProductClick={setSelectedProduct} />
-            <TrendingProducts onProductClick={setSelectedProduct} />
-            <SellerProducts onProductClick={setSelectedProduct} />
+            <NewArrivals onProductClick={handleProductClick} />
+            <FestiveProducts onProductClick={handleProductClick} />
+            <TrendingProducts onProductClick={handleProductClick} />
+            <SellerProducts onProductClick={handleProductClick} />
             <RecentlyViewed
-              onProductClick={setSelectedProduct}
+              onProductClick={handleProductClick}
               onAddToCart={handleAddToCart}
             />
           </Suspense>
         )}
         <ProductGrid
-          onProductClick={setSelectedProduct}
+          onProductClick={handleProductClick}
           onAddToCart={handleAddToCart}
           hideFilters={!search}
           filters={filters}
           page={page}
           setPage={setPage}
         />
-
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-            onAddToCart={handleAddToCart}
-          />
-        )}
 
         {showCart && (
           <Cart

@@ -115,9 +115,9 @@ const MobileMenu = ({
                     >
                       <Store className="w-5 h-5 opacity-70" /> Home
                     </Link>
-                    <button onClick={() => { onClose(); setShowOffers(true) }} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors">
+                    <Link href="/special-offers" onClick={onClose} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors">
                       <Gift className="w-5 h-5 opacity-70" /> Special Offers
-                    </button>
+                    </Link>
                     <Link href="/wishlist" onClick={onClose} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-foreground/80 hover:bg-foreground/5 rounded-xl transition-colors">
                       <Heart className="w-5 h-5 opacity-70" /> Wishlist
                     </Link>

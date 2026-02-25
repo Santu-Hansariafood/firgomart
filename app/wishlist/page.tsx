@@ -10,7 +10,8 @@ import { useCart } from "@/context/CartContext/CartContext";
 import dynamic from "next/dynamic";
 import { fadeInUp, staggerContainer } from '@/utils/animations/animations'
 
-const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
+import { getProductPath } from '@/utils/productUtils'
+
 const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
 
 interface Product {
@@ -36,7 +37,6 @@ export default function WishlistPage() {
   const { addToCart, setShowCart } = useCart();
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [internalLoading, setInternalLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const formatPrice = (v: number) => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(v)
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
@@ -81,7 +81,7 @@ export default function WishlistPage() {
   };
 
   const handleProductClick = (product: Product) => {
-      setSelectedProduct(product);
+      router.push(getProductPath(product.name, product._id));
   };
 
   const loading = isAuthenticated ? internalLoading : false;
@@ -263,30 +263,6 @@ export default function WishlistPage() {
           </motion.div>
         )}
       </div>
-
-      <AnimatePresence>
-        {selectedProduct && (
-          <ProductModal
-            product={{
-              ...selectedProduct,
-              id: selectedProduct._id,
-              category: selectedProduct.category || "General",
-            }}
-            onClose={() => setSelectedProduct(null)}
-            onAddToCart={(productWithQty) => {
-              addToCart({
-                id: selectedProduct._id,
-                name: selectedProduct.name,
-                price: selectedProduct.price,
-                image: selectedProduct.image,
-                stock: selectedProduct.stock,
-                quantity: productWithQty.quantity || 1,
-              });
-              setShowCart(true);
-            }}
-          />
-        )}
-      </AnimatePresence>
     </section>
   );
 }

@@ -6,9 +6,11 @@
  import { useCart } from "@/context/CartContext/CartContext";
  import { useProductFilters } from "@/hooks/product-grid/useProductFilters";
 
+ import { useRouter } from "next/navigation";
+ import { getProductPath } from "@/utils/productUtils";
+
  const TrendingProducts = dynamic(() => import("@/components/ui/TrendingProducts/TrendingProducts"));
  const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
- const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
  const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 
  export default function TrendingProductsPage() {
@@ -22,7 +24,7 @@
  function TrendingProductsContent() {
    const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
      useCart();
-   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+   const router = useRouter();
    const [page, setPage] = useState<number>(1);
    const filters = useProductFilters(setPage);
 
@@ -35,26 +37,22 @@
      setShowCart(true);
    };
 
+   const handleProductClick = (product: any) => {
+     router.push(getProductPath(product.name, product._id || product.id));
+   };
+
    return (
      <div className="bg-gradient-to-b from-[#7800c8]/5 via-white to-[#f00000]/5 dark:bg-none min-h-screen">
        <Suspense fallback={<Loading />}>
-         <TrendingProducts onProductClick={setSelectedProduct} />
+         <TrendingProducts onProductClick={handleProductClick} />
          <ProductGrid
-           onProductClick={setSelectedProduct}
+           onProductClick={handleProductClick}
            onAddToCart={handleAddToCart}
            hideFilters={false}
            filters={filters}
            page={page}
            setPage={setPage}
          />
-
-         {selectedProduct && (
-           <ProductModal
-             product={selectedProduct}
-             onClose={() => setSelectedProduct(null)}
-             onAddToCart={handleAddToCart}
-           />
-         )}
 
          {showCart && (
            <Cart

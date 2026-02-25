@@ -8,9 +8,11 @@ import { useProductFilters } from "@/hooks/product-grid/useProductFilters";
 import { useGeolocation } from "@/hooks/product-grid/useGeolocation";
 import type { Offer } from "@/components/ui/Filters/OffersFilterChips";
 
+import { useRouter } from "next/navigation";
+import { getProductPath } from "@/utils/productUtils";
+
 const FestiveProductsHero = dynamic(() => import("@/components/ui/FestiveProducts/FestiveProducts"));
 const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
-const ProductModal = dynamic(() => import("@/components/ui/ProductModal/ProductModal"));
 const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 
 export default function FestiveProductsPage() {
@@ -24,7 +26,7 @@ export default function FestiveProductsPage() {
 function FestiveProductsContent() {
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } =
     useCart();
-  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const filters = useProductFilters(setPage);
   const { countryCode } = useGeolocation();
@@ -70,26 +72,22 @@ function FestiveProductsContent() {
     setShowCart(true);
   };
 
+  const handleProductClick = (product: any) => {
+    router.push(getProductPath(product.name, product._id || product.id));
+  };
+
   return (
     <div className="bg-gradient-to-b from-[#7800c8]/5 via-white to-[#f00000]/5 dark:bg-none min-h-screen">
       <Suspense fallback={<Loading />}>
-        <FestiveProductsHero onProductClick={setSelectedProduct} />
+        <FestiveProductsHero onProductClick={handleProductClick} />
         <ProductGrid
-          onProductClick={setSelectedProduct}
+          onProductClick={handleProductClick}
           onAddToCart={handleAddToCart}
           hideFilters={false}
           filters={filters}
           page={page}
           setPage={setPage}
         />
-
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-            onAddToCart={handleAddToCart}
-          />
-        )}
 
         {showCart && (
           <Cart

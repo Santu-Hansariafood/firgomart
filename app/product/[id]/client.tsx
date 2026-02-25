@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart, Share2 } from 'lucide-react'
+import { X, ShoppingCart, Star, ChevronLeft, ChevronRight, User, ZoomIn, Heart, Share2, Home } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import FallbackImage from '@/components/common/Image/FallbackImage'
 import Script from 'next/script'
@@ -18,6 +19,7 @@ interface Product {
   image: string
   images?: string[]
   category: string
+  subcategory?: string
   price: number
   originalPrice?: number
   discount?: number
@@ -321,10 +323,46 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
 
   const maxQty = getMaxQuantity(product.price)
 
+  const toCamelCase = (str: string) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
   return (
-    <div className="bg-background text-foreground min-h-screen pt-24 pb-12">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-foreground/10">
+    <div className="bg-background text-foreground min-h-screen pt-20 sm:pt-24 pb-12">
+        <div className="container mx-auto px-2 sm:px-6">
+          <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium mb-4 sm:mb-6 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
+            <Link 
+              href="/" 
+              className="flex items-center gap-1 text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
+            >
+              <Home className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>Home</span>
+            </Link>
+            
+            <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground/30 shrink-0" />
+            
+            {product.category && (
+              <>
+                <Link 
+                  href={`/category/${product.category.toLowerCase().replace(/ /g, '-')}`}
+                  className="text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
+                >
+                  {toCamelCase(product.category)}
+                </Link>
+                <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground/30 shrink-0" />
+              </>
+            )}
+
+            <span className="text-brand-purple font-bold truncate shrink-0 max-w-[120px] sm:max-w-none">
+              {toCamelCase(product.name)}
+            </span>
+          </nav>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-foreground/10">
             <div className="flex items-center justify-between mb-4">
                <div />
                <div className="flex items-center gap-2">
@@ -455,21 +493,22 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                   </h1>
                 </div>
                 
-                <div className="flex items-baseline space-x-3 mb-2">
-                  <span className="text-2xl sm:text-3xl font-bold">{currency.symbol}{currentPrice}</span>
+                <div className="flex items-baseline space-x-2 sm:space-x-3 mb-2">
+                  <span className="text-xl sm:text-3xl font-bold">{currency.symbol}{currentPrice}</span>
                   {(product.originalPrice || hasOffer) && (
-                    <>
-                      <span className="text-xl text-red-500 line-through">
-                        {currency.symbol}{product.originalPrice || product.price}
-                      </span>
-                    </>
-                  )}
-                  {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 && (
-                    <span className="ml-2 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                      {`Pack of ${product.unitsPerPack}`}
+                    <span className="text-base sm:text-xl text-red-500 line-through">
+                      {currency.symbol}{product.originalPrice || product.price}
                     </span>
                   )}
                 </div>
+                
+                {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 && (
+                  <div className="mb-4">
+                    <span className="inline-block bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 border border-purple-200 dark:border-purple-800 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide">
+                      {`Pack of ${product.unitsPerPack}`}
+                    </span>
+                  </div>
+                )}
 
                 {hasOffer && (
                    <div className="mb-6 inline-block">
@@ -568,11 +607,11 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                   </div>
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex flex-col xs:flex-row gap-2">
                   <button
                     onClick={handleAddToCart}
                     disabled={(product.stock ?? 0) <= 0}
-                    className={`flex-1 px-3 py-2 border rounded-md transition-colors font-medium text-sm flex items-center justify-center space-x-1 ${
+                    className={`flex-1 px-3 py-2.5 border rounded-lg transition-colors font-bold text-xs sm:text-sm flex items-center justify-center space-x-2 ${
                       (product.stock ?? 0) > 0
                         ? 'border-brand-purple text-brand-purple hover:bg-brand-purple/10'
                         : 'border-foreground/20 text-foreground/40 cursor-not-allowed'
@@ -584,7 +623,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                   <button
                     onClick={handleBuyNow}
                     disabled={(product.stock ?? 0) <= 0}
-                    className={`flex-1 px-3 py-2 rounded-md transition-colors font-medium text-sm ${
+                    className={`flex-1 px-3 py-2.5 rounded-lg transition-colors font-bold text-xs sm:text-sm flex items-center justify-center ${
                       (product.stock ?? 0) > 0
                         ? 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90'
                         : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
@@ -597,23 +636,23 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
             </div>
 
             <div className="border-t border-foreground/20 pt-6">
-                <div className="flex gap-6 border-b border-foreground/20 mb-6">
-                    <button onClick={() => setActiveTab('desc')} className={`pb-2 font-medium transition-colors ${activeTab === 'desc' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Description</button>
-                    <button onClick={() => setActiveTab('info')} className={`pb-2 font-medium transition-colors ${activeTab === 'info' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Additional Info</button>
-                    <button onClick={() => setActiveTab('reviews')} className={`pb-2 font-medium transition-colors ${activeTab === 'reviews' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Reviews ({product.reviews ?? 0})</button>
+                <div className="flex gap-4 sm:gap-6 border-b border-foreground/20 mb-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    <button onClick={() => setActiveTab('desc')} className={`pb-2 text-sm sm:text-base font-medium transition-colors shrink-0 ${activeTab === 'desc' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Description</button>
+                    <button onClick={() => setActiveTab('info')} className={`pb-2 text-sm sm:text-base font-medium transition-colors shrink-0 ${activeTab === 'info' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Additional Info</button>
+                    <button onClick={() => setActiveTab('reviews')} className={`pb-2 text-sm sm:text-base font-medium transition-colors shrink-0 ${activeTab === 'reviews' ? 'text-brand-purple border-b-2 border-brand-purple' : 'text-foreground/60'}`}>Reviews ({product.reviews ?? 0})</button>
                   </div>
 
                 <div className="min-h-[200px]">
                     {activeTab === 'desc' && (
-                      <div className="rounded-xl p-4 bg-linear-to-br from-brand-purple/5 to-transparent border border-foreground/15 shadow-sm">
-                        <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap">
+                      <div className="rounded-xl p-3 sm:p-4 bg-linear-to-br from-brand-purple/5 to-transparent border border-foreground/15 shadow-sm">
+                        <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
                           {product.description || 'No description available.'}
                         </div>
                       </div>
                     )}
                     {activeTab === 'info' && (
-                      <div className="rounded-xl p-4 bg-linear-to-br from-brand-red/5 to-transparent border border-foreground/15 shadow-sm">
-                        <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap mb-4">
+                      <div className="rounded-xl p-3 sm:p-4 bg-linear-to-br from-brand-red/5 to-transparent border border-foreground/15 shadow-sm">
+                        <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap mb-4 text-sm sm:text-base">
                           {product.additionalInfo || 'No additional information available.'}
                         </div>
                       </div>

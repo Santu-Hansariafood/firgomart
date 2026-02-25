@@ -11,7 +11,7 @@ import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 import { DropdownItem } from '@/components/ui/ProductGrid/ProductFilters'
 import { Product } from '@/types/product'
 import ProductCard from '@/components/ui/ProductCard/ProductCard'
-import ProductModal from '@/components/ui/ProductModal/ProductModal'
+import { getProductPath } from '@/utils/productUtils'
 
 interface OffersOverlayProps {
   isOpen: boolean
@@ -35,8 +35,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState(false)
   
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
-
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   const router = useRouter()
   const category = '' 
@@ -94,6 +92,11 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
     { id: '3XL', label: '3XL' }, { id: 'Free Size', label: 'Free Size' },
     ...Array.from({ length: 8 }, (_, i) => ({ id: String(4 + i), label: String(4 + i) })),
   ]
+
+  const handleProductClick = (product: Product) => {
+    onClose()
+    router.push(getProductPath(product.name, product._id || product.id))
+  }
 
   const fetchPage = useCallback(async (pageNum: number) => {
     try {
@@ -202,10 +205,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
     if (currentTarget) observer.observe(currentTarget)
     return () => { if (currentTarget) observer.unobserve(currentTarget) }
   }, [loadMore, isOpen, selectedOffer])
-
-  const handleProductClick = (product: Product) => {
-    setSelectedProduct(product)
-  }
 
   const handleAddToCart = (product: Product) => {
     addToCart({ ...product, quantity: 1 })
@@ -444,17 +443,6 @@ export default function OffersOverlay({ isOpen, onClose }: OffersOverlayProps) {
                     )}
                 </div>
             </div>
-
-            {selectedProduct && (
-              <ProductModal
-                product={selectedProduct}
-                onClose={() => setSelectedProduct(null)}
-                onAddToCart={(p) => {
-                  addToCart({ ...p, quantity: p.quantity || 1 })
-                  setShowCart(true)
-                }}
-              />
-            )}
 
           </motion.div>
         </>
