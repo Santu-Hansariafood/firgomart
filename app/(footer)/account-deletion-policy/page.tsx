@@ -126,7 +126,7 @@ const AccountDeletionPolicyPage = () => {
             7. Seller-Specific Conditions
           </h2>
           <p className="text-sm leading-relaxed text-foreground/80">
-            Seller account deletion shall be processed only upon satisfaction of the following conditions: completion of all pending orders, settlement of refunds and returns, clearance of outstanding platform fees or dues, resolution of active disputes, and compliance with GST and statutory filing requirements. The Company reserves the right to defer permanent deletion until all contractual and regulatory obligations are fulfilled.
+            Seller account deletion shall be processed only upon satisfaction of the following conditions: completion of all pending orders, settlement of refunds and returns, clearance of any applicable charges or liabilities, resolution of active disputes, and compliance with GST and statutory filing requirements. The Company reserves the right to defer permanent deletion until all contractual and regulatory obligations are fulfilled.
           </p>
 
           <h2 className="font-bold text-foreground text-base mt-4 uppercase border-b border-foreground/20 pb-1">
