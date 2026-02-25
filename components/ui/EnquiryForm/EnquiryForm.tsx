@@ -30,12 +30,12 @@
    return (
      <>
        {!userEmail && (
-         <div className="rounded-xl border border-amber-300 bg-amber-50 px-3 py-2 text-[13px] text-amber-800">
+        <div className="rounded-xl border border-amber-300 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 text-[13px] text-amber-800 dark:text-amber-200">
            Please login to Firgomart so we can attach this enquiry to your account.
          </div>
        )}
  
-       <div className="space-y-3 bg-white border border-foreground/5 rounded-2xl p-4">
+      <div className="space-y-3 bg-[var(--card-bg,var(--background))] border border-[var(--foreground)/5] rounded-2xl p-4">
          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
            <div className="space-y-1">
              <span className="text-[11px] font-semibold uppercase tracking-wide text-foreground/50">Name</span>
@@ -60,7 +60,7 @@
              value={subject}
              onChange={(e) => setSubject(e.currentTarget.value)}
              placeholder="Briefly describe your enquiry"
-             className="w-full px-3 py-2 text-sm rounded-lg border border-foreground/15 bg-white/95"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-foreground/15 bg-[var(--background)] text-[color:var(--foreground)]"
            />
          </div>
  
@@ -73,7 +73,7 @@
              value={message}
              onChange={(e) => setMessage(e.currentTarget.value)}
              placeholder="Write your enquiry with details..."
-             className="w-full px-3 py-2 text-sm rounded-lg border border-foreground/15 bg-white/95 resize-none"
+            className="w-full px-3 py-2 text-sm rounded-lg border border-foreground/15 bg-[var(--background)] text-[color:var(--foreground)] resize-none"
            />
          </div>
  

@@ -12,7 +12,7 @@ export default function EnquiryPage() {
         <BackButton />
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-purple/10 text-brand-purple text-xs font-semibold"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--foreground)/20] bg-[var(--background)] hover:bg-[var(--background)/80] text-[color:var(--foreground)] text-xs font-semibold"
         >
           <Home className="w-4 h-4" />
           Go to Home
@@ -20,7 +20,7 @@ export default function EnquiryPage() {
       </div>
  
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-brand-purple/10 flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-[var(--foreground)/10] flex items-center justify-center">
           <MessageCircle className="w-5 h-5 text-brand-purple" />
         </div>
         <div>

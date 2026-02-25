@@ -142,6 +142,18 @@ export default function RootLayout({
       <body
         className="antialiased"
       >
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`
+            try {
+              var saved = localStorage.getItem('theme');
+              var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+              var theme = saved || (systemDark ? 'dark' : 'light');
+              document.documentElement.setAttribute('data-theme', theme);
+            } catch {
+              document.documentElement.setAttribute('data-theme', 'light');
+            }
+          `}
+        </Script>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
           strategy="afterInteractive"
