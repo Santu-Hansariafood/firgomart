@@ -121,7 +121,7 @@ export default function EnquiryPage() {
           type="button"
           onClick={submit}
           disabled={!canSubmit}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-brand-purple to-brand-red text-white text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-brand-purple text-white text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
           Submit Enquiry
