@@ -332,9 +332,9 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen pt-20 sm:pt-24 pb-12">
+    <div className="bg-background text-foreground min-h-screen pt-16 sm:pt-20 pb-12">
         <div className="container mx-auto px-2 sm:px-6">
-          <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium mb-4 sm:mb-6 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
+          <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium mb-2 sm:mb-4 overflow-x-auto whitespace-nowrap pb-1 scrollbar-hide">
             <Link 
               href="/" 
               className="flex items-center gap-1 text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
