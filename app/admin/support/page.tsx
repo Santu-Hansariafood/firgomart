@@ -51,6 +51,7 @@ export default function Page() {
   const [loadingNotes, setLoadingNotes] = useState(false)
   const [feedbackText, setFeedbackText] = useState("")
   const [sendingFeedback, setSendingFeedback] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   const statusOptions: DropdownItem[] = [
     { id: "", label: "All Status" },
@@ -87,9 +88,9 @@ export default function Page() {
         const params = new URLSearchParams()
         params.set("page", String(page))
         params.set("limit", String(pageSize))
-        if (selectedStatus?.id !== undefined) params.set("status", String(selectedStatus.id))
-        if (selectedPriority?.id !== undefined) params.set("priority", String(selectedPriority.id))
-        if (selectedSource?.id !== undefined) params.set("source", String(selectedSource.id))
+        if (selectedStatus?.id) params.set("status", String(selectedStatus.id))
+        if (selectedPriority?.id) params.set("priority", String(selectedPriority.id))
+        if (selectedSource?.id) params.set("source", String(selectedSource.id))
         if (search) params.set("search", search)
         if (sortKey) params.set("sortBy", String(sortKey))
         params.set("sortOrder", sortOrder)
@@ -112,7 +113,7 @@ export default function Page() {
       if (!cancelled) setLoading(false)
     })()
     return () => { cancelled = true }
-  }, [allowed, page, selectedStatus, selectedPriority, selectedSource, search, sortKey, sortOrder])
+  }, [allowed, page, selectedStatus, selectedPriority, selectedSource, search, sortKey, sortOrder, refreshKey])
 
   const updateStatus = async (id: string, status: string) => {
     try {
@@ -213,7 +214,19 @@ export default function Page() {
     ) : (
     <div className="p-4 space-y-6">
       <BackButton className="mb-2" />
-      <h1 className="text-2xl font-semibold">Enquiries & Support</h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-2xl font-semibold">Enquiries & Support</h1>
+        <button 
+          onClick={() => setRefreshKey(prev => prev + 1)}
+          className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 flex items-center gap-2 text-sm"
+          title="Refresh Data"
+        >
+          <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
+      </div>
 
       <div className="bg-white border rounded-xl p-4 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
