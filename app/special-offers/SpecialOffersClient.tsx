@@ -208,10 +208,10 @@ function SpecialOffersContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-16 sm:pt-20 pb-12">
+    <div className="min-h-screen bg-background pt-14 sm:pt-16 pb-12">
       <div className="container mx-auto px-2 sm:px-6">
         {/* Breadcrumbs */}
-        <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium mb-2 sm:mb-4 overflow-x-auto whitespace-nowrap pb-1 scrollbar-hide">
+        <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium mb-1 sm:mb-2 overflow-x-auto whitespace-nowrap pb-0.5 scrollbar-hide">
           <Link href="/" className="flex items-center gap-1 text-foreground/60 hover:text-brand-purple shrink-0">
             <Home className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
             <span>Home</span>
