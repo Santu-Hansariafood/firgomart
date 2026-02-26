@@ -9,7 +9,7 @@ import FallbackImage from "@/components/common/Image/FallbackImage"
 import dynamic from "next/dynamic"
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonDropdown = dynamic(() => import("@/components/common/CommonDropdown/CommonDropdown"))
-import { BarChart3, Users, Store, Boxes, Receipt, Package, Truck, CreditCard, Megaphone, LifeBuoy, FileText, Shield, PieChart, Globe } from "lucide-react"
+import { BarChart3, Users, Store, Boxes, Receipt, Package, Truck, CreditCard, Megaphone, LifeBuoy, FileText, Shield, PieChart, Globe, Tag } from "lucide-react"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 
 type Seller = {
@@ -258,6 +258,7 @@ export default function AdminPageClient() {
     { title: 'Security & Roles', icon: Shield, route: '/admin/security' },
     { title: 'Reports & Analytics', icon: PieChart, route: '/admin/reports' },
     { title: 'Global Selling (Optional)', icon: Globe, route: '/admin/global-selling' },
+    { title: 'Promo Codes', icon: Tag, route: '/admin/promocodes' },
   ]
 
   type CategoryOption = { id: number; label: string }

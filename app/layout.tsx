@@ -10,6 +10,7 @@ import Script from "next/script";
 import { Suspense } from "react";
 import categoriesData from "@/data/categories.json";
 import { Toaster } from "react-hot-toast";
+import CartHost from "@/components/common/CartHost/CartHost";
 
 const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || "AW-17932697360";
@@ -215,6 +216,7 @@ export default function RootLayout({
             <CategorySubHeader />
           </Suspense>
           <main className="min-h-screen pb-24 md:pb-0">{children}</main>
+          <CartHost />
           <Suspense fallback={null}>
             <Footer />
           </Suspense>

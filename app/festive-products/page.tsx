@@ -118,14 +118,6 @@ function FestiveProductsContent() {
             setPage={setPage}
           />
 
-          {showCart && (
-            <Cart
-              items={cartItems}
-              onClose={() => setShowCart(false)}
-              onUpdateQuantity={updateQuantity}
-              onRemoveItem={removeFromCart}
-            />
-          )}
         </Suspense>
       </div>
     </div>

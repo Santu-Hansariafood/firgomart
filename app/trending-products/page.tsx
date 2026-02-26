@@ -74,7 +74,7 @@
 
          <Suspense fallback={<Loading />}>
            <TrendingProducts onProductClick={handleProductClick} />
-           <ProductGrid
+          <ProductGrid
              onProductClick={handleProductClick}
              onAddToCart={handleAddToCart}
              hideFilters={false}
@@ -83,14 +83,6 @@
              setPage={setPage}
            />
 
-           {showCart && (
-             <Cart
-               items={cartItems}
-               onClose={() => setShowCart(false)}
-               onUpdateQuantity={updateQuantity}
-               onRemoveItem={removeFromCart}
-             />
-           )}
          </Suspense>
        </div>
      </div>
