@@ -155,13 +155,17 @@ const Checkout: React.FC<CheckoutProps> = ({
     user
   } = useCheckoutForm()
 
+  const [promoInput, setPromoInput] = useState<string>("")
+  const [appliedPromo, setAppliedPromo] = useState<string>("")
+  const [promoError, setPromoError] = useState<string>("")
+
   const {
     deliveryFee,
     orderSummary,
     subtotal,
     tax,
     total
-  } = useOrderSummary({ cartItems, formData })
+  } = useOrderSummary({ cartItems, formData, promoCode: appliedPromo })
 
   const {
     invalidItems,
@@ -178,7 +182,7 @@ const Checkout: React.FC<CheckoutProps> = ({
     isSubmitting,
     handlePlaceOrder,
     router
-  } = usePayment({ cartItems, formData, total, onRemoveItem })
+  } = usePayment({ cartItems, formData, total, onRemoveItem, promoCode: appliedPromo })
 
   const {
     validItems,
@@ -723,6 +727,40 @@ const Checkout: React.FC<CheckoutProps> = ({
               </div>
 
               <div className="border-t border-dashed border-gray-200 dark:border-zinc-700 pt-6 space-y-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={(e) => { setPromoInput(e.target.value.toUpperCase()); setPromoError("") }}
+                    placeholder="Enter 8-character promo code"
+                    maxLength={8}
+                    className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const code = (promoInput || "").trim().toUpperCase()
+                      if (!/^[A-Z0-9]{8}$/.test(code)) {
+                        setPromoError("Invalid code format")
+                        return
+                      }
+                      setAppliedPromo(code)
+                      setPromoError("")
+                    }}
+                    className="px-4 py-2 rounded-lg bg-brand-purple text-white font-bold text-sm hover:bg-brand-purple/90"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {promoError && (
+                  <div className="text-xs text-red-600 font-bold">{promoError}</div>
+                )}
+                {orderSummary.promo && (
+                  <div className="flex justify-between text-xs sm:text-sm text-green-700 dark:text-green-400">
+                    <span>Promo ({orderSummary.promo.code})</span>
+                    <span className="font-bold">-<Rupee />{orderSummary.promo.discount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-[var(--foreground)]/70">Subtotal</span>
                   <span className="font-bold text-[var(--foreground)]"><Rupee />{subtotal.toFixed(2)}</span>

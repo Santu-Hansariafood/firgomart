@@ -6,6 +6,8 @@ import { findUserAcrossDBs } from "@/lib/models/User"
 import { findSellerAcrossDBs } from "@/lib/models/Seller"
 import categories from "@/data/categories.json"
 import type { ClientSession } from "mongoose"
+import { getPromoCodeModel } from "@/lib/models/PromoCode"
+import { getPromoCodeUsageModel } from "@/lib/models/PromoCodeUsage"
 
 type BodyItem = { 
   id: string | number; 
@@ -50,6 +52,7 @@ export async function POST(request: Request) {
     let state = typeof body?.state === "string" ? body.state.trim() : ""
     let pincode = typeof body?.pincode === "string" ? body.pincode.trim() : ""
     const country = typeof body?.country === "string" ? body.country.trim() : "IN"
+    const promoCodeRaw = typeof body?.promoCode === "string" ? body.promoCode.trim() : ""
 
     if ((!address || !city || !state || !pincode) && buyerEmail) {
       try {
@@ -88,6 +91,8 @@ export async function POST(request: Request) {
     const conn = await connectDB()
     const Product = getProductModel(conn)
     const Order = getOrderModel(conn)
+    const PromoCode = getPromoCodeModel(conn)
+    const PromoCodeUsage = getPromoCodeUsageModel(conn)
 
     const ids = items.map((i) => i.id)
     type ProductLean = { _id: string; name: string; price?: number; stock?: number; height?: number; width?: number; weight?: number; dimensionUnit?: string; weightUnit?: string; category?: string; sellerState?: string; createdByEmail?: string; gstPercent?: number; isAdminProduct?: boolean }
@@ -245,7 +250,50 @@ export async function POST(request: Request) {
       }
     })
 
-    const finalAmount = Number((subtotal + totalTax + deliveryFee).toFixed(2))
+    const totalBeforeDiscount = Number((subtotal + totalTax + deliveryFee).toFixed(2))
+
+    let promoCode = ""
+    let promoType: "percent" | "flat" | "" = ""
+    let promoValue = 0
+    let promoDiscount = 0
+
+    const isValidFormat = (c: string) => /^[A-Za-z0-9]{8}$/.test(c)
+    const now = new Date()
+
+    if (promoCodeRaw && isValidFormat(promoCodeRaw)) {
+      const doc = await (PromoCode as unknown as { findOne: (q: any) => { lean: () => Promise<any> } })
+        .findOne({ code: promoCodeRaw.toUpperCase(), active: true }).lean()
+      if (doc) {
+        const startsOk = !doc.startsAt || new Date(doc.startsAt) <= now
+        const endsOk = !doc.endsAt || new Date(doc.endsAt) >= now
+        const withinWindow = startsOk && endsOk
+        const remainingOk = typeof doc.maxRedemptions !== "number" || Number(doc.usageCount || 0) < doc.maxRedemptions
+        let userOk = true
+        if (buyerEmail) {
+          const count = await (PromoCodeUsage as unknown as { countDocuments: (q: any) => Promise<number> })
+            .countDocuments({ code: doc.code, buyerEmail })
+          const maxPerUser = typeof doc.maxRedemptionsPerUser === "number" ? doc.maxRedemptionsPerUser : 1
+          userOk = count < maxPerUser
+        } else {
+          const maxPerUser = typeof doc.maxRedemptionsPerUser === "number" ? doc.maxRedemptionsPerUser : 1
+          userOk = maxPerUser > 0
+        }
+        if (withinWindow && remainingOk && userOk) {
+          promoCode = String(doc.code).toUpperCase()
+          promoType = doc.type === "flat" ? "flat" : "percent"
+          promoValue = Number(doc.value || 0)
+          if (promoType === "percent") {
+            const pct = Math.max(0, Math.min(100, promoValue))
+            promoDiscount = Math.round((totalBeforeDiscount * pct) / 100)
+          } else {
+            promoDiscount = Math.max(0, Math.floor(promoValue))
+          }
+          promoDiscount = Math.min(promoDiscount, totalBeforeDiscount)
+        }
+      }
+    }
+
+    const finalAmount = Number(Math.max(0, totalBeforeDiscount - promoDiscount).toFixed(2))
 
     if (body.dryRun) {
       return NextResponse.json({ 
@@ -253,6 +301,13 @@ export async function POST(request: Request) {
         subtotal,
         tax: totalTax,
         total: finalAmount,
+        totalBeforeDiscount,
+        promo: promoCode ? {
+          code: promoCode,
+          type: promoType,
+          value: promoValue,
+          discount: promoDiscount
+        } : null,
         taxBreakdown: {
           cgst: totalCGST,
           sgst: totalSGST,
@@ -309,6 +364,10 @@ export async function POST(request: Request) {
       amount: finalAmount,
       subtotal,
       tax: totalTax,
+      promoCode: promoCode || undefined,
+      promoType: promoType || undefined,
+      promoValue: promoValue || undefined,
+      promoDiscount: promoDiscount || undefined,
       status: "pending",
       address,
       city,
@@ -329,6 +388,30 @@ export async function POST(request: Request) {
         idStr = typeof maybe?.toString === "function" ? maybe.toString() : String(c._id)
       }
     }
+    // Track promo usage after order creation
+    if (promoCode && c && idStr) {
+      try {
+        let userId: string | undefined = undefined
+        if (buyerEmail) {
+          try {
+            const foundUser = await findUserAcrossDBs(buyerEmail)
+            const u = foundUser?.user as any
+            if (u && (u._id || u.id)) {
+              userId = String(u._id || u.id)
+            }
+          } catch {}
+        }
+        await (PromoCodeUsage as unknown as { create: (arr: any[]) => Promise<any> }).create([{
+          code: promoCode,
+          buyerEmail: buyerEmail || undefined,
+          userId,
+          orderId: idStr,
+        }])
+        await (PromoCode as unknown as { updateOne: (q: any, upd: any) => Promise<any> })
+          .updateOne({ code: promoCode }, { $inc: { usageCount: 1 } })
+      } catch {}
+    }
+
     const safe = c ? {
       id: String(idStr),
       orderNumber: c.orderNumber,

@@ -4,16 +4,19 @@ import { CartItem, OrderSummary, CheckoutFormData, safeJson } from '@/types/chec
 interface UseOrderSummaryProps {
   cartItems: CartItem[]
   formData: CheckoutFormData
+  promoCode?: string
 }
 
-export const useOrderSummary = ({ cartItems, formData }: UseOrderSummaryProps) => {
+export const useOrderSummary = ({ cartItems, formData, promoCode }: UseOrderSummaryProps) => {
   const [deliveryFee, setDeliveryFee] = useState<number>(0)
   const [orderSummary, setOrderSummary] = useState<OrderSummary>({ 
     subtotal: 0, 
     tax: 0, 
     total: 0, 
     items: [],
-    taxBreakdown: { cgst: 0, sgst: 0, igst: 0 }
+    taxBreakdown: { cgst: 0, sgst: 0, igst: 0 },
+    totalBeforeDiscount: 0,
+    promo: null
   })
 
   useEffect(() => {
@@ -35,7 +38,8 @@ export const useOrderSummary = ({ cartItems, formData }: UseOrderSummaryProps) =
             })),
             dryRun: true,
             state: formData.state,
-            country: formData.country
+            country: formData.country,
+            promoCode: promoCode
           }),
         })
         const data = await safeJson(res)
@@ -46,14 +50,16 @@ export const useOrderSummary = ({ cartItems, formData }: UseOrderSummaryProps) =
             tax: data.tax || 0,
             total: data.total || 0,
             items: data.items || [],
-            taxBreakdown: data.taxBreakdown || { cgst: 0, sgst: 0, igst: 0 }
+            taxBreakdown: data.taxBreakdown || { cgst: 0, sgst: 0, igst: 0 },
+            totalBeforeDiscount: data.totalBeforeDiscount || data.total || 0,
+            promo: data.promo || null
           })
         }
       } catch {}
     }
     const timer = setTimeout(fetchFee, 500)
     return () => clearTimeout(timer)
-  }, [cartItems, formData.state, formData.country])
+  }, [cartItems, formData.state, formData.country, promoCode])
 
   return {
     deliveryFee,

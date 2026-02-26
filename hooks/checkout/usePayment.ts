@@ -7,9 +7,10 @@ interface UsePaymentProps {
   formData: CheckoutFormData
   total: number
   onRemoveItem?: (id: number | string) => void
+  promoCode?: string
 }
 
-export const usePayment = ({ cartItems, formData, total, onRemoveItem }: UsePaymentProps) => {
+export const usePayment = ({ cartItems, formData, total, onRemoveItem, promoCode }: UsePaymentProps) => {
   const router = useRouter()
   const [paymentMethod, setPaymentMethod] = useState<'cashfree' | 'razorpay'>('cashfree')
   const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
@@ -32,6 +33,7 @@ export const usePayment = ({ cartItems, formData, total, onRemoveItem }: UsePaym
         state: formData.state,
         pincode: formData.pincode,
         country: formData.country,
+        promoCode: promoCode,
         items: cartItems.map(ci => ({ 
           id: ci.id, 
           quantity: ci.quantity ?? 1,

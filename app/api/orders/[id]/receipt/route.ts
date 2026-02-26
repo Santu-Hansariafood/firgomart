@@ -209,6 +209,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
       let subtotalVal = Number(doc.subtotal || 0)
       let taxTotal = Number(doc.tax || 0)
       let grand = Number(doc.amount || 0)
+      const promoCode = (doc as any).promoCode ? String((doc as any).promoCode) : ""
+      const promoDiscount = Number((doc as any).promoDiscount || 0)
 
       if (!doc.subtotal && !doc.tax) {
          subtotalVal = sum
@@ -242,7 +244,12 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
         pdf.text(`SGST`, colPrice, y + 46)
         pdf.text(`${currencySymbol}${sgst.toFixed(2)}`, colAmt, y + 46)
       }
-      const baseY = y + (igst > 0 ? 46 : 64)
+      let baseY = y + (igst > 0 ? 46 : 64)
+      if (promoCode && promoDiscount > 0) {
+        pdf.fillColor("#059669").text(`Promo (${promoCode})`, colPrice, baseY + 10)
+        pdf.text(`- ${currencySymbol}${promoDiscount.toFixed(2)}`, colAmt, baseY + 10)
+        baseY += 10
+      }
       pdf.font("Helvetica-Bold").text("Total", colPrice, baseY + 18)
       pdf.text(`${currencySymbol}${grand.toFixed(2)}`, colAmt, baseY + 18)
       pdf.moveDown(0.2)
@@ -263,6 +270,8 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
     let subtotalVal = Number(doc.subtotal || 0)
     let taxTotal = Number(doc.tax || 0)
     let grand = Number(doc.amount || 0)
+    const promoCode = (doc as any).promoCode ? String((doc as any).promoCode) : ""
+    const promoDiscount = Number((doc as any).promoDiscount || 0)
 
     if (!doc.subtotal && !doc.tax) {
        subtotalVal = sum
@@ -382,6 +391,9 @@ export async function GET(request: Request, ctx: { params: Promise<{ id: string 
           ? `<tr><td>IGST</td><td style="text-align:right;">${currencySymbol}${igst.toFixed(2)}</td></tr>`
           : `<tr><td>CGST</td><td style="text-align:right;">${currencySymbol}${cgst.toFixed(2)}</td></tr>
              <tr><td>SGST</td><td style="text-align:right;">${currencySymbol}${sgst.toFixed(2)}</td></tr>`}
+        ${promoCode && promoDiscount > 0
+          ? `<tr><td style="color:#059669;">Promo (${promoCode})</td><td style="text-align:right;color:#059669;">- ${currencySymbol}${promoDiscount.toFixed(2)}</td></tr>`
+          : ``}
         <tr><td class="total">Total</td><td class="total" style="text-align:right;">${currencySymbol}${grand.toFixed(2)}</td></tr>
       </tbody>
     </table>

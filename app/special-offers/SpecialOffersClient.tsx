@@ -210,7 +210,6 @@ function SpecialOffersContent() {
   return (
     <div className="min-h-screen bg-background pt-4 sm:pt-6 pb-12">
       <div className="container mx-auto px-2 sm:px-6">
-        {/* Breadcrumbs */}
         <div className="flex items-center justify-between mb-2 sm:mb-3">
           <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium overflow-x-auto whitespace-nowrap pb-0.5 scrollbar-hide">
             <Link href="/" className="flex items-center gap-1 text-foreground/60 hover:text-brand-purple shrink-0">

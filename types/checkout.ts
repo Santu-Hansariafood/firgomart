@@ -52,6 +52,13 @@ export interface OrderSummary {
     sgst: number
     igst: number
   }
+  totalBeforeDiscount?: number
+  promo?: {
+    code: string
+    type: "percent" | "flat"
+    value: number
+    discount: number
+  } | null
 }
 
 export async function safeJson(res: Response) {

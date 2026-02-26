@@ -223,6 +223,14 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                       <div><span className="font-semibold">Order ID:</span> {order.orderNumber}</div>
                       <div><span className="font-semibold">Order Date:</span> {fmtDate(order.createdAt)}</div>
                       <div><span className="font-semibold">Invoice Date:</span> {fmtDate(new Date().toISOString())}</div>
+                      {order.promoCode && (
+                        <div className="text-green-700">
+                          <span className="font-semibold">Promo Code:</span> {order.promoCode}
+                          {typeof order.promoDiscount === "number" && order.promoDiscount > 0 && (
+                            <span className="ml-2">(Discount: {fmt(Number(order.promoDiscount || 0))})</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="text-right text-xs space-y-0.5">
@@ -349,6 +357,15 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                         <td className="py-2 text-right" colSpan={!isIntrastate ? 4 : 5}></td>
                         <td className="py-2 text-right">{fmt(taxDetails.total)}</td>
                      </tr>
+                     {/** Display order-level promo info on the first page only to avoid repetition */}
+                     {order?.promoCode && idx === 0 && (
+                       <tr>
+                         <td className="py-2 text-green-700">Promo ({order.promoCode})</td>
+                         <td className="py-2 text-right">—</td>
+                         <td className="py-2 text-right" colSpan={!isIntrastate ? 4 : 5}></td>
+                         <td className="py-2 text-right text-green-700">- {fmt(Number(order.promoDiscount || 0))}</td>
+                       </tr>
+                     )}
                   </tfoot>
                 </table>
                 <div className="mt-auto pt-4 border-t border-gray-300 text-xs flex justify-between items-end">
