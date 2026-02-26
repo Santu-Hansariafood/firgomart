@@ -449,6 +449,56 @@ export function CMSFormPanel({ state }: CMSFormPanelProps) {
       )}
       {activeTab === 'careers' && (
         <form onSubmit={handleSubmitCareer} className="space-y-4">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-foreground/70">Featured Image</label>
+            <div className="flex items-center gap-4">
+              {forms.careerForm.image ? (
+                <div className="relative group">
+                  <img src={forms.careerForm.image} alt="Preview" className="w-16 h-16 rounded-lg object-cover border" />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForms(prev => ({
+                        ...prev,
+                        careerForm: { ...prev.careerForm, image: '' }
+                      }))
+                    }
+                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={12} />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-gray-400 border border-dashed">
+                  <ImageIcon size={24} />
+                </div>
+              )}
+              <label className="flex-1 flex flex-col items-center justify-center px-4 py-2 bg-white dark:bg-gray-700 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:border-brand-purple transition-colors">
+                <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  {uploading ? <Loader2 className="animate-spin" size={16} /> : <Upload size={16} />}
+                  <span>{uploading ? 'Uploading...' : 'Upload Image'}</span>
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={e => handleImageUpload(e, 'career')}
+                  disabled={uploading}
+                />
+              </label>
+            </div>
+          </div>
+          <CommonInput
+            label="Or Image URL"
+            value={forms.careerForm.image}
+            onChange={val =>
+              setForms(prev => ({
+                ...prev,
+                careerForm: { ...prev.careerForm, image: val }
+              }))
+            }
+            placeholder="https://..."
+          />
           <CommonInput
             label="Job Title"
             value={forms.careerForm.title}

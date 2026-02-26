@@ -6,6 +6,7 @@ export interface ICareer extends Document {
   location: string
   type: string
   description: string
+  image?: string
   requirements: string[]
   benefits: string[]
   isActive: boolean
@@ -20,6 +21,7 @@ const CareerSchema = new Schema<ICareer>(
     location: { type: String, required: true },
     type: { type: String, required: true }, // Full-time, Part-time, Contract
     description: { type: String, required: true },
+    image: { type: String },
     requirements: { type: [String], default: [] },
     benefits: { type: [String], default: [] },
     isActive: { type: Boolean, default: true, index: true },

@@ -88,6 +88,7 @@ export interface CMSFormsState {
     location: string
     type: string
     description: string
+    image: string
     requirements: string
     benefits: string
     isActive: boolean
@@ -111,7 +112,7 @@ export interface CMSState {
   isEditing: boolean
   forms: CMSFormsState
   setForms: Dispatch<SetStateAction<CMSFormsState>>
-  handleImageUpload: (e: ChangeEvent<HTMLInputElement>, target: 'team' | 'blog') => void
+  handleImageUpload: (e: ChangeEvent<HTMLInputElement>, target: 'team' | 'blog' | 'career') => void
   resetForms: () => void
   handleSubmitDept: (e: FormEvent) => void
   handleSubmitTeam: (e: FormEvent) => void
@@ -173,6 +174,7 @@ export function useCMSState(): CMSState {
       location: '',
       type: 'Full-time',
       description: '',
+      image: '',
       requirements: '',
       benefits: '',
       isActive: true
@@ -249,6 +251,7 @@ export function useCMSState(): CMSState {
         location: '',
         type: 'Full-time',
         description: '',
+        image: '',
         requirements: '',
         benefits: '',
         isActive: true
@@ -258,7 +261,7 @@ export function useCMSState(): CMSState {
     setCurrentId(null)
   }
 
-  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>, target: 'team' | 'blog') => {
+  const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>, target: 'team' | 'blog' | 'career') => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -280,10 +283,15 @@ export function useCMSState(): CMSState {
               ...prev,
               teamForm: { ...prev.teamForm, image: data.urls[0] }
             }))
-          } else {
+          } else if (target === 'blog') {
             setForms(prev => ({
               ...prev,
               blogForm: { ...prev.blogForm, image: data.urls[0] }
+            }))
+          } else {
+            setForms(prev => ({
+              ...prev,
+              careerForm: { ...prev.careerForm, image: data.urls[0] }
             }))
           }
           toast.success('Image uploaded')
@@ -365,6 +373,7 @@ export function useCMSState(): CMSState {
         location: career.location,
         type: career.type,
         description: career.description,
+        image: (career as any).image || '',
         requirements: career.requirements.join('\n'),
         benefits: career.benefits.join('\n'),
         isActive: career.isActive
@@ -522,6 +531,7 @@ export function useCMSState(): CMSState {
     try {
       const body = {
         ...forms.careerForm,
+        image: forms.careerForm.image,
         requirements: forms.careerForm.requirements.split('\n').map(r => r.trim()).filter(Boolean),
         benefits: forms.careerForm.benefits.split('\n').map(b => b.trim()).filter(Boolean)
       }
