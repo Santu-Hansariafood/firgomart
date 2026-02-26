@@ -338,35 +338,46 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   }
 
   return (
-    <div className="bg-background text-foreground min-h-screen pt-14 sm:pt-16 pb-12">
+    <div className="bg-background text-foreground min-h-screen pt-4 sm:pt-6 pb-12">
         <div className="container mx-auto px-2 sm:px-6">
-          <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium mb-1 sm:mb-2 overflow-x-auto whitespace-nowrap pb-0.5 scrollbar-hide">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <nav className="flex items-center space-x-1.5 sm:space-x-2 text-[10px] sm:text-sm font-medium overflow-x-auto whitespace-nowrap pb-0.5 scrollbar-hide">
+              <Link 
+                href="/" 
+                className="flex items-center gap-1 text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
+              >
+                <Home className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>Home</span>
+              </Link>
+              
+              <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground/30 shrink-0" />
+              
+              {product.category && (
+                <>
+                  <Link 
+                    href={`/category/${product.category.toLowerCase().replace(/ /g, '-')}`}
+                    className="text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
+                  >
+                    {toCamelCase(product.category)}
+                  </Link>
+                  <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground/30 shrink-0" />
+                </>
+              )}
+
+              <span className="text-brand-purple font-bold truncate shrink-0 max-w-[120px] sm:max-w-none">
+                {toCamelCase(product.name)}
+              </span>
+            </nav>
+
             <Link 
-              href="/" 
-              className="flex items-center gap-1 text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
+              href="/"
+              className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 bg-brand-purple/10 hover:bg-brand-purple/20 text-brand-purple rounded-full text-[9px] sm:text-xs font-bold transition-all shrink-0 border border-brand-purple/20 shadow-sm"
             >
               <Home className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-              <span>Home</span>
+              <span className="hidden xs:inline">Back to Home</span>
+              <span className="xs:hidden">Home</span>
             </Link>
-            
-            <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground/30 shrink-0" />
-            
-            {product.category && (
-              <>
-                <Link 
-                  href={`/category/${product.category.toLowerCase().replace(/ /g, '-')}`}
-                  className="text-foreground/60 hover:text-brand-purple transition-colors shrink-0"
-                >
-                  {toCamelCase(product.category)}
-                </Link>
-                <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-foreground/30 shrink-0" />
-              </>
-            )}
-
-            <span className="text-brand-purple font-bold truncate shrink-0 max-w-[120px] sm:max-w-none">
-              {toCamelCase(product.name)}
-            </span>
-          </nav>
+          </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-sm border border-foreground/10">
             <div className="flex items-center justify-between mb-4">
