@@ -16,6 +16,7 @@ import {
   Phone,
   Mail,
   Handshake,
+  Calculator
 } from "lucide-react";
 
 const Title = dynamic(() => import("@/components/common/Title/Title"));
@@ -29,6 +30,7 @@ const iconMap = {
   Wallet,
   Globe,
   Ban,
+  Calculator
 };
 
 const ReturnsPage = () => {
@@ -66,11 +68,27 @@ const ReturnsPage = () => {
                     <Icon className="w-6 h-6 text-brand-purple" />
                     <h3 className="text-xl font-bold">{section.title}</h3>
                   </div>
-                  <ul className="space-y-2 text-[var(--foreground)/70]">
-                    {section.points.map((point, i) => (
-                      <li key={i}>• {point}</li>
-                    ))}
-                  </ul>
+                  {section.points && (
+                    <ul className="space-y-2 text-[var(--foreground)/70]">
+                      {section.points.map((point, i) => (
+                        <li key={i}>• {point}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {section.subSections && (
+                    <div className="mt-4 space-y-4">
+                      {section.subSections.map((sub, i) => (
+                        <div key={i} className="bg-foreground/5 p-3 rounded-xl border border-foreground/10">
+                          <h4 className="font-bold text-sm mb-2 text-brand-purple">{sub.title}</h4>
+                          <ul className="space-y-1">
+                            {sub.points?.map((p, j) => (
+                              <li key={j} className="text-xs text-foreground/60">• {p}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               );
             })}

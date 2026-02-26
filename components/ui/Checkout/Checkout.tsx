@@ -436,6 +436,17 @@ const Checkout: React.FC<CheckoutProps> = ({
                               <ChevronRight className="w-4 h-4 rotate-90" />
                             </div>
                           </div>
+                          {formData.country !== 'India' && (
+                            <div className="mt-2 p-3 bg-brand-purple/5 border border-brand-purple/10 rounded-xl">
+                              <p className="text-[10px] sm:text-xs text-brand-purple font-medium flex items-center gap-1.5">
+                                <Truck className="w-3 h-3" />
+                                Estimated Delivery: 7-12 Working Days
+                              </p>
+                              <p className="text-[9px] sm:text-[10px] text-foreground/50 mt-1 leading-tight">
+                                Timeline may vary based on destination and customs clearance.
+                              </p>
+                            </div>
+                          )}
                         </div>
 
                         <div className="space-y-1">

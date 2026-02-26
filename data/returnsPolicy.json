@@ -94,6 +94,44 @@
       ]
     },
     {
+      "id": "international",
+      "icon": "Globe",
+      "title": "International Orders Policy",
+      "points": [
+        "Return shipping will be charged at actual courier cost.",
+        "Estimated reference range: GCC Countries (Saudi Arabia, UAE, Qatar, Kuwait, Oman) approx. ₹2,500 per return; USA approx. ₹3,000 per return. (Final charge as per actual cost.)",
+        "Cancellation Before Dispatch: Full refund (gateway charges may be deducted if non-refundable).",
+        "Cancellation After Dispatch: Treated as return. Return shipping cost applicable.",
+        "Non-Refundable Components: Original shipping charges, Payment gateway charges, Customs duty (if applicable)."
+      ]
+    },
+    {
+      "id": "refundCalculation",
+      "icon": "Calculator",
+      "title": "Refund Calculation Examples",
+      "content": "Examples of how international refunds are calculated:",
+      "subSections": [
+        {
+          "title": "Example – GCC Order",
+          "points": [
+            "Order Value: ₹5,300",
+            "Return Shipping (Approx.): ₹2,500",
+            "Original Shipping: Non-refundable",
+            "Refund to Customer = ₹5,300 − ₹2,500 = ₹2,800"
+          ]
+        },
+        {
+          "title": "Example – USA Order",
+          "points": [
+            "Order Value: ₹5,500",
+            "Return Shipping (Approx.): ₹3,000",
+            "Original Shipping: Non-refundable",
+            "Refund to Customer = ₹5,500 − ₹3,000 = ₹2,500"
+          ]
+        }
+      ]
+    },
+    {
       "id": "marketplace",
       "icon": "Globe",
       "title": "Seller-Specific Policies",
