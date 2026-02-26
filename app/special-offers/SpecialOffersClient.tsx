@@ -135,6 +135,12 @@ function SpecialOffersContent() {
   }, [minPrice, maxPrice, minRating, selectedSize, selectedOffer, selectedOfferDetails, sortBy, countryCode])
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [selectedOffer])
+
+  useEffect(() => {
     if (selectedOffer) {
       const loadInitial = async () => {
         setLoading(true)

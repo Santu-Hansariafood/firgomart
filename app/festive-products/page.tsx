@@ -32,6 +32,12 @@ function FestiveProductsContent() {
   const { countryCode } = useGeolocation();
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [])
+
+  useEffect(() => {
     filters.setSortBy("relevance");
   }, [filters]);
 

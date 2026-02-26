@@ -29,6 +29,12 @@
    const filters = useProductFilters(setPage);
 
    useEffect(() => {
+     if (typeof window !== 'undefined') {
+       window.scrollTo(0, 0)
+     }
+   }, [])
+
+   useEffect(() => {
      filters.setSortBy("rating");
    }, [filters]);
 

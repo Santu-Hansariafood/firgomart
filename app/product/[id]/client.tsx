@@ -143,6 +143,12 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const currency = getCurrencyForCountry(countryCode || product.availableCountry)
   const { reviewEligibility, isSaved, saving, toggleSave } = useProductUserState(product.id, session)
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [product.id])
+
   const handleShare = () => {
     try {
       const url = typeof window !== 'undefined' ? window.location.href : ''

@@ -42,6 +42,12 @@ export default function WishlistPage() {
   const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!isAuthenticated) return;
 
     fetch("/api/user/wishlist")

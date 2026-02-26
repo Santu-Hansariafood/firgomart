@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { useCart } from '@/context/CartContext/CartContext'
@@ -13,6 +13,12 @@ const Cart = dynamic(() => import('@/components/ui/Cart/Cart'))
 export default function NewArrivalsPage() {
   const router = useRouter()
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } = useCart()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [])
 
   const handleAddToCart = (product: any) => {
     addToCart(product)

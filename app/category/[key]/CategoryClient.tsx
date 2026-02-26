@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCart } from '@/context/CartContext/CartContext'
 import ProductGrid from '@/components/ui/ProductGrid/ProductGrid'
@@ -12,6 +13,12 @@ interface CategoryClientProps {
 export default function CategoryClient({ categoryName }: CategoryClientProps) {
   const router = useRouter()
   const { addToCart, setShowCart } = useCart()
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0)
+    }
+  }, [categoryName])
 
   const handleProductClick = (product: any) => {
     router.push(getProductPath(product.name, product.id || product._id))
