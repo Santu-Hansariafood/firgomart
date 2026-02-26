@@ -62,6 +62,9 @@ export async function POST(request: Request) {
     const type = (String(body?.type || "percent").trim() === "flat") ? "flat" : "percent"
     const value = Number(body?.value || 0)
     const active = body?.active !== undefined ? !!body.active : true
+    const availableCountry = (typeof body?.availableCountry === "string" && body.availableCountry.trim())
+      ? body.availableCountry.trim().toUpperCase()
+      : undefined
     const startsAt = body?.startsAt ? new Date(body.startsAt) : undefined
     const endsAt = body?.endsAt ? new Date(body.endsAt) : undefined
     const maxRedemptions = body?.maxRedemptions !== undefined ? Number(body.maxRedemptions) : undefined
@@ -84,6 +87,7 @@ export async function POST(request: Request) {
       type,
       value,
       active,
+      availableCountry,
       startsAt,
       endsAt,
       maxRedemptions,
@@ -116,6 +120,7 @@ export async function PUT(request: Request) {
     if (body?.endsAt !== undefined) update.endsAt = body.endsAt ? new Date(body.endsAt) : null
     if (body?.maxRedemptions !== undefined) update.maxRedemptions = Number(body.maxRedemptions)
     if (body?.maxRedemptionsPerUser !== undefined) update.maxRedemptionsPerUser = Number(body.maxRedemptionsPerUser)
+     if (typeof body?.availableCountry === "string") update.availableCountry = body.availableCountry.trim().toUpperCase() || null
 
     const conn = await connectDB()
     const Promo = getPromoCodeModel(conn)
@@ -143,4 +148,3 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Server error", reason: err?.message || "unknown" }, { status: 500 })
   }
 }
-

@@ -5,6 +5,7 @@ export interface IPromoCode extends Document {
   type: "percent" | "flat"
   value: number
   active: boolean
+  availableCountry?: string
   startsAt?: Date
   endsAt?: Date
   maxRedemptions?: number
@@ -21,6 +22,7 @@ const PromoCodeSchema = new Schema<IPromoCode>(
     type: { type: String, required: true, enum: ["percent", "flat"], default: "percent" },
     value: { type: Number, required: true },
     active: { type: Boolean, default: true, index: true },
+    availableCountry: { type: String, index: true },
     startsAt: { type: Date },
     endsAt: { type: Date },
     maxRedemptions: { type: Number },

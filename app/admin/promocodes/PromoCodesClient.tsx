@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import countryData from '@/data/country.json'
 import { RefreshCw, Save, ToggleLeft, ToggleRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -25,6 +26,7 @@ export default function PromoCodesClient() {
     type: 'percent' as 'percent' | 'flat',
     value: 10,
     active: true,
+    availableCountry: '',
     startsAt: '',
     endsAt: '',
     maxRedemptions: '',
@@ -61,6 +63,7 @@ export default function PromoCodesClient() {
         type: form.type,
         value: Number(form.value),
         active: form.active,
+        availableCountry: form.availableCountry || undefined,
         startsAt: form.startsAt || undefined,
         endsAt: form.endsAt || undefined,
         maxRedemptions: form.maxRedemptions ? Number(form.maxRedemptions) : undefined,
@@ -70,7 +73,7 @@ export default function PromoCodesClient() {
       const data = await res.json()
       if (!res.ok) { toast.error(data?.error || 'Failed to create'); return }
       toast.success('Promo created')
-      setForm({ code: '', type: 'percent', value: 10, active: true, startsAt: '', endsAt: '', maxRedemptions: '', maxRedemptionsPerUser: '1' })
+      setForm({ code: '', type: 'percent', value: 10, active: true, availableCountry: '', startsAt: '', endsAt: '', maxRedemptions: '', maxRedemptionsPerUser: '1' })
       load()
     } catch { toast.error('Failed to create') }
   }
@@ -90,19 +93,19 @@ export default function PromoCodesClient() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Promo Codes</h1>
-        <button onClick={load} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border">
+        <h1 className="text-xl font-bold text-brand-purple">Promo Codes</h1>
+        <button onClick={load} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-brand-purple/30 hover:bg-brand-purple/10">
           <RefreshCw className="w-4 h-4" /> Refresh
         </button>
       </div>
 
-      <div className="p-4 rounded-xl border">
+      <div className="p-4 rounded-xl border border-foreground/10 bg-white dark:bg-zinc-900">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div>
             <label className="text-xs font-semibold">Code</label>
             <div className="flex gap-2">
               <input value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} maxLength={8} className="w-full px-3 py-2 rounded border" placeholder="XXXXXXXX" />
-              <button onClick={gen} className="px-3 rounded border">Gen</button>
+              <button onClick={gen} className="px-3 rounded border border-brand-purple/30 text-brand-purple hover:bg-brand-purple/10">Gen</button>
             </div>
           </div>
           <div>
@@ -110,6 +113,29 @@ export default function PromoCodesClient() {
             <select value={form.type} onChange={e => setForm({ ...form, type: e.target.value as any })} className="w-full px-3 py-2 rounded border">
               <option value="percent">Percent %</option>
               <option value="flat">Flat Amount</option>
+            </select>
+          </div>
+          <div>
+            <label className="text-xs font-semibold">Country</label>
+            <select
+              value={form.availableCountry}
+              onChange={e => setForm({ ...form, availableCountry: e.target.value })}
+              className="w-full px-3 py-2 rounded border"
+            >
+              <option value="">Any</option>
+              {countryData.countries.map((c: any) => {
+                const name = c.country as string
+                const code = name.toLowerCase() === 'india' ? 'IN'
+                  : name.toLowerCase().includes('united states') ? 'US'
+                  : name.toLowerCase().includes('united kingdom') ? 'GB'
+                  : name.toLowerCase().includes('united arab emirates') ? 'AE'
+                  : name.toLowerCase().includes('saudi') ? 'SA'
+                  : name.toLowerCase().includes('qatar') ? 'QA'
+                  : name.toLowerCase().includes('canada') ? 'CA'
+                  : name.toLowerCase().includes('australia') ? 'AU'
+                  : (name.slice(0,2).toUpperCase())
+                return <option key={code+name} value={code}>{name} ({code})</option>
+              })}
             </select>
           </div>
           <div>
@@ -137,7 +163,7 @@ export default function PromoCodesClient() {
             <input type="checkbox" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} />
           </div>
           <div className="flex items-end">
-            <button onClick={save} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black text-white">
+            <button onClick={save} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-purple text-white hover:bg-brand-purple/90">
               <Save className="w-4 h-4" /> Save
             </button>
           </div>
@@ -152,7 +178,7 @@ export default function PromoCodesClient() {
               <div className="font-bold">{p.code} <span className="text-xs font-medium ml-2">{p.type === 'percent' ? `${p.value}%` : `₹${p.value}`}</span></div>
               <div className="text-xs text-gray-500">Used {p.usageCount || 0} times{p.maxRedemptions ? ` / ${p.maxRedemptions}` : ''}</div>
             </div>
-            <button onClick={() => toggleActive(p)} className="inline-flex items-center gap-2 px-3 py-1.5 rounded border">
+            <button onClick={() => toggleActive(p)} className="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-brand-purple/30 hover:bg-brand-purple/10">
               {p.active ? <ToggleRight className="w-4 h-4" /> : <ToggleLeft className="w-4 h-4" />} {p.active ? 'Active' : 'Inactive'}
             </button>
           </div>

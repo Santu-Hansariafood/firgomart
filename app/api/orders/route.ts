@@ -256,6 +256,20 @@ export async function POST(request: Request) {
     let promoType: "percent" | "flat" | "" = ""
     let promoValue = 0
     let promoDiscount = 0
+    const toCountryCode = (nameOrCode?: string) => {
+      const raw = String(nameOrCode || "").trim().toLowerCase()
+      if (!raw) return "IN"
+      if (raw === "in" || raw === "india") return "IN"
+      if (raw === "us" || raw.includes("united states") || raw === "usa") return "US"
+      if (raw === "gb" || raw.includes("united kingdom") || raw === "uk") return "GB"
+      if (raw === "ae" || raw.includes("united arab emirates") || raw.includes("dubai")) return "AE"
+      if (raw === "sa" || raw.includes("saudi")) return "SA"
+      if (raw === "qa" || raw.includes("qatar")) return "QA"
+      if (raw === "ca" || raw.includes("canada")) return "CA"
+      if (raw === "au" || raw.includes("australia")) return "AU"
+      return raw.length === 2 ? raw.toUpperCase() : "IN"
+    }
+    const buyerCountryCode = toCountryCode(country)
 
     const isValidFormat = (c: string) => /^[A-Za-z0-9]{8}$/.test(c)
     const now = new Date()
@@ -268,6 +282,7 @@ export async function POST(request: Request) {
         const endsOk = !doc.endsAt || new Date(doc.endsAt) >= now
         const withinWindow = startsOk && endsOk
         const remainingOk = typeof doc.maxRedemptions !== "number" || Number(doc.usageCount || 0) < doc.maxRedemptions
+        const countryOk = !doc.availableCountry || String(doc.availableCountry).toUpperCase() === buyerCountryCode
         let userOk = true
         if (buyerEmail) {
           const count = await (PromoCodeUsage as unknown as { countDocuments: (q: any) => Promise<number> })
@@ -278,7 +293,7 @@ export async function POST(request: Request) {
           const maxPerUser = typeof doc.maxRedemptionsPerUser === "number" ? doc.maxRedemptionsPerUser : 1
           userOk = maxPerUser > 0
         }
-        if (withinWindow && remainingOk && userOk) {
+        if (withinWindow && remainingOk && userOk && countryOk) {
           promoCode = String(doc.code).toUpperCase()
           promoType = doc.type === "flat" ? "flat" : "percent"
           promoValue = Number(doc.value || 0)
