@@ -271,7 +271,7 @@ export async function POST(request: Request) {
     }
     const buyerCountryCode = toCountryCode(country)
 
-    const isValidFormat = (c: string) => /^[A-Za-z0-9]{8}$/.test(c)
+    const isValidFormat = (c: string) => /^[A-Za-z0-9]{10}$/.test(c)
     const now = new Date()
 
     if (promoCodeRaw && isValidFormat(promoCodeRaw)) {

@@ -732,15 +732,15 @@ const Checkout: React.FC<CheckoutProps> = ({
                     type="text"
                     value={promoInput}
                     onChange={(e) => { setPromoInput(e.target.value.toUpperCase()); setPromoError("") }}
-                    placeholder="Enter 8-character promo code"
-                    maxLength={8}
+                    placeholder="Enter 10-character promo code"
+                    maxLength={10}
                     className="flex-1 px-3 py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-sm font-medium"
                   />
                   <button
                     type="button"
                     onClick={() => {
                       const code = (promoInput || "").trim().toUpperCase()
-                      if (!/^[A-Z0-9]{8}$/.test(code)) {
+                      if (!/^[A-Z0-9]{10}$/.test(code)) {
                         setPromoError("Invalid code format")
                         return
                       }

@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     const maxRedemptions = body?.maxRedemptions !== undefined ? Number(body.maxRedemptions) : undefined
     const maxRedemptionsPerUser = body?.maxRedemptionsPerUser !== undefined ? Number(body.maxRedemptionsPerUser) : 1
 
-    if (!/^[A-Z0-9]{8}$/.test(code)) {
+    if (!/^[A-Z0-9]{10}$/.test(code)) {
       return NextResponse.json({ error: "Invalid code format" }, { status: 400 })
     }
     if (!value || value < 0) {
@@ -110,7 +110,7 @@ export async function PUT(request: Request) {
     const update: Record<string, unknown> = {}
     if (typeof body?.code === "string") {
       const c = String(body.code).trim().toUpperCase()
-      if (!/^[A-Z0-9]{8}$/.test(c)) return NextResponse.json({ error: "Invalid code format" }, { status: 400 })
+      if (!/^[A-Z0-9]{10}$/.test(c)) return NextResponse.json({ error: "Invalid code format" }, { status: 400 })
       update.code = c
     }
     if (typeof body?.type === "string") update.type = body.type === "flat" ? "flat" : "percent"

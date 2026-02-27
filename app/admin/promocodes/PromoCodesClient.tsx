@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { useAuth } from '@/context/AuthContext'
 import countryData from '@/data/country.json'
 import { RefreshCw, Save, ToggleLeft, ToggleRight } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -19,6 +21,9 @@ type Promo = {
 }
 
 export default function PromoCodesClient() {
+  const { data: session } = useSession()
+  const { user: authUser } = useAuth()
+  const adminEmail = ((session?.user?.email as string | undefined) || (authUser?.email as string | undefined) || '').trim()
   const [list, setList] = useState<Promo[]>([])
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
@@ -51,13 +56,13 @@ export default function PromoCodesClient() {
   const gen = () => {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
     let out = ''
-    for (let i = 0; i < 8; i++) out += chars[Math.floor(Math.random() * chars.length)]
+    for (let i = 0; i < 10; i++) out += chars[Math.floor(Math.random() * chars.length)]
     setForm(prev => ({ ...prev, code: out }))
   }
 
   const save = async () => {
     try {
-      if (!/^[A-Z0-9]{8}$/.test(form.code)) { toast.error('Code must be 8 letters/numbers'); return }
+      if (!/^[A-Z0-9]{10}$/.test(form.code)) { toast.error('Code must be 10 letters/numbers'); return }
       const body = {
         code: form.code,
         type: form.type,
@@ -69,7 +74,7 @@ export default function PromoCodesClient() {
         maxRedemptions: form.maxRedemptions ? Number(form.maxRedemptions) : undefined,
         maxRedemptionsPerUser: form.maxRedemptionsPerUser ? Number(form.maxRedemptionsPerUser) : 1,
       }
-      const res = await fetch('/api/admin/promocodes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+      const res = await fetch('/api/admin/promocodes', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(adminEmail ? { 'x-admin-email': adminEmail } : {}) }, body: JSON.stringify(body) })
       const data = await res.json()
       if (!res.ok) { toast.error(data?.error || 'Failed to create'); return }
       toast.success('Promo created')
@@ -80,7 +85,7 @@ export default function PromoCodesClient() {
 
   const toggleActive = async (p: Promo) => {
     try {
-      const res = await fetch('/api/admin/promocodes', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p._id, active: !p.active }) })
+      const res = await fetch('/api/admin/promocodes', { method: 'PUT', headers: { 'Content-Type': 'application/json', ...(adminEmail ? { 'x-admin-email': adminEmail } : {}) }, body: JSON.stringify({ id: p._id, active: !p.active }) })
       if (res.ok) {
         toast.success('Updated')
         load()
@@ -104,7 +109,7 @@ export default function PromoCodesClient() {
           <div>
             <label className="text-xs font-semibold">Code</label>
             <div className="flex gap-2">
-              <input value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} maxLength={8} className="w-full px-3 py-2 rounded border" placeholder="XXXXXXXX" />
+              <input value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} maxLength={10} className="w-full px-3 py-2 rounded border" placeholder="XXXXXXXXXX" />
               <button onClick={gen} className="px-3 rounded border border-brand-purple/30 text-brand-purple hover:bg-brand-purple/10">Gen</button>
             </div>
           </div>
