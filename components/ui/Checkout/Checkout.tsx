@@ -156,6 +156,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   } = useCheckoutForm()
 
   const [promoInput, setPromoInput] = useState<string>("")
+  const [promoAppliedMsg, setPromoAppliedMsg] = useState<string>("")
   const [appliedPromo, setAppliedPromo] = useState<string>("")
   const [promoError, setPromoError] = useState<string>("")
 
@@ -746,6 +747,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                       }
                       setAppliedPromo(code)
                       setPromoError("")
+                      setPromoAppliedMsg(`Promo ${code} applied`)
                     }}
                     className="px-4 py-2 rounded-lg bg-brand-purple text-white font-bold text-sm hover:bg-brand-purple/90"
                   >
@@ -755,11 +757,29 @@ const Checkout: React.FC<CheckoutProps> = ({
                 {promoError && (
                   <div className="text-xs text-red-600 font-bold">{promoError}</div>
                 )}
-                {orderSummary.promo && (
-                  <div className="flex justify-between text-xs sm:text-sm text-green-700 dark:text-green-400">
-                    <span>Promo ({orderSummary.promo.code})</span>
-                    <span className="font-bold">-<Rupee />{orderSummary.promo.discount.toFixed(2)}</span>
-                  </div>
+                {orderSummary.promo ? (
+                  <>
+                    <div className="flex items-center justify-between text-xs sm:text-sm text-green-700 dark:text-green-400">
+                      <span className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 font-bold tracking-wide">
+                          {orderSummary.promo.code}
+                        </span>
+                        <span>applied</span>
+                      </span>
+                      <span className="font-bold">-<Rupee />{orderSummary.promo.discount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => { setAppliedPromo(""); setPromoInput(""); setPromoAppliedMsg(""); }}
+                        className="text-[11px] text-foreground/60 hover:text-brand-purple underline decoration-dotted"
+                      >
+                        Remove promo
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  promoAppliedMsg && <div className="text-xs text-green-700 dark:text-green-400">{promoAppliedMsg}</div>
                 )}
                 <div className="flex justify-between text-xs sm:text-sm">
                   <span className="text-[var(--foreground)]/70">Subtotal</span>

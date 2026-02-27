@@ -80,6 +80,13 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
     })
   }
 
+  const overallTotal = Array.isArray(sellerGroups)
+    ? sellerGroups.reduce((sum, g) => sum + Number(g?.taxDetails?.total || 0), 0)
+    : 0
+  const promoCode = typeof order?.promoCode === "string" ? order.promoCode : ""
+  const promoDiscount = Number(order?.promoDiscount || 0)
+  const amountPayable = Math.max(0, overallTotal - (isFinite(promoDiscount) ? promoDiscount : 0))
+
   return (
     <div className="min-h-screen bg-gray-100 p-8 print:p-0 print:bg-white">
       <div className="mb-8 flex justify-between items-center max-w-[210mm] mx-auto print:hidden">
@@ -368,6 +375,24 @@ export default function OrderPrint({ order, sellerGroups, shipment, adminGst }: 
                      )}
                   </tfoot>
                 </table>
+                {idx === 0 && (
+                  <div className="mt-3 ml-auto w-full max-w-xs border border-gray-300 rounded-lg p-3 text-xs bg-white">
+                    <div className="flex justify-between mb-1">
+                      <span className="text-gray-600">Order Total</span>
+                      <span className="font-bold">{fmt(overallTotal)}</span>
+                    </div>
+                    {promoCode && promoDiscount > 0 && (
+                      <div className="flex justify-between mb-1 text-green-700">
+                        <span>Promo ({promoCode})</span>
+                        <span className="font-bold">- {fmt(promoDiscount)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between pt-2 mt-1 border-t border-gray-200">
+                      <span className="font-semibold">Amount Payable</span>
+                      <span className="font-bold">{fmt(amountPayable)}</span>
+                    </div>
+                  </div>
+                )}
                 <div className="mt-auto pt-4 border-t border-gray-300 text-xs flex justify-between items-end">
                   <div className="max-w-[60%]">
                     <div className="font-bold">Seller Registered Address:</div>
