@@ -158,6 +158,7 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [promoInput, setPromoInput] = useState<string>("")
   const [promoAppliedMsg, setPromoAppliedMsg] = useState<string>("")
   const [appliedPromo, setAppliedPromo] = useState<string>("")
+  const [validatingPromo, setValidatingPromo] = useState<boolean>(false)
   const [promoError, setPromoError] = useState<string>("")
 
   const {
@@ -739,19 +740,49 @@ const Checkout: React.FC<CheckoutProps> = ({
                   />
                   <button
                     type="button"
-                    onClick={() => {
+                    onClick={async () => {
                       const code = (promoInput || "").trim().toUpperCase()
                       if (!/^[A-Z0-9]{10}$/.test(code)) {
                         setPromoError("Invalid code format")
                         return
                       }
-                      setAppliedPromo(code)
                       setPromoError("")
-                      setPromoAppliedMsg(`Promo ${code} applied`)
+                      setPromoAppliedMsg("")
+                      setValidatingPromo(true)
+                      try {
+                        const items = cartItems.map(ci => ({
+                          id: ci.id,
+                          quantity: ci.quantity ?? 1,
+                          appliedOffer: ci.appliedOffer
+                        }))
+                        const res = await fetch('/api/orders', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            items,
+                            dryRun: true,
+                            state: formData.state,
+                            country: formData.country,
+                            promoCode: code
+                          })
+                        })
+                        const data = await res.json().catch(() => ({}))
+                        if (res.ok && data?.promo && typeof data.promo.discount === 'number' && data.promo.discount > 0) {
+                          setAppliedPromo(code)
+                          setPromoAppliedMsg(`Promo ${code} applied: -₹${Number(data.promo.discount).toFixed(2)}`)
+                        } else {
+                          setPromoError("Promo not applicable for your cart")
+                        }
+                      } catch {
+                        setPromoError("Failed to validate promo")
+                      } finally {
+                        setValidatingPromo(false)
+                      }
                     }}
-                    className="px-4 py-2 rounded-lg bg-brand-purple text-white font-bold text-sm hover:bg-brand-purple/90"
+                    disabled={validatingPromo}
+                    className="px-4 py-2 rounded-lg bg-brand-purple text-white font-bold text-sm hover:bg-brand-purple/90 disabled:opacity-60"
                   >
-                    Apply
+                    {validatingPromo ? "Checking..." : "Apply"}
                   </button>
                 </div>
                 {promoError && (
