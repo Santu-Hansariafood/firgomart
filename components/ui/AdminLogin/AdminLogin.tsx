@@ -120,7 +120,7 @@ export default function AdminLogin() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md overflow-hidden rounded-3xl shadow-2xl bg-[var(--background)] border border-[var(--foreground)/10]"
       >
-        <div className="relative px-6 pt-6 pb-4 sm:px-8 sm:pt-8 sm:pb-6 bg-linear-to-r from-brand-purple to-brand-red text-white">
+        <div className="relative px-6 pt-6 pb-4 sm:px-8 sm:pt-8 sm:pb-6 bg-brand-purple text-white">
           <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_top,_#ffffff40,_transparent_60%)]" />
           <div className="relative flex items-center justify-between gap-4">
             <div>
@@ -174,7 +174,7 @@ export default function AdminLogin() {
               <button
                 onClick={requestOtp}
                 disabled={loading || !validEmail}
-                className="w-full py-3.5 bg-linear-to-r from-brand-purple to-brand-red text-white rounded-xl font-semibold text-base shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="w-full py-3.5 bg-brand-purple text-white rounded-xl font-semibold text-base shadow-lg shadow-brand-purple/25 hover:shadow-brand-purple/40 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

@@ -88,7 +88,7 @@ function ResetPasswordContent() {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md rounded-2xl shadow-2xl border border-[var(--foreground)/20] bg-[var(--background)] overflow-hidden"
       >
-        <div className="bg-linear-to-r from-brand-purple to-brand-red p-6">
+        <div className="bg-brand-purple p-6">
           <Title level={2} className="text-white">
             Reset Password
           </Title>
@@ -149,7 +149,7 @@ function ResetPasswordContent() {
               <button
                 type="submit"
                 disabled={loading || !email || !token}
-                className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-brand-purple text-white py-3 rounded-lg font-medium hover:from-brand-red hover:to-brand-purple transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Updating..." : "Update Password"}
               </button>

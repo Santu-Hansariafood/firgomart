@@ -271,7 +271,7 @@ export default function AdminPageClient() {
   return (
     <Suspense fallback={<BeautifulLoader/>}>
     <div className="p-6 space-y-8">
-      <div className="rounded-2xl bg-linear-to-r from-brand-purple to-brand-red text-white p-6">
+      <div className="rounded-2xl bg-brand-purple text-white p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Admin Dashboard</h1>

@@ -95,7 +95,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
             </button>
 
             <div className="space-y-2">
-              <Title level={2} className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
+              <Title level={2} className="text-3xl font-bold bg-clip-text text-transparent bg-brand-purple">
                 Forgot Password
               </Title>
               <Paragraph className="text-[var(--foreground)/60]">
@@ -162,7 +162,7 @@ const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                  className="w-full bg-brand-purple text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {loading ? (
                     <span className="flex items-center justify-center gap-2">

@@ -642,7 +642,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                     disabled={(product.stock ?? 0) <= 0}
                     className={`flex-1 px-3 py-2.5 rounded-lg transition-colors font-bold text-xs sm:text-sm flex items-center justify-center ${
                       (product.stock ?? 0) > 0
-                        ? 'bg-linear-to-r from-brand-purple to-brand-red text-white hover:from-brand-purple/90 hover:to-brand-red/90'
+                        ? 'bg-brand-purple text-white hover:from-brand-purple/90 hover:to-brand-red/90'
                         : 'bg-foreground/10 text-foreground/40 cursor-not-allowed'
                     }`}
                   >

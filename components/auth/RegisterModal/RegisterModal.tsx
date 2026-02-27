@@ -351,7 +351,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             </button>
             
             <div className="space-y-1 mb-4 mt-2 sm:mt-0">
-              <Title level={2} className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-brand-purple to-brand-red">
+              <Title level={2} className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-brand-purple">
                 Create Account
               </Title>
               <Paragraph className="text-sm sm:text-base text-[var(--foreground)/60]">
@@ -365,7 +365,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <div className="flex flex-col items-center gap-1">
                   <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                     step >= 1 
-                      ? 'bg-linear-to-r from-brand-purple to-brand-red text-white shadow-lg shadow-brand-purple/20 scale-110' 
+                      ? 'bg-brand-purple text-white shadow-lg shadow-brand-purple/20 scale-110' 
                       : 'bg-[var(--foreground)/10] text-[var(--foreground)/40]'
                   }`}>1</div>
                   <span className={`text-xs font-medium transition-colors duration-300 ${
@@ -378,7 +378,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <div className="flex flex-col items-center gap-1">
                   <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300 ${
                     step >= 2 
-                      ? 'bg-linear-to-r from-brand-purple to-brand-red text-white shadow-lg shadow-brand-purple/20 scale-110' 
+                      ? 'bg-brand-purple text-white shadow-lg shadow-brand-purple/20 scale-110' 
                       : 'bg-[var(--foreground)/10] text-[var(--foreground)/40]'
                   }`}>2</div>
                   <span className={`text-xs font-medium transition-colors duration-300 ${
@@ -575,7 +575,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                 <button
                   type="button"
                   onClick={handleNext}
-                  className="w-full bg-linear-to-r from-brand-purple to-brand-red text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4"
+                  className="w-full bg-brand-purple text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all mt-4"
                 >
                   Next Step
                 </button>
@@ -693,7 +693,7 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-linear-to-r from-brand-purple to-brand-red text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="flex-1 bg-brand-purple text-white py-4 rounded-xl font-semibold text-lg shadow-lg shadow-brand-purple/20 hover:shadow-brand-purple/40 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {loading ? (
                       <span className="flex items-center justify-center gap-2">
