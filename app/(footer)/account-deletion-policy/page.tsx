@@ -1,4 +1,6 @@
+import Loading from "@/app/loading";
 import { Metadata } from "next";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Account Deletion & Data Erasure Policy - FirgoMart",
@@ -16,6 +18,7 @@ export const metadata: Metadata = {
 
 const AccountDeletionPolicyPage = () => {
   return (
+    <Suspense fallback={<Loading />}>
     <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
       <div className="w-full max-w-[210mm] mx-auto bg-background text-foreground shadow-none sm:shadow-2xl min-h-screen sm:min-h-[297mm] p-4 sm:p-10 my-0 sm:my-8 relative border-0 sm:border border-foreground/20 rounded-lg">
         <div className="space-y-4 font-serif text-foreground/80">
@@ -169,6 +172,7 @@ const AccountDeletionPolicyPage = () => {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 };
 

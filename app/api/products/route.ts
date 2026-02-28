@@ -96,7 +96,6 @@ export async function GET(request: Request) {
     if (categoryParam) {
       const cats = categoryParam.split(",").map(c => c.trim()).filter(Boolean)
       if (cats.length > 0) {
-        // Optimization: Try to map to exact category names from JSON to use indexes efficiently
         const exactCats = cats.map(c => {
           const lowerC = c.toLowerCase()
           const match = categoriesData.categories.find(
@@ -105,9 +104,6 @@ export async function GET(request: Request) {
           return match ? match.name : c // Use exact name if found, else original
         })
         
-        // Use exact string matching which leverages the { category: 1 } index optimally
-        // This is much faster than regex, even anchored regex.
-        // Since we mapped to canonical names above, this handles case-insensitive input correctly for known categories.
         conditions.push({ category: { $in: exactCats } })
       }
     }
@@ -115,7 +111,6 @@ export async function GET(request: Request) {
     if (subcategoryParam) {
       const subs = subcategoryParam.split(",").map(s => s.trim()).filter(Boolean)
       if (subs.length > 0) {
-        // Optimization: Map subcategories
         const exactSubs = subs.map(s => {
           const lowerS = s.toLowerCase()
           let found: string | undefined
@@ -228,7 +223,6 @@ export async function GET(request: Request) {
             }
           }
 
-          // Apply category/subcategory filters for non-category types if specified
           if (type !== 'category') {
             const catField = (off as any).category
             const subField = (off as any).subcategory

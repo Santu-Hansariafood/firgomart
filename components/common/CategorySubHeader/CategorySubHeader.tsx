@@ -2,137 +2,130 @@
 
 import { motion } from "framer-motion"
 import { useEffect } from "react"
-import FallbackImage from "@/components/common/Image/FallbackImage"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import FallbackImage from "@/components/common/Image/FallbackImage"
 import categoriesData from "@/data/categories.json"
 
 type JsonCategory = { name: string; image: string; key: string }
-const categories: Array<{ id: number; name: string; image: string; key: string }> =
-  (categoriesData as { categories: JsonCategory[] }).categories.map((c, i) => ({
+
+const categories = (categoriesData as { categories: JsonCategory[] }).categories.map(
+  (c, i) => ({
     id: i + 1,
     name: c.name,
     image: c.image,
     key: c.key,
-  }))
+  })
+)
 
-const CategorySubHeader: React.FC = () => {
+export default function CategorySubHeader() {
   const pathname = usePathname()
   const router = useRouter()
   const searchParams = useSearchParams()
-  const currentSelectedName = (searchParams.get('category') || '').trim()
-  
-  const isAdminHost =
-    typeof window !== 'undefined' &&
-    window.location.hostname.toLowerCase().includes('admin')
 
-  const isHome = pathname === '/'
-  const isCategoryPage = pathname.startsWith('/category/')
-  
-  const hide =
-    isAdminHost ||
-    (!isHome && !isCategoryPage)
+  const currentSelectedName = (searchParams.get("category") || "").trim()
+
+  const isAdminHost =
+    typeof window !== "undefined" &&
+    window.location.hostname.toLowerCase().includes("admin")
+
+  const isHome = pathname === "/"
+  const isCategoryPage = pathname.startsWith("/category/")
+  const hide = isAdminHost || (!isHome && !isCategoryPage)
 
   useEffect(() => {
-    if (pathname.startsWith('/category/')) {
-      router.replace('/')
-    }
+    if (pathname.startsWith("/category/")) router.replace("/")
   }, [])
 
-  const toggleCategory = (catKey: string) => {
-    if (pathname === `/category/${catKey}`) {
-      router.push('/')
-    } else {
-      router.push(`/category/${catKey}`)
-    }
+  const toggleCategory = (key: string) => {
+    router.push(pathname === `/category/${key}` ? "/" : `/category/${key}`)
   }
 
   if (hide) return null
 
   return (
-    <div className="relative z-30 bg-[var(--background)] border-[var(--foreground)/10] mt-2 sm:mt-3">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2">
-        <div
-          className="
-            flex gap-4 sm:gap-6 items-center
-            justify-start
-            overflow-x-auto
-            snap-x snap-mandatory
-            scrollbar-hide
-            [-ms-overflow-style:none]
-            [scrollbar-width:none]
-            [&::-webkit-scrollbar]:hidden
-            flex-nowrap
-            px-2
-          "
-        >
-          {categories.map((category, index) => {
-            const isActive = pathname === `/category/${category.key}` || currentSelectedName === category.name
+    <div className="sticky top-0 z-30">
+      <div className="backdrop-blur-xl bg-[var(--background)/80] border-b border-[var(--foreground)/10]">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div
+            className="
+              flex gap-5 items-center overflow-x-auto snap-x snap-mandatory
+              scrollbar-hide flex-nowrap
+            "
+          >
+            {categories.map((category, index) => {
+              const isActive =
+                pathname === `/category/${category.key}` ||
+                currentSelectedName === category.name
 
-            return (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.04, duration: 0.3 }}
-                className="shrink-0 snap-center"
-              >
-                <button
+              return (
+                <motion.button
+                  key={category.id}
                   onClick={() => toggleCategory(category.key)}
-                  className={`
-                    group flex flex-col items-center gap-2 px-2 py-1 rounded-xl
-                    transition-all duration-300 focus:outline-none relative
-                    ${
-                      isActive
-                        ? 'bg-brand-purple/10 scale-105'
-                        : 'hover:bg-[var(--background)/80]'
-                    }
-                  `}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    delay: index * 0.03,
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                  }}
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="
+                    relative shrink-0 snap-center
+                    flex flex-col items-center gap-2
+                    focus:outline-none
+                  "
                 >
-                  {isActive && (
-                    <div className="absolute -top-1 -right-1 bg-brand-purple text-white rounded-full p-0.5 shadow-sm z-10">
-                    </div>
-                  )}
-
+                  {/* Image */}
                   <div
                     className={`
-                      relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden
+                      relative w-14 h-14 rounded-full overflow-hidden
                       ring-2 transition-all duration-300
                       ${
                         isActive
-                          ? 'ring-brand-purple'
-                          : 'ring-[var(--foreground)/20] group-hover:ring-brand-purple/30'
+                          ? "ring-brand-purple shadow-[0_0_0_6px_rgba(124,58,237,0.15)]"
+                          : "ring-[var(--foreground)/15] hover:ring-brand-purple/40"
                       }
                     `}
                   >
                     <FallbackImage
-                    src={category.image}
-                    alt={category.name}
-                    fill
-                    sizes="(max-width: 640px) 48px, 56px"
-                    className="object-cover object-center rounded-full transition-transform duration-500"
-                  />
-
+                      src={category.image}
+                      alt={category.name}
+                      fill
+                      sizes="48px"
+                      className="object-cover"
+                    />
                   </div>
 
-                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight max-w-[6.5rem] min-h-[2.4em]">
-                    <span
-                      className={`block ${
+                  {/* Label */}
+                  <span
+                    className={`
+                      text-xs font-medium text-center leading-tight
+                      transition-colors
+                      ${
                         isActive
-                          ? 'text-brand-purple font-semibold'
-                          : 'text-[var(--foreground)/70]'
-                      }`}
-                    >
-                      {category.name}
-                    </span>
+                          ? "text-brand-purple"
+                          : "text-[var(--foreground)/70]"
+                      }
+                    `}
+                  >
+                    {category.name}
                   </span>
-                </button>
-              </motion.div>
-            )
-          })}
+
+                  {/* Active underline */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-category"
+                      className="absolute -bottom-1 h-[3px] w-6 rounded-full bg-brand-purple"
+                    />
+                  )}
+                </motion.button>
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
   )
 }
-
-export default CategorySubHeader

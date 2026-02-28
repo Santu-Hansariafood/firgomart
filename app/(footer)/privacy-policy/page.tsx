@@ -1,6 +1,8 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Metadata } from "next";
-import PolicyContent from "@/components/common/PolicyContent/PolicyContent";
+import dynamic from "next/dynamic";
+import Loading from "@/app/loading";
+const PolicyContent = dynamic(() => import("@/components/common/PolicyContent/PolicyContent"));
 
 export const metadata: Metadata = {
   title: "Privacy Policy - FirgoMart | Your Data Security Matters",
@@ -18,9 +20,11 @@ export const metadata: Metadata = {
 
 const PrivacyPolicyPage = () => {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
-      <PolicyContent policy="privacy" />
-    </div>
+    <Suspense fallback={<Loading />}>
+      <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
+        <PolicyContent policy="privacy" />
+      </div>
+    </Suspense>
   );
 };
 

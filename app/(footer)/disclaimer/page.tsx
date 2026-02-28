@@ -1,5 +1,8 @@
+import Loading from "@/app/loading";
 import { Metadata } from "next";
-import PolicyContent from "@/components/common/PolicyContent/PolicyContent";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+const PolicyContent = dynamic(() => import("@/components/common/PolicyContent/PolicyContent"));
 
 export const metadata: Metadata = {
   title: "Disclaimer - FirgoMart | Legal Information",
@@ -17,9 +20,11 @@ export const metadata: Metadata = {
 
 const DisclaimerPage = () => {
   return (
-    <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
-      <PolicyContent policy="disclaimer" />
-    </div>
+    <Suspense fallback={<Loading />}>
+      <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)] px-4 sm:px-8 py-12">
+        <PolicyContent policy="disclaimer" />
+      </div>
+    </Suspense>
   );
 };
 
