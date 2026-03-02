@@ -12,6 +12,10 @@ import FallbackImage from "@/components/common/Image/FallbackImage"
 import BeautifulLoader from "@/components/common/Loader/BeautifulLoader"
 import toast from "react-hot-toast"
 import { SUPPORTED_COUNTRIES, getCurrencyForCountry } from "@/utils/productUtils"
+import ProductModal, { DropdownItem as DDItem } from "@/components/ui/AdminProducts/ProductModal"
+import { useAdminProductsLoader } from "@/hooks/admin-products/useAdminProductsLoader"
+import { useGstStateAutoFill } from "@/hooks/admin-products/useGstStateAutoFill"
+import { useProductIdOptions } from "@/hooks/admin-products/useProductIdOptions"
 
 const AdminLogin = dynamic(() => import("@/components/ui/AdminLogin/AdminLogin"))
 const CommonTable = dynamic(() => import("@/components/common/Table/CommonTable"))
@@ -70,111 +74,7 @@ const gstStateMap: Record<string, string> = {
 
 type DropdownItem = { id: string | number; label: string }
 
-function useAdminProductsLoader(args: {
-  session: any
-  authUser: any
-  allowed: boolean
-  page: number
-  pageSize: number
-  category: string
-  selectedState: DropdownItem | null
-  selectedGST: DropdownItem
-  search: string
-  sortKey: string | null
-  sortOrder: "asc" | "desc"
-  setProducts: (value: ProductItem[]) => void
-  setTotal: (value: number) => void
-  setLoading: (value: boolean) => void
-}) {
-  const {
-    session,
-    authUser,
-    allowed,
-    page,
-    pageSize,
-    category,
-    selectedState,
-    selectedGST,
-    search,
-    sortKey,
-    sortOrder,
-    setProducts,
-    setTotal,
-    setLoading
-  } = args
-
-  const loadProducts = useCallback(async () => {
-    setLoading(true)
-    try {
-      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
-      const params = new URLSearchParams()
-      params.set("page", String(page))
-      params.set("limit", String(pageSize))
-      if (category) params.set("category", category)
-      if (selectedState?.id && String(selectedGST.id) !== "true") params.set("state", String(selectedState.id))
-      if (selectedGST?.id !== undefined && selectedGST.id !== "") params.set("hasGST", String(selectedGST.id))
-      if (search) params.set("search", search)
-      if (sortKey) params.set("sortBy", String(sortKey))
-      params.set("sortOrder", sortOrder)
-      const res = await fetch(`/api/admin/products?${params.toString()}`, {
-        headers: { ...(adminEmail ? { "x-admin-email": adminEmail } : {}) }
-      })
-      const data = await res.json()
-      if (res.ok) {
-        setProducts(Array.isArray(data.products) ? data.products : [])
-        setTotal(Number(data.total || 0))
-      } else {
-        setProducts([])
-        setTotal(0)
-      }
-    } catch {
-      setProducts([])
-      setTotal(0)
-    }
-    setLoading(false)
-  }, [
-    session,
-    authUser,
-    page,
-    pageSize,
-    category,
-    selectedState,
-    selectedGST,
-    search,
-    sortKey,
-    sortOrder,
-    setProducts,
-    setTotal,
-    setLoading
-  ])
-
-  useEffect(() => {
-    if (!allowed) return
-    loadProducts()
-  }, [allowed, loadProducts])
-
-  return { loadProducts }
-}
-
-function useGstStateAutoFill(args: {
-  formGST: boolean
-  formGSTNumber: string
-  setFormSellerState: (value: string) => void
-}) {
-  const { formGST, formGSTNumber, setFormSellerState } = args
-
-  useEffect(() => {
-    if (formGST) setFormSellerState("")
-  }, [formGST, setFormSellerState])
-
-  useEffect(() => {
-    if (formGSTNumber.length >= 2) {
-      const code = formGSTNumber.substring(0, 2)
-      const state = gstStateMap[code]
-      if (state) setFormSellerState(state)
-    }
-  }, [formGSTNumber, setFormSellerState])
-}
+function noopFn(_: unknown) {}
 
 export default function Page() {
   const { data: session } = useSession()
@@ -394,6 +294,8 @@ export default function Page() {
     setFormSellerState
   })
 
+  const { productIdOptions } = useProductIdOptions({ session, authUser, products, isModalOpen })
+
   const openModal = (product?: ProductItem) => {
     if (product) {
       setEditingId(product.id)
@@ -576,9 +478,15 @@ export default function Page() {
     const comboPayload = comboItems
       .map(item => ({
         productId: item.productId.trim(),
-        quantity: item.quantity ? Number(item.quantity) : 1,
+        quantity: item.quantity ? Math.max(1, Number(item.quantity)) : 1,
       }))
       .filter(item => item.productId)
+
+    if (isComboPack && comboPayload.length === 0) {
+      toast.error("Please select at least one Product ID for the combo")
+      setIsSubmitting(false)
+      return
+    }
 
     const payload = {
       name: formName.trim(),
@@ -788,389 +696,91 @@ export default function Page() {
           </div>
 
           {isModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-              <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                <div className="p-6 border-b flex justify-between items-center sticky top-0 bg-white z-10">
-                  <h2 className="text-xl font-bold">{editingId ? "Edit Product" : "Add Product"}</h2>
-                  <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full">
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-gray-700">Basic Information</h3>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                            <input value={formName} onChange={e => setFormName(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Product ID</label>
-                            <input value={formProductId} onChange={e => setFormProductId(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. PID-123" />
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              MRP ({currentCurrency.symbol})
-                            </label>
-                            <input
-                              type="number"
-                              value={formOriginalPrice}
-                              onChange={e => setFormOriginalPrice(e.target.value)}
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="Original"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                              Selling Price ({currentCurrency.symbol})
-                            </label>
-                            <input type="number" value={formPrice} onChange={e => setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Sale" />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                            <input type="number" value={formStock} onChange={e => setFormStock(e.target.value)} className="w-full px-3 py-2 border rounded-lg" />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                            <input type="number" min={1} value={formUnitsPerPack} onChange={e => setFormUnitsPerPack(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Units per product (e.g., 1 or 2)" />
-                            <p className="text-xs text-gray-500 mt-1">Enter how many units are in this product listing.</p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Available Country</label>
-                            <CommonDropdown
-                              options={countryOptions}
-                              selected={formAvailableCountry ? { id: formAvailableCountry, label: SUPPORTED_COUNTRIES.find(c => c.code === formAvailableCountry)?.name || formAvailableCountry } : null}
-                              onChange={onFormCountryChange}
-                              placeholder="Select Country"
-                            />
-                            <p className="mt-1 text-xs text-gray-500">
-                              Currency: {currentCurrency.code} ({currentCurrency.symbol}) | HTML code: {currentCurrency.html}
-                            </p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Time (days)</label>
-                            <input
-                              type="number"
-                              min={1}
-                              value={formDeliveryTimeDays}
-                              onChange={e => setFormDeliveryTimeDays(e.target.value)}
-                              className="w-full px-3 py-2 border rounded-lg"
-                              placeholder="e.g. 3"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                            <CommonDropdown
-                                options={categoryOptions}
-                                selected={formCategory ? { id: formCategory, label: formCategory } : null}
-                                onChange={onFormCategoryChange}
-                                placeholder="Select Category"
-                            />
-                        </div>
-                        {formCategory && subcategoryOptionsFor(formCategory).length > 0 && (
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Product type</label>
-                            <CommonDropdown
-                              options={subcategoryOptionsFor(formCategory)}
-                              selected={formSubcategory ? { id: formSubcategory, label: formSubcategory } : null}
-                              onChange={(v) => {
-                                if (!Array.isArray(v)) {
-                                  setFormSubcategory(v.label)
-                                  const catEntry = (categoriesData as any).categories.find((c: any) => c.name === formCategory)
-                                  if (catEntry && catEntry.hsnMap) {
-                                    const hsn = catEntry.hsnMap[v.label]
-                                    if (Array.isArray(hsn) && hsn.length > 0) setFormHSNCode(String(hsn[0]))
-                                    else if (typeof hsn === "string") setFormHSNCode(hsn)
-                                  }
-                                }
-                              }}
-                              placeholder="Select Product type"
-                            />
-                          </div>
-                        )}
-                        <div>
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-                             <input value={formBrand} onChange={e => setFormBrand(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. Nike, Apple" />
-                        </div>
-                        
-                        <div className="grid grid-cols-2 gap-4">
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Length</label>
-                                <div className="flex gap-1">
-                                    <input type="number" value={formLength} onChange={e => setFormLength(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Length" />
-                                    <select value={formLengthUnit} onChange={e => setFormLengthUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
-                                        {dimensionUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
-                                    </select>
-                                </div>
-                             </div>
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Height</label>
-                                <div className="flex gap-1">
-                                    <input type="number" value={formHeight} onChange={e => setFormHeight(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Height" />
-                                    <select value={formDimensionUnit} onChange={e => setFormDimensionUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
-                                        {dimensionUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
-                                    </select>
-                                </div>
-                             </div>
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Width</label>
-                                <div className="flex gap-1">
-                                    <input type="number" value={formWidth} onChange={e => setFormWidth(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Width" />
-                                    <select value={formDimensionUnit} onChange={e => setFormDimensionUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
-                                        {dimensionUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
-                                    </select>
-                                </div>
-                             </div>
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Weight</label>
-                                <div className="flex gap-1">
-                                    <input type="number" value={formWeight} onChange={e => setFormWeight(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Weight" />
-                                    <select value={formWeightUnit} onChange={e => setFormWeightUnit(e.target.value)} className="px-2 py-2 border rounded-lg bg-white">
-                                        {weightUnits.map(u => <option key={u.id} value={u.id}>{u.label}</option>)}
-                                    </select>
-                                </div>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        <h3 className="font-semibold text-gray-700">Product Details</h3>
-                        <div>
-                          <CommonDropdown
-                            label="Colors"
-                            options={colorOptions}
-                            selected={selectedColorItems}
-                            onChange={(v) => {
-                              if (Array.isArray(v)) {
-                                const list = v as DropdownItem[]
-                                setSelectedColorItems(list)
-                                if (list.some((i) => i.id === "others")) {
-                                  applyColorsToForm(list, otherColorInput)
-                                } else {
-                                  setOtherColorInput("")
-                                  applyColorsToForm(list, "")
-                                }
-                              }
-                            }}
-                            multiple
-                            placeholder="Select colors"
-                          />
-                          {selectedColorItems.some((i) => i.id === "others") && (
-                            <div className="mt-2">
-                              <input
-                                value={otherColorInput}
-                                onChange={(e) => {
-                                  const val = e.target.value
-                                  setOtherColorInput(val)
-                                  applyColorsToForm(selectedColorItems, val)
-                                }}
-                                className="w-full px-3 py-2 border rounded-lg"
-                                placeholder="Enter custom colors (comma separated)"
-                              />
-                            </div>
-                          )}
-                        </div>
-                        {sizeOptions.length > 0 && (
-                          <div>
-                            <CommonDropdown
-                              label="Sizes"
-                              options={sizeOptions}
-                              selected={selectedSizeItems}
-                              onChange={(v) => {
-                                if (Array.isArray(v)) {
-                                  const list = v as DropdownItem[]
-                                  setSelectedSizeItems(list)
-                                  if (list.some((i) => i.id === "others")) {
-                                    applySizesToForm(list, otherSizeInput)
-                                  } else {
-                                    setOtherSizeInput("")
-                                    applySizesToForm(list, "")
-                                  }
-                                }
-                              }}
-                              multiple
-                              placeholder="Select sizes"
-                            />
-                            {selectedSizeItems.some((i) => i.id === "others") && (
-                              <div className="mt-2">
-                                <input
-                                  value={otherSizeInput}
-                                  onChange={(e) => {
-                                    const val = e.target.value
-                                    setOtherSizeInput(val)
-                                    applySizesToForm(selectedSizeItems, val)
-                                  }}
-                                  className="w-full px-3 py-2 border rounded-lg"
-                                  placeholder="Enter custom sizes (comma separated)"
-                                />
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        <div>
-                             <label className="block text-sm font-medium text-gray-700 mb-1">About Product (Short Summary)</label>
-                             <textarea value={formAbout} onChange={e => setFormAbout(e.target.value)} className="w-full px-3 py-2 border rounded-lg" rows={2} />
-                        </div>
-                    </div>
-                    
-                    <div className="md:col-span-2 space-y-4">
-                        <div>
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                             <textarea value={formDesc} onChange={e => setFormDesc(e.target.value)} className="w-full px-3 py-2 border rounded-lg" rows={4} />
-                        </div>
-                        <div>
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Additional Information</label>
-                             <textarea value={formAddInfo} onChange={e => setFormAddInfo(e.target.value)} className="w-full px-3 py-2 border rounded-lg" rows={3} placeholder="Technical specs, warranty info, etc." />
-                        </div>
-                    </div>
-
-                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4">
-                            <h3 className="font-semibold text-gray-700">Seller & Tax</h3>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">HSN Code</label>
-                                <input value={formHSNCode} onChange={e => setFormHSNCode(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="HSN Code" />
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input id="gst_modal" type="checkbox" checked={formGST} onChange={(e) => setFormGST(e.target.checked)} />
-                                <label htmlFor="gst_modal" className="text-sm font-medium text-gray-700">Seller has GST</label>
-                            </div>
-                            {formGST ? (
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">GST Number</label>
-                                    <input value={formGSTNumber} onChange={e => setFormGSTNumber(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="GST Number" maxLength={15} />
-                                    {formSellerState && <p className="text-xs text-green-600 mt-1">Detected State: {formSellerState}</p>}
-                                </div>
-                            ) : (
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Seller State</label>
-                                    <CommonDropdown
-                                        options={stateOptions}
-                                        selected={formSellerState ? { id: formSellerState, label: formSellerState } : null}
-                                        onChange={onFormSellerStateChange}
-                                        placeholder="Select State"
-                                    />
-                                </div>
-                            )}
-                        </div>
-                        
-                        <div className="space-y-4">
-                             <h3 className="font-semibold text-gray-700">Product Images (6 Slots)</h3>
-                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                                {[0, 1, 2, 3, 4, 5].map((index) => (
-                                    <div key={index} className="space-y-2">
-                                        <label className="block text-xs font-medium text-gray-600">Image {index + 1}</label>
-                                        <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-2 h-32 flex items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                                            {images[index] ? (
-                                                <div className="relative w-full h-full group">
-                                                    <FallbackImage src={images[index]} alt={`Image ${index + 1}`} fill className="object-contain rounded" />
-                                                    <button onClick={() => removeImage(index)} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm">
-                                                        <X className="w-3 h-3" />
-                                                    </button>
-                                                    <button onClick={() => startCrop(index)} className="absolute bottom-1 right-1 bg-brand-purple text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 shadow-sm" title="Crop">
-                                                        <Crop className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div className="text-center">
-                                                    <span className="text-gray-400 text-xs">Upload</span>
-                                                </div>
-                                            )}
-                                            <input 
-                                                type="file" 
-                                                accept="image/*" 
-                                                onChange={(e) => handleImageSlotChange(index, e.target.files)} 
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                disabled={!!images[index]}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            <div className="md:col-span-2 space-y-4 px-6 pb-2">
-              <h3 className="font-semibold text-gray-700">Combo Pack (optional)</h3>
-              <div className="flex items-center gap-2">
-                <input
-                  id="combo_pack_toggle"
-                  type="checkbox"
-                  checked={isComboPack}
-                  onChange={e => setIsComboPack(e.target.checked)}
-                />
-                <label htmlFor="combo_pack_toggle" className="text-sm font-medium text-gray-700">
-                  Treat this listing as a combo pack
-                </label>
-              </div>
-              {isComboPack && (
-                <div className="space-y-3">
-                  <p className="text-xs text-gray-500">
-                    Add one or more underlying products by their Product ID and quantity.
-                  </p>
-                  {comboItems.map((item, idx) => (
-                    <div key={idx} className="grid grid-cols-3 gap-2">
-                      <input
-                        value={item.productId}
-                        onChange={e => {
-                          const val = e.target.value
-                          setComboItems(prev =>
-                            prev.map((it, i) => (i === idx ? { ...it, productId: val } : it))
-                          )
-                        }}
-                        placeholder="Product ID"
-                        className="col-span-2 px-3 py-2 border rounded-lg text-sm"
-                      />
-                      <input
-                        type="number"
-                        min={1}
-                        value={item.quantity}
-                        onChange={e => {
-                          const val = e.target.value
-                          setComboItems(prev =>
-                            prev.map((it, i) => (i === idx ? { ...it, quantity: val } : it))
-                          )
-                        }}
-                        placeholder="Qty"
-                        className="px-3 py-2 border rounded-lg text-sm"
-                      />
-                    </div>
-                  ))}
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setComboItems(prev => [...prev, { productId: "", quantity: "1" }])
-                      }
-                      className="px-3 py-1 text-sm bg-white border border-brand-purple text-brand-purple rounded-lg hover:bg-brand-purple/5"
-                    >
-                      Add product to combo
-                    </button>
-                    {comboItems.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => setComboItems(prev => prev.slice(0, -1))}
-                        className="px-3 py-1 text-sm text-gray-600 hover:bg-gray-100 rounded-lg"
-                      >
-                        Remove last
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="p-6 border-t flex justify-end gap-3 bg-white z-10 sticky bottom-0">
-                  <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg font-medium" disabled={isSubmitting}>Cancel</button>
-                  <button onClick={handleSave} className="px-6 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 font-medium disabled:opacity-50 disabled:cursor-not-allowed" disabled={isSubmitting}>
-                    {isSubmitting ? "Saving..." : (editingId ? "Update Product" : "Submit")}
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ProductModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              editingId={editingId}
+              currentCurrency={currentCurrency}
+              countryOptions={countryOptions}
+              stateOptions={stateOptions}
+              categoryOptions={categoryOptions}
+              subcategoryOptionsFor={subcategoryOptionsFor}
+              dimensionUnits={dimensionUnits}
+              weightUnits={weightUnits}
+              colorOptions={colorOptions}
+              sizeOptions={sizeOptions}
+              formName={formName}
+              setFormName={setFormName}
+              formProductId={formProductId}
+              setFormProductId={setFormProductId}
+              formOriginalPrice={formOriginalPrice}
+              setFormOriginalPrice={setFormOriginalPrice}
+              formPrice={formPrice}
+              setFormPrice={setFormPrice}
+              formStock={formStock}
+              setFormStock={setFormStock}
+              formUnitsPerPack={formUnitsPerPack}
+              setFormUnitsPerPack={setFormUnitsPerPack}
+              formAvailableCountry={formAvailableCountry}
+              onFormCountryChange={onFormCountryChange}
+              formDeliveryTimeDays={formDeliveryTimeDays}
+              setFormDeliveryTimeDays={setFormDeliveryTimeDays}
+              formCategory={formCategory}
+              onFormCategoryChange={onFormCategoryChange}
+              formSubcategory={formSubcategory}
+              setFormSubcategory={setFormSubcategory}
+              formBrand={formBrand}
+              setFormBrand={setFormBrand}
+              formLength={formLength}
+              setFormLength={setFormLength}
+              formLengthUnit={formLengthUnit}
+              setFormLengthUnit={setFormLengthUnit}
+              formHeight={formHeight}
+              setFormHeight={setFormHeight}
+              formDimensionUnit={formDimensionUnit}
+              setFormDimensionUnit={setFormDimensionUnit}
+              formWidth={formWidth}
+              setFormWidth={setFormWidth}
+              formWeight={formWeight}
+              setFormWeight={setFormWeight}
+              formWeightUnit={formWeightUnit}
+              setFormWeightUnit={setFormWeightUnit}
+              selectedColorItems={selectedColorItems}
+              setSelectedColorItems={setSelectedColorItems}
+              selectedSizeItems={selectedSizeItems}
+              setSelectedSizeItems={setSelectedSizeItems}
+              otherColorInput={otherColorInput}
+              setOtherColorInput={setOtherColorInput}
+              otherSizeInput={otherSizeInput}
+              setOtherSizeInput={setOtherSizeInput}
+              applyColorsToForm={applyColorsToForm}
+              applySizesToForm={applySizesToForm}
+              formAbout={formAbout}
+              setFormAbout={setFormAbout}
+              formDesc={formDesc}
+              setFormDesc={setFormDesc}
+              formAddInfo={formAddInfo}
+              setFormAddInfo={setFormAddInfo}
+              formHSNCode={formHSNCode}
+              setFormHSNCode={setFormHSNCode}
+              formGST={formGST}
+              setFormGST={setFormGST}
+              formGSTNumber={formGSTNumber}
+              setFormGSTNumber={setFormGSTNumber}
+              formSellerState={formSellerState}
+              onFormSellerStateChange={onFormSellerStateChange}
+              images={images}
+              removeImage={removeImage}
+              startCrop={startCrop}
+              handleImageSlotChange={handleImageSlotChange}
+              isComboPack={isComboPack}
+              setIsComboPack={setIsComboPack}
+              comboItems={comboItems}
+              setComboItems={setComboItems}
+              productIdOptions={productIdOptions as DDItem[]}
+              isSubmitting={isSubmitting}
+              handleSave={handleSave}
+            />
           )}
           {croppingImageIndex !== null && images[croppingImageIndex] && (
             <ImageCropper 
