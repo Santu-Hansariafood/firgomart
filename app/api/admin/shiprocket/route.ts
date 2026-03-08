@@ -4,23 +4,30 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { connectDB } from "@/lib/db/db"
 import { getOrderModel } from "@/lib/models/Order"
 import { getShipmentModel } from "@/lib/models/Shipment"
-import { 
-  getShiprocketToken, 
-  checkServiceability, 
-  createShiprocketShipment, 
-  requestPickup, 
-  generateManifest, 
-  printManifest, 
-  generateLabel, 
-  generateInvoice, 
+import {
+  getShiprocketToken,
+  checkServiceability,
+  createShiprocketShipment,
+  requestPickup,
+  generateManifest,
+  printManifest,
+  generateLabel,
+  generateInvoice,
   trackShipment,
-  addPickupLocation
+  addPickupLocation,
 } from "@/lib/shiprocket"
 
 function isAdminEmail(email?: string | null) {
   const raw = process.env.ADMIN_EMAILS || process.env.NEXT_PUBLIC_ADMIN_EMAILS || ""
   const allow = raw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean)
   return !!(email && allow.includes(email.toLowerCase()))
+}
+
+function getShiprocketBaseUrl() {
+  const raw = process.env.SHIPROCKET_BASE_URL || ""
+  const trimmed = raw.trim()
+  if (trimmed) return trimmed.replace(/\/+$/, "")
+  return "https://apiv2.shiprocket.in"
 }
 
 export async function POST(request: Request) {
@@ -56,6 +63,194 @@ export async function POST(request: Request) {
       const { pickup_postcode, delivery_postcode, weight, cod } = params
       const data = await checkServiceability(token, { pickup_postcode, delivery_postcode, weight, cod })
       return NextResponse.json(data)
+    }
+
+    if (action === "create_manual_order") {
+      const delivery = params.delivery || {}
+      const billing = params.billing || {}
+      const billingSameAsDelivery = !!params.billingSameAsDelivery
+      const product = params.product || {}
+      const charges = params.charges || {}
+      const pkg = params.package || {}
+      const other = params.other || {}
+
+      const now = new Date()
+      const yyyy = now.getFullYear()
+      const mm = String(now.getMonth() + 1).padStart(2, "0")
+      const dd = String(now.getDate()).padStart(2, "0")
+      const hh = String(now.getHours()).padStart(2, "0")
+      const mi = String(now.getMinutes()).padStart(2, "0")
+
+      const orderDate = other.orderDate || `${yyyy}-${mm}-${dd} ${hh}:${mi}`
+      const pickupLocation = process.env.SHIPROCKET_PICKUP_LOCATION || "Default"
+
+      const dName = String(delivery.fullName || "").trim()
+      const dPhone = String(delivery.mobile || "").trim()
+      const dAddress = String(delivery.address || "").trim()
+      const dLandmark = String(delivery.landmark || "").trim()
+      const dPincode = String(delivery.pincode || "").trim()
+      const dCity = String(delivery.city || "").trim()
+      const dState = String(delivery.state || "").trim()
+      const dAlt = String(delivery.altMobile || "").trim()
+
+      const bName = String((billingSameAsDelivery ? dName : billing.fullName || "") || "").trim()
+      const bPhone = String((billingSameAsDelivery ? dPhone : billing.mobile || "") || "").trim()
+      const bAddress = String((billingSameAsDelivery ? dAddress : billing.address || "") || "").trim()
+      const bLandmark = String((billingSameAsDelivery ? dLandmark : billing.landmark || "") || "").trim()
+      const bPincode = String((billingSameAsDelivery ? dPincode : billing.pincode || "") || "").trim()
+      const bCity = String((billingSameAsDelivery ? dCity : billing.city || "") || "").trim()
+      const bState = String((billingSameAsDelivery ? dState : billing.state || "") || "").trim()
+
+      const email = String(params.email || delivery.email || billing.email || "").trim()
+
+      const itemName = String(product.name || "").trim()
+      const sku = String(product.sku || itemName || "SKU").trim()
+      const quantity = Number(product.quantity || 1)
+      const unitPrice = Number(product.unitPrice || 0)
+
+      if (!itemName || !quantity || !unitPrice || !dAddress || !dCity || !dPincode || !dState) {
+        return NextResponse.json({ error: "Missing required fields for Shiprocket order" }, { status: 400 })
+      }
+
+      const paymentMethod = String(charges.paymentMethod || "Prepaid")
+
+      const subTotal = unitPrice * quantity
+      const shippingCharges = Number(charges.shipping || 0)
+      const giftWrapCharges = Number(charges.giftWrap || 0)
+      const txCharges = Number(charges.transaction || 0)
+      const totalDiscount = Number(charges.totalDiscount || 0) + Number(product.productDiscount || 0)
+
+      const length = Number(pkg.length || process.env.SHIPROCKET_DEFAULT_LENGTH || 10)
+      const height = Number(pkg.height || process.env.SHIPROCKET_DEFAULT_HEIGHT || 10)
+      const breadth = Number(pkg.breadth || process.env.SHIPROCKET_DEFAULT_BREADTH || length)
+      const deadWeight = Number(pkg.deadWeight || process.env.SHIPROCKET_DEFAULT_WEIGHT || 0.5)
+      const weight = deadWeight > 0 ? deadWeight : Number(pkg.volumetricWeight || process.env.SHIPROCKET_DEFAULT_WEIGHT || 0.5)
+
+      const idSource = other.orderId || `${yyyy}${mm}${dd}${hh}${mi}`
+      const orderId = String(idSource || "").trim()
+
+      const base = getShiprocketBaseUrl()
+
+      const payload: any = {
+        order_id: orderId,
+        order_date: orderDate,
+        pickup_location: pickupLocation,
+        channel_id: "",
+        comment: String(other.notes || ""),
+        billing_customer_name: bName || dName,
+        billing_last_name: "",
+        billing_address: `${bAddress}${bLandmark ? ", " + bLandmark : ""}`,
+        billing_city: bCity || dCity,
+        billing_pincode: bPincode || dPincode,
+        billing_state: bState || dState,
+        billing_country: "India",
+        billing_email: email || undefined,
+        billing_phone: bPhone || dPhone,
+        shipping_is_billing: billingSameAsDelivery,
+        shipping_customer_name: dName,
+        shipping_last_name: "",
+        shipping_address: `${dAddress}${dLandmark ? ", " + dLandmark : ""}`,
+        shipping_city: dCity,
+        shipping_pincode: dPincode,
+        shipping_state: dState,
+        shipping_country: "India",
+        shipping_email: email || undefined,
+        shipping_phone: dPhone,
+        order_items: [
+          {
+            name: itemName,
+            sku,
+            units: quantity,
+            selling_price: unitPrice,
+            discount: Number(product.productDiscount || 0),
+            tax: Number(product.taxRate || 0),
+            hsn: String(product.hsnCode || ""),
+          },
+        ],
+        payment_method: paymentMethod,
+        shipping_charges: shippingCharges,
+        giftwrap_charges: giftWrapCharges,
+        transaction_charges: txCharges,
+        total_discount: totalDiscount,
+        sub_total: subTotal,
+        length,
+        breadth,
+        height,
+        weight,
+        order_tags: String(other.orderTag || ""),
+      }
+
+      const createRes = await fetch(`${base}/v1/external/orders/create/adhoc`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      })
+
+      if (!createRes.ok) {
+        let message = "Shiprocket order creation failed"
+        try {
+          const d = await createRes.json()
+          message = d?.message || d?.error || message
+        } catch {}
+        return NextResponse.json({ error: message }, { status: 502 })
+      }
+
+      const created = await createRes.json()
+      const shipmentId = created?.shipment_id || created?.shipmentId
+      const srOrderId = created?.order_id || created?.orderId || orderId
+
+      if (!shipmentId) {
+        return NextResponse.json({ error: "Shiprocket shipment ID missing" }, { status: 502 })
+      }
+
+      const awbPayload: any = { shipment_id: shipmentId }
+      const courierIdRaw = process.env.SHIPROCKET_COURIER_ID
+      if (courierIdRaw) {
+        const n = Number(courierIdRaw)
+        if (!Number.isNaN(n) && n > 0) awbPayload.courier_id = n
+      }
+
+      const awbRes = await fetch(`${base}/v1/external/courier/assign/awb`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(awbPayload),
+      })
+
+      if (!awbRes.ok) {
+        const txt = await awbRes.text().catch(() => "")
+        return NextResponse.json({ error: "AWB assignment failed", details: txt }, { status: 502 })
+      }
+
+      const awbData = await awbRes.json()
+      const awbCode = awbData?.awb_code || awbData?.awbCode
+      const courierName = awbData?.courier_name || awbData?.courierName || ""
+
+      let invoiceUrl: string | null = null
+      if (srOrderId) {
+        invoiceUrl = await generateInvoice(token, srOrderId)
+      }
+
+      let labelUrl: string | null = null
+      if (shipmentId) {
+        const l = await generateLabel(token, shipmentId).catch(() => ({}))
+        labelUrl = (l as any)?.label_url || (l as any)?.label_created_at || null
+      }
+
+      return NextResponse.json({
+        success: true,
+        shipmentId,
+        shiprocketOrderId: srOrderId,
+        awbCode,
+        courier: courierName,
+        invoiceUrl,
+        labelUrl,
+      })
     }
 
     if (action === "create_order") {
