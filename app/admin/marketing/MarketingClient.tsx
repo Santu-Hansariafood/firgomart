@@ -270,25 +270,31 @@ export default function MarketingClient() {
   }
 
   const uploadToCloudinary = async (file: File): Promise<string> => {
-    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""
-    const preset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""
-    
-    if (!cloudName || !preset) {
-      throw new Error("Cloudinary configuration missing")
-    }
-
-    const fd = new FormData()
-    fd.append("file", file)
-    fd.append("upload_preset", preset)
-    
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/upload`, {
-      method: "POST",
-      body: fd,
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onerror = () => reject(new Error("Failed to read file"))
+      reader.onloadend = async () => {
+        try {
+          const base64data = reader.result as string
+          const res = await fetch("/api/upload/image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ images: [base64data] }),
+          })
+          const data = await res.json()
+          if (res.ok && Array.isArray(data.urls) && data.urls[0]) {
+            resolve(String(data.urls[0]))
+          } else {
+            const msg = data?.error || "Upload failed"
+            reject(new Error(msg))
+          }
+        } catch (err) {
+          if (err instanceof Error) reject(err)
+          else reject(new Error("Upload error"))
+        }
+      }
+      reader.readAsDataURL(file)
     })
-    
-    const data = await res.json()
-    if (!data?.secure_url) throw new Error("Upload failed")
-    return String(data.secure_url)
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

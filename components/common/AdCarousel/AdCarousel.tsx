@@ -44,7 +44,7 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
               if (!sectionMatch) return false
               const bannerCountry = (b.availableCountry || '').toUpperCase()
               if (!bannerCountry) return true
-              if (!country) return false
+              if (!country) return true
               return bannerCountry === country
             })
             setBanners(filtered)
