@@ -43,7 +43,7 @@ export default function CategorySubHeader() {
   if (hide) return null
 
   return (
-    <div className="sticky top-0 z-30">
+    <div className="relative z-30">
       <div className="backdrop-blur-xl bg-[var(--background)/80] border-b border-[var(--foreground)/10]">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div
@@ -77,7 +77,6 @@ export default function CategorySubHeader() {
                     focus:outline-none
                   "
                 >
-                  {/* Image */}
                   <div
                     className={`
                       relative w-14 h-14 rounded-full overflow-hidden
@@ -98,7 +97,6 @@ export default function CategorySubHeader() {
                     />
                   </div>
 
-                  {/* Label */}
                   <span
                     className={`
                       text-xs font-medium text-center leading-tight
@@ -113,7 +111,6 @@ export default function CategorySubHeader() {
                     {category.name}
                   </span>
 
-                  {/* Active underline */}
                   {isActive && (
                     <motion.div
                       layoutId="active-category"
