@@ -198,11 +198,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
                 <span className="text-[11px] sm:text-xs text-foreground/50 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
               )}
             </div>
-            {product.discount ? (
-              <span className="shrink-0 text-[10px] sm:text-xs font-extrabold text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-300 px-2 py-1 rounded-full border border-red-200/60 dark:border-red-800/50">
-                {product.discount}% OFF
-              </span>
-            ) : null}
+            <button
+              onClick={() => onProductClick(product)}
+              className="shrink-0 inline-flex items-center justify-center min-h-[40px] px-4 py-2 bg-brand-purple text-white text-xs sm:text-sm font-extrabold rounded-xl hover:bg-brand-purple/90 active:scale-[0.98] transition-all shadow-md touch-manipulation"
+            >
+              Buy Now
+            </button>
           </div>
         </div>
       )}
