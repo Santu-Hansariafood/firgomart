@@ -256,7 +256,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
         )}
 
         {category && subcategoryOptionsFor(category).length > 0 && (
-          <div className="mb-2 pb-1 border-b border-foreground/10">
+          <div className="mb-2 pb-1 border-b border-foreground/10 hidden sm:block">
             <div
               className="
                 flex items-center gap-3

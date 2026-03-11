@@ -141,7 +141,12 @@ export default function MarketingClient() {
 
   const fetchBanners = async () => {
     try {
-      const res = await fetch("/api/admin/banners")
+      const adminEmail = (session?.user?.email || authUser?.email || "").trim()
+      const res = await fetch("/api/admin/banners", {
+        headers: {
+          ...(adminEmail ? { "x-admin-email": adminEmail } : {}),
+        }
+      })
       if (res.ok) {
         const data = await res.json()
         setBanners(data.banners || [])
