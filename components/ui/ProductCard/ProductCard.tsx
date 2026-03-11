@@ -118,8 +118,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
 
         <div className="hidden md:block absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
+        {/* Mobile: category + rating on photo */}
+        <div className="md:hidden absolute bottom-2 left-2 right-2 z-20 flex items-center justify-between gap-2 pointer-events-none">
+          <span className="bg-white/95 dark:bg-black/70 backdrop-blur-md text-brand-purple text-[10px] font-extrabold uppercase tracking-wider px-2 py-1 rounded-full shadow-sm border border-foreground/10 max-w-[70%] truncate">
+            {product.category}
+          </span>
+          {(product.rating || 0) > 0 && (
+            <span className="flex items-center gap-1 bg-black/45 backdrop-blur-md text-white px-2 py-1 rounded-full shadow-sm border border-white/10 shrink-0">
+              <Star className="w-3.5 h-3.5 fill-current text-amber-400" />
+              <span className="text-[10px] font-bold leading-none">{product.rating}</span>
+              <span className="text-[10px] text-white/70 leading-none">({product.reviews || 0})</span>
+            </span>
+          )}
+        </div>
+
         {typeof product.unitsPerPack === 'number' && product.unitsPerPack > 1 ? (
-          <span className={`absolute bottom-2 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-auto md:bottom-auto md:left-3 md:right-auto text-center md:text-left bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1 sm:py-1.5 rounded-lg sm:rounded-xl md:rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50 ${product.discount ? 'md:top-12' : 'md:top-3'}`}>
+          <span className={`absolute bottom-12 left-2 right-2 sm:bottom-3 sm:left-3 sm:right-auto md:bottom-auto md:left-3 md:right-auto text-center md:text-left bg-white/95 dark:bg-violet-600/90 backdrop-blur-md text-violet-700 dark:text-white text-[10px] font-bold px-2 py-1 sm:py-1.5 rounded-lg sm:rounded-xl md:rounded-lg shadow-lg z-20 border border-violet-200/50 dark:border-violet-500/50 ${product.discount ? 'md:top-12' : 'md:top-3'}`}>
             {`PACK OF ${product.unitsPerPack}`}
           </span>
         ) : null}
@@ -176,17 +190,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
 
       {/* Mobile & tablet: content below image */}
       {!compact && (
-        <div className="md:hidden flex flex-col flex-1 p-3 sm:p-4 gap-2 sm:gap-2.5 min-h-0">
-          <p className="text-[10px] sm:text-xs font-bold text-brand-purple uppercase tracking-wider truncate">
-            {product.category}
-          </p>
-          <h3
-            className="text-sm sm:text-base font-bold text-foreground leading-snug line-clamp-2 cursor-pointer min-h-10 sm:min-h-11 flex items-start"
-            onClick={() => onProductClick(product)}
-            title={product.name}
-          >
-            {product.name}
-          </h3>
+        <div className="md:hidden flex flex-col flex-1 p-3 sm:p-4 gap-2 min-h-0">
           <div className="flex items-end justify-between gap-2 mt-auto">
             <div className="flex flex-col gap-0.5 min-w-0">
               <span className="text-base sm:text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
@@ -194,31 +198,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
                 <span className="text-[11px] sm:text-xs text-foreground/50 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
               )}
             </div>
-            <div className="flex items-center gap-1 shrink-0">
-              {(product.rating || 0) > 0 ? (
-                <>
-                  <div className="flex items-center gap-0.5 text-amber-500">
-                    <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
-                    <span className="text-[11px] sm:text-xs font-semibold text-foreground">{product.rating}</span>
-                  </div>
-                  <span className="text-[10px] sm:text-xs text-foreground/50">({product.reviews || 0})</span>
-                </>
-              ) : (
-                <span className="text-[10px] sm:text-xs text-foreground/50">No ratings</span>
-              )}
-            </div>
+            {product.discount ? (
+              <span className="shrink-0 text-[10px] sm:text-xs font-extrabold text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-300 px-2 py-1 rounded-full border border-red-200/60 dark:border-red-800/50">
+                {product.discount}% OFF
+              </span>
+            ) : null}
           </div>
-          {onAddToCart && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation()
-                onAddToCart(product)
-              }}
-              className="w-full mt-2 sm:mt-3 min-h-[44px] py-2.5 sm:py-3 bg-brand-purple text-white text-xs sm:text-sm font-bold rounded-xl hover:bg-brand-purple/90 active:scale-[0.98] transition-all shadow-md touch-manipulation"
-            >
-              Add to Cart
-            </button>
-          )}
         </div>
       )}
     </motion.div>
