@@ -12,6 +12,7 @@ import { getProductPath } from '@/utils/productUtils'
 const ProductGrid = dynamic(() => import('@/components/ui/ProductGrid/ProductGrid'))
 const Cart = dynamic(() => import('@/components/ui/Cart/Cart'))
 
+
 export default function NewArrivalsPage() {
   const router = useRouter()
   const { cartItems, addToCart, updateQuantity, removeFromCart, showCart, setShowCart } = useCart()

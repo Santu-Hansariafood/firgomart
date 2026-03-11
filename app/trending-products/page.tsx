@@ -15,6 +15,7 @@
  const ProductGrid = dynamic(() => import("@/components/ui/ProductGrid/ProductGrid"));
  const Cart = dynamic(() => import("@/components/ui/Cart/Cart"));
 
+
  export default function TrendingProductsPage() {
    return (
      <Suspense fallback={<Loading />}>
