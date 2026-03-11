@@ -31,6 +31,18 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
   const [banners, setBanners] = useState<Advertisement[]>([])
   const [loading, setLoading] = useState(true)
 
+  const normalizeCountry = (raw?: string) => {
+    const s = (raw || '').trim().toLowerCase()
+    if (!s) return ''
+    if (s === 'in' || s === 'india') return 'IN'
+    if (s.includes('saudi')) return 'SA'
+    if (s === 'us' || s === 'usa' || s.includes('united states')) return 'US'
+    if (s === 'uae' || s.includes('united arab emirates') || s.includes('dubai')) return 'AE'
+    if (s.includes('qatar')) return 'QA'
+    if (s.includes('kuwait')) return 'KW'
+    return s.toUpperCase()
+  }
+
   useEffect(() => {
     const fetchBanners = async () => {
       try {
@@ -38,15 +50,18 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ section = "hero" }) => {
         if (res.ok) {
           const data = await res.json()
           if (data.banners && data.banners.length > 0) {
-            const country = (countryCode || '').toUpperCase()
-            const filtered = data.banners.filter((b: Advertisement) => {
+            const userCountry = normalizeCountry(countryCode)
+            let filtered = data.banners.filter((b: Advertisement) => {
               const sectionMatch = (b.section || "hero") === section
               if (!sectionMatch) return false
-              const bannerCountry = (b.availableCountry || '').toUpperCase()
+              const bannerCountry = normalizeCountry(b.availableCountry)
               if (!bannerCountry) return true
-              if (!country) return true
-              return bannerCountry === country
+              if (!userCountry) return true
+              return bannerCountry === userCountry
             })
+            if (filtered.length === 0) {
+              filtered = data.banners.filter((b: Advertisement) => (b.section || "hero") === section)
+            }
             setBanners(filtered)
           }
         }
