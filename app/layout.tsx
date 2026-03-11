@@ -18,6 +18,7 @@ const APP_SCHEME = process.env.NEXT_PUBLIC_APP_DEEP_LINK_SCHEME || "firgomart";
 const ANDROID_PACKAGE = process.env.NEXT_PUBLIC_ANDROID_PACKAGE || "";
 const APP_DL_ENABLED = (process.env.NEXT_PUBLIC_APP_DEEP_LINK_ENABLED || "true") !== "false";
 const PLAYSTORE_URL = process.env.NEXT_PUBLIC_PLAYSTORE_URL;
+const DEEP_LINK_AUTO = (process.env.NEXT_PUBLIC_DEEP_LINK_AUTO || "false") === "true";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://firgomart.com"),
@@ -230,20 +231,30 @@ export default function RootLayout({
                   var ua = navigator.userAgent || '';
                   var isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
                   if (!isMobile) return;
+                  var isAndroid = /Android/i.test(ua);
+                  if (!isAndroid) return;
                   var host = (window.location.host || '').toLowerCase();
                   if (host.startsWith('admin.')) return;
                   var path = window.location.pathname + window.location.search;
                   if (path.startsWith('/download-app')) return;
+                  try { if (!${DEEP_LINK_AUTO ? "true" : "false"} && !/openInApp=1/.test(window.location.search)) return; } catch(e) {}
                   try { if (sessionStorage.getItem('deeplinkAttempted') === '1') return; sessionStorage.setItem('deeplinkAttempted','1'); } catch(e) {}
                   var scheme = ${JSON.stringify(APP_SCHEME)};
                   var pkg = ${JSON.stringify(ANDROID_PACKAGE)};
-                  if (pkg && /Android/i.test(ua)) {
-                    var fallback = encodeURIComponent(${JSON.stringify(PLAYSTORE_URL)} || window.location.href);
-                    var intent = 'intent://' + path.replace(/^\\/+/, '') + '#Intent;scheme=' + scheme + ';package=' + pkg + ';S.browser_fallback_url=' + fallback + ';end';
-                    window.location.href = intent;
-                  } else {
-                    var url = scheme + '://' + path.replace(/^\\/+/, '');
-                    window.location.href = url;
+                  var start = Date.now();
+                  var timedOut = false;
+                  var timer = setTimeout(function(){ timedOut = true; }, 1500);
+                  var onVisibility = function(){ try { document.removeEventListener('visibilitychange', onVisibility); } catch(e){} clearTimeout(timer); };
+                  try { document.addEventListener('visibilitychange', onVisibility, { once: true }); } catch(e){}
+                  if (pkg) {
+                    var isTwa = /\\.twa$/.test(pkg);
+                    if (isTwa) {
+                      var intent = 'intent://' + host + path + '#Intent;scheme=https;package=' + pkg + ';end';
+                      window.location.href = intent;
+                    } else {
+                      var url = scheme + '://' + path.replace(/^\\/+/, '');
+                      window.location.href = url;
+                    }
                   }
                 })();
               `,
