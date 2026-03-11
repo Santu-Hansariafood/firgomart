@@ -32,6 +32,8 @@ type Props = {
   setFormUnitsPerPack: (v: string) => void
   formAvailableCountry: string
   onFormCountryChange: (v: DropdownItem | DropdownItem[]) => void
+  selectedCountryItems: DropdownItem[]
+  setSelectedCountryItems: (v: DropdownItem[]) => void
   formDeliveryTimeDays: string
   setFormDeliveryTimeDays: (v: string) => void
   formCategory: string
@@ -136,15 +138,16 @@ export default function ProductModal(props: Props) {
                 <p className="text-xs text-gray-500 mt-1">Enter how many units are in this product listing.</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Available Country</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Available Countries</label>
                 <CommonDropdown
                   options={props.countryOptions}
-                  selected={props.formAvailableCountry ? { id: props.formAvailableCountry, label: props.formAvailableCountry } : null}
-                  onChange={props.onFormCountryChange}
-                  placeholder="Select Country"
+                  selected={props.selectedCountryItems}
+                  onChange={(v) => { if (Array.isArray(v)) props.setSelectedCountryItems(v as DropdownItem[]) }}
+                  placeholder="Select Countries"
+                  multiple
                 />
                 <p className="mt-1 text-xs text-gray-500">
-                  Currency: {props.currentCurrency.code} ({props.currentCurrency.symbol}) | HTML code: {props.currentCurrency.html}
+                  Primary currency: {props.currentCurrency.code} ({props.currentCurrency.symbol})
                 </p>
               </div>
               <div>

@@ -128,6 +128,7 @@ export default function Page() {
   const [formSubcategory, setFormSubcategory] = useState("")
   const [formPrice, setFormPrice] = useState("")
   const [formAvailableCountry, setFormAvailableCountry] = useState("IN")
+  const [selectedCountryItems, setSelectedCountryItems] = useState<DropdownItem[]>([])
   const [formDeliveryTimeDays, setFormDeliveryTimeDays] = useState("")
   const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
@@ -155,8 +156,10 @@ export default function Page() {
   const colorOptions: DropdownItem[] = (colorsData as any).colors
   const countryOptions: DropdownItem[] = SUPPORTED_COUNTRIES.map((c) => ({ id: c.code, label: c.name }))
   const onFormCountryChange = (v: DropdownItem | DropdownItem[]) => {
-    if (!Array.isArray(v)) {
-      setFormAvailableCountry(String(v.id))
+    if (Array.isArray(v)) {
+      setSelectedCountryItems(v as DropdownItem[])
+    } else {
+      setFormAvailableCountry(String((v as DropdownItem).id))
     }
   }
   const currentCurrency = getCurrencyForCountry(formAvailableCountry)
@@ -305,6 +308,14 @@ export default function Page() {
       setFormSubcategory((product as any).subcategory || "")
       setFormPrice(String(product.price))
       setFormAvailableCountry(product.availableCountry || "IN")
+      const availList: string[] = Array.isArray((product as any).availableCountries) ? (product as any).availableCountries : []
+      const initialCountries: string[] = (availList.length > 0 ? availList : [product.availableCountry || "IN"]).filter(Boolean) as string[]
+      const optMap = new Map(countryOptions.map(o => [String(o.id), o]))
+      setSelectedCountryItems(initialCountries.map((code: string) => {
+        const c = String(code)
+        const match = optMap.get(c)
+        return match || { id: c, label: c }
+      }))
       setFormDeliveryTimeDays(product.deliveryTimeDays ? String(product.deliveryTimeDays) : "")
       setFormOriginalPrice(String(product.originalPrice || ""))
       setFormStock(String(product.stock || 0))
@@ -356,6 +367,7 @@ export default function Page() {
       setFormSubcategory("")
       setFormPrice("")
       setFormAvailableCountry("IN")
+      setSelectedCountryItems([])
       setFormDeliveryTimeDays("")
       setFormOriginalPrice("")
       setFormStock("")
@@ -495,6 +507,7 @@ export default function Page() {
       subcategory: formSubcategory.trim(),
       price,
       availableCountry: formAvailableCountry,
+      availableCountries: selectedCountryItems.map(i => String(i.id)),
       currencyCode: currentCurrency.code,
       originalPrice,
       discount,
@@ -723,6 +736,8 @@ export default function Page() {
               setFormUnitsPerPack={setFormUnitsPerPack}
               formAvailableCountry={formAvailableCountry}
               onFormCountryChange={onFormCountryChange}
+              selectedCountryItems={selectedCountryItems}
+              setSelectedCountryItems={setSelectedCountryItems}
               formDeliveryTimeDays={formDeliveryTimeDays}
               setFormDeliveryTimeDays={setFormDeliveryTimeDays}
               formCategory={formCategory}

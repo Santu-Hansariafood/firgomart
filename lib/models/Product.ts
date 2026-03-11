@@ -37,6 +37,13 @@ export interface IProduct extends Document {
   about?: string
   additionalInfo?: string
   availableCountry?: string
+  availableCountries?: string[]
+  countryPrices?: {
+    country: string
+    price: number
+    currencyCode?: string
+    originalPrice?: number
+  }[]
   deliveryTimeDays?: number
   unitsPerPack: number
   isComboPack?: boolean
@@ -86,6 +93,15 @@ const ProductSchema = new Schema<IProduct>(
     about: { type: String },
     additionalInfo: { type: String },
     availableCountry: { type: String },
+    availableCountries: { type: [String], index: true, default: [] },
+    countryPrices: [
+      {
+        country: { type: String, required: true },
+        price: { type: Number, required: true },
+        currencyCode: { type: String },
+        originalPrice: { type: Number },
+      }
+    ],
     deliveryTimeDays: { type: Number },
     unitsPerPack: { type: Number, default: 1 },
     isComboPack: { type: Boolean, default: false, index: true },

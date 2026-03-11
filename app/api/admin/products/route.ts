@@ -160,6 +160,7 @@ export async function POST(request: Request) {
     const subcategory = String(body?.subcategory || "").trim()
     const price = Number(body?.price)
     const availableCountryRaw = String(body?.availableCountry || "").trim().toUpperCase()
+    const availableCountriesArr = Array.isArray(body?.availableCountries) ? (body.availableCountries as string[]).map(c => String(c).trim().toUpperCase()).filter(Boolean) : []
     const currencyCode = String(body?.currencyCode || "").trim()
     const originalPrice = body?.originalPrice ? Number(body.originalPrice) : undefined
     const discount = body?.discount ? Number(body.discount) : 0
@@ -236,6 +237,7 @@ export async function POST(request: Request) {
       hsnCode,
       gstNumber,
       availableCountry: availableCountryRaw,
+      availableCountries: availableCountriesArr.length ? availableCountriesArr : undefined,
       deliveryTimeDays: deliveryTimeDays || undefined,
       isComboPack,
       comboItems: comboItems.length > 0 ? comboItems : undefined,
