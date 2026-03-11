@@ -14,6 +14,10 @@ import CartHost from "@/components/common/CartHost/CartHost";
 
 const GOOGLE_ADS_ID =
   process.env.NEXT_PUBLIC_GOOGLE_ADS_ID || "AW-17932697360";
+const APP_SCHEME = process.env.NEXT_PUBLIC_APP_DEEP_LINK_SCHEME || "firgomart";
+const ANDROID_PACKAGE = process.env.NEXT_PUBLIC_ANDROID_PACKAGE || "";
+const APP_DL_ENABLED = (process.env.NEXT_PUBLIC_APP_DEEP_LINK_ENABLED || "true") !== "false";
+const PLAYSTORE_URL = process.env.NEXT_PUBLIC_PLAYSTORE_URL;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://firgomart.com"),
@@ -215,6 +219,36 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <CategorySubHeader />
           </Suspense>
+          <Script
+            id="app-deeplink-redirect"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function(){
+                  var enabled = ${APP_DL_ENABLED ? "true" : "false"};
+                  if (!enabled) return;
+                  var ua = navigator.userAgent || '';
+                  var isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+                  if (!isMobile) return;
+                  var host = (window.location.host || '').toLowerCase();
+                  if (host.startsWith('admin.')) return;
+                  var path = window.location.pathname + window.location.search;
+                  if (path.startsWith('/download-app')) return;
+                  try { if (sessionStorage.getItem('deeplinkAttempted') === '1') return; sessionStorage.setItem('deeplinkAttempted','1'); } catch(e) {}
+                  var scheme = ${JSON.stringify(APP_SCHEME)};
+                  var pkg = ${JSON.stringify(ANDROID_PACKAGE)};
+                  if (pkg && /Android/i.test(ua)) {
+                    var fallback = encodeURIComponent(${JSON.stringify(PLAYSTORE_URL)} || window.location.href);
+                    var intent = 'intent://' + path.replace(/^\\/+/, '') + '#Intent;scheme=' + scheme + ';package=' + pkg + ';S.browser_fallback_url=' + fallback + ';end';
+                    window.location.href = intent;
+                  } else {
+                    var url = scheme + '://' + path.replace(/^\\/+/, '');
+                    window.location.href = url;
+                  }
+                })();
+              `,
+            }}
+          />
           <main className="min-h-screen pb-24 md:pb-0">{children}</main>
           <CartHost />
           <Suspense fallback={null}>

@@ -63,6 +63,14 @@ export async function generateMetadata(
   return {
     title: `${product.name} | FirgoMart`,
     description: product.description?.slice(0, 160) || `Buy ${product.name} at FirgoMart. Best prices and quality assurance.`,
+    keywords: [
+      product.name,
+      product.category || '',
+      product.subcategory || '',
+      product.brand || '',
+      'FirgoMart',
+    ].filter(Boolean),
+    robots: { index: true, follow: true },
     openGraph: {
       title: `${product.name} | FirgoMart`,
       description: product.description?.slice(0, 160),
