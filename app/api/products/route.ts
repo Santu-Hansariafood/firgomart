@@ -270,6 +270,25 @@ export async function GET(request: Request) {
       .limit(limit)
       .lean()
 
+    if (countryParam) {
+      for (const p of products) {
+        const prod = p as any
+        const list = Array.isArray(prod.countryPrices) ? prod.countryPrices : []
+        const found = list.find((cp: any) => String(cp.country || '').toUpperCase() === countryParam)
+        if (found && Number.isFinite(Number(found.price))) {
+          prod.price = Number(found.price)
+          if (found.currencyCode) prod.currencyCode = String(found.currencyCode)
+          if (Number.isFinite(Number(found.originalPrice))) {
+            prod.originalPrice = Number(found.originalPrice)
+            if (prod.originalPrice > prod.price) {
+              const d = Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)
+              prod.discount = d
+            }
+          }
+        }
+      }
+    }
+
     try {
       const activeOffers = await (Offer as any).find({ 
         active: true, 

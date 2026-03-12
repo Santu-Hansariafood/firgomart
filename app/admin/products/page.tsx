@@ -129,6 +129,7 @@ export default function Page() {
   const [formPrice, setFormPrice] = useState("")
   const [formAvailableCountry, setFormAvailableCountry] = useState("IN")
   const [selectedCountryItems, setSelectedCountryItems] = useState<DropdownItem[]>([])
+  const [countryPriceRows, setCountryPriceRows] = useState<{ country: string; price: string; originalPrice: string; currencyCode: string }[]>([])
   const [formDeliveryTimeDays, setFormDeliveryTimeDays] = useState("")
   const [formOriginalPrice, setFormOriginalPrice] = useState("")
   const [formStock, setFormStock] = useState("")
@@ -158,6 +159,18 @@ export default function Page() {
   const onFormCountryChange = (v: DropdownItem | DropdownItem[]) => {
     if (Array.isArray(v)) {
       setSelectedCountryItems(v as DropdownItem[])
+      const codes = new Set((v as DropdownItem[]).map(i => String(i.id)))
+      const next: { country: string; price: string; originalPrice: string; currencyCode: string }[] = []
+      for (const item of v as DropdownItem[]) {
+        const code = String(item.id)
+        const found = countryPriceRows.find(r => r.country === code)
+        if (found) next.push(found)
+        else {
+          const cur = getCurrencyForCountry(code)
+          next.push({ country: code, price: "", originalPrice: "", currencyCode: cur.code })
+        }
+      }
+      setCountryPriceRows(next)
     } else {
       setFormAvailableCountry(String((v as DropdownItem).id))
     }
@@ -316,6 +329,19 @@ export default function Page() {
         const match = optMap.get(c)
         return match || { id: c, label: c }
       }))
+      const existingRows: { country: string; price: string; originalPrice: string; currencyCode: string }[] = []
+      const cps: Array<{ country: string; price: number; originalPrice?: number; currencyCode?: string }> = Array.isArray((product as any).countryPrices) ? (product as any).countryPrices : []
+      for (const c of initialCountries) {
+        const row = cps.find(p => String(p.country).toUpperCase() === String(c).toUpperCase())
+        const cur = getCurrencyForCountry(c)
+        existingRows.push({
+          country: c,
+          price: row && typeof row.price === 'number' ? String(row.price) : "",
+          originalPrice: row && typeof row.originalPrice === 'number' ? String(row.originalPrice) : "",
+          currencyCode: row?.currencyCode || cur.code
+        })
+      }
+      setCountryPriceRows(existingRows)
       setFormDeliveryTimeDays(product.deliveryTimeDays ? String(product.deliveryTimeDays) : "")
       setFormOriginalPrice(String(product.originalPrice || ""))
       setFormStock(String(product.stock || 0))
@@ -368,6 +394,7 @@ export default function Page() {
       setFormPrice("")
       setFormAvailableCountry("IN")
       setSelectedCountryItems([])
+      setCountryPriceRows([])
       setFormDeliveryTimeDays("")
       setFormOriginalPrice("")
       setFormStock("")
@@ -508,6 +535,9 @@ export default function Page() {
       price,
       availableCountry: formAvailableCountry,
       availableCountries: selectedCountryItems.map(i => String(i.id)),
+      countryPrices: countryPriceRows
+        .map(r => ({ country: r.country, price: Number(r.price || 0), originalPrice: r.originalPrice ? Number(r.originalPrice) : undefined, currencyCode: r.currencyCode }))
+        .filter(p => Number.isFinite(p.price) && p.price > 0),
       currencyCode: currentCurrency.code,
       originalPrice,
       discount,
@@ -738,6 +768,8 @@ export default function Page() {
               onFormCountryChange={onFormCountryChange}
               selectedCountryItems={selectedCountryItems}
               setSelectedCountryItems={setSelectedCountryItems}
+              countryPriceRows={countryPriceRows}
+              setCountryPriceRows={setCountryPriceRows}
               formDeliveryTimeDays={formDeliveryTimeDays}
               setFormDeliveryTimeDays={setFormDeliveryTimeDays}
               formCategory={formCategory}

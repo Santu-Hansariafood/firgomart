@@ -110,6 +110,8 @@ export async function GET(request: Request) {
       gstNumber: p.gstNumber,
       images: p.images || [],
       availableCountry: p.availableCountry,
+      availableCountries: Array.isArray(p.availableCountries) ? p.availableCountries : [],
+      countryPrices: Array.isArray(p.countryPrices) ? p.countryPrices : [],
       currencyCode: p.currencyCode,
       deliveryTimeDays: p.deliveryTimeDays,
       isAdminProduct: p.isAdminProduct,
@@ -161,6 +163,16 @@ export async function POST(request: Request) {
     const price = Number(body?.price)
     const availableCountryRaw = String(body?.availableCountry || "").trim().toUpperCase()
     const availableCountriesArr = Array.isArray(body?.availableCountries) ? (body.availableCountries as string[]).map(c => String(c).trim().toUpperCase()).filter(Boolean) : []
+    const countryPricesArr = Array.isArray(body?.countryPrices)
+      ? (body.countryPrices as Array<{ country: string; price: number; currencyCode?: string; originalPrice?: number }>)
+          .map(p => ({
+            country: String(p.country || '').trim().toUpperCase(),
+            price: Number(p.price),
+            currencyCode: p.currencyCode ? String(p.currencyCode).trim().toUpperCase() : undefined,
+            originalPrice: typeof p.originalPrice === 'number' ? p.originalPrice : undefined
+          }))
+          .filter(p => p.country && Number.isFinite(p.price) && p.price > 0)
+      : []
     const currencyCode = String(body?.currencyCode || "").trim()
     const originalPrice = body?.originalPrice ? Number(body.originalPrice) : undefined
     const discount = body?.discount ? Number(body.discount) : 0
@@ -238,6 +250,7 @@ export async function POST(request: Request) {
       gstNumber,
       availableCountry: availableCountryRaw,
       availableCountries: availableCountriesArr.length ? availableCountriesArr : undefined,
+      countryPrices: countryPricesArr.length ? countryPricesArr : undefined,
       deliveryTimeDays: deliveryTimeDays || undefined,
       isComboPack,
       comboItems: comboItems.length > 0 ? comboItems : undefined,

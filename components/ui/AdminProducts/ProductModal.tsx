@@ -34,6 +34,8 @@ type Props = {
   onFormCountryChange: (v: DropdownItem | DropdownItem[]) => void
   selectedCountryItems: DropdownItem[]
   setSelectedCountryItems: (v: DropdownItem[]) => void
+  countryPriceRows: { country: string; price: string; originalPrice: string; currencyCode: string }[]
+  setCountryPriceRows: (rows: { country: string; price: string; originalPrice: string; currencyCode: string }[]) => void
   formDeliveryTimeDays: string
   setFormDeliveryTimeDays: (v: string) => void
   formCategory: string
@@ -149,6 +151,64 @@ export default function ProductModal(props: Props) {
                 <p className="mt-1 text-xs text-gray-500">
                   Primary currency: {props.currentCurrency.code} ({props.currentCurrency.symbol})
                 </p>
+                {props.selectedCountryItems.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {props.selectedCountryItems.map((it) => {
+                      const row = props.countryPriceRows.find(r => r.country === String(it.id)) || { country: String(it.id), price: "", originalPrice: "", currencyCode: "" }
+                      return (
+                        <div key={String(it.id)} className="grid grid-cols-7 gap-2 items-end">
+                          <div className="col-span-2">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Country</label>
+                            <div className="px-3 py-2 border rounded-lg bg-gray-50 text-sm">{String(it.label || it.id)}</div>
+                          </div>
+                          <div className="col-span-2">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Currency</label>
+                            <input
+                              value={row.currencyCode}
+                              onChange={e => {
+                                const v = e.target.value.toUpperCase()
+                                const next = props.countryPriceRows.map(r => r.country === row.country ? { ...r, currencyCode: v } : r)
+                                props.setCountryPriceRows(next)
+                              }}
+                              className="w-full px-3 py-2 border rounded-lg text-sm"
+                              placeholder="e.g. INR, SAR"
+                            />
+                          </div>
+                          <div className="col-span-1">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Price</label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={row.price}
+                              onChange={e => {
+                                const v = e.target.value
+                                const next = props.countryPriceRows.map(r => r.country === row.country ? { ...r, price: v } : r)
+                                props.setCountryPriceRows(next)
+                              }}
+                              className="w-full px-3 py-2 border rounded-lg text-sm"
+                              placeholder="0"
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">MRP (optional)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={row.originalPrice}
+                              onChange={e => {
+                                const v = e.target.value
+                                const next = props.countryPriceRows.map(r => r.country === row.country ? { ...r, originalPrice: v } : r)
+                                props.setCountryPriceRows(next)
+                              }}
+                              className="w-full px-3 py-2 border rounded-lg text-sm"
+                              placeholder="0"
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Time (days)</label>
