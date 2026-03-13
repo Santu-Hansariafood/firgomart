@@ -164,12 +164,13 @@ export async function POST(request: Request) {
     const availableCountryRaw = String(body?.availableCountry || "").trim().toUpperCase()
     const availableCountriesArr = Array.isArray(body?.availableCountries) ? (body.availableCountries as string[]).map(c => String(c).trim().toUpperCase()).filter(Boolean) : []
     const countryPricesArr = Array.isArray(body?.countryPrices)
-      ? (body.countryPrices as Array<{ country: string; price: number; currencyCode?: string; originalPrice?: number }>)
+      ? (body.countryPrices as Array<{ country: string; price: number; currencyCode?: string; originalPrice?: number; discount?: number }>)
           .map(p => ({
             country: String(p.country || '').trim().toUpperCase(),
             price: Number(p.price),
             currencyCode: p.currencyCode ? String(p.currencyCode).trim().toUpperCase() : undefined,
-            originalPrice: typeof p.originalPrice === 'number' ? p.originalPrice : undefined
+            originalPrice: typeof p.originalPrice === 'number' ? p.originalPrice : undefined,
+            discount: typeof p.discount === 'number' ? p.discount : 0
           }))
           .filter(p => p.country && Number.isFinite(p.price) && p.price > 0)
       : []

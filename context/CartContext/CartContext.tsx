@@ -15,6 +15,7 @@ interface CartItem {
   unitsPerPack?: number;
   selectedSize?: string;
   selectedColor?: string;
+  currencyCode?: string;
   _uniqueId?: string;
   appliedOffer?: {
     name: string;
@@ -54,6 +55,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       unitsPerPack: item.unitsPerPack,
       selectedSize: item.selectedSize,
       selectedColor: item.selectedColor,
+      currencyCode: item.currencyCode,
       _uniqueId: item._uniqueId,
       appliedOffer: item.appliedOffer ? {
         name: item.appliedOffer.name,

@@ -536,7 +536,18 @@ export default function Page() {
       availableCountry: formAvailableCountry,
       availableCountries: selectedCountryItems.map(i => String(i.id)),
       countryPrices: countryPriceRows
-        .map(r => ({ country: r.country, price: Number(r.price || 0), originalPrice: r.originalPrice ? Number(r.originalPrice) : undefined, currencyCode: r.currencyCode }))
+        .map(r => {
+          const p = Number(r.price || 0)
+          const op = r.originalPrice ? Number(r.originalPrice) : undefined
+          const d = op && op > p ? Math.round(((op - p) / op) * 100) : 0
+          return { 
+            country: r.country, 
+            price: p, 
+            originalPrice: op, 
+            discount: d,
+            currencyCode: r.currencyCode 
+          }
+        })
         .filter(p => Number.isFinite(p.price) && p.price > 0),
       currencyCode: currentCurrency.code,
       originalPrice,

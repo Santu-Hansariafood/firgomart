@@ -9,6 +9,7 @@ export interface CartItem {
   unitsPerPack?: number
   selectedSize?: string
   selectedColor?: string
+  currencyCode?: string
   _uniqueId?: string
   appliedOffer?: {
     name: string

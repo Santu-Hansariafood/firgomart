@@ -91,6 +91,9 @@ export function useProductData({
       unitsPerPack: p.unitsPerPack,
       isAdminProduct: p.isAdminProduct,
       hsnCode: p.hsnCode,
+      availableCountry: (p as any).availableCountry,
+      availableCountries: (p as any).availableCountries,
+      countryPrices: (p as any).countryPrices,
       appliedOffer: (selectedOfferDetails && (
         (!selectedOfferDetails.category || selectedOfferDetails.category === p.category) &&
         (!selectedOfferDetails.subcategory || selectedOfferDetails.subcategory === p.subcategory)

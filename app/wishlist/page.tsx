@@ -29,6 +29,15 @@ interface Product {
   description?: string;
   features?: string[];
   rating?: number;
+  availableCountry?: string;
+  availableCountries?: string[];
+  countryPrices?: {
+    country: string;
+    price: number;
+    currencyCode?: string;
+    originalPrice?: number;
+    discount?: number;
+  }[];
 }
 
 export default function WishlistPage() {

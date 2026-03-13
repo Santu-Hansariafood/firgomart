@@ -4,9 +4,10 @@ import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 import { useSession } from 'next-auth/react'
 import { Product } from '@/types/product'
-import { sanitizeImageUrl, formatPrice, getProductPath } from '@/utils/productUtils'
+import { sanitizeImageUrl, formatPrice, getProductPath, getCurrencyForCountry } from '@/utils/productUtils'
 import { Share2, Heart, Star } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 const ProductImageSlider = dynamic(() => import('@/components/common/ProductImageSlider/ProductImageSlider'))
 
@@ -27,6 +28,24 @@ const fadeInUp = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- priority reserved for image loading
 const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAddToCart, priority = false, onWishlistToggle, compact = false }) => {
   const { data: session } = useSession()
+  const { countryCode } = useGeolocation()
+
+  const { price, originalPrice, currencySymbol } = (() => {
+    const cp = product.countryPrices?.find(p => p.country.toUpperCase() === countryCode.toUpperCase())
+    if (cp) {
+      return {
+        price: cp.price,
+        originalPrice: cp.originalPrice,
+        currencySymbol: getCurrencyForCountry(countryCode).symbol
+      }
+    }
+    const cur = getCurrencyForCountry(product.availableCountry || 'IN')
+    return {
+      price: product.price,
+      originalPrice: product.originalPrice,
+      currencySymbol: cur.symbol
+    }
+  })()
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -159,9 +178,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
             <div className="flex items-end justify-between gap-2">
               <div className="flex flex-col">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-lg font-extrabold text-white">₹{formatPrice(product.price)}</span>
-                  {product.originalPrice && (
-                    <span className="text-xs text-white/60 line-through font-medium">₹{formatPrice(product.originalPrice)}</span>
+                  <span className="text-lg font-extrabold text-white">{currencySymbol}{formatPrice(price)}</span>
+                  {originalPrice && (
+                    <span className="text-xs text-white/60 line-through font-medium">{currencySymbol}{formatPrice(originalPrice)}</span>
                   )}
                 </div>
               </div>
@@ -193,9 +212,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
         <div className="md:hidden flex flex-col flex-1 p-3 sm:p-4 gap-2 min-h-0">
           <div className="flex items-end justify-between gap-2 mt-auto">
             <div className="flex flex-col gap-0.5 min-w-0">
-              <span className="text-base sm:text-lg font-extrabold text-foreground">₹{formatPrice(product.price)}</span>
-              {product.originalPrice && (
-                <span className="text-[11px] sm:text-xs text-foreground/50 line-through font-medium">MRP ₹{formatPrice(product.originalPrice)}</span>
+              <span className="text-base sm:text-lg font-extrabold text-foreground">{currencySymbol}{formatPrice(price)}</span>
+              {originalPrice && (
+                <span className="text-[11px] sm:text-xs text-foreground/50 line-through font-medium">MRP {currencySymbol}{formatPrice(originalPrice)}</span>
               )}
             </div>
             <button

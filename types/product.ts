@@ -21,6 +21,14 @@ export interface Product {
   stock?: number
   unitsPerPack?: number
   availableCountry?: string
+  availableCountries?: string[]
+  countryPrices?: {
+    country: string
+    price: number
+    currencyCode?: string
+    originalPrice?: number
+    discount?: number
+  }[]
   deliveryTimeDays?: number
   isAdminProduct?: boolean
   isComboPack?: boolean

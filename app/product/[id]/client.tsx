@@ -10,7 +10,7 @@ import FallbackImage from '@/components/common/Image/FallbackImage'
 import Script from 'next/script'
 import { useCart } from '@/context/CartContext/CartContext'
 import toast from 'react-hot-toast'
-import { getMaxQuantity, getCurrencyForCountry } from '@/utils/productUtils'
+import { getMaxQuantity, getCurrencyForCountry, formatPrice } from '@/utils/productUtils'
 import { useGeolocation } from '@/hooks/product-grid/useGeolocation'
 
 interface Product {
@@ -42,6 +42,14 @@ interface Product {
   selectedSize?: string
   selectedColor?: string
   availableCountry?: string
+  availableCountries?: string[]
+  countryPrices?: {
+    country: string
+    price: number
+    currencyCode?: string
+    originalPrice?: number
+    discount?: number
+  }[]
   currencyCode?: string
   deliveryTimeDays?: number
   appliedOffer?: {
@@ -192,17 +200,17 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const prevImage = () => setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
 
   const calculatePrice = () => {
-    let price = product.price
+    let currentPriceVal = price
     if (product.appliedOffer && product.appliedOffer.value) {
       const val = Number(product.appliedOffer.value)
-      if (!isNaN(val) && val > 0 && val <= 100) {
-         if (String(product.appliedOffer.type).includes('discount')) {
-            const discountAmount = Math.round((price * val) / 100)
-            price = price - discountAmount
+      if (val > 0) {
+         if (product.appliedOffer.type === 'percentage') {
+            const discountAmount = Math.round((currentPriceVal * val) / 100)
+            currentPriceVal = currentPriceVal - discountAmount
          }
       }
     }
-    return price
+    return currentPriceVal
   }
 
   const currentPrice = calculatePrice()
@@ -301,11 +309,31 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
     }
   }, [activeTab, fetchReviews])
 
+  const { price, originalPrice, currencySymbol } = (() => {
+    const cp = product.countryPrices?.find(p => p.country.toUpperCase() === countryCode.toUpperCase())
+    if (cp) {
+      return {
+        price: cp.price,
+        originalPrice: cp.originalPrice,
+        currencySymbol: getCurrencyForCountry(countryCode).symbol
+      }
+    }
+    const cur = getCurrencyForCountry(product.availableCountry || 'IN')
+    return {
+      price: product.price,
+      originalPrice: product.originalPrice,
+      currencySymbol: cur.symbol
+    }
+  })()
+
   const handleBuyNow = () => {
     if ((product.stock ?? 0) > 0) {
       if (!validateSelection()) return
       addToCart({ 
-        ...product, 
+        ...product,
+        price,
+        originalPrice,
+        currencyCode: getCurrencyForCountry(countryCode).code,
         quantity,
         selectedSize: selectedSize || undefined,
         selectedColor: selectedColor || undefined
@@ -319,6 +347,9 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
       if (!validateSelection()) return
       addToCart({
         ...product,
+        price,
+        originalPrice,
+        currencyCode: getCurrencyForCountry(countryCode).code,
         quantity,
         selectedSize: selectedSize || undefined,
         selectedColor: selectedColor || undefined,
@@ -327,7 +358,7 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
     }
   }
 
-  const maxQty = getMaxQuantity(product.price)
+  const maxQty = getMaxQuantity(price)
 
   const toCamelCase = (str: string) => {
     return str
@@ -510,12 +541,19 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
                   </h1>
                 </div>
                 
-                <div className="flex items-baseline space-x-2 sm:space-x-3 mb-2">
-                  <span className="text-xl sm:text-3xl font-bold">{currency.symbol}{currentPrice}</span>
-                  {(product.originalPrice || hasOffer) && (
-                    <span className="text-base sm:text-xl text-red-500 line-through">
-                      {currency.symbol}{product.originalPrice || product.price}
-                    </span>
+                <div className="flex items-baseline gap-2.5 sm:gap-4 flex-wrap">
+                  <span className="text-2xl sm:text-4xl font-black text-foreground tracking-tight">
+                    {currencySymbol}{formatPrice(currentPrice)}
+                  </span>
+                  {(originalPrice || price > currentPrice) && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm sm:text-lg text-foreground/40 line-through decoration-brand-red/30">
+                        {currencySymbol}{formatPrice(originalPrice || price)}
+                      </span>
+                      <span className="px-2 py-0.5 bg-brand-red/10 text-brand-red text-[10px] sm:text-xs font-bold rounded-full">
+                        {Math.round((((originalPrice || price) - currentPrice) / (originalPrice || price)) * 100)}% OFF
+                      </span>
+                    </div>
                   )}
                 </div>
                 

@@ -21,6 +21,15 @@ export interface Product {
   discount: number;
   rating: number;
   image: string;
+  availableCountry?: string;
+  availableCountries?: string[];
+  countryPrices?: {
+    country: string;
+    price: number;
+    currencyCode?: string;
+    originalPrice?: number;
+    discount?: number;
+  }[];
 }
 
 export const categories: Category[] = [

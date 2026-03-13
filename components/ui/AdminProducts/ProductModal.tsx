@@ -119,7 +119,7 @@ export default function ProductModal(props: Props) {
               <label className="block text-sm font-medium text-gray-700 mb-1">Product ID</label>
               <input value={props.formProductId} onChange={e => props.setFormProductId(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. PID-123" />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">MRP ({props.currentCurrency.symbol})</label>
                 <input type="number" value={props.formOriginalPrice} onChange={e => props.setFormOriginalPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Original" />
@@ -127,6 +127,19 @@ export default function ProductModal(props: Props) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Selling Price ({props.currentCurrency.symbol})</label>
                 <input type="number" value={props.formPrice} onChange={e => props.setFormPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Sale" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Discount</label>
+                <div className="w-full px-3 py-2 border rounded-lg bg-gray-50 text-green-600 font-semibold">
+                  {(() => {
+                    const mrp = Number(props.formOriginalPrice)
+                    const price = Number(props.formPrice)
+                    if (mrp && mrp > price) {
+                      return `${Math.round(((mrp - price) / mrp) * 100)}% off`
+                    }
+                    return "0%"
+                  })()}
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
@@ -139,12 +152,12 @@ export default function ProductModal(props: Props) {
                 <input type="number" min={1} value={props.formUnitsPerPack} onChange={e => props.setFormUnitsPerPack(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Units per product" />
                 <p className="text-xs text-gray-500 mt-1">Enter how many units are in this product listing.</p>
               </div>
-              <div className="col-span-3">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Available Countries</label>
                 <CommonDropdown
                   options={props.countryOptions}
                   selected={props.selectedCountryItems}
-                  onChange={(v) => { if (Array.isArray(v)) props.setSelectedCountryItems(v as DropdownItem[]) }}
+                  onChange={props.onFormCountryChange}
                   placeholder="Select Countries"
                   multiple
                 />
@@ -155,8 +168,14 @@ export default function ProductModal(props: Props) {
                   <div className="mt-3 space-y-2">
                     {props.selectedCountryItems.map((it) => {
                       const row = props.countryPriceRows.find(r => r.country === String(it.id)) || { country: String(it.id), price: "", originalPrice: "", currencyCode: "" }
+                      const priceNum = Number(row.price)
+                      const originalPriceNum = Number(row.originalPrice)
+                      const discount = originalPriceNum && originalPriceNum > priceNum 
+                          ? Math.round(((originalPriceNum - priceNum) / originalPriceNum) * 100) 
+                          : 0
+                      
                       return (
-                        <div key={String(it.id)} className="grid grid-cols-7 gap-2 items-end">
+                        <div key={String(it.id)} className="grid grid-cols-10 gap-2 items-end">
                           <div className="col-span-2">
                             <label className="block text-xs font-medium text-gray-600 mb-1">Country</label>
                             <div className="px-3 py-2 border rounded-lg bg-gray-50 text-sm">{String(it.label || it.id)}</div>
@@ -174,7 +193,7 @@ export default function ProductModal(props: Props) {
                               placeholder="e.g. INR, SAR"
                             />
                           </div>
-                          <div className="col-span-1">
+                          <div className="col-span-2">
                             <label className="block text-xs font-medium text-gray-600 mb-1">Price</label>
                             <input
                               type="number"
@@ -203,6 +222,12 @@ export default function ProductModal(props: Props) {
                               className="w-full px-3 py-2 border rounded-lg text-sm"
                               placeholder="0"
                             />
+                          </div>
+                          <div className="col-span-2">
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Discount</label>
+                            <div className="px-3 py-2 border rounded-lg bg-gray-50 text-sm text-green-600 font-semibold">
+                              {discount > 0 ? `${discount}% off` : "0%"}
+                            </div>
                           </div>
                         </div>
                       )
