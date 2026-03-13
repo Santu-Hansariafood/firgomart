@@ -139,7 +139,7 @@ export default function ProductModal(props: Props) {
                 <input type="number" min={1} value={props.formUnitsPerPack} onChange={e => props.setFormUnitsPerPack(e.target.value)} className="w-full px-3 py-2 border rounded-lg" placeholder="Units per product" />
                 <p className="text-xs text-gray-500 mt-1">Enter how many units are in this product listing.</p>
               </div>
-              <div>
+              <div className="col-span-3">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Available Countries</label>
                 <CommonDropdown
                   options={props.countryOptions}
