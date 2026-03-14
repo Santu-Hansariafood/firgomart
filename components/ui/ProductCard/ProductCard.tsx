@@ -31,12 +31,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
   const { countryCode } = useGeolocation()
 
   const { price, originalPrice, currencySymbol } = (() => {
-    const cp = product.countryPrices?.find(p => p.country.toUpperCase() === countryCode.toUpperCase())
+    const code = countryCode || 'IN'
+    const cp = product.countryPrices?.find(p => p.country.toUpperCase() === code.toUpperCase())
     if (cp) {
       return {
         price: cp.price,
         originalPrice: cp.originalPrice,
-        currencySymbol: getCurrencyForCountry(countryCode).symbol
+        currencySymbol: getCurrencyForCountry(code).symbol
       }
     }
     const cur = getCurrencyForCountry(product.availableCountry || 'IN')

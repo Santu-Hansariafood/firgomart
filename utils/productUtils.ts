@@ -1,11 +1,43 @@
 import { DropdownItem } from '@/types/product'
 import categoriesData from '@/data/categories.json'
 
+export type CountryConfig = {
+  code: string
+  name: string
+  currencyCode: string
+  currencySymbol: string
+  currencyHtml: string
+}
+
+export const SUPPORTED_COUNTRIES: CountryConfig[] = [
+  { code: 'IN', name: 'India', currencyCode: 'INR', currencySymbol: '₹', currencyHtml: '&#8377;' },
+  { code: 'SA', name: 'Saudi Arabia', currencyCode: 'SAR', currencySymbol: 'SAR', currencyHtml: '&#65020;' },
+  { code: 'US', name: 'United States', currencyCode: 'USD', currencySymbol: '$', currencyHtml: '&#36;' },
+  { code: 'AE', name: 'United Arab Emirates', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
+  { code: 'QA', name: 'Qatar', currencyCode: 'QAR', currencySymbol: 'QAR', currencyHtml: 'QAR' },
+  { code: 'KW', name: 'Kuwait', currencyCode: 'KWD', currencySymbol: 'KWD', currencyHtml: 'KWD' },
+  { code: 'AE-DU', name: 'Dubai', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
+]
+
+export const allSizes: DropdownItem[] = [
+  { id: 'XS', label: 'XS' },
+  { id: 'S', label: 'S' },
+  { id: 'M', label: 'M' },
+  { id: 'L', label: 'L' },
+  { id: 'XL', label: 'XL' },
+  { id: 'XXL', label: 'XXL' },
+  { id: '3XL', label: '3XL' },
+  { id: 'Free Size', label: 'Free Size' },
+  ...Array.from({ length: 8 }, (_, i) => ({ id: String(4 + i), label: String(4 + i) })), // 4-11
+]
+
 type JsonCategory = { name: string; subcategories?: string[] }
 
-export const sanitizeImageUrl = (src: string) => (src || '').trim().replace(/[)]+$/g, '')
+export function sanitizeImageUrl(src: string) {
+  return (src || '').trim().replace(/[)]+$/g, '')
+}
 
-export const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
+export function getSizeOptionsForCategory(cat: string): DropdownItem[] {
   const clothingSizes: DropdownItem[] = [
     { id: 'XS', label: 'XS' },
     { id: 'S', label: 'S' },
@@ -52,52 +84,22 @@ export const getSizeOptionsForCategory = (cat: string): DropdownItem[] => {
   return clothingSizes
 }
 
-export const allSizes: DropdownItem[] = [
-  { id: 'XS', label: 'XS' },
-  { id: 'S', label: 'S' },
-  { id: 'M', label: 'M' },
-  { id: 'L', label: 'L' },
-  { id: 'XL', label: 'XL' },
-  { id: 'XXL', label: 'XXL' },
-  { id: '3XL', label: '3XL' },
-  { id: 'Free Size', label: 'Free Size' },
-  ...Array.from({ length: 8 }, (_, i) => ({ id: String(4 + i), label: String(4 + i) })), // 4-11
-]
-
-export const subcategoryOptionsFor = (cat: string): DropdownItem[] => {
+export function subcategoryOptionsFor(cat: string): DropdownItem[] {
   const entry = ((categoriesData as { categories: JsonCategory[] }).categories || []).find((c) => c.name === cat)
   const subs: string[] = Array.isArray(entry?.subcategories) ? entry!.subcategories : []
   return subs.map((s) => ({ id: s, label: s }))
 }
 
-export const formatPrice = (price: number) => {
+export function formatPrice(price: number) {
   return new Intl.NumberFormat('en-IN').format(price)
 }
 
-export type CountryConfig = {
-  code: string
-  name: string
-  currencyCode: string
-  currencySymbol: string
-  currencyHtml: string
-}
-
-export const SUPPORTED_COUNTRIES: CountryConfig[] = [
-  { code: 'IN', name: 'India', currencyCode: 'INR', currencySymbol: '₹', currencyHtml: '&#8377;' },
-  { code: 'SA', name: 'Saudi Arabia', currencyCode: 'SAR', currencySymbol: 'SAR', currencyHtml: '&#65020;' },
-  { code: 'US', name: 'United States', currencyCode: 'USD', currencySymbol: '$', currencyHtml: '&#36;' },
-  { code: 'AE', name: 'United Arab Emirates', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
-  { code: 'QA', name: 'Qatar', currencyCode: 'QAR', currencySymbol: 'QAR', currencyHtml: 'QAR' },
-  { code: 'KW', name: 'Kuwait', currencyCode: 'KWD', currencySymbol: 'KWD', currencyHtml: 'KWD' },
-  { code: 'AE-DU', name: 'Dubai', currencyCode: 'AED', currencySymbol: 'AED', currencyHtml: 'AED' },
-]
-
-export const getCountryByCode = (code?: string) => {
+export function getCountryByCode(code?: string) {
   if (!code) return undefined
   return SUPPORTED_COUNTRIES.find(c => c.code === code)
 }
 
-export const getCurrencyForCountry = (code?: string) => {
+export function getCurrencyForCountry(code?: string) {
   const country = getCountryByCode(code) || SUPPORTED_COUNTRIES[0]
   return {
     code: country.currencyCode,
@@ -106,13 +108,13 @@ export const getCurrencyForCountry = (code?: string) => {
   }
 }
 
-export const getMaxQuantity = (price: number): number => {
+export function getMaxQuantity(price: number): number {
   if (price < 1000) return 3
   if (price < 2000) return 2
   return 1
 }
 
-export const getProductSlug = (name: string, id: string | number) => {
+export function getProductSlug(name: string, id: string | number) {
   const base = String(name || '')
     .toLowerCase()
     .trim()
@@ -122,6 +124,6 @@ export const getProductSlug = (name: string, id: string | number) => {
   return base ? `${base}-${suffix}` : suffix
 }
 
-export const getProductPath = (name: string, id: string | number) => {
+export function getProductPath(name: string, id: string | number) {
   return `/product/${getProductSlug(name, id)}`
 }
