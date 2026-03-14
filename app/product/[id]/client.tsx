@@ -148,8 +148,24 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
   const [userComment, setUserComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
   const { countryCode } = useGeolocation()
-  const currency = getCurrencyForCountry(countryCode || product.availableCountry)
   const { reviewEligibility, isSaved, saving, toggleSave } = useProductUserState(product.id, session)
+
+  const { price, originalPrice, currencySymbol } = (() => {
+    const cp = product.countryPrices?.find(p => p.country.toUpperCase() === countryCode.toUpperCase())
+    if (cp) {
+      return {
+        price: cp.price,
+        originalPrice: cp.originalPrice,
+        currencySymbol: getCurrencyForCountry(countryCode).symbol
+      }
+    }
+    const cur = getCurrencyForCountry(product.availableCountry || 'IN')
+    return {
+      price: product.price,
+      originalPrice: product.originalPrice,
+      currencySymbol: cur.symbol
+    }
+  })()
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -308,23 +324,6 @@ const ProductPageClient: React.FC<ProductPageClientProps> = ({ product }) => {
       cancelled = true
     }
   }, [activeTab, fetchReviews])
-
-  const { price, originalPrice, currencySymbol } = (() => {
-    const cp = product.countryPrices?.find(p => p.country.toUpperCase() === countryCode.toUpperCase())
-    if (cp) {
-      return {
-        price: cp.price,
-        originalPrice: cp.originalPrice,
-        currencySymbol: getCurrencyForCountry(countryCode).symbol
-      }
-    }
-    const cur = getCurrencyForCountry(product.availableCountry || 'IN')
-    return {
-      price: product.price,
-      originalPrice: product.originalPrice,
-      currencySymbol: cur.symbol
-    }
-  })()
 
   const handleBuyNow = () => {
     if ((product.stock ?? 0) > 0) {

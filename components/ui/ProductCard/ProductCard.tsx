@@ -30,21 +30,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
   const { data: session } = useSession()
   const { countryCode } = useGeolocation()
 
-  const { price, originalPrice, currencySymbol } = (() => {
+  const { price, originalPrice, currencySymbol, discount } = (() => {
     const code = countryCode || 'IN'
     const cp = product.countryPrices?.find(p => p.country.toUpperCase() === code.toUpperCase())
     if (cp) {
       return {
         price: cp.price,
         originalPrice: cp.originalPrice,
-        currencySymbol: getCurrencyForCountry(code).symbol
+        currencySymbol: getCurrencyForCountry(code).symbol,
+        discount: cp.discount
       }
     }
     const cur = getCurrencyForCountry(product.availableCountry || 'IN')
     return {
       price: product.price,
       originalPrice: product.originalPrice,
-      currencySymbol: cur.symbol
+      currencySymbol: cur.symbol,
+      discount: product.discount
     }
   })()
 
@@ -158,9 +160,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onProductClick, onAd
           </span>
         ) : null}
 
-        {product.discount && (
+        {discount && (
           <span className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg shadow-lg z-20">
-            {product.discount}% OFF
+            {discount}% OFF
           </span>
         )}
 
